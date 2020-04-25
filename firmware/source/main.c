@@ -85,6 +85,7 @@ void fw_powerOffFinalStage(void)
 		}
 	}
 
+	nonVolatileSettings.displayBacklightPercentageOff = 0;
 	displayEnableBacklight(false);
 
 #if !defined(PLATFORM_RD5R)
