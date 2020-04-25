@@ -85,6 +85,9 @@ void fw_powerOffFinalStage(void)
 		}
 	}
 
+	nonVolatileSettings.displayBacklightPercentageOff = 0;
+	displayEnableBacklight(false);
+
 #if !defined(PLATFORM_RD5R)
 	// This turns the power off to the CPU.
 	GPIO_PinWrite(GPIO_Keep_Power_On, Pin_Keep_Power_On, 0);
