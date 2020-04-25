@@ -128,12 +128,12 @@ void fw_main_task(void *data)
     init_I2C0a();
     setup_I2C0();
 	fw_init_common();
-	fw_init_buttons();
+	buttonsInit();
 	fw_init_LEDs();
 	keyboardInit();
 	init_rotary_switch();
 
-	fw_check_button_event(&buttons, &button_event);// Read button state and event
+	buttonsCheckButtonsEvent(&buttons, &button_event);// Read button state and event
 	if (buttons & BUTTON_SK2)
 	{
 		settingsRestoreDefaultSettings();
@@ -264,7 +264,7 @@ void fw_main_task(void *data)
 
 			tick_com_request();
 
-			fw_check_button_event(&buttons, &button_event); // Read button state and event
+			buttonsCheckButtonsEvent(&buttons, &button_event); // Read button state and event
 
 			keyboardCheckKeyEvent(&keys, &key_event); // Read keyboard state and event
 
