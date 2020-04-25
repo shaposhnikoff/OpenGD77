@@ -217,17 +217,14 @@ void fw_main_task(void *data)
 #endif
 
 	// Clear boot melody and image
-#if defined(PLATFORM_RD5R)
-	if ((buttons & (BUTTON_SK1 | BUTTON_SK2 | BUTTON_PTT)) == ((BUTTON_SK1 | BUTTON_SK2 | BUTTON_PTT)))
-	{
-		settingsEraseCustomContent();
-	}
+#if defined(PLATFORM_GD77S)
+    if ((buttons & (BUTTON_SK2 | BUTTON_ORANGE)) == ((BUTTON_SK2 | BUTTON_ORANGE)))
 #else
-	if ((buttons & (BUTTON_SK2 | BUTTON_ORANGE)) == ((BUTTON_SK2 | BUTTON_ORANGE)))
+    if ((buttons & BUTTON_SK2) && ((fw_read_keyboard() & (SCAN_UP | SCAN_DOWN)) == (SCAN_UP | SCAN_DOWN)))
+#endif
 	{
 		settingsEraseCustomContent();
 	}
-#endif
 
     lastheardInitList();
     codeplugInitContactsCache();
@@ -245,6 +242,13 @@ void fw_main_task(void *data)
 		nonVolatileSettings.hotspotType = (buttons & BUTTON_PTT) ? HOTSPOT_TYPE_BLUEDV : HOTSPOT_TYPE_MMDVM;
 	}
 #endif
+
+	// Reset buttons/key states in case some where pressed while booting.
+	button_event = EVENT_BUTTON_NONE;
+	buttons = BUTTON_NONE;
+	key_event = EVENT_KEY_NONE;
+	keys.event = 0;
+	keys.key = 0;
 
     while (1U)
     {
