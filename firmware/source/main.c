@@ -216,11 +216,13 @@ void fw_main_task(void *data)
     SEGGER_RTT_printf(0,"Segger RTT initialised\n");
 #endif
 
+#if ! defined(PLATFORM_RD5R)
 	// Clear boot melody and image
 	if ((buttons & (BUTTON_SK2 | BUTTON_ORANGE)) == ((BUTTON_SK2 | BUTTON_ORANGE)))
 	{
 		settingsEraseCustomContent();
 	}
+#endif
 
     lastheardInitList();
     codeplugInitContactsCache();
