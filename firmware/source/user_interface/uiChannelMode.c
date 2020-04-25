@@ -111,7 +111,7 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		if (firstRunGD77S)
 		{
 			firstRunGD77S = false;
-			checkAndUpdateSelectedChannelForGD77S(get_rotary_switch_position(), true);
+			checkAndUpdateSelectedChannelForGD77S(rotarySwitchGetPosition(), true);
 		}
 #endif
 		displayLightTrigger();
@@ -136,9 +136,9 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 #if defined(PLATFORM_GD77S)
 			// Just ensure rotary's selected channel is matching the already loaded one
 			// as rotary selector could be turned while the GD is OFF, or in hotspot mode.
-			if (get_rotary_switch_position() != getCurrentChannelInCurrentZoneForGD77S())
+			if (rotarySwitchGetPosition() != getCurrentChannelInCurrentZoneForGD77S())
 			{
-				checkAndUpdateSelectedChannelForGD77S(get_rotary_switch_position(), false);
+				checkAndUpdateSelectedChannelForGD77S(rotarySwitchGetPosition(), false);
 			}
 #endif
 

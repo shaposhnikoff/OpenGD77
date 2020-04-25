@@ -131,7 +131,7 @@ void fw_main_task(void *data)
 	buttonsInit();
 	fw_init_LEDs();
 	keyboardInit();
-	init_rotary_switch();
+	rotarySwitchInit();
 
 	buttonsCheckButtonsEvent(&buttons, &button_event);// Read button state and event
 	if (buttons & BUTTON_SK2)
@@ -268,7 +268,7 @@ void fw_main_task(void *data)
 
 			keyboardCheckKeyEvent(&keys, &key_event); // Read keyboard state and event
 
-			check_rotary_switch_event(&rotary, &rotary_event); // Rotary switch state and event (GD-77S only)
+			rotarySwitchCheckRotaryEvent(&rotary, &rotary_event); // Rotary switch state and event (GD-77S only)
 
 			// VOX Checking
 			if (voxIsEnabled())
