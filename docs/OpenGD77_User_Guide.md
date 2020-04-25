@@ -1,10 +1,10 @@
 ![](media/OpenGD77-logo.png)
 
-# OpenGD77 / OpenDM1801 / OpenRD5R User Guide
+# OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide
 OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R is a work-in-progress, so is this User Guide. Last update was on 20th April 2020. For documentation ToDo (including incremental changes), please refer to https://github.com/jangelor/OpenGD77/wiki/Documentation-ToDo . For latest discussions, please refer to the development and community forum at https://opengd77.com .
 <!-- MDTOC maxdepth:6 firsth1:1 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
 
-- [OpenGD77 / OpenDM1801 / OpenRD5R User Guide](#opengd77-opendm1801-openrd5r-user-guide)   
+- [OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide](#opengd77-opengd77s-opendm1801-openrd5r-user-guide)   
    - [Introduction](#introduction)   
       - [Credits](#credits)   
       - [Download links and other resources](#download-links-and-other-resources)   
@@ -31,6 +31,7 @@ OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R is a work-in-progress, so is this U
             - [Copy the RX frequency to the TX frequency](#copy-the-rx-frequency-to-the-tx-frequency)   
             - [Copy TX frequency to the RX frequency](#copy-tx-frequency-to-the-rx-frequency)   
             - [Filter (DMR mode only)](#filter-dmr-mode-only)   
+         - [VFO to New Channel](#vfo-to-new-channel)   
             - [Tone Scan for CTCSS tone in FM](#tone-scan-for-ctcss-tone-in-fm)   
       - [DMR specific functionality (VFO and Channel screens)](#dmr-specific-functionality-vfo-and-channel-screens)   
          - [Timeslot selection](#timeslot-selection)   
@@ -101,6 +102,8 @@ OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R is a work-in-progress, so is this U
          - [DMR Beep](#dmr-beep)   
          - [DMR mic](#dmr-mic)   
          - [FM mic](#fm-mic)   
+         - [VOX threshold](#vox-threshold)   
+         - [VOX Tail](#vox-tail)   
       - [Channel Details](#channel-details)   
          - [Mode](#mode)   
          - [Color Code](#color-code)   
@@ -115,12 +118,14 @@ OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R is a work-in-progress, so is this U
          - [TOT](#tot)   
          - [Zone Skip](#zone-skip)   
          - [All Skip](#all-skip)   
+         - [VOX](#vox)   
          - [Accepting and saving the changes to the channel](#accepting-and-saving-the-changes-to-the-channel)   
       - [Credits Screen](#credits-screen)   
    - [Making and receiving DMR Private Calls](#making-and-receiving-dmr-private-calls)   
       - [To make a Private Call](#to-make-a-private-call)   
       - [To Receive a Private Call](#to-receive-a-private-call)   
    - [Hotspot mode](#hotspot-mode)   
+   - [Resetting the Settings](#resetting-the-settings)   
    - [Programming Channels and Talkgroups for use with the firmware](#programming-channels-and-talkgroups-for-use-with-the-firmware)   
       - [Overview](#overview)   
          - [New Driver Installation](#new-driver-installation)   
@@ -269,7 +274,16 @@ In DMR mode, pressing the **Star** key toggles between TimeSlot 1 and TimeSlot 2
 ### Controlling Tx power
 
 Press **Function + Right** to increase the power. Press **Function + Left** to decrease the power. Power can be set to 50mW, 250mW, 500mW, 750mW, 1W, 2W, 3W, 4W, 5W and 5W++.
-*Note:* The power output will only be correct after the operator has calibrated their own radio, as these radios do not seem to have very accurate power calibration applied in the factory.
+
+The 5W++ power setting, configures the PA drive to its maximum value.
+This power setting is designed for emergency use only, and results in around 5.5W being produced on 70cm and 7W on 2m.
+To acess this power setting, select the 5W power setting, then press and hold **Function + Right**
+
+*Notes:*
+
+(1) The power output will only be correct after the operator has calibrated their own radio, as these radios do not seem to have very accurate power calibration applied in the factory.
+
+(2) The High / Low power setting defined for a Channel (or VFO) is not used by the firmware, as it can only have 2 settings, whereas the firmware supports 10 power levels.
 
 ### Signal strength bar graph
 
@@ -368,6 +382,13 @@ Copies the TX frequency to the RX frequency. Press **Green** key or **Orange** b
 ##### Filter (DMR mode only)
 
 This function is identical to the Filter described forChannel mode operation (above)
+
+#### VFO to New Channel
+
+The "VFO --> New Chan" option, creats a new channel using the current VFO settings.
+The name of the new channel uses the format "New channel NNN", where NNN is next available number in the All Channels zone.
+
+This channel is not added to a Zone but is available via the "All Channels" Zone.
 
 ##### Tone Scan for CTCSS tone in FM
 
@@ -575,13 +596,13 @@ If a timeout is defined in the CPS, or adjusted in the Channel Details screen, t
 
 In DMR Tier2 the timer will not start counting until the repeater becomes active.
 
-During DMR TX a VU meter is displayed showing the input microphone level, in the form of a bar graph across the top of the screen.
+During FM and DMR Tx a VU meter is displayed showing the input microphone level, in the form of a bar graph across the top of the screen.
 
 ![](media/dmr-mic-level.png)
 
 ### Timeout warning beep
 
-A timeout warning can be configured in the Utilities menu. The radio will beep every 5 seconds when the remaining call time is less than the Timeout warning time that you have configured in the Options screen.
+A timeout warning can be configured in the Sound Options menu. The radio will beep every 5 seconds when the remaining call time is less than the timeout.
 
 ### TOT
 
@@ -737,7 +758,7 @@ Displays a record of the last 16 DMR stations that the radio has received.
 
 Pressing the **Up** or **Down** arrows cycles through the list to show stations which have been heard.
 
-The radio stores data on the last 16 stations that were heard.
+Hold **Blue** button to view details like TalkGroup and time elapsed
 
 ### Firmware Info
 
@@ -923,12 +944,21 @@ Settings are in 3dB steps, with 0dB being the normal default setting, which is t
 This controls the audio gain of the FM microphone input system, relative to the default value. Positive values result in more gain than default, Negative values result in less gain than default.
 The units of this control in the baseband IC (AT1846S) are not known.
 
+#### VOX threshold
+
+Threshold value which controls the mic level which triggers the radio to transmit when VOX is enabled.
+
+#### VOX Tail
+
+Controls the length of time after the operator stops speaking, before the transmission is ended.
 
 ### Channel Details
 
 ![](media/channel-details.png)
 
 #### Mode
+
+FM or DMR
 
 #### Color Code
 Sets the color code when the VFO/Channel is set to DMR
@@ -971,6 +1001,10 @@ Set to skip the channel when scanning within the zone.
 
 #### All Skip
 Set to skip the channel when scanning within the All Channels list.
+
+#### VOX
+
+Controls whether VOX is enabled or disabled.
 
 #### Accepting and saving the changes to the channel
 Pressing the **Green** menu key confirms the changes.
@@ -1086,6 +1120,13 @@ When the radio receives a RF DMR signal, the green LED on the top of the radio w
 When PiStar receives traffic from the Internet and sends it to the hotspot for transmission, the hotspot displays the Callsign and name or the DMR ID, and the TX frequency is show.
 
 The LED on the top of the radio also turns red to indicate the radio is transmitting
+
+## Resetting the Settings
+
+The radio can also be set to the default settings by holding the **Blue (Function)** key while turning on the radio.
+
+Additionally holding the **Orange** button, resets any custom boot melody and custom boot image that has been uploaded using the OpenGD77 CPS.
+
 
 ## Programming Channels and Talkgroups for use with the firmware
 
