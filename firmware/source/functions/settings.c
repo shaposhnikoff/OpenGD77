@@ -212,3 +212,9 @@ void settingsRestoreDefaultSettings(void)
 
 	settingsSaveSettings(false);
 }
+
+void settingsEraseCustomContent(void)
+{
+	//Erase OpenGD77 custom content
+	SPI_Flash_eraseSector(0);// The first sector (4k) contains the OpenGD77 custom codeplug content e.g. Boot melody and boot image.
+}
