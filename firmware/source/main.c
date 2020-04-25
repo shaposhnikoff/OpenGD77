@@ -216,8 +216,13 @@ void fw_main_task(void *data)
     SEGGER_RTT_printf(0,"Segger RTT initialised\n");
 #endif
 
-#if ! defined(PLATFORM_RD5R)
 	// Clear boot melody and image
+#if defined(PLATFORM_RD5R)
+	if ((buttons & (BUTTON_SK1 | BUTTON_SK2 | BUTTON_PTT)) == ((BUTTON_SK1 | BUTTON_SK2 | BUTTON_PTT)))
+	{
+		settingsEraseCustomContent();
+	}
+#else
 	if ((buttons & (BUTTON_SK2 | BUTTON_ORANGE)) == ((BUTTON_SK2 | BUTTON_ORANGE)))
 	{
 		settingsEraseCustomContent();
