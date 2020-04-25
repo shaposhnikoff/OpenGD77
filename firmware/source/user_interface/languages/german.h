@@ -20,7 +20,7 @@
  * Translators: DG3GSP, DL4LEX
  *
  *
- * Rev: 3.7
+ * Rev: 3.8
  */
 #ifndef USER_INTERFACE_LANGUAGES_GERMAN_H_
 #define USER_INTERFACE_LANGUAGES_GERMAN_H_
@@ -152,8 +152,8 @@ const stringsTable_t germanLanguage =
 .dmr_beep				= "DMR TX Ton", // MaxLen 16 (with ':' + .star/.stop/.both/.none)
 .start					= "Start", // MaxLen 16 (with ':' + .dmr_beep)
 .both					= "Beide", // MaxLen 16 (with ':' + .dmr_beep)
-.vox_threshold                          = "VOX Thres.", // MaxLen 16 (with ':' + .off or 1..30)
-.vox_tail                               = "VOX Tail" // MaxLen 16 (with ':' + .n_a or '0.0s')
+.vox_threshold                          = "VOX Empf.", // MaxLen 16 (with ':' + .off or 1..30)
+.vox_tail                               = "VOX Dauer" // MaxLen 16 (with ':' + .n_a or '0.0s')
 };
 /********************************************************************
  *
