@@ -1043,7 +1043,7 @@ static void handleEvent(uiEvent_t *ev)
 				}
 				scanTimer = SCAN_SKIP_CHANNEL_INTERVAL;	//force scan to continue;
 				scanState=SCAN_SCANNING;
-				fw_reset_keyboard();
+				keyboardReset();
 				return;
 			}
 
@@ -1051,7 +1051,7 @@ static void handleEvent(uiEvent_t *ev)
 			if (scanState == SCAN_SCANNING && ev->keys.key == KEY_LEFT)
 			{
 				scanDirection *= -1;
-				fw_reset_keyboard();
+				keyboardReset();
 				return;
 			}
 		}
@@ -1060,7 +1060,7 @@ static void handleEvent(uiEvent_t *ev)
 		if (((ev->keys.key == KEY_UP) && (ev->buttons & BUTTON_SK2) == 0) == false)
 		{
 			uiChannelModeStopScanning();
-			fw_reset_keyboard();
+			keyboardReset();
 			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 			uiChannelModeUpdateScreen(0);
 			return;

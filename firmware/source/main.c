@@ -130,7 +130,7 @@ void fw_main_task(void *data)
 	fw_init_common();
 	fw_init_buttons();
 	fw_init_LEDs();
-	fw_init_keyboard();
+	keyboardInit();
 	init_rotary_switch();
 
 	fw_check_button_event(&buttons, &button_event);// Read button state and event
@@ -220,7 +220,7 @@ void fw_main_task(void *data)
 #if defined(PLATFORM_GD77S)
     if ((buttons & (BUTTON_SK2 | BUTTON_ORANGE)) == ((BUTTON_SK2 | BUTTON_ORANGE)))
 #else
-    if ((buttons & BUTTON_SK2) && ((fw_read_keyboard() & (SCAN_UP | SCAN_DOWN)) == (SCAN_UP | SCAN_DOWN)))
+    if ((buttons & BUTTON_SK2) && ((keyboardRead() & (SCAN_UP | SCAN_DOWN)) == (SCAN_UP | SCAN_DOWN)))
 #endif
 	{
 		settingsEraseCustomContent();
@@ -266,7 +266,7 @@ void fw_main_task(void *data)
 
 			fw_check_button_event(&buttons, &button_event); // Read button state and event
 
-			fw_check_key_event(&keys, &key_event); // Read keyboard state and event
+			keyboardCheckKeyEvent(&keys, &key_event); // Read keyboard state and event
 
 			check_rotary_switch_event(&rotary, &rotary_event); // Rotary switch state and event (GD-77S only)
 
@@ -642,7 +642,7 @@ void fw_main_task(void *data)
 					keys.key = 0;
 					keys.event = 0;
 					function_event = FUNCTION_EVENT;
-					fw_reset_keyboard();
+					keyboardReset();
 				}
 			}
     		ev.buttons = buttons;
