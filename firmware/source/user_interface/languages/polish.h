@@ -20,7 +20,7 @@
  *
  * Translators: SQ7PTE
  *
- * Rev: 4.7
+ * Rev: 4.8
  */
 #ifndef USER_INTERFACE_LANGUAGES_POLISH_H_
 #define USER_INTERFACE_LANGUAGES_POLISH_H_
@@ -110,7 +110,7 @@ const stringsTable_t polishLanguage =
 .calibration				= "Kalibracja", // MaxLen: 16 (with ':' + .on or .off)
 .band_limits				= "Limit pasma", // MaxLen: 16 (with ':' + .on or .off)
 .beep_volume				= "Gˆos bipa", // MaxLen: 16 (with ':' + -24..6 + 'dB')
-.dmr_mic_gain				= "Mikrofon", // MaxLen: 16 (with ':' + -33..12 + 'dB')
+.dmr_mic_gain				= "DMR mic", // MaxLen: 16 (with ':' + -33..12 + 'dB')
 .fm_mic_gain				= "FM mic", // MaxLen: 16 (with ':' + 0..31)
 .key_long				= "Key dˆugi", // MaxLen: 11 (with ':' + x.xs fitted)
 .key_repeat				= "Key krótki", // MaxLen: 11 (with ':' + x.xs fitted)
