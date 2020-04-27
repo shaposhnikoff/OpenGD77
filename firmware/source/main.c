@@ -355,21 +355,21 @@ void fw_main_task(void *data)
 #if defined(PLATFORM_RD5R)
 					if (button_event == EVENT_BUTTON_CHANGE && (buttons & BUTTON_SK2))
 #else
-						if (button_event == EVENT_BUTTON_CHANGE && ((buttons & BUTTON_ORANGE) || (buttons & BUTTON_SK2)))
+					if (button_event == EVENT_BUTTON_CHANGE && ((buttons & BUTTON_ORANGE) || (buttons & BUTTON_SK2)))
 #endif
+					{
+						if ((PTTToggledDown == false) && (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN))
 						{
-							if ((PTTToggledDown == false) && (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN))
-							{
-								menuSystemPushNewMenu(UI_LOCK_SCREEN);
-							}
-
-							button_event = EVENT_BUTTON_NONE;
-
-							if (nonVolatileSettings.pttToggle && PTTToggledDown)
-							{
-								PTTToggledDown = false;
-							}
+							menuSystemPushNewMenu(UI_LOCK_SCREEN);
 						}
+
+						button_event = EVENT_BUTTON_NONE;
+
+						if (nonVolatileSettings.pttToggle && PTTToggledDown)
+						{
+							PTTToggledDown = false;
+						}
+					}
 				}
 				else if (PTTLocked)
 				{
