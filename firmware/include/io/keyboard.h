@@ -192,6 +192,7 @@
 #define KEYCHECK_DOWN(keys, k)     ((keys.key == k) && ((keys.event & KEY_MOD_DOWN) == KEY_MOD_DOWN))
 #define KEYCHECK_PRESS(keys, k)    ((keys.key == k) && ((keys.event & KEY_MOD_PRESS) == KEY_MOD_PRESS))
 #define KEYCHECK_LONGDOWN(keys, k) ((keys.key == k) && ((keys.event & (KEY_MOD_DOWN | KEY_MOD_LONG)) == (KEY_MOD_DOWN | KEY_MOD_LONG)))
+#define KEYCHECK_LONGDOWN_REPEAT(keys, k) ((keys.key == k) && ((keys.event & (KEY_MOD_PRESS | KEY_MOD_LONG)) == (KEY_MOD_PRESS | KEY_MOD_LONG)))
 
 
 //#define KEYCHAR(keys)              ((char)(keys & 0xff))

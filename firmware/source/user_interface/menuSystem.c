@@ -156,11 +156,14 @@ void menuSystemPopAllAndDisplayRootMenu(void)
 	menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev,true);
 }
 
-void menuSystemPopAllAndDisplaySpecificRootMenu(int newRootMenu)
+void menuSystemPopAllAndDisplaySpecificRootMenu(int newRootMenu, bool resetKeyboard)
 {
 	uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = 0, .events = NO_EVENT, .hasEvent = false, .time = fw_millis() };
 
-	keyboardReset();
+	if (resetKeyboard)
+	{
+		keyboardReset();
+	}
 	memset(menuControlData.itemIndex, 0, sizeof(menuControlData.itemIndex));
 	menuControlData.stack[0]  = newRootMenu;
 	menuControlData.stackPosition = 0;
