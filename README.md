@@ -20,7 +20,7 @@ New developers are welcome to participate, but currently the focus is still on g
 This does not mean that new non-core functionality changes will be rejected, but bug fixes and core functionality PR's  will take priority
 
 # User guide
-There is an extensive User Guide https://github.com/rogerclarkmelbourne/OpenGD77/blob/master/docs/OpenGD77%20User%20Guide.md  however becuase the firmware is evolving very rapidly, sometimes the User Guide does show the latest features or functions.
+There is an extensive User Guide https://github.com/rogerclarkmelbourne/OpenGD77/blob/master/docs/OpenGD77_User_Guide.md  however becuase the firmware is evolving very rapidly, sometimes the User Guide does show the latest features or functions.
 
 # Credits
 Originally conceived by Kai DG4KLU.
