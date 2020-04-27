@@ -1,5 +1,5 @@
 # OpenGD77
-Open source firmware for the Radioddity GD-77 (aka TYT MD-760), Baofeng DM-1801 (aka DM-860) dual band DMR / FM handheld transceievers, for Amateur Radio use.
+Open source firmware for the Radioddity GD-77 (aka TYT MD-760), GD-77S, Baofeng DM-1801 (aka DM-860) and Baofeng RD-5r, dual band DMR / FM handheld transceievers, for Amateur Radio use.
 
 Note. 
 The AMBE codec is not open source because of potential copyright problems, and instead uses binary sections from original manufacturers firmware.
@@ -12,8 +12,6 @@ However it does currently support some core functionality that the official firm
 Not all functionality provided in the official firmware is likely ever to be part of this firmware, because some features like encryption are explicitly prohibited for Amateur Radio operators.
 
 Some functionality like Dual Watch may also not ever be implemented, because its equivalent to the Channel / Zone scan function.
-
-
 
 The project is under active development by several developers. 
 New developers are welcome to participate, but currently the focus is still on getting the core functionality working and existing bugs fixed.
