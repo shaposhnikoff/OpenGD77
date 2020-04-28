@@ -180,8 +180,8 @@ void SPI_HR_C6000_init(void)
 	write_SPI_page_reg_byte_SPI0(0x04, 0x28, 0x7D);   //Undocumented Register
 	write_SPI_page_reg_byte_SPI0(0x04, 0x29, 0x40);   //Undocumented Register
 	write_SPI_page_reg_byte_SPI0(0x04, 0x2A, 0x0B);   //Set spi_clk_cnt to default value
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2B, 0x0B);   //According to Datashhet this is a Read only register For FM Squelch
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2C, 0x17);   //According to Datashhet this is a Read only register For FM Squelch
+	write_SPI_page_reg_byte_SPI0(0x04, 0x2B, 0x0B);   //According to Datasheet this is a Read only register For FM Squelch
+	write_SPI_page_reg_byte_SPI0(0x04, 0x2C, 0x17);   //According to Datasheet this is a Read only register For FM Squelch
 	write_SPI_page_reg_byte_SPI0(0x04, 0x2D, 0x05);   //Set FM Compression and Decompression points (?)
 	write_SPI_page_reg_byte_SPI0(0x04, 0x2E, 0x04);   //Set tx_pre_on (DMR Transmission advance) to 400us
 	write_SPI_page_reg_byte_SPI0(0x04, 0x2F, 0x0B);   //Set I2S Clock Frequency
