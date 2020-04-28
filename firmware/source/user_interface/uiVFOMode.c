@@ -894,7 +894,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				handleUpKey(ev);
 			}
-			else if (KEYCHECK_LONGDOWN(ev->keys,KEY_UP))
+			else if (KEYCHECK_LONGDOWN(ev->keys, KEY_UP) && ((ev->buttons & BUTTON_SK2) == 0))
 			{
 				if (screenOperationMode[nonVolatileSettings.currentVFONumber] != VFO_SCREEN_OPERATION_SCAN)
 				{
