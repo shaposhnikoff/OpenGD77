@@ -24,6 +24,7 @@
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
 static void updateBacklightMode(uint8_t mode);
+static void setDisplayInvert(bool invert);
 
 static const int BACKLIGHT_MAX_TIMEOUT = 30;
 #if defined (PLATFORM_RD5R)
@@ -136,6 +137,9 @@ static void updateScreen(void)
 	ucRender();
 	displayLightTrigger();
 }
+
+
+
 
 static void handleEvent(uiEvent_t *ev)
 {
@@ -263,18 +267,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case DISPLAY_MENU_COLOUR_INVERT:
-					{
-						bool isLit = displayIsBacklightLit();
-
-						nonVolatileSettings.displayInverseVideo = !nonVolatileSettings.displayInverseVideo;
-						displayInit(nonVolatileSettings.displayInverseVideo);// Need to perform a full reset on the display to change back to non-inverted
-						// Need to cycle the backlight
-						if (nonVolatileSettings.backlightMode != BACKLIGHT_MODE_NONE)
-						{
-							displayEnableBacklight(! isLit);
-							displayEnableBacklight(isLit);
-						}
-					}
+					setDisplayInvert(true);
 					break;
 				case DISPLAY_MENU_CONTACT_DISPLAY_ORDER:
 					if (nonVolatileSettings.contactDisplayPriority < CONTACT_DISPLAY_PRIO_TA_DB_CC)
@@ -354,18 +347,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case DISPLAY_MENU_COLOUR_INVERT:
-					{
-						bool isLit = displayIsBacklightLit();
-
-						nonVolatileSettings.displayInverseVideo = !nonVolatileSettings.displayInverseVideo;
-						displayInit(nonVolatileSettings.displayInverseVideo);// Need to perform a full reset on the display to change back to non-inverted
-						// Need to cycle the backlight
-						if (nonVolatileSettings.backlightMode != BACKLIGHT_MODE_NONE)
-						{
-							displayEnableBacklight(! isLit);
-							displayEnableBacklight(isLit);
-						}
-					}
+					setDisplayInvert(false);
 					break;
 				case DISPLAY_MENU_CONTACT_DISPLAY_ORDER:
 					if (nonVolatileSettings.contactDisplayPriority > CONTACT_DISPLAY_PRIO_CC_DB_TA)
@@ -438,5 +420,23 @@ static void updateBacklightMode(uint8_t mode)
 		case BACKLIGHT_MODE_AUTO:
 			displayLightTrigger();
 			break;
+	}
+}
+
+static void setDisplayInvert(bool invert)
+{
+	if (invert==nonVolatileSettings.displayInverseVideo)
+	{
+		return;// Don't update unless the setting is actually changing
+	}
+	bool isLit = displayIsBacklightLit();
+
+	nonVolatileSettings.displayInverseVideo = invert;//!nonVolatileSettings.displayInverseVideo;
+	displayInit(nonVolatileSettings.displayInverseVideo);// Need to perform a full reset on the display to change back to non-inverted
+	// Need to cycle the backlight
+	if (nonVolatileSettings.backlightMode != BACKLIGHT_MODE_NONE)
+	{
+		displayEnableBacklight(! isLit);
+		displayEnableBacklight(isLit);
 	}
 }
