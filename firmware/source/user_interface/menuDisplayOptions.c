@@ -263,8 +263,18 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case DISPLAY_MENU_COLOUR_INVERT:
-					nonVolatileSettings.displayInverseVideo = !nonVolatileSettings.displayInverseVideo;
-					displayInit(nonVolatileSettings.displayInverseVideo);// Need to perform a full reset on the display to change back to non-inverted
+					{
+						bool isLit = displayIsBacklightLit();
+
+						nonVolatileSettings.displayInverseVideo = !nonVolatileSettings.displayInverseVideo;
+						displayInit(nonVolatileSettings.displayInverseVideo);// Need to perform a full reset on the display to change back to non-inverted
+						// Need to cycle the backlight
+						if (nonVolatileSettings.backlightMode != BACKLIGHT_MODE_NONE)
+						{
+							displayEnableBacklight(! isLit);
+							displayEnableBacklight(isLit);
+						}
+					}
 					break;
 				case DISPLAY_MENU_CONTACT_DISPLAY_ORDER:
 					if (nonVolatileSettings.contactDisplayPriority < CONTACT_DISPLAY_PRIO_TA_DB_CC)
@@ -344,8 +354,18 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case DISPLAY_MENU_COLOUR_INVERT:
-					nonVolatileSettings.displayInverseVideo = !nonVolatileSettings.displayInverseVideo;
-					displayInit(nonVolatileSettings.displayInverseVideo);// Need to perform a full reset on the display to change back to non-inverted
+					{
+						bool isLit = displayIsBacklightLit();
+
+						nonVolatileSettings.displayInverseVideo = !nonVolatileSettings.displayInverseVideo;
+						displayInit(nonVolatileSettings.displayInverseVideo);// Need to perform a full reset on the display to change back to non-inverted
+						// Need to cycle the backlight
+						if (nonVolatileSettings.backlightMode != BACKLIGHT_MODE_NONE)
+						{
+							displayEnableBacklight(! isLit);
+							displayEnableBacklight(isLit);
+						}
+					}
 					break;
 				case DISPLAY_MENU_CONTACT_DISPLAY_ORDER:
 					if (nonVolatileSettings.contactDisplayPriority > CONTACT_DISPLAY_PRIO_CC_DB_TA)
