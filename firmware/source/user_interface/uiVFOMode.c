@@ -1429,7 +1429,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					nonVolatileSettings.tsManualOverride &= 0xF0;// Clear lower nibble value
 					nonVolatileSettings.tsManualOverride |= (trxGetDMRTimeSlot()+1);// Store manual TS override
 
-					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE);
+					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
 
 					set_melody(melody_ACK_beep);
 
@@ -1639,7 +1639,7 @@ static void initScan(void)
 
 	scanTimer=500;
 	scanState = SCAN_SCANNING;
-	menuSystemPopAllAndDisplaySpecificRootMenu(UI_VFO_MODE);
+	menuSystemPopAllAndDisplaySpecificRootMenu(UI_VFO_MODE, true);
 }
 
 static void scanning(void)
