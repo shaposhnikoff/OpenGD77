@@ -245,9 +245,16 @@ static void updateScreen(void)
 					break;
 
 				case CH_DETAILS_RXGROUP:
-					codeplugRxGroupGetDataForIndex(tmpChannel.rxGroupList, &rxGroupBuf);
-					codeplugUtilConvertBufToString(rxGroupBuf.name, rxNameBuf, 16);
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->rx_group, rxNameBuf);
+					if (tmpChannel.chMode == RADIO_MODE_DIGITAL)
+					{
+						codeplugRxGroupGetDataForIndex(tmpChannel.rxGroupList, &rxGroupBuf);
+						codeplugUtilConvertBufToString(rxGroupBuf.name, rxNameBuf, 16);
+						snprintf(buf, bufferLen, "%s:%s", currentLanguage->rx_group, rxNameBuf);
+					}
+					else
+					{
+						snprintf(buf, bufferLen, "%s:%s", currentLanguage->rx_group, currentLanguage->n_a);
+					}
 					break;
 				case CH_DETAILS_VOX:
 					snprintf(buf, bufferLen, "VOX:%s",((tmpChannel.flag4 & 0x40) == 0x40) ? currentLanguage->on : currentLanguage->off);
@@ -447,8 +454,7 @@ static void handleEvent(uiEvent_t *ev)
 				tmpVal++;
 				while (tmpVal < 76)
 				{
-					codeplugRxGroupGetDataForIndex(tmpVal, &rxGroupBuf);
-					if (rxGroupBuf.name[0] != 0) {
+					if (codeplugRxGroupGetDataForIndex(tmpVal, &rxGroupBuf)) {
 						tmpChannel.rxGroupList = tmpVal;
 						break;
 					}
@@ -559,8 +565,7 @@ static void handleEvent(uiEvent_t *ev)
 					tmpVal--;
 					while (tmpVal > 0)
 					{
-						codeplugRxGroupGetDataForIndex(tmpVal, &rxGroupBuf);
-						if (rxGroupBuf.name[0] != 0) {
+						if (codeplugRxGroupGetDataForIndex(tmpVal, &rxGroupBuf)) {
 							tmpChannel.rxGroupList = tmpVal;
 							break;
 						}
