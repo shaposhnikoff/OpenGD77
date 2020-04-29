@@ -118,7 +118,7 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 
 		uiChannelModeUpdateScreen(0);
 
-		if (scanActive==false)
+		if (scanActive == false)
 		{
 			scanState = SCAN_SCANNING;
 		}
@@ -186,7 +186,7 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 				}
 			}
 
-			if(scanActive==true)
+			if (scanActive == true)
 			{
 				scanning();
 			}

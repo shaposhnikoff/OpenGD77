@@ -519,6 +519,12 @@ void fw_main_task(void *data)
 							currentMenu != UI_TX_SCREEN )
 					{
 						bool wasScanning = false;
+
+						if (toneScanActive)
+						{
+							uiVFOModeStopScanning();
+						}
+
 						if (scanActive)
 						{
 							if (currentMenu == UI_VFO_MODE)

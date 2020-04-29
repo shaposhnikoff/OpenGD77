@@ -49,7 +49,7 @@ static bool isDisplayingQSOData=false;
 static int tmpQuickMenuDmrFilterLevel;
 static int tmpQuickMenuAnalogFilterLevel;
 static int16_t newChannelIndex = 0;
-static bool toneScanActive = false;//tone scan active flag  (CTCSS)
+bool toneScanActive = false;//tone scan active flag  (CTCSS)
 static const int TONESCANINTERVAL=200;//time between each tone for lowest tone. (higher tones take less time.)
 static int scanIndex=0;
 static bool displayChannelSettings;
@@ -118,7 +118,7 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 				}
 			}
 
-			if (scanActive==false)
+			if (scanActive == false)
 			{
 				scanState = SCAN_SCANNING;
 			}
@@ -226,12 +226,12 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 			}
 
-			if(toneScanActive==true)
+			if (toneScanActive == true)
 			{
 				toneScan();
 			}
 
-			if (scanActive==true)
+			if (scanActive == true)
 			{
 				scanning();
 			}
@@ -249,8 +249,13 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 				// Scanning barrier
 				if (toneScanActive)
 				{
-					if (((ev->events & BUTTON_EVENT) && (ev->buttons == BUTTON_NONE)) ||
+#if defined(PLATFORM_RD5R) // virtual ORANGE button will be implemented later, this CPP will be removed then.
+					if ((ev->keys.key != 0) && (ev->keys.event & KEY_MOD_UP))
+#else
+					// PTT key is already handled in main().
+					if (((ev->events & BUTTON_EVENT) && (ev->buttons & BUTTON_ORANGE)) ||
 							((ev->keys.key != 0) && (ev->keys.event & KEY_MOD_UP)))
+#endif
 					{
 						uiVFOModeStopScanning();
 					}
@@ -547,9 +552,9 @@ void uiVFOModeStopScanning(void)
 	if (toneScanActive)
 	{
 		trxSetRxCTCSS(currentChannelData->rxTone);
-		toneScanActive=false;
+		toneScanActive = false;
 	}
-	scanActive=false;
+	scanActive = false;
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 	uiVFOModeUpdateScreen(0); // Needs to redraw the screen now
 	displayLightTrigger();
@@ -650,7 +655,7 @@ static void handleEvent(uiEvent_t *ev)
 
 		// Stop the scan on any key except UP without Shift (allows scan to be manually continued)
 		// or SK2 on its own (allows Backlight to be triggered)
-		if (ev->keys.key != KEY_UP)
+		if (((ev->keys.key == KEY_UP) && (ev->buttons & BUTTON_SK2) == 0) == false)
 		{
 			uiVFOModeStopScanning();
 			keyboardReset();
@@ -671,12 +676,14 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
+#if ! defined(PLATFORM_RD5R)
 		// Stop the scan if any button is pressed.
-		if (scanActive)
+		if (scanActive && (ev->buttons & BUTTON_ORANGE))
 		{
 			uiVFOModeStopScanning();
 			return;
 		}
+#endif
 
 		uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
@@ -867,12 +874,16 @@ static void handleEvent(uiEvent_t *ev)
 					uiVFOModeUpdateScreen(0);
 				}
 			}
-			else if (KEYCHECK_SHORTUP(ev->keys,KEY_DOWN))
+			else if (KEYCHECK_SHORTUP(ev->keys, KEY_DOWN) || KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_DOWN))
 			{
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-				if (ev->buttons & BUTTON_SK2 )
+				if (ev->buttons & BUTTON_SK2)
 				{
-					selectedFreq = VFO_SELECTED_FREQUENCY_INPUT_TX;
+					// Don't permit to switch from RX/TX while scanning
+					if (screenOperationMode[nonVolatileSettings.currentVFONumber] != VFO_SCREEN_OPERATION_SCAN)
+					{
+						selectedFreq = VFO_SELECTED_FREQUENCY_INPUT_TX;
+					}
 				}
 				else
 				{
@@ -890,7 +901,7 @@ static void handleEvent(uiEvent_t *ev)
 					return;
 				}
 			}
-			else if (KEYCHECK_SHORTUP(ev->keys,KEY_UP))
+			else if (KEYCHECK_SHORTUP(ev->keys, KEY_UP) || KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_UP))
 			{
 				handleUpKey(ev);
 			}
@@ -1190,9 +1201,13 @@ static void handleEvent(uiEvent_t *ev)
 static void handleUpKey(uiEvent_t *ev)
 {
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-	if (ev->buttons & BUTTON_SK2 )
+	if (ev->buttons & BUTTON_SK2)
 	{
-		selectedFreq = VFO_SELECTED_FREQUENCY_INPUT_RX;
+		// Don't permit to switch from RX/TX while scanning
+		if (screenOperationMode[nonVolatileSettings.currentVFONumber] != VFO_SCREEN_OPERATION_SCAN)
+		{
+			selectedFreq = VFO_SELECTED_FREQUENCY_INPUT_RX;
+		}
 	}
 	else
 	{
@@ -1443,9 +1458,9 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 			case VFO_SCREEN_CODE_SCAN:
 				if(trxGetMode() == RADIO_MODE_ANALOG)
 				{
-					toneScanActive=true;
-					scanTimer=TONESCANINTERVAL;
-					scanIndex=1;
+					toneScanActive = true;
+					scanTimer = TONESCANINTERVAL;
+					scanIndex = 1;
 					trxSetRxCTCSS(TRX_CTCSSTones[scanIndex]);
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
 				}
@@ -1539,23 +1554,23 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 
 bool uiVFOModeIsScanning(void)
 {
-	return (toneScanActive || scanActive );
+	return (toneScanActive || scanActive);
 }
 
 static void toneScan(void)
 {
 	if (getAudioAmpStatus() & AUDIO_AMP_MODE_RF)
 	{
-		currentChannelData->txTone=TRX_CTCSSTones[scanIndex];
-		currentChannelData->rxTone=TRX_CTCSSTones[scanIndex];
+		currentChannelData->txTone = TRX_CTCSSTones[scanIndex];
+		currentChannelData->rxTone = TRX_CTCSSTones[scanIndex];
 		trxSetTxCTCSS(currentChannelData->txTone);
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 		uiVFOModeUpdateScreen(0);
-		toneScanActive=false;
+		toneScanActive = false;
 		return;
 	}
 
-	if(scanTimer>0)
+	if (scanTimer > 0)
 	{
 		scanTimer--;
 	}
@@ -1564,12 +1579,12 @@ static void toneScan(void)
 		scanIndex++;
 		if(scanIndex > (TRX_NUM_CTCSS-1))
 		{
-			scanIndex=1;
+			scanIndex = 1;
 		}
 		trxAT1846RxOff();
 		trxSetRxCTCSS(TRX_CTCSSTones[scanIndex]);
-		scanTimer=TONESCANINTERVAL-(scanIndex*2);
-		trx_measure_count=0;//synchronise the measurement with the scan.
+		scanTimer = TONESCANINTERVAL - (scanIndex * 2);
+		trx_measure_count = 0;//synchronise the measurement with the scan.
 		trxAT1846RxOn();
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 		uiVFOModeUpdateScreen(0);
@@ -1645,7 +1660,7 @@ static void initScan(void)
 static void scanning(void)
 {
 	//After initial settling time
-	if((scanState == SCAN_SCANNING) && (scanTimer > SCAN_SKIP_CHANNEL_INTERVAL) && (scanTimer < ( SCAN_TOTAL_INTERVAL - SCAN_FREQ_CHANGE_SETTLING_INTERVAL)))
+	if((scanState == SCAN_SCANNING) && (scanTimer > SCAN_SKIP_CHANNEL_INTERVAL) && (scanTimer < (SCAN_TOTAL_INTERVAL - SCAN_FREQ_CHANGE_SETTLING_INTERVAL)))
 	{
 		//test for presence of RF Carrier.
 		// In FM mode the dmr slot_state will always be DMR_STATE_IDLE
