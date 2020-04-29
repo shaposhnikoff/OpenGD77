@@ -122,7 +122,7 @@ uint32_t byteSwap32(uint32_t n);
 uint32_t bcd2int(uint32_t in);
 int int2bcd(int i);
 
-void codeplugRxGroupGetDataForIndex(int index, struct_codeplugRxGroup_t *rxGroupBuf);
+bool codeplugRxGroupGetDataForIndex(int index, struct_codeplugRxGroup_t *rxGroupBuf);
 bool codeplugContactGetDataForIndex(int index, struct_codeplugContact_t *contact);
 void codeplugDTMFContactGetDataForIndex(struct_codeplugDTMFContactList_t *contactList);
 int codeplugGetUserDMRID(void);

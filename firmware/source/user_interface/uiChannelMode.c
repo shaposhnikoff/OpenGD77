@@ -317,6 +317,8 @@ static void setNextChannel(void)
 
 static void loadChannelData(bool useChannelDataInMemory)
 {
+	bool rxGroupValid;
+
 	if (currentZone.NOT_IN_MEMORY_isAllChannelsZone)
 	{
 		settingsCurrentChannelNumber = nonVolatileSettings.currentChannelIndexInAllZone;
@@ -363,9 +365,9 @@ static void loadChannelData(bool useChannelDataInMemory)
 		nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] = channelScreenChannelData.contact - 1;
 #endif
 
-		codeplugRxGroupGetDataForIndex(channelScreenChannelData.rxGroupList, &currentRxGroupData);
+		rxGroupValid = codeplugRxGroupGetDataForIndex(channelScreenChannelData.rxGroupList, &currentRxGroupData);
 		// Check if this channel has an Rx Group
-		if (currentRxGroupData.name[0]!=0 && nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup)
+		if (rxGroupValid && nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup)
 		{
 			codeplugContactGetDataForIndex(currentRxGroupData.contacts[nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE]],&currentContactData);
 		}

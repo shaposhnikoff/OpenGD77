@@ -454,8 +454,7 @@ static void handleEvent(uiEvent_t *ev)
 				tmpVal++;
 				while (tmpVal < 76)
 				{
-					codeplugRxGroupGetDataForIndex(tmpVal, &rxGroupBuf);
-					if (rxGroupBuf.name[0] != 0) {
+					if (codeplugRxGroupGetDataForIndex(tmpVal, &rxGroupBuf)) {
 						tmpChannel.rxGroupList = tmpVal;
 						break;
 					}
@@ -566,8 +565,7 @@ static void handleEvent(uiEvent_t *ev)
 					tmpVal--;
 					while (tmpVal > 0)
 					{
-						codeplugRxGroupGetDataForIndex(tmpVal, &rxGroupBuf);
-						if (rxGroupBuf.name[0] != 0) {
+						if (codeplugRxGroupGetDataForIndex(tmpVal, &rxGroupBuf)) {
 							tmpChannel.rxGroupList = tmpVal;
 							break;
 						}
