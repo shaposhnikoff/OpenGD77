@@ -712,10 +712,17 @@ void fw_main_task(void *data)
 				set_melody(NULL);
 			}
 
-			if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO) && (menuDisplayLightTimer > 0))
+			if (((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO)
+					|| (nonVolatileSettings.backlightMode == BACKLIGHT_MODE_SQUELCH)) && (menuDisplayLightTimer > 0))
 			{
-				menuDisplayLightTimer--;
-				if (menuDisplayLightTimer==0)
+				// Countdown only in (AUTO) or (SQUELCH + no audio)
+				if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO) ||
+						((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_SQUELCH) && ((getAudioAmpStatus() & AUDIO_AMP_MODE_RF) == 0)))
+				{
+					menuDisplayLightTimer--;
+				}
+
+				if (menuDisplayLightTimer == 0)
 				{
 					displayEnableBacklight(false);
 				}
