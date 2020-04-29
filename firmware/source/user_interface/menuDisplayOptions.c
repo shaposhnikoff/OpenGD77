@@ -69,7 +69,7 @@ static void updateScreen(void)
 	int mNum = 0;
 	static const int bufferLen = 17;
 	char buf[bufferLen];
-	const char *backlightModes[] = { currentLanguage->Auto, currentLanguage->manual, currentLanguage->none };
+	const char *backlightModes[] = { currentLanguage->Auto, currentLanguage->squelch, currentLanguage->manual, currentLanguage->none };
 
 	ucClearBuf();
 	menuDisplayTitle(currentLanguage->display_options);
@@ -137,9 +137,6 @@ static void updateScreen(void)
 	ucRender();
 	displayLightTrigger();
 }
-
-
-
 
 static void handleEvent(uiEvent_t *ev)
 {
@@ -260,11 +257,15 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case DISPLAY_MENU_TIMEOUT:
-					nonVolatileSettings.backLightTimeout += BACKLIGHT_TIMEOUT_STEP;
-					if (nonVolatileSettings.backLightTimeout > BACKLIGHT_MAX_TIMEOUT)
+					if (nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO)
 					{
-						nonVolatileSettings.backLightTimeout = BACKLIGHT_MAX_TIMEOUT;
+						nonVolatileSettings.backLightTimeout += BACKLIGHT_TIMEOUT_STEP;
+						if (nonVolatileSettings.backLightTimeout > BACKLIGHT_MAX_TIMEOUT)
+						{
+							nonVolatileSettings.backLightTimeout = BACKLIGHT_MAX_TIMEOUT;
+						}
 					}
+
 					break;
 				case DISPLAY_MENU_COLOUR_INVERT:
 					setDisplayInvert(true);
@@ -341,7 +342,8 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case DISPLAY_MENU_TIMEOUT:
-					if (nonVolatileSettings.backLightTimeout >= BACKLIGHT_TIMEOUT_STEP)
+					if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO)
+							&& (nonVolatileSettings.backLightTimeout >= BACKLIGHT_TIMEOUT_STEP))
 					{
 						nonVolatileSettings.backLightTimeout -= BACKLIGHT_TIMEOUT_STEP;
 					}
@@ -417,6 +419,8 @@ static void updateBacklightMode(uint8_t mode)
 		case BACKLIGHT_MODE_NONE:
 			displayEnableBacklight(false); // Could be MANUAL previously, but in OFF state, so turn it OFF blindly.
 			break;
+		case BACKLIGHT_MODE_SQUELCH:
+				nonVolatileSettings.backLightTimeout = BACKLIGHT_TIMEOUT_STEP;
 		case BACKLIGHT_MODE_AUTO:
 			displayLightTrigger();
 			break;
