@@ -72,7 +72,7 @@ int menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 		if ((settingsCurrentChannelNumber == -1) && (namePos == 0)) // In VFO, and VFO has no name in the codeplug
 		{
 			snprintf(channelName, 17, "VFO %s", (nonVolatileSettings.currentVFONumber==0?"A":"B"));
-			namePos = 4;
+			namePos = 5;
 		}
 
 		updateScreen();
