@@ -95,7 +95,7 @@ static void updateScreen(void)
 				snprintf(buf, bufferLen, "%s:%s", currentLanguage->mode, backlightModes[nonVolatileSettings.backlightMode]);
 				break;
 			case DISPLAY_MENU_TIMEOUT:
-				if (nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO)
+				if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO) || (nonVolatileSettings.backlightMode == BACKLIGHT_MODE_SQUELCH))
 				{
 					if (nonVolatileSettings.backLightTimeout == 0)
 						snprintf(buf, bufferLen, "%s:%s", currentLanguage->backlight_timeout, currentLanguage->no);
@@ -257,7 +257,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case DISPLAY_MENU_TIMEOUT:
-					if (nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO)
+					if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO) || (nonVolatileSettings.backlightMode == BACKLIGHT_MODE_SQUELCH))
 					{
 						nonVolatileSettings.backLightTimeout += BACKLIGHT_TIMEOUT_STEP;
 						if (nonVolatileSettings.backLightTimeout > BACKLIGHT_MAX_TIMEOUT)
@@ -342,8 +342,8 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case DISPLAY_MENU_TIMEOUT:
-					if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO)
-							&& (nonVolatileSettings.backLightTimeout >= BACKLIGHT_TIMEOUT_STEP))
+					if (((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO) && (nonVolatileSettings.backLightTimeout >= BACKLIGHT_TIMEOUT_STEP)) ||
+							((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_SQUELCH) && (nonVolatileSettings.backLightTimeout >= (BACKLIGHT_TIMEOUT_STEP * 2))))
 					{
 						nonVolatileSettings.backLightTimeout -= BACKLIGHT_TIMEOUT_STEP;
 					}
@@ -420,7 +420,10 @@ static void updateBacklightMode(uint8_t mode)
 			displayEnableBacklight(false); // Could be MANUAL previously, but in OFF state, so turn it OFF blindly.
 			break;
 		case BACKLIGHT_MODE_SQUELCH:
+			if (nonVolatileSettings.backLightTimeout < BACKLIGHT_TIMEOUT_STEP)
+			{
 				nonVolatileSettings.backLightTimeout = BACKLIGHT_TIMEOUT_STEP;
+			}
 		case BACKLIGHT_MODE_AUTO:
 			displayLightTrigger();
 			break;
