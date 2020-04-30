@@ -19,7 +19,7 @@ OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R is a work-in-progress, so is this U
          - [Changing channels within the current zone](#changing-channels-within-the-current-zone)
          - [Changing zones](#changing-zones)
       - [Displaying the channel Frequency](#displaying-the-channel-frequency)
-      - [Displaying FM specific channel infromation](#displaying-fm-specific-channel-infromation)
+      - [Displaying FM specific channel information](#displaying-fm-specific-channel-information)
       - [Listening on a repeater input](#listening-on-a-repeater-input)
          - [Channel screen Quick Menu](#channel-screen-quick-menu)
             - [Copying a channel to VFO](#copying-a-channel-to-vfo)
@@ -315,7 +315,7 @@ Pressing **Function + Up arrow** or **Function + Down arrow** changes to the nex
 
 Press and hold the **Black button** to display the Rx and Tx frequency in both DMR and FM modem
 
-### Displaying FM specific channel infromation
+### Displaying FM specific channel information
 
 Press and hold the **Black button** to display FM specific information. CTCSS and squelch setting
 
