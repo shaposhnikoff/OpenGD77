@@ -37,6 +37,7 @@
 bool PTTToggledDown = false; // PTT toggle feature
 
 void fw_main_task(void *data);
+void debugReadCPUID(void);
 
 const char *FIRMWARE_VERSION_STRING = "VK3KYY";//"V0.3.5";
 TaskHandle_t fwMainTaskHandle;
@@ -624,6 +625,11 @@ void fw_main_task(void *data)
 				case '8':
 					keyFunction = (MENU_DISPLAY <<8) + INC_BRIGHTNESS;
 					break;
+				/*
+				case '0':
+					debugReadCPUID();
+					keyFunction = (NUM_MENU_ENTRIES<<8);
+					break;*/
 				default:
 					keyFunction = 0;
 					break;
@@ -733,4 +739,35 @@ void fw_main_task(void *data)
 		}
 		vTaskDelay(0);
 	}
+}
+
+void debugReadCPUID(void)
+{
+	char tmp[6];
+	char buf[512]={0};
+	uint8_t *p = (uint8_t *)0x40048054;
+	USB_DEBUG_PRINT("\nCPU ID\n");
+	vTaskDelay(portTICK_PERIOD_MS * 1);
+	for(int i=0; i<16;i++)
+	{
+		sprintf(tmp,"%02x ", *p);
+		strcat(buf,tmp);
+		p++;
+	}
+	USB_DEBUG_PRINT(buf);
+
+	vTaskDelay(portTICK_PERIOD_MS * 1);
+	USB_DEBUG_PRINT("\nProtection bytes\n");
+	vTaskDelay(portTICK_PERIOD_MS * 1);
+
+	buf[0]=0;
+	p = (uint8_t *)0x7f800;
+	for(int i=0; i<36;i++)
+	{
+		sprintf(tmp,"%02x ", *p);
+		strcat(buf,tmp);
+		p++;
+	}
+	USB_DEBUG_PRINT(buf);
+
 }
