@@ -46,7 +46,7 @@ OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R is a work-in-progress, so is this U
          - [Station DMR ID number entry](#station-dmr-id-number-entry)
       - [FM specific functionality (VFO and Channel screens)](#fm-specific-functionality-vfo-and-channel-screens)
          - [FM and FM Narrow](#fm-and-fm-narrow)
-         - [CTCSS tone](#ctcss-tone)
+         - [CTCSS Tone or DCS Code](#ctcss-tone-or-dcs-code)
          - [Squelch](#squelch)
          - [1750Hz Tone for repeater operation](#1750hz-tone-for-repeater-operation)
          - [DTMF tone transmission](#dtmf-tone-transmission)
@@ -109,8 +109,8 @@ OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R is a work-in-progress, so is this U
          - [Color Code](#color-code)
          - [Timeslot](#timeslot)
          - [Tx/RX Grp](#txrx-grp)
-         - [TX CTCSS](#tx-ctcss)
-         - [RX CTCSS](#rx-ctcss)
+         - [Tx CTCSS or DCS](#tx-ctcss-or-dcs)
+         - [Rx CTCSS or DCS](#rx-ctcss-or-dcs)
          - [Bandwidth](#bandwidth)
          - [RX](#rx)
          - [TX](#tx)
@@ -160,14 +160,13 @@ This firmware is specifically designed for **Amateur Radio** use, and has featur
 
    Text messaging and other similar features are currently not supported, but are on the To Do list.
 
-1. FM RX and TX transmission works.
+1. FM Rx and Tx transmission works.
 
-   This includes repeater operation using CTCSS on both TX and RX.
+   This includes repeater operation using CTCSS or DCS on both Tx and Rx.
 
 
    For a full list of current bugs, and proposed enhancements see
    <https://github.com/rogerclarkmelbourne/opengd77/issues>
-
 
 Also, as far as possible the firmware is open source.
 This allows anyone to modify the firmware to suit their own individual needs, and also for peer review and improvement of the firmware source code.
@@ -313,11 +312,11 @@ Pressing **Function + Up arrow** or **Function + Down arrow** changes to the nex
 
 ### Displaying the channel Frequency
 
-Press and hold the **Black button** to display the Rx and Tx frequency in both DMR and FM modem
+Press and hold the **Black button** to display the Rx and Tx frequency in both DMR and FM modem.
 
 ### Displaying FM specific channel information
 
-Press and hold the **Black button** to display FM specific information. CTCSS and squelch setting
+Press and hold the **Black button** to display FM specific information: CTCSS / DCS and squelch setting.
 
 ### Listening on a repeater input
 
@@ -503,13 +502,15 @@ To make the change permanent, so that its written back to the codeplug Press **F
 
 For FM with 25kHz bandwidth with the text “FM” is displayed in the top left of the screen. For narrow band with 12.5kHz bandwidth the text “FMN” is displayed.
 
-#### CTCSS tone
+#### CTCSS Tone or DCS Code
 
-This can be set for the Channel or VFO, the letters **CT** **CR** or **CTR** will be displayed next to the FM indication at the top of the screen.
+These can be set for the Channel or VFO. The letters **C** or **D** and **T**, **R**, or **TR** will be displayed next to the FM indicator at the top of the screen.
 
-**CT** means CTCSS TX tone only. **CR** means CTCSS RX tone only. **CTR** means CTCSS TX and RX tones.
+**C** means CTCSS and **D** means DCS code. **T** means Tx tone or code only. **R** means RX tone or code only. **TR** means both Tx and Rx tones or codes are configured.
 
 ![](media/ctcss-tone.png)
+
+It is possible to configure Tx and Rx tones or codes independently.
 
 #### Squelch
 
@@ -972,11 +973,11 @@ Selects DMR Timeslot 1 or 2 when the VFO/Channel is set to DMR.
 #### Tx/RX Grp
 Selects which Tx/Rx group is assigned to teh current channel (DMR only).
 
-#### TX CTCSS
-Sets the transmit CTCSS tone when the VFO/Channel is set to FM
+#### Tx CTCSS or DCS
+Sets the transmit CTCSS tone or DCS code when the VFO/Channel is set to FM.
 
-#### RX CTCSS
-Sets the receive CTCSS tone when the VFO/Channel is set to FM
+#### Rx CTCSS or DCS
+Sets the receive CTCSS tone or DCS code when the VFO/Channel is set to FM.
 
 #### Bandwidth
 Sets the Rx and Tx bandwidth in FM mode to either 25Khz or 12.5Khz

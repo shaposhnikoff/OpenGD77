@@ -71,11 +71,6 @@ bool settingsLoadSettings(void)
 
 	trxDMRID = codeplugGetUserDMRID();
 
-	if (nonVolatileSettings.analogFilterLevel == ANALOG_FILTER_NONE)
-	{
-		trxSetRxCTCSS(TRX_CTCSS_TONE_NONE);
-	}
-
 	currentLanguage = &languages[nonVolatileSettings.languageIndex];
 
 	// Added this parameter without changing the magic number, so need to check for default / invalid numbers
