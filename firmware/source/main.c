@@ -772,7 +772,11 @@ void debugReadCPUID(void)
 	vTaskDelay(portTICK_PERIOD_MS * 1);
 
 	buf[0]=0;
+#if defined(PLATFORM_DM1801)
+	p = (uint8_t *)0x3800;
+#else
 	p = (uint8_t *)0x7f800;
+#endif
 	for(int i=0; i<36;i++)
 	{
 		sprintf(tmp,"%02x ", *p);
