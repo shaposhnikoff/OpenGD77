@@ -34,6 +34,9 @@
 #error Change target build to Debug then Clean the build and recompile
 #endif
 
+#define READ_CPUID
+
+
 bool PTTToggledDown = false; // PTT toggle feature
 
 void fw_main_task(void *data);
@@ -595,6 +598,13 @@ void fw_main_task(void *data)
 				}
 			}
 
+#if defined(PLATFORM_GD77S) && defined(READ_CPUID)
+	if ((buttons & (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT)) == (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT))
+	{
+		debugReadCPUID();
+	}
+#endif
+
 			ev.function = 0;
 			function_event = NO_EVENT;
 			if (buttons & BUTTON_SK2)
@@ -625,11 +635,12 @@ void fw_main_task(void *data)
 				case '8':
 					keyFunction = (MENU_DISPLAY <<8) + INC_BRIGHTNESS;
 					break;
-				/*
+#if defined(READ_CPUID)
 				case '0':
 					debugReadCPUID();
 					keyFunction = (NUM_MENU_ENTRIES<<8);
-					break;*/
+					break;
+#endif
 				default:
 					keyFunction = 0;
 					break;
