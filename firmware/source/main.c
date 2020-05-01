@@ -34,10 +34,15 @@
 #error Change target build to Debug then Clean the build and recompile
 #endif
 
+//#define READ_CPUID
+
+
 bool PTTToggledDown = false; // PTT toggle feature
 
 void fw_main_task(void *data);
+#if defined(READ_CPUID)
 void debugReadCPUID(void);
+#endif
 
 const char *FIRMWARE_VERSION_STRING = "VK3KYY";//"V0.3.5";
 TaskHandle_t fwMainTaskHandle;
@@ -595,6 +600,13 @@ void fw_main_task(void *data)
 				}
 			}
 
+#if defined(PLATFORM_GD77S) && defined(READ_CPUID)
+	if ((buttons & (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT)) == (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT))
+	{
+		debugReadCPUID();
+	}
+#endif
+
 			ev.function = 0;
 			function_event = NO_EVENT;
 			if (buttons & BUTTON_SK2)
@@ -625,11 +637,12 @@ void fw_main_task(void *data)
 				case '8':
 					keyFunction = (MENU_DISPLAY <<8) + INC_BRIGHTNESS;
 					break;
-				/*
+#if defined(READ_CPUID)
 				case '0':
 					debugReadCPUID();
 					keyFunction = (NUM_MENU_ENTRIES<<8);
-					break;*/
+					break;
+#endif
 				default:
 					keyFunction = 0;
 					break;
@@ -741,6 +754,7 @@ void fw_main_task(void *data)
 	}
 }
 
+#if defined(READ_CPUID)
 void debugReadCPUID(void)
 {
 	char tmp[6];
@@ -761,7 +775,11 @@ void debugReadCPUID(void)
 	vTaskDelay(portTICK_PERIOD_MS * 1);
 
 	buf[0]=0;
+#if defined(PLATFORM_DM1801)
+	p = (uint8_t *)0x3800;
+#else
 	p = (uint8_t *)0x7f800;
+#endif
 	for(int i=0; i<36;i++)
 	{
 		sprintf(tmp,"%02x ", *p);
@@ -771,3 +789,4 @@ void debugReadCPUID(void)
 	USB_DEBUG_PRINT(buf);
 
 }
+#endif
