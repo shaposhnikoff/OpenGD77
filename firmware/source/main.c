@@ -40,7 +40,9 @@
 bool PTTToggledDown = false; // PTT toggle feature
 
 void fw_main_task(void *data);
+#if defined(READ_CPUID)
 void debugReadCPUID(void);
+#endif
 
 const char *FIRMWARE_VERSION_STRING = "VK3KYY";//"V0.3.5";
 TaskHandle_t fwMainTaskHandle;
@@ -752,6 +754,7 @@ void fw_main_task(void *data)
 	}
 }
 
+#if defined(READ_CPUID)
 void debugReadCPUID(void)
 {
 	char tmp[6];
@@ -786,3 +789,4 @@ void debugReadCPUID(void)
 	USB_DEBUG_PRINT(buf);
 
 }
+#endif
