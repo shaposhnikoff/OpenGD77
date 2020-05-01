@@ -58,7 +58,7 @@ uint32_t menuUtilityTgBeforePcMode 	= 0;// No TG saved, prior to a Private call 
 
 const char *POWER_LEVELS[]={ "50mW","250mW","500mW","750mW","1W","2W","3W","4W","5W","5W++"};
 const char *DMR_FILTER_LEVELS[]={"None","CC","CC,TS","CC,TS,TG","CC,TS,Ct","CC,TS,RxG"};
-const char *ANALOG_FILTER_LEVELS[]={"None","CTCSS"};
+const char *ANALOG_FILTER_LEVELS[]={"None","CTCSS|DCS"};
 
 volatile uint32_t lastID=0;// This needs to be volatile as lastHeardClearLastID() is called from an ISR
 uint32_t lastTG=0;
@@ -1208,20 +1208,28 @@ void menuUtilityRenderHeader(void)
 			}
 			ucPrintCore(MODE_TEXT_X_OFFSET, Y_OFFSET, buffer, ((nonVolatileSettings.hotspotType != HOTSPOT_TYPE_OFF) ? FONT_SIZE_1_BOLD : FONT_SIZE_1), TEXT_ALIGN_LEFT, scanBlinkPhase);
 
-			if (codeplugChannelToneIsCTCSS(currentChannelData->txTone) || codeplugChannelToneIsCTCSS(currentChannelData->rxTone))
+			if ((currentChannelData->txTone != CODEPLUG_CSS_NONE) || (currentChannelData->rxTone != CODEPLUG_CSS_NONE))
 			{
 				int rectWidth = 9;
-				strcpy(buffer, "C");
-				if (codeplugChannelToneIsCTCSS(currentChannelData->txTone))
+				if (codeplugChannelToneIsDCS(currentChannelData->txTone))
+				{
+					strcpy(buffer, "D");
+				}
+				else
+				{
+					strcpy(buffer, "C");
+				}
+				if (currentChannelData->txTone != CODEPLUG_CSS_NONE)
 				{
 					rectWidth += 6;
 					strcat(buffer, "T");
 				}
-				if (codeplugChannelToneIsCTCSS(currentChannelData->rxTone))
+				if (currentChannelData->rxTone != CODEPLUG_CSS_NONE)
 				{
 					rectWidth += 6;
 					strcat(buffer, "R");
 				}
+
 				bool isInverted = (nonVolatileSettings.analogFilterLevel == ANALOG_FILTER_NONE);
 				if (isInverted)
 				{
@@ -1378,24 +1386,30 @@ void printToneAndSquelch(void)
 	char buf[24];
 	if (trxGetMode() == RADIO_MODE_ANALOG)
 	{
-		if (!codeplugChannelToneIsCTCSS(currentChannelData->rxTone))
+		if (codeplugChannelToneIsCTCSS(currentChannelData->rxTone))
 		{
-			snprintf(buf, 24, "CTCSS:%s|", currentLanguage->none);
-			buf[23] = 0;
+			snprintf(buf, 24, "Rx:%d.%dHz|", currentChannelData->rxTone / 10 , currentChannelData->rxTone % 10);
+		}
+		else if (codeplugChannelToneIsDCS(currentChannelData->rxTone))
+		{
+			snprintf(buf, 24, "Rx:D%03oN|", currentChannelData->rxTone & 0777);
 		}
 		else
 		{
-			snprintf(buf, 24, "CTCSS:%d.%dHz|", currentChannelData->rxTone / 10 , currentChannelData->rxTone % 10);
+			snprintf(buf, 24, "Rx:%s|", currentLanguage->none);
 		}
 
-		if (!codeplugChannelToneIsCTCSS(currentChannelData->txTone))
+		if (codeplugChannelToneIsCTCSS(currentChannelData->txTone))
 		{
-			snprintf(buf, 24, "%s%s", buf, currentLanguage->none);
-			buf[23] = 0;
+			snprintf(buf, 24, "%sTx:%d.%dHz", buf, currentChannelData->txTone / 10 , currentChannelData->txTone % 10);
+		}
+		else if (codeplugChannelToneIsDCS(currentChannelData->txTone))
+		{
+			snprintf(buf, 24, "%sTx:D%03oN", buf, currentChannelData->txTone & 0777);
 		}
 		else
 		{
-			snprintf(buf, 24, "%s%d.%dHz", buf, currentChannelData->txTone / 10 , currentChannelData->txTone % 10);
+			snprintf(buf, 24, "%sTx:%s", buf, currentLanguage->none);
 		}
 
 #if defined(PLATFORM_RD5R)
