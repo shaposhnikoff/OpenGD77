@@ -34,7 +34,7 @@
 #error Change target build to Debug then Clean the build and recompile
 #endif
 
-#define READ_CPUID
+//#define READ_CPUID
 
 
 bool PTTToggledDown = false; // PTT toggle feature
