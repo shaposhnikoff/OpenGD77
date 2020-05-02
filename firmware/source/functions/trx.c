@@ -919,7 +919,12 @@ void trxUpdateAT1846SCalibration(void)
 	I2C_AT1846_set_register_with_mask(0x60, 0x0000, noise2_th, 0);
 	I2C_AT1846_set_register_with_mask(0x3f, 0x0000, rssi3_th, 0);
 
-	I2C_AT1846_set_register_with_mask(0x0A, 0x87FF, padrv_ibit, 11);
+#if defined(PLATFORM_RD5R)
+	const int PA_DRIVE = 11;
+#else
+	const int PA_DRIVE = 11;
+#endif
+	I2C_AT1846_set_register_with_mask(0x0A, 0x87FF, padrv_ibit, PA_DRIVE);
 
 	I2C_AT1846_set_register_with_mask(0x49, 0x0000, squelch_th, 0);
 }
