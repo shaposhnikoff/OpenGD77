@@ -255,7 +255,6 @@ void trxSetModeAndBandwidth(int mode, bool bandwidthIs25kHz)
 			break;
 		case RADIO_MODE_DIGITAL:
 			I2C_AT1846_SetMode();// Also sets the bandwidth to 12.5kHz which is the standard for DMR
-
 			trxUpdateC6000Calibration();
 			trxUpdateAT1846SCalibration();
 			GPIO_PinWrite(GPIO_TX_audio_mux, Pin_TX_audio_mux, 1); // Connect mic to MIC_P input of HR-C6000
