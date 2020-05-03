@@ -23,9 +23,8 @@
 </head>
 <body><div id="readme" class="container"><article class="markdown-body entry-content"><p><img src="media/OpenGD77-logo.png" alt></p>
 <h1 id="opengd77-opengd77s-opendm1801-openrd5r-user-guide">OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide</h1>
-<p>OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R is a work-in-progress, so is this User Guide. Last update was on 20th April 2020. For documentation ToDo (including incremental changes), please refer to <a href="https://github.com/jangelor/OpenGD77/wiki/Documentation-ToDo">https://github.com/jangelor/OpenGD77/wiki/Documentation-ToDo</a> . For latest discussions, please refer to the development and community forum at <a href="https://opengd77.com">https://opengd77.com</a> .</p>
+<p>For latest information and discussions, please refer to the development and community forum at <a href="https://opengd77.com">https://opengd77.com</a></p>
 <!-- MDTOC maxdepth:6 firsth1:1 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
-
 <ul>
 <li><a href="#opengd77-opengd77s-opendm1801-openrd5r-user-guide">OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide</a><ul>
 <li><a href="#introduction">Introduction</a><ul>
@@ -83,7 +82,7 @@
 </li>
 <li><a href="#fm-specific-functionality-vfo-and-channel-screens">FM specific functionality (VFO and Channel screens)</a><ul>
 <li><a href="#fm-and-fm-narrow">FM and FM Narrow</a></li>
-<li><a href="#ctcss-tone">CTCSS tone</a></li>
+<li><a href="#ctcss-tone-or-dcs-code">CTCSS Tone or DCS Code</a></li>
 <li><a href="#squelch">Squelch</a></li>
 <li><a href="#1750hz-tone-for-repeater-operation">1750Hz Tone for repeater operation</a></li>
 <li><a href="#dtmf-tone-transmission">DTMF tone transmission</a></li>
@@ -164,8 +163,8 @@
 <li><a href="#color-code">Color Code</a></li>
 <li><a href="#timeslot">Timeslot</a></li>
 <li><a href="#txrx-grp">Tx/RX Grp</a></li>
-<li><a href="#tx-ctcss">TX CTCSS</a></li>
-<li><a href="#rx-ctcss">RX CTCSS</a></li>
+<li><a href="#tx-ctcss-or-dcs">Tx CTCSS or DCS</a></li>
+<li><a href="#rx-ctcss-or-dcs">Rx CTCSS or DCS</a></li>
 <li><a href="#bandwidth">Bandwidth</a></li>
 <li><a href="#rx">RX</a></li>
 <li><a href="#tx">TX</a></li>
@@ -219,8 +218,8 @@ This firmware is specifically designed for <strong>Amateur Radio</strong> use, a
 <li><p>DMR Tier 2 Tx and Rx voice transmissions works.</p>
 <p>Text messaging and other similar features are currently not supported, but are on the To Do list.</p>
 </li>
-<li><p>FM RX and TX transmission works.</p>
-<p>This includes repeater operation using CTCSS on both TX and RX.</p>
+<li><p>FM Rx and Tx transmission works.</p>
+<p>This includes repeater operation using CTCSS or DCS on both Tx and Rx.</p>
 </li>
 </ol>
 <p>   For a full list of current bugs, and proposed enhancements see
@@ -310,9 +309,9 @@ To acess this power setting, select the 5W power setting, then press and hold <s
 <p>Pressing <strong>Function + Up arrow</strong> or <strong>Function + Down arrow</strong> changes to the next or previous zone, respectively.</p>
 <p><img src="media/changing-zones.png" alt></p>
 <h3 id="displaying-the-channel-frequency">Displaying the channel Frequency</h3>
-<p>Press and hold the <strong>Black button</strong> to display the Rx and Tx frequency in both DMR and FM modem</p>
+<p>Press and hold the <strong>Black button</strong> to display the Rx and Tx frequency in both DMR and FM modem.</p>
 <h3 id="displaying-fm-specific-channel-information">Displaying FM specific channel information</h3>
-<p>Press and hold the <strong>Black button</strong> to display FM specific information. CTCSS and squelch setting</p>
+<p>Press and hold the <strong>Black button</strong> to display FM specific information: CTCSS / DCS and squelch setting.</p>
 <h3 id="listening-on-a-repeater-input">Listening on a repeater input</h3>
 <p>Pressing the <strong>Black button</strong> and <strong>Blue button</strong> enables the radio to receive on the input to a repeater.
 This works on both DMR and FM repeaters.
@@ -412,10 +411,11 @@ If the entered TG is in the Digital Contacts the name of the TG Contact will be 
 <h3 id="fm-specific-functionality-vfo-and-channel-screens-">FM specific functionality (VFO and Channel screens)</h3>
 <h4 id="fm-and-fm-narrow">FM and FM Narrow</h4>
 <p>For FM with 25kHz bandwidth with the text &#x201C;FM&#x201D; is displayed in the top left of the screen. For narrow band with 12.5kHz bandwidth the text &#x201C;FMN&#x201D; is displayed.</p>
-<h4 id="ctcss-tone">CTCSS tone</h4>
-<p>This can be set for the Channel or VFO, the letters <strong>CT</strong> <strong>CR</strong> or <strong>CTR</strong> will be displayed next to the FM indication at the top of the screen.</p>
-<p><strong>CT</strong> means CTCSS TX tone only. <strong>CR</strong> means CTCSS RX tone only. <strong>CTR</strong> means CTCSS TX and RX tones.</p>
+<h4 id="ctcss-tone-or-dcs-code">CTCSS Tone or DCS Code</h4>
+<p>These can be set for the Channel or VFO. The letters <strong>C** or **D</strong> and <strong>T*<em>, *</em>R</strong>, or <strong>TR</strong> will be displayed next to the FM indicator at the top of the screen.</p>
+<p><strong>C** means CTCSS and **D</strong> means DCS code. <strong>T** means Tx tone or code only. **R</strong> means RX tone or code only. <strong>TR</strong> means both Tx and Rx tones or codes are configured.</p>
 <p><img src="media/ctcss-tone.png" alt></p>
+<p>It is possible to configure Tx and Rx tones or codes independently.</p>
 <h4 id="squelch">Squelch</h4>
 <p>Pressing <strong>Left</strong> or <strong>Right</strong> keys, controls the FM squelch.</p>
 <p><img src="media/squelch.png" alt></p>
@@ -663,10 +663,12 @@ The units of this control in the baseband IC (AT1846S) are not known.</p>
 <p>Selects DMR Timeslot 1 or 2 when the VFO/Channel is set to DMR.</p>
 <h4 id="tx-rx-grp">Tx/RX Grp</h4>
 <p>Selects which Tx/Rx group is assigned to teh current channel (DMR only).</p>
-<h4 id="tx-ctcss">TX CTCSS</h4>
-<p>Sets the transmit CTCSS tone when the VFO/Channel is set to FM</p>
-<h4 id="rx-ctcss">RX CTCSS</h4>
-<p>Sets the receive CTCSS tone when the VFO/Channel is set to FM</p>
+<h4 id="tx-ctcss-or-dcs">Tx CTCSS or DCS</h4>
+<p>Sets the transmit CTCSS tone or DCS code when the VFO/Channel is set to FM.</p>
+<h4 id="rx-ctcss-or-dcs">Rx CTCSS or DCS</h4>
+<p>Sets the receive CTCSS tone or DCS code when the VFO/Channel is set to FM.</p>
+<p>For both Tx and Rx CTCSS / DCS. <strong>Long press</strong> of <strong>Right arrow</strong> or <strong>Left arrow</strong>, skips forward, or back by 5 entries in the list of possible CTCSS / DCS settings.</p>
+<p>Pressing <strong>Funtion + Right</strong> or <strong>Function + Left</strong> skips to the end or beginning of the current CTCSS / DSC items.</p>
 <h4 id="bandwidth">Bandwidth</h4>
 <p>Sets the Rx and Tx bandwidth in FM mode to either 25Khz or 12.5Khz</p>
 <h4 id="rx">RX</h4>
