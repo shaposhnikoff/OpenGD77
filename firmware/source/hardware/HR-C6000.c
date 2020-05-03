@@ -232,12 +232,6 @@ void SPI_HR_C6000_init(void)
 	set_clear_SPI_page_reg_byte_with_mask_SPI0(0x04, 0x06, 0xFD, 0x02); // SET OpenMusic bit (play Boot sound and Call Prompts)
 	// --- end sub_1B5A4
 
-
-#if false
-/* This code is not necessary
- *
- * It just sends a DC voltage to the audio DAC for 128/8192 of a second.
- */
 	// --- start sub_1B5DC
 	uint8_t spi_values[128];// hard coded 128 * 0xAA
 	for (int i=0; i<128;i++)
@@ -246,7 +240,6 @@ void SPI_HR_C6000_init(void)
 	}
 	write_SPI_page_reg_bytearray_SPI0(0x03, 0x00, spi_values, 0x80);
 	// --- end sub_1B5DC
-#endif
 
 	// --- start sub_1B5A4
 	set_clear_SPI_page_reg_byte_with_mask_SPI0(0x04, 0x06, 0xFD, 0x00); // CLEAR OpenMusic bit (play Boot sound and Call Prompts)
