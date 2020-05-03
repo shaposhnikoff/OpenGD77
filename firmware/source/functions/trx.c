@@ -820,6 +820,14 @@ void trxUpdateC6000Calibration(void)
 
 	read_val_twopoint_mod(band_offset,&lowByte, &highByte);
 	uint16_t refOscOffset = (highByte<<8)+lowByte;
+
+#if defined(PLATFORM_RD5R)
+	// Hack to bring the RD-5R to the correct frequency
+	// I don't know why the RD-5R calibration seems to result in this firmware being about 1.4khz too high on VHF
+	// This offset value seems to be consistent on various RD-5R radios, as reported by operators on the OpenGD77 forum.
+	refOscOffset -= 38;
+#endif
+
 	if (refOscOffset>1023)
 	{
 		refOscOffset=1023;
