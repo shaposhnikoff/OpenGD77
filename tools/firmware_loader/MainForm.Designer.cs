@@ -78,7 +78,7 @@ namespace GD77_FirmwareLoader
 			this.rbModels[3].AutoSize = true;
 			this.rbModels[3].CheckedChanged += new System.EventHandler(this.rbModel_CheckedChanged);
 
-			if (FirmwareLoader.outputType != FirmwareLoader.OutputType.OutputType_UNKOWN)
+			if (FirmwareLoader.outputType != FirmwareLoader.OutputType.OutputType_UNKNOWN)
 			{
 				this.rbModels[(int)FirmwareLoader.outputType].Checked = true;
 			}
