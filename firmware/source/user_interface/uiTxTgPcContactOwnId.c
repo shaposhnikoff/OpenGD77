@@ -202,7 +202,7 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			else
 			{
-				set_melody(melody_ERROR_beep);
+				soundSetMelody(melody_ERROR_beep);
 			}
 
 		}

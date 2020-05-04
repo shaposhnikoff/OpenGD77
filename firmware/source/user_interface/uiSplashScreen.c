@@ -28,12 +28,12 @@ int uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
 	{
 		if (codeplugGetOpenGD77CustomData(CODEPLUG_CUSTOM_DATA_TYPE_BEEP, melodyBuf))
 		{
-			create_song(melodyBuf);
-			set_melody(melody_generic);
+			soundCreateSong(melodyBuf);
+			soundSetMelody(melody_generic);
 		}
 		else
 		{
-			set_melody(melody_poweron);
+			soundSetMelody(melody_poweron);
 		}
 		updateScreen();
 	}

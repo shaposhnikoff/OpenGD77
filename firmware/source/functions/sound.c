@@ -19,6 +19,8 @@
 #include <HR-C6000.h>
 #include <settings.h>
 #include <sound.h>
+
+static void soundBeepTask(void *data);
 typedef union byteSwap16
 {
 	int16_t byte16;
@@ -80,6 +82,10 @@ const int melody_ERROR_beep[] = { 440, 30, 0, 30, 440, 30, 0, 30, 440, 30, -1, -
 const int melody_tx_timeout_beep[] = { 440, 60, 494, 60, 440, 60, 494, 60, 440, 60, 494, 60, 440, 60, 494, 60, -1, -1 };
 const int melody_dmr_tx_start_beep[] = { 800, 50, -1, -1 };
 const int melody_dmr_tx_stop_beep[] = { 500, 50, -1, -1 };
+
+// To calculate the pitch use a spreadsheet etc   =ROUND(98*POWER(2, (NOTE_NUMBER/12)),0)
+static const int freqs[] = {0,104,110,117,123,131,139,147,156,165,175,185,196,208,220,233,247,262,277,294,311,330,349,370,392,415,440,466,494,523,554,587,622,659,698,740,784,831,880,932,988,1047,1109,1175,1245,1319,1397,1480};
+
 volatile int *melody_play = NULL;
 volatile int melody_idx = 0;
 int soundBeepVolumeDivider;
@@ -113,7 +119,7 @@ void disableAudioAmp(uint8_t mode)
 }
 
 
-void set_melody(const int *melody)
+void soundSetMelody(const int *melody)
 {
 	taskENTER_CRITICAL();
 	sine_beep_freq=0;
@@ -123,21 +129,15 @@ void set_melody(const int *melody)
 	taskEXIT_CRITICAL();
 }
 
-// To calculate the pitch use a spreadsheet etc   =ROUND(98*POWER(2, (NOTE_NUMBER/12)),0)
-static const int freqs[] = {0,104,110,117,123,131,139,147,156,165,175,185,196,208,220,233,247,262,277,294,311,330,349,370,392,415,440,466,494,523,554,587,622,659,698,740,784,831,880,932,988,1047,1109,1175,1245,1319,1397,1480};
-int get_freq(int tone)
-{
-	return (freqs[tone]);
-}
 
-void create_song(const uint8_t *melody)
+void soundCreateSong(const uint8_t *melody)
 {
 	int song_idx = 0;
 	for (int i=0;i<256;i++)
 	{
 		if (melody[2*i+1]!=0)
 		{
-			melody_generic[song_idx++]=get_freq(melody[2*i]);
+			melody_generic[song_idx++]=freqs[melody[2*i]];
 			melody_generic[song_idx++]=melody[2*i+1]*27;
 		}
 		else
@@ -150,15 +150,15 @@ void create_song(const uint8_t *melody)
 	}
 }
 
-void fw_init_beep_task(void)
+void soundInitBeepTask(void)
 {
 	taskENTER_CRITICAL();
 	sine_beep_freq = 0;
 	sine_beep_duration = 0;
 	taskEXIT_CRITICAL();
 
-	xTaskCreate(fw_beep_task,                        /* pointer to the task */
-				"fw beep task",                      /* task name for kernel awareness debugging */
+	xTaskCreate(soundBeepTask,                        /* pointer to the task */
+				"beep task",                      /* task name for kernel awareness debugging */
 				1000L / sizeof(portSTACK_TYPE),      /* task stack size */
 				NULL,                      			 /* optional task startup argument */
 				5U,                                  /* initial priority */
@@ -179,12 +179,10 @@ __attribute__((section(".data.$RAM2"))) uint8_t spi_sound3[WAV_BUFFER_SIZE*2];
 __attribute__((section(".data.$RAM2"))) uint8_t spi_sound4[WAV_BUFFER_SIZE*2];
 
 volatile bool g_TX_SAI_in_use = false;
-
-
 uint8_t *spi_soundBuf;
 sai_transfer_t xfer;
 
-void init_sound(void)
+void soundInit(void)
 {
 
     g_TX_SAI_in_use = false;
@@ -198,18 +196,18 @@ void init_sound(void)
 	wavbuffer_count = 0;
 }
 
-void terminate_sound(void)
+void soundTerminateSound(void)
 {
     SAI_TransferTerminateSendEDMA(I2S0, &g_SAI_TX_Handle);
     SAI_TransferTerminateSendEDMA(I2S0, &g_SAI_RX_Handle);
 }
 
-void setup_soundBuffer(void)
+void soundSetupBuffer(void)
 {
 	currentWaveBuffer = (uint8_t *)audioAndHotspotDataBuffer.wavbuffer[wavbuffer_write_idx];// cast just to prevent compiler warning
 }
 
-void store_soundbuffer(void)
+void soundStoreBuffer(void)
 {
 	taskENTER_CRITICAL();
 	int tmp_wavbuffer_count = wavbuffer_count;
@@ -226,7 +224,7 @@ void store_soundbuffer(void)
 	taskEXIT_CRITICAL();
 }
 
-void retrieve_soundbuffer(void)
+void soundRetrieveBuffer(void)
 {
 	taskENTER_CRITICAL();
 	if (wavbuffer_count>0)
@@ -244,7 +242,7 @@ void retrieve_soundbuffer(void)
 
 
 // This function is used when receiving
-void send_sound_data(void)
+void soundSendData(void)
 {
 	if (wavbuffer_count>0)
 	{
@@ -291,7 +289,7 @@ void send_sound_data(void)
 
 
 // This function is used during transmission.
-void receive_sound_data(void)
+void soundReceiveData(void)
 {
 	if (trxIsTransmitting==false)
 	{
@@ -356,19 +354,19 @@ void receive_sound_data(void)
 	}
 }
 
-void tick_RXsoundbuffer(void)
+void soundTickRXBuffer(void)
 {
 	// The AMBE codec decodes 1 DMR frame into 6 buffers.
 	// Hence waiting for more than 6 buffers delays the sound playback by 1 DMR frame which gives some effective bufffering
 	// Max value for this is 12, as the total number of buffers is 18.
     if (!g_TX_SAI_in_use && wavbuffer_count > 6)
     {
-    	send_sound_data();
+    	soundSendData();
     }
 }
 
 
-void tick_melody(void)
+void soundTickMelody(void)
 {
 	taskENTER_CRITICAL();
 	if (melody_play!=NULL)
@@ -401,7 +399,7 @@ void tick_melody(void)
 				}
 
 				disableAudioAmp(AUDIO_AMP_MODE_BEEP);
-			    set_melody(NULL);
+			    soundSetMelody(NULL);
 			}
 			else
 			{
@@ -423,9 +421,8 @@ void tick_melody(void)
 }
 
 
-void fw_beep_task(void *data)
+static void soundBeepTask(void *data)
 {
-	// beep mode stuff
 	uint8_t tmp_val;
 	int beep_idx = 0;
 	bool beep = false;
