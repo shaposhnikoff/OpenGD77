@@ -73,17 +73,6 @@ bool settingsLoadSettings(void)
 
 	currentLanguage = &languages[nonVolatileSettings.languageIndex];
 
-	// Added this parameter without changing the magic number, so need to check for default / invalid numbers
-	if (nonVolatileSettings.txTimeoutBeepX5Secs > 4)
-	{
-		nonVolatileSettings.txTimeoutBeepX5Secs=0;
-	}
-
-	// Added this parameter without changing the magic number, so need to check for default / invalid numbers
-	if (nonVolatileSettings.beepVolumeDivider>10)
-	{
-		nonVolatileSettings.beepVolumeDivider = 2;// no reduction in volume
-	}
 	soundBeepVolumeDivider = nonVolatileSettings.beepVolumeDivider;
 
 	codeplugInitChannelsPerZone();// Initialise the codeplug channels per zone
