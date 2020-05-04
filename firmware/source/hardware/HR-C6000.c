@@ -1004,7 +1004,7 @@ inline static void HRC6000TimeslotInterruptHandler(void)
             	 * And the I2S sampling is started again for the next sample.
             	 * 2. If spi_soundBuf is null, no copy to the wave buffer occurs, and the I2S is started for the first time.
             	 */
-            	receive_sound_data();
+            	soundReceiveData();
             	//memcpy((uint8_t *)DMR_frame_buffer+0x0C,(uint8_t *)SILENCE_AUDIO, 27);// copy silence into the DMR audio
             }
 			slot_state = DMR_STATE_TX_START_5;
@@ -1546,7 +1546,7 @@ void tick_HR_C6000(void)
 			{
 				hasEncodedAudio=false;
 				tick_codec_decode((uint8_t *)DMR_frame_buffer+0x0C);
-				tick_RXsoundbuffer();
+				soundTickRXBuffer();
 			}
 		}
 

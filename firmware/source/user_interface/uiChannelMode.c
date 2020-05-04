@@ -678,7 +678,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 		{
 			if (melody_play == NULL)
 			{
-				set_melody(melody_ERROR_beep);
+				soundSetMelody(melody_ERROR_beep);
 			}
 		}
 	}
@@ -697,7 +697,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 		{
 			if (melody_play == NULL)
 			{
-				set_melody(melody_ERROR_beep);
+				soundSetMelody(melody_ERROR_beep);
 			}
 		}
 
@@ -1218,7 +1218,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					else
 					{
-						set_melody(melody_ERROR_beep);
+						soundSetMelody(melody_ERROR_beep);
 					}
 				}
 				else
@@ -1230,7 +1230,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					else
 					{
-						set_melody(melody_ERROR_beep);
+						soundSetMelody(melody_ERROR_beep);
 					}
 
 				}
@@ -1470,7 +1470,7 @@ static void handleEvent(uiEvent_t *ev)
 				}
 				else
 				{
-					set_melody(melody_ERROR_beep);
+					soundSetMelody(melody_ERROR_beep);
 				}
 			}
 		}
@@ -1568,7 +1568,7 @@ static void handleEvent(uiEvent_t *ev)
 					if(directChannelNumber>1024)
 					{
 						directChannelNumber = 0;
-						set_melody(melody_ERROR_beep);
+						soundSetMelody(melody_ERROR_beep);
 					}
 				}
 				else
@@ -1576,7 +1576,7 @@ static void handleEvent(uiEvent_t *ev)
 					if(directChannelNumber>currentZone.NOT_IN_MEMORY_numChannelsInZone)
 						{
 							directChannelNumber=0;
-							set_melody(melody_ERROR_beep);
+							soundSetMelody(melody_ERROR_beep);
 						}
 
 				}

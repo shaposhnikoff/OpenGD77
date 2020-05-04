@@ -48,12 +48,12 @@ void init_I2S(void)
 void SAI_TX_Callback(I2S_Type *base, sai_edma_handle_t *handle, status_t status, void *userData)
 {
 	g_TX_SAI_in_use = false;
-	send_sound_data();
+	soundSendData();
 }
 
 void SAI_RX_Callback(I2S_Type *base, sai_edma_handle_t *handle, status_t status, void *userData)
 {
-	receive_sound_data();
+	soundReceiveData();
 }
 
 void setup_I2S(void)

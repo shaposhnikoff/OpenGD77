@@ -561,7 +561,7 @@ static void update_frequency(int frequency)
 			currentChannelData->txFreq = frequency;
 			trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
 
-			set_melody(melody_ACK_beep);
+			soundSetMelody(melody_ACK_beep);
 		}
 	}
 	else
@@ -575,17 +575,17 @@ static void update_frequency(int frequency)
 
 			if (trxGetBandFromFrequency(currentChannelData->txFreq)!=-1)
 			{
-				set_melody(melody_ACK_beep);
+				soundSetMelody(melody_ACK_beep);
 			}
 			else
 			{
 				currentChannelData->txFreq = frequency;
-				set_melody(melody_ERROR_beep);
+				soundSetMelody(melody_ERROR_beep);
 			}
 		}
 		else
 		{
-			set_melody(melody_ERROR_beep);
+			soundSetMelody(melody_ERROR_beep);
 		}
 	}
 	menuClearPrivateCall();
@@ -838,7 +838,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					else
 					{
-						set_melody(melody_ERROR_beep);
+						soundSetMelody(melody_ERROR_beep);
 					}
 				}
 			}
@@ -1099,7 +1099,7 @@ static void handleEvent(uiEvent_t *ev)
 			else if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
 			{
 				reset_freq_enter_digits();
-				set_melody(melody_NACK_beep);
+				soundSetMelody(melody_NACK_beep);
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 			}
 			else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
@@ -1114,7 +1114,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					else
 					{
-						set_melody(melody_ERROR_beep);
+						soundSetMelody(melody_ERROR_beep);
 					}
 
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -1123,7 +1123,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					if (freq_enter_idx != 0)
 					{
-						set_melody(melody_ERROR_beep);
+						soundSetMelody(melody_ERROR_beep);
 					}
 				}
 			}
@@ -1146,11 +1146,11 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							update_frequency(tmp_frequency);
 							reset_freq_enter_digits();
-							set_melody(melody_ACK_beep);
+							soundSetMelody(melody_ACK_beep);
 						}
 						else
 						{
-							set_melody(melody_ERROR_beep);
+							soundSetMelody(melody_ERROR_beep);
 						}
 					}
 				}
@@ -1172,12 +1172,12 @@ static void handleEvent(uiEvent_t *ev)
 							nonVolatileSettings.vfoScanHigh[nonVolatileSettings.currentVFONumber] = fUpper;
 
 							reset_freq_enter_digits();
-							set_melody(melody_ACK_beep);
+							soundSetMelody(melody_ACK_beep);
 							uiVFOModeUpdateScreen(0);
 						}
 						else
 						{
-							set_melody(melody_ERROR_beep);
+							soundSetMelody(melody_ERROR_beep);
 						}
 					}
 				}
@@ -1260,7 +1260,7 @@ static void stepFrequency(int increment)
 	}
 	else
 	{
-		set_melody(melody_ERROR_beep);
+		soundSetMelody(melody_ERROR_beep);
 	}
 }
 
@@ -1437,13 +1437,13 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 
 					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
 
-					set_melody(melody_ACK_beep);
+					soundSetMelody(melody_ACK_beep);
 
 					return;
 				}
 				else
 				{
-					set_melody(melody_ERROR_beep);
+					soundSetMelody(melody_ERROR_beep);
 				}
 				break;
 			case VFO_SCREEN_CODE_SCAN:

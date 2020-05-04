@@ -218,7 +218,7 @@ void fw_main_task(void *data)
 	menuBatteryInit(); // Initialize circular buffer
 	init_watchdog(menuBatteryPushBackVoltage);
 
-	fw_init_beep_task();
+	soundInitBeepTask();
 
 #if defined(USE_SEGGER_RTT)
 	SEGGER_RTT_ConfigUpBuffer(0, NULL, NULL, 0, SEGGER_RTT_MODE_NO_BLOCK_TRIM);
@@ -381,7 +381,7 @@ void fw_main_task(void *data)
 				{
 					if ((buttons & BUTTON_PTT) && (button_event == EVENT_BUTTON_CHANGE))
 					{
-						set_melody(melody_ERROR_beep);
+						soundSetMelody(melody_ERROR_beep);
 
 						if (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN)
 						{
@@ -410,14 +410,14 @@ void fw_main_task(void *data)
 				{
 					if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 					{
-						set_melody(melody_key_beep);
+						soundSetMelody(melody_key_beep);
 					}
 				}
 				else if ((keys.event & (KEY_MOD_LONG | KEY_MOD_DOWN)) == (KEY_MOD_LONG | KEY_MOD_DOWN))
 				{
 					if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 					{
-						set_melody(melody_key_long_beep);
+						soundSetMelody(melody_key_long_beep);
 					}
 				}
 
@@ -728,7 +728,7 @@ void fw_main_task(void *data)
 					menuSystemPushNewMenu(UI_POWER_OFF);
 				}
 				GPIO_PinWrite(GPIO_audio_amp_enable, Pin_audio_amp_enable, 0);
-				set_melody(NULL);
+				soundSetMelody(NULL);
 			}
 
 			if (((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO)
@@ -746,7 +746,7 @@ void fw_main_task(void *data)
 					displayEnableBacklight(false);
 				}
 			}
-			tick_melody();
+			soundTickMelody();
 			speechSynthesisTick();
 			voxTick();
 		}

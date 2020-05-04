@@ -33,7 +33,7 @@ void init_codec(void)
 	memcpy(ambebuffer_decode,ambebuffer_decode_init,0x7ec);
 	memcpy(ambebuffer_encode,ambebuffer_encode_init,0x2000);
 	memcpy(ambebuffer_encode_ecc,ambebuffer_encode_ecc_init,0x100);
-	init_sound();
+	soundInit();
 }
 
 void tick_codec_decode(uint8_t *indata_ptr)
@@ -54,7 +54,7 @@ void tick_codec_decode(uint8_t *indata_ptr)
 		{
 			bitbuffer_decode[i]=(short)ambe_d[i];
 		}
-		setup_soundBuffer();// this just sets currentWaveBuffer but the compiler seems to optimise out the code if I try to do it in this file
+		soundSetupBuffer();// this just sets currentWaveBuffer but the compiler seems to optimise out the code if I try to do it in this file
 		r2 = (int)bitbuffer_decode;
 		r0 = (int)currentWaveBuffer;
 		r1 = AMBE_DECODE_BUFFER;
@@ -74,9 +74,9 @@ void tick_codec_decode(uint8_t *indata_ptr)
 			"POP {R4-R11}"
 		);
 
-		store_soundbuffer();
+		soundStoreBuffer();
 
-		setup_soundBuffer();// this just sets currentWaveBuffer but the compiler seems to optimise out the code if I try to do it in this file
+		soundSetupBuffer();// this just sets currentWaveBuffer but the compiler seems to optimise out the code if I try to do it in this file
 		r2 = (int)bitbuffer_decode;
 		r0 = (int)currentWaveBuffer;
 		r1 = AMBE_DECODE_BUFFER;
@@ -96,13 +96,12 @@ void tick_codec_decode(uint8_t *indata_ptr)
 			"POP {R4-R11}"
 		);
 
-		store_soundbuffer();
+		soundStoreBuffer();
     }
 }
 
 void tick_codec_encode(uint8_t *outdata_ptr)
 {
-	//SEGGER_RTT_printf(0, "tick_codec_encode now %d\n",PITCounter);
 	memset((uint8_t *)outdata_ptr, 0, 27);// fills with zeros
 
 	register int r0 asm ("r0") __attribute__((unused));
@@ -113,13 +112,8 @@ void tick_codec_encode(uint8_t *outdata_ptr)
 	{
 
 		memset(bitbuffer_encode,0,72);// faster to call memset as it will be compiled as optimised code
-		/*
-		for (int i=0;i<72;i++)
-		{
-			bitbuffer_encode[i]=0;
-		}*/
 
-		retrieve_soundbuffer();// gets currentWaveBuffer pointer used as input r2 to the encoder
+		soundRetrieveBuffer();// gets currentWaveBuffer pointer used as input r2 to the encoder
 
 		r0 = (int)bitbuffer_encode;
 		r2 = (int)currentWaveBuffer;//tmp_wavbuffer;
@@ -142,7 +136,7 @@ void tick_codec_encode(uint8_t *outdata_ptr)
 			"POP {R4-R11}"
 		);
 
-		retrieve_soundbuffer();// gets currentWaveBuffer pointer used as input r2 to the encoder
+		soundRetrieveBuffer();// gets currentWaveBuffer pointer used as input r2 to the encoder
 
 		r0 = (int)bitbuffer_encode;
 		r2 = (int)currentWaveBuffer;//tmp_wavbuffer;
