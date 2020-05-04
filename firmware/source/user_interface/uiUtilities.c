@@ -77,7 +77,7 @@ bool displaySquelch=false;
 char freq_enter_digits[12] = { '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-' };
 int freq_enter_idx;
 
-struct_codeplugRxGroup_t currentRxGroupData;
+__attribute__((section(".data.$RAM4"))) struct_codeplugRxGroup_t currentRxGroupData;
 struct_codeplugContact_t currentContactData;
 
 const int SCAN_SHORT_PAUSE_TIME = 500;			//time to wait after carrier detected to allow time for full signal detection. (CTCSS or DMR)

@@ -86,7 +86,7 @@ typedef struct
 
 __attribute__((section(".data.$RAM2"))) codeplugContactsCache_t codeplugContactsCache;
 
-uint8_t codeplugRXGroupCache[77] = { 0 };
+__attribute__((section(".data.$RAM4"))) uint8_t codeplugRXGroupCache[77] = { 0 };
 
 uint32_t byteSwap32(uint32_t n)
 {
