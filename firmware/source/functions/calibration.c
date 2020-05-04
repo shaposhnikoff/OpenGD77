@@ -60,7 +60,7 @@ calibrationStruct_t calibrationUHF;
 */
 
 #define CALIBRATION_TABLE_LENGTH 0xE0 // Calibration table is 224 bytes long
-static uint8_t calibrationData[CALIBRATION_TABLE_LENGTH];
+static __attribute__((section(".data.$RAM4"))) uint8_t calibrationData[CALIBRATION_TABLE_LENGTH];
 
 bool calibrationInit()
 {
