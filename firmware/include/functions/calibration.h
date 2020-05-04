@@ -46,6 +46,8 @@ typedef struct deviationToneStruct
 } deviationToneStruct_t;
 
 
+bool calibrationInit();
+
 void read_val_DACDATA_shift(int offset, uint8_t* val_shift);
 void read_val_twopoint_mod(int offset, uint8_t* val_0x47, uint8_t* val_0x48);
 void read_val_Q_MOD2_offset(int offset, uint8_t* val_0x04);

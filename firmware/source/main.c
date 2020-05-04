@@ -167,9 +167,8 @@ void fw_main_task(void *data)
 	// Init DAC
 	dac_init();
 
-	SPI_Flash_init();
-
-	if (!checkAndCopyCalibrationToCommonLocation())
+	// We shouldn't go further if calibration related initialization has failed
+	if ((SPI_Flash_init() == false) || (calibrationInit() == false) || (checkAndCopyCalibrationToCommonLocation() == false))
 	{
 		showErrorMessage("CAL DATA ERROR");
 		while(1U)
