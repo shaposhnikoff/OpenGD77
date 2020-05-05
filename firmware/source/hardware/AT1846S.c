@@ -168,7 +168,7 @@ const uint8_t AT1846DMRSettings[][AT1846_BYTES_PER_COMMAND] = {
 		{0x66, 0xEB, 0x2E}, // rssi_comp  and afc range
 		};
 
-#define I2C_DATA_LENGTH (32)  /* MAX is 256 */
+#define I2C_DATA_LENGTH (4)  /* Maximum transfer size seems to be 3 bytes. So use 4 to pad to 32 byte boundary */
 static uint8_t i2c_master_buff[I2C_DATA_LENGTH];
 
 void I2C_AT1846S_send_Settings(const uint8_t settings[][3],int numSettings)
