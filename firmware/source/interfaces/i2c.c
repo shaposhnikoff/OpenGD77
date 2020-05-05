@@ -117,14 +117,6 @@ void setup_I2C0(void)
 	I2C_MasterInit(I2C0, &masterConfig, CLOCK_GetFreq(I2C0_CLK_SRC));
 }
 
-void clear_I2C_buffer(void)
-{
-    for (uint32_t i = 0; i < I2C_DATA_LENGTH; i++)
-    {
-    	i2c_master_buff[i] = 0;
-    }
-}
-
 int write_I2C_reg_2byte(uint8_t addr, uint8_t reg, uint8_t val1, uint8_t val2)
 {
     i2c_master_transfer_t masterXfer;
@@ -139,8 +131,6 @@ int write_I2C_reg_2byte(uint8_t addr, uint8_t reg, uint8_t val1, uint8_t val2)
     }
     isI2cInUse = 3;
 
-	//taskENTER_CRITICAL();
-	//clear_I2C_buffer();
 	i2c_master_buff[0] = reg;
 	i2c_master_buff[1] = val1;
 	i2c_master_buff[2] = val2;
@@ -196,7 +186,6 @@ int read_I2C_reg_2byte(uint8_t addr, uint8_t reg, uint8_t* val1, uint8_t* val2)
     	isI2cInUse = 0;
     	return status;
     }
-
 
     masterXfer.slaveAddress = I2C_MASTER_SLAVE_ADDR_7BIT;
     masterXfer.direction = kI2C_Read;
