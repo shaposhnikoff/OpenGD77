@@ -111,5 +111,6 @@ void trxSetTone2(int toneFreq);
 void trxSetDTMF(int code);
 void trxUpdateTsForCurrentChannelWithSpecifiedContact(struct_codeplugContact_t *contactData);
 uint32_t trxDCSEncode(uint16_t dcsCode);
+void setMicGainFM(uint8_t gain);
 
 #endif /* _FW_TRX_H_ */

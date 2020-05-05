@@ -237,8 +237,8 @@ void trxSetModeAndBandwidth(int mode, bool bandwidthIs25kHz)
 			soundTerminateSound();
 			terminate_digital();
 
-			I2C_AT1846_SetMode();
-			I2C_AT1846_SetBandwidth();
+			AT1846SetMode();
+			AT1846SetBandwidth();
 			trxUpdateC6000Calibration();
 			trxUpdateAT1846SCalibration();
 			break;
@@ -248,13 +248,13 @@ void trxSetModeAndBandwidth(int mode, bool bandwidthIs25kHz)
 			soundTerminateSound();
 			terminate_digital();
 
-			I2C_AT1846_SetMode();
-			I2C_AT1846_SetBandwidth();
+			AT1846SetMode();
+			AT1846SetBandwidth();
 			trxUpdateC6000Calibration();
 			trxUpdateAT1846SCalibration();
 			break;
 		case RADIO_MODE_DIGITAL:
-			I2C_AT1846_SetMode();// Also sets the bandwidth to 12.5kHz which is the standard for DMR
+			AT1846SetMode();// Also sets the bandwidth to 12.5kHz which is the standard for DMR
 			trxUpdateC6000Calibration();
 			trxUpdateAT1846SCalibration();
 			GPIO_PinWrite(GPIO_TX_audio_mux, Pin_TX_audio_mux, 1); // Connect mic to MIC_P input of HR-C6000
@@ -321,16 +321,12 @@ bool trxCheckFrequencyInAmateurBand(int tmp_frequency)
 
 void trxReadVoxAndMicStrength(void)
 {
-	taskENTER_CRITICAL();
-	read_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x1a, (uint8_t *)&trxTxVox, (uint8_t *)&trxTxMic);
-	taskEXIT_CRITICAL();
-	}
+	AT1846ReadVoxAndMicStrength();
+}
 
 void trxReadRSSIAndNoise(void)
 {
-	taskENTER_CRITICAL();
-	read_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x1b, (uint8_t *)&trxRxSignal, (uint8_t *)&trxRxNoise);
-	taskEXIT_CRITICAL();
+	AT1846ReadRSSIAndNoise();
 }
 
 bool trxCarrierDetected(void)
@@ -525,28 +521,28 @@ void trxSetFrequency(int fRx,int fTx, int dmrMode)
 		if (currentBandWidthIs25kHz)
 		{
 			// 25 kHz settings
-			write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x70, 0x06 | squelch); // RX off
+			AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x70, 0x06 | squelch); // RX off
 		}
 		else
 		{
 			// 12.5 kHz settings
-			write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x06 | squelch); // RX off
+			AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x06 | squelch); // RX off
 		}
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x05, 0x87, 0x63); // select 'normal' frequency mode
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x05, 0x87, 0x63); // select 'normal' frequency mode
 
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x29, rx_fh_h, rx_fh_l);
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x2a, rx_fl_h, rx_fl_l);
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x49, 0x0C, 0x15); // setting SQ open and shut threshold
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x29, rx_fh_h, rx_fh_l);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x2a, rx_fl_h, rx_fl_l);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x49, 0x0C, 0x15); // setting SQ open and shut threshold
 
 		if (currentBandWidthIs25kHz)
 		{
 			// 25 kHz settings
-			write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x70, 0x26 | squelch); // RX on
+			AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x70, 0x26 | squelch); // RX on
 		}
 		else
 		{
 			// 12.5 kHz settings
-			write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x26 | squelch); // RX on
+			AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x26 | squelch); // RX on
 		}
 
 		trxUpdateC6000Calibration();
@@ -618,12 +614,12 @@ void trx_setTX(void)
 
 void trxAT1846RxOff(void)
 {
-	set_clear_I2C_reg_2byte_with_mask(0x30, 0xFF, 0xDF, 0x00, 0x00);
+	AT1846SetClearReg2byteWithMask(0x30, 0xFF, 0xDF, 0x00, 0x00);
 }
 
 void trxAT1846RxOn(void)
 {
-	set_clear_I2C_reg_2byte_with_mask(0x30, 0xFF, 0xFF, 0x00, 0x20);
+	AT1846SetClearReg2byteWithMask(0x30, 0xFF, 0xFF, 0x00, 0x20);
 }
 
 void trxActivateRx(void)
@@ -650,42 +646,42 @@ void trxActivateRx(void)
 
 	if (currentBandWidthIs25kHz)
 	{
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x70, 0x06); 		// 25 kHz settings // RX off
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x70, 0x06); 		// 25 kHz settings // RX off
 	}
 	else
 	{
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x06); 		// 12.5 kHz settings // RX off
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x06); 		// 12.5 kHz settings // RX off
 	}
 
-	write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x29, rx_fh_h, rx_fh_l);
-	write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x2a, rx_fl_h, rx_fl_l);
+	AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x29, rx_fh_h, rx_fh_l);
+	AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x2a, rx_fl_h, rx_fl_l);
 
 	if (currentBandWidthIs25kHz)
 	{
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x70, 0x26); // 25 kHz settings // RX on
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x70, 0x26); // 25 kHz settings // RX on
 	}
 	else
 	{
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x26); // 12.5 kHz settings // RX on
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x26); // 12.5 kHz settings // RX on
 	}
 }
 
 void trxActivateTx(void)
 {
 	txPAEnabled=true;
-	write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x29, tx_fh_h, tx_fh_l);
-	write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x2a, tx_fl_h, tx_fl_l);
+	AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x29, tx_fh_h, tx_fh_l);
+	AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x2a, tx_fl_h, tx_fl_l);
 
-	set_clear_I2C_reg_2byte_with_mask(0x30, 0xFF, 0x1F, 0x00, 0x00); // Clear Tx and Rx bits
+	AT1846SetClearReg2byteWithMask(0x30, 0xFF, 0x1F, 0x00, 0x00); // Clear Tx and Rx bits
 	if (currentMode == RADIO_MODE_ANALOG)
 	{
-		set_clear_I2C_reg_2byte_with_mask(0x30, 0xFF, 0x1F, 0x00, 0x40); // analog TX
+		AT1846SetClearReg2byteWithMask(0x30, 0xFF, 0x1F, 0x00, 0x40); // analog TX
 		trxSelectVoiceChannel(AT1846_VOICE_CHANNEL_MIC);// For 1750 tone burst
 		setMicGainFM(nonVolatileSettings.micGainFM);
 	}
 	else
 	{
-		set_clear_I2C_reg_2byte_with_mask(0x30, 0xFF, 0x1F, 0x00, 0xC0); // digital TX
+		AT1846SetClearReg2byteWithMask(0x30, 0xFF, 0x1F, 0x00, 0xC0); // digital TX
 	}
 
 	// TX PA on
@@ -843,7 +839,7 @@ void trxUpdateC6000Calibration(void)
 
 void I2C_AT1846_set_register_with_mask(uint8_t reg, uint16_t mask, uint16_t value, uint8_t shift)
 {
-	set_clear_I2C_reg_2byte_with_mask(reg, (mask & 0xff00) >> 8, (mask & 0x00ff) >> 0, ((value << shift) & 0xff00) >> 8, ((value << shift) & 0x00ff) >> 0);
+	AT1846SetClearReg2byteWithMask(reg, (mask & 0xff00) >> 8, (mask & 0x00ff) >> 0, ((value << shift) & 0xff00) >> 8, ((value << shift) & 0x00ff) >> 0);
 }
 
 void trxUpdateAT1846SCalibration(void)
@@ -1006,34 +1002,34 @@ void trxSetTxCSS(uint16_t tone)
 	{
 		// tone value of 0xffff in the codeplug seem to be a flag that no tone has been selected
 		// Zero the CTCSS1 Register
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x4a, 0x00,0x00);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x4a, 0x00,0x00);
 		// disable the transmit CTCSS
-		set_clear_I2C_reg_2byte_with_mask(0x4e,0xF9,0xFF,0x00,0x00);
+		AT1846SetClearReg2byteWithMask(0x4e,0xF9,0xFF,0x00,0x00);
 	}
 	else if (codeplugChannelToneIsCTCSS(tone))
 	{
 		// value that is stored is 100 time the tone freq but its stored in the codeplug as freq times 10
 		tone = tone * 10;
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4a, (tone >> 8) & 0xff, (tone & 0xff));
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4a, (tone >> 8) & 0xff, (tone & 0xff));
 		// init cdcss_code
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4b, 0x00, 0x00);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4b, 0x00, 0x00);
 		// init cdcss_code
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4c, 0x0A, 0xE3);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4c, 0x0A, 0xE3);
 		//enable the transmit CTCSS
-		set_clear_I2C_reg_2byte_with_mask(0x4e, 0xF9, 0xFF, 0x06, 0x00);
+		AT1846SetClearReg2byteWithMask(0x4e, 0xF9, 0xFF, 0x06, 0x00);
 	}
 	else if (codeplugChannelToneIsDCS(tone))
 	{
 		// Set the CTCSS1 Register to 134.4Hz (DCS data rate)
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4a, (TRX_DCS_TONE >> 8) & 0xff, TRX_DCS_TONE & 0xff);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4a, (TRX_DCS_TONE >> 8) & 0xff, TRX_DCS_TONE & 0xff);
 		// Zero the CTCSS2 Register
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x4d, 0x00, 0x00);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x4d, 0x00, 0x00);
 		// The AT1846S wants the Golay{23,12} encoding of the DCS code, rather than just the code itself.
 		uint32_t encoded = trxDCSEncode(tone & ~CODEPLUG_DCS_FLAGS_MASK);
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4b, 0x00, (encoded >> 16) & 0xff);           // init cdcss_code
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4c, (encoded >> 8) & 0xff, encoded & 0xff);  // init cdcss_code
-		set_clear_I2C_reg_2byte_with_mask(0x3a, 0xFF, 0xE0, 0x00, 0x06); // enable receive DCS
-		set_clear_I2C_reg_2byte_with_mask(0x4e, 0x38, 0x3F, 0x04, 0x00); // enable transmit DCS
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4b, 0x00, (encoded >> 16) & 0xff);           // init cdcss_code
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4c, (encoded >> 8) & 0xff, encoded & 0xff);  // init cdcss_code
+		AT1846SetClearReg2byteWithMask(0x3a, 0xFF, 0xE0, 0x00, 0x06); // enable receive DCS
+		AT1846SetClearReg2byteWithMask(0x4e, 0x38, 0x3F, 0x04, 0x00); // enable transmit DCS
 		//set_clear_I2C_reg_2byte_with_mask(0x4e, 0xF9, 0xFF, 0x04, 0x00); // enable transmit DCS
 	}
 	taskEXIT_CRITICAL();
@@ -1046,7 +1042,7 @@ void trxSetRxCSS(uint16_t tone)
 	{
 		// tone value of 0xffff in the codeplug seem to be a flag that no tone has been selected
 		// Zero the CTCSS2 Register
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x4d, 0x00, 0x00);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x4d, 0x00, 0x00);
 		rxCSSactive = false;
 	}
 	else if (codeplugChannelToneIsCTCSS(tone))
@@ -1055,26 +1051,26 @@ void trxSetRxCSS(uint16_t tone)
 		if (tone > 2400) threshold=1;
 		// value that is stored is 100 time the tone freq but its stored in the codeplug as freq times 10
 		tone = tone * 10;
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4d, (tone >> 8) & 0xff, (tone & 0xff));
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4d, (tone >> 8) & 0xff, (tone & 0xff));
 		//set the detection thresholds
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x5b, (threshold & 0xFF), (threshold & 0xFF));
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x5b, (threshold & 0xFF), (threshold & 0xFF));
 		//set detection to CTCSS2
-		set_clear_I2C_reg_2byte_with_mask(0x3a, 0xFF, 0xE0, 0x00, 0x08);
+		AT1846SetClearReg2byteWithMask(0x3a, 0xFF, 0xE0, 0x00, 0x08);
 		rxCSSactive = (nonVolatileSettings.analogFilterLevel != ANALOG_FILTER_NONE);
 	}
 	else if (codeplugChannelToneIsDCS(tone))
 	{
 		// Set the CTCSS1 Register to 134.4Hz (DCS data rate)
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4a, (TRX_DCS_TONE >> 8) & 0xff, TRX_DCS_TONE & 0xff);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4a, (TRX_DCS_TONE >> 8) & 0xff, TRX_DCS_TONE & 0xff);
 		// Zero the CTCSS2 Register
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x4d, 0x00, 0x00);
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x4d, 0x00, 0x00);
 		// The AT1846S wants the Golay{23,12} encoding of the DCS code, rather than just the code itself.
 		uint32_t encoded = trxDCSEncode(tone & ~CODEPLUG_DCS_FLAGS_MASK);
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4b, 0x00, (encoded >> 16) & 0xff);           // init cdcss_code
-		write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT,	0x4c, (encoded >> 8) & 0xff, encoded & 0xff);  // init cdcss_code
-		set_clear_I2C_reg_2byte_with_mask(0x3a, 0xFF, 0xE0, 0x00, 0x06); // enable receive DCS
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4b, 0x00, (encoded >> 16) & 0xff);           // init cdcss_code
+		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4c, (encoded >> 8) & 0xff, encoded & 0xff);  // init cdcss_code
+		AT1846SetClearReg2byteWithMask(0x3a, 0xFF, 0xE0, 0x00, 0x06); // enable receive DCS
 		// The cdcss_sel bits have to be set for DCS receive to work
-		set_clear_I2C_reg_2byte_with_mask(0x4e, 0x38, 0x3F, 0x04, 0x00); // enable transmit DCS
+		AT1846SetClearReg2byteWithMask(0x4e, 0x38, 0x3F, 0x04, 0x00); // enable transmit DCS
 		//set_clear_I2C_reg_2byte_with_mask(0x4e, 0xF9, 0xFF, 0x04, 0x00); // enable transmit DCS
 		rxCSSactive = (nonVolatileSettings.analogFilterLevel != ANALOG_FILTER_NONE);
 	}
@@ -1087,7 +1083,7 @@ bool trxCheckCSSFlag(uint16_t tone)
 	uint8_t FlagsL;
 
 	taskENTER_CRITICAL();
-	read_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x1c, &FlagsH, &FlagsL);
+	AT1846ReadReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x1c, &FlagsH, &FlagsL);
 	taskEXIT_CRITICAL();
 	// Could instead check both flags in one go?
 	if (codeplugChannelToneIsCTCSS(tone))
@@ -1147,21 +1143,21 @@ void trxSelectVoiceChannel(uint8_t channel) {
 	case AT1846_VOICE_CHANNEL_TONE1:
 	case AT1846_VOICE_CHANNEL_TONE2:
 	case AT1846_VOICE_CHANNEL_DTMF:
-		set_clear_I2C_reg_2byte_with_mask(0x79, 0xff, 0xff, 0xc0, 0x00); // Select single tone
-		set_clear_I2C_reg_2byte_with_mask(0x57, 0xff, 0xfe, 0x00, 0x01); // Audio feedback on
+		AT1846SetClearReg2byteWithMask(0x79, 0xff, 0xff, 0xc0, 0x00); // Select single tone
+		AT1846SetClearReg2byteWithMask(0x57, 0xff, 0xfe, 0x00, 0x01); // Audio feedback on
 
-		read_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x41, &valh, &trxSaveVoiceGainTx);
+		AT1846ReadReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x41, &valh, &trxSaveVoiceGainTx);
 		trxSaveVoiceGainTx &= 0x7f;
 
-		read_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x59, &valh, &vall);
+		AT1846ReadReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x59, &valh, &vall);
 		trxSaveDeviation = (vall + (valh<<8)) >> 6;
 
 		trxUpdateDeviation(channel);
 
-		set_clear_I2C_reg_2byte_with_mask(0x41, 0xff, 0x80, 0x00, 0x05);
+		AT1846SetClearReg2byteWithMask(0x41, 0xff, 0x80, 0x00, 0x05);
 		break;
 	default:
-		set_clear_I2C_reg_2byte_with_mask(0x57, 0xff, 0xfe, 0x00, 0x00); // Audio feedback off
+		AT1846SetClearReg2byteWithMask(0x57, 0xff, 0xfe, 0x00, 0x00); // Audio feedback off
 		if (trxSaveVoiceGainTx != 0xff)
 		{
 			I2C_AT1846_set_register_with_mask(0x41, 0xFF80, trxSaveVoiceGainTx, 0);
@@ -1172,7 +1168,7 @@ void trxSelectVoiceChannel(uint8_t channel) {
 		}
 		break;
 	}
-	set_clear_I2C_reg_2byte_with_mask(0x3a, 0x8f, 0xff, channel, 0x00);
+	AT1846SetClearReg2byteWithMask(0x3a, 0x8f, 0xff, channel, 0x00);
 	taskEXIT_CRITICAL();
 }
 
@@ -1181,7 +1177,7 @@ void trxSetTone1(int toneFreq)
 
 	toneFreq = toneFreq * 10;
 	taskENTER_CRITICAL();
-	write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x35, (toneFreq >> 8) & 0xff,	(toneFreq & 0xff));   // tone1_freq
+	AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x35, (toneFreq >> 8) & 0xff,	(toneFreq & 0xff));   // tone1_freq
 	taskEXIT_CRITICAL();
 }
 
@@ -1189,7 +1185,7 @@ void trxSetTone2(int toneFreq)
 {
 	toneFreq = toneFreq * 10;
 	taskENTER_CRITICAL();
-	write_I2C_reg_2byte(I2C_MASTER_SLAVE_ADDR_7BIT, 0x36, (toneFreq >> 8) & 0xff,	(toneFreq & 0xff));   // tone2_freq
+	AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x36, (toneFreq >> 8) & 0xff,	(toneFreq & 0xff));   // tone2_freq
 	taskEXIT_CRITICAL();
 }
 
@@ -1206,3 +1202,19 @@ uint32_t trxDCSEncode(uint16_t code)
 {
 	return (TRX_DCSECCBits[code] << 12) | 04000 | code;
 }
+
+void setMicGainFM(uint8_t gain)
+{
+	uint8_t voice_gain_tx = trxGetCalibrationVoiceGainTx();
+
+	// Apply extra gain 17 (the calibration default value, not the datasheet one)
+	if (gain > 17)
+	{
+		//voice_gain_tx += (((gain - 16) * 3) >> 1); // Get some Larsen starting at gain:11
+		voice_gain_tx += (gain - 16); // Seems to be enough
+	}
+
+	I2C_AT1846_set_register_with_mask(0x0A, 0xF83F, gain, 6);
+	I2C_AT1846_set_register_with_mask(0x41, 0xFF80, voice_gain_tx, 0);
+}
+

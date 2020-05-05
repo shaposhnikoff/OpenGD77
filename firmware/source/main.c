@@ -178,14 +178,14 @@ void fw_main_task(void *data)
 	}
 
 	// Init AT1846S
-	I2C_AT1846S_init();
+	AT1846Init();
 
 	// Init HR-C6000
 	SPI_HR_C6000_init();
 
 	// Additional init stuff
 	SPI_C6000_postinit();
-	I2C_AT1846_Postinit();
+	AT1846Postinit();
 
 	// Init HR-C6000 interrupts
 	init_HR_C6000_interrupts();
