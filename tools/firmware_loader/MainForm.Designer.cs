@@ -78,11 +78,6 @@ namespace GD77_FirmwareLoader
 			this.rbModels[3].AutoSize = true;
 			this.rbModels[3].CheckedChanged += new System.EventHandler(this.rbModel_CheckedChanged);
 
-			if (FirmwareLoader.outputType != FirmwareLoader.OutputType.OutputType_UNKNOWN)
-			{
-				this.rbModels[(int)FirmwareLoader.outputType].Checked = true;
-			}
-
 			this.grpboxModel.Controls.Add(this.rbModels[0]);
 			this.grpboxModel.Controls.Add(this.rbModels[1]);
 			this.grpboxModel.Controls.Add(this.rbModels[2]);
@@ -137,6 +132,13 @@ namespace GD77_FirmwareLoader
 			this.btnDetect.Click += new System.EventHandler(this.btnDetect_Click);
 			this.btnDetect.Visible = false;
 
+
+			if (FirmwareLoader.outputType != FirmwareLoader.OutputType.OutputType_UNKNOWN)
+			{
+				this.rbModels[(int)FirmwareLoader.outputType].Checked = true;
+				this.btnDownload.Enabled = true;
+				this.btnOpenFile.Enabled = true;
+			}
 
 			// 
 			// MainForm
