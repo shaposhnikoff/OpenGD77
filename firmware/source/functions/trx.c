@@ -477,8 +477,6 @@ void trxSetFrequency(int fRx,int fTx, int dmrMode)
 		calibrationGetPowerForFrequency(fTx, &trxPowerSettings);
 		trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
 
-
-
 		currentRxFrequency=fRx;
 		currentTxFrequency=fTx;
 
@@ -566,7 +564,7 @@ void trxSetFrequency(int fRx,int fTx, int dmrMode)
 			//SEGGER_RTT_printf(0, "ERROR Cant enable Rx when PA active\n");
 		}
 
-		if (currentMode==RADIO_MODE_DIGITAL)
+		if (currentMode == RADIO_MODE_DIGITAL)
 		{
 			init_digital();
 		}
@@ -767,21 +765,22 @@ uint16_t trxGetPower(void)
 	return txPower;
 }
 
-void trxCalcBandAndFrequencyOffset(uint32_t *band_offset, uint32_t *freq_offset)
+void trxCalcBandAndFrequencyOffset(CalibrationBand_t *calibrationBand, uint32_t *freq_offset)
 {
 // NOTE. For crossband duplex DMR, the calibration potentially needs to be changed every time the Tx/Rx is switched over on each 30ms cycle
 // But at the moment this is an unnecessary complication and I'll just use the Rx frequency to get the calibration offsets
 
 	if (trxCurrentBand[TRX_RX_FREQ_BAND] == RADIO_BAND_UHF)
 	{
-		*band_offset=0x00000000;
+		*calibrationBand = CalibrationBandUHF;
 		*freq_offset = (currentTxFrequency - 40000000)/1000000;
 	}
 	else
 	{
-		*band_offset=0x00000070;
+		*calibrationBand = CalibrationBandVHF;
 		*freq_offset = (currentTxFrequency - 13250000)/500000;
 	}
+
 	// Limit VHF freq calculation exceeds the max lookup table index (of 7)
 	if (*freq_offset > 7)
 	{
@@ -791,31 +790,31 @@ void trxCalcBandAndFrequencyOffset(uint32_t *band_offset, uint32_t *freq_offset)
 
 void trxUpdateC6000Calibration(void)
 {
-	uint8_t highByte;
-	uint8_t lowByte;
-	uint32_t band_offset;
 	uint32_t freq_offset;
+	CalibrationBand_t calBand;
+	CalibrationDataResult_t calRes;
 
 	if (nonVolatileSettings.useCalibration==false)
 	{
 		return;
 	}
 
-	trxCalcBandAndFrequencyOffset(&band_offset, &freq_offset);
+	trxCalcBandAndFrequencyOffset(&calBand, &freq_offset);
 
 	write_SPI_page_reg_byte_SPI0(0x04, 0x00, 0x3F); // Reset HR-C6000 state
 
-	read_val_DACDATA_shift(band_offset,&lowByte);
-	write_SPI_page_reg_byte_SPI0(0x04, 0x37, lowByte); // DACDATA shift (LIN_VOL)
+	calibrationGetSectionData(calBand, CalibrationSection_DACDATA_SHIFT, &calRes);
+	write_SPI_page_reg_byte_SPI0(0x04, 0x37, calRes.value); // DACDATA shift (LIN_VOL)
 
-	read_val_Q_MOD2_offset(band_offset,&lowByte);
-	write_SPI_page_reg_byte_SPI0(0x04, 0x04, lowByte); // MOD2 offset
+	calibrationGetSectionData(calBand, CalibrationSection_Q_MOD2_OFFSET, &calRes);
+	write_SPI_page_reg_byte_SPI0(0x04, 0x04, calRes.value); // MOD2 offset
 
-	read_val_phase_reduce(band_offset+freq_offset,&lowByte);
-	write_SPI_page_reg_byte_SPI0(0x04, 0x46, lowByte); // phase reduce
+	calRes.offset = freq_offset;
+	calibrationGetSectionData(calBand, CalibrationSection_PHASE_REDUCE, &calRes);
+	write_SPI_page_reg_byte_SPI0(0x04, 0x46, calRes.value); // phase reduce
 
-	read_val_twopoint_mod(band_offset,&lowByte, &highByte);
-	uint16_t refOscOffset = (highByte<<8)+lowByte;
+	calibrationGetSectionData(calBand, CalibrationSection_TWOPOINT_MOD, &calRes);
+	uint16_t refOscOffset = calRes.value; //(highByte<<8)+lowByte;
 
 /*
  * Hack to bring the RD-5R to the correct frequency
@@ -828,12 +827,11 @@ void trxUpdateC6000Calibration(void)
  * refOscOffset -= 38;
  *
  */
-
-	if (refOscOffset>1023)
+	if (refOscOffset > 1023)
 	{
-		refOscOffset=1023;
+		refOscOffset = 1023;
 	}
-	write_SPI_page_reg_byte_SPI0(0x04, 0x48, (refOscOffset>>8) & 0x03); // bit 0 to 1 = upper 2 bits of 10-bit twopoint mod
+	write_SPI_page_reg_byte_SPI0(0x04, 0x48, (refOscOffset >> 8) & 0x03); // bit 0 to 1 = upper 2 bits of 10-bit twopoint mod
 	write_SPI_page_reg_byte_SPI0(0x04, 0x47, (refOscOffset & 0xFF)); // bit 0 to 7 = lower 8 bits of 10-bit twopoint mod
 }
 
@@ -844,15 +842,16 @@ void I2C_AT1846_set_register_with_mask(uint8_t reg, uint16_t mask, uint16_t valu
 
 void trxUpdateAT1846SCalibration(void)
 {
-	uint32_t band_offset=0x00000000;
-	uint32_t freq_offset=0x00000000;
+	uint32_t freq_offset = 0x00000000;
+	CalibrationBand_t calBand;
+	CalibrationDataResult_t calRes;
 
-	if (nonVolatileSettings.useCalibration==false)
+	if (nonVolatileSettings.useCalibration == false)
 	{
 		return;
 	}
 
-	trxCalcBandAndFrequencyOffset(&band_offset, &freq_offset);
+	trxCalcBandAndFrequencyOffset(&calBand, &freq_offset);
 
 	uint8_t val_pga_gain;
 	uint8_t gain_tx;
@@ -869,26 +868,31 @@ void trxUpdateAT1846SCalibration(void)
 
 	uint16_t squelch_th;
 
-	read_val_pga_gain(band_offset, &val_pga_gain);
-	read_val_voice_gain_tx(band_offset, &voice_gain_tx);
-	read_val_gain_tx(band_offset, &gain_tx);
-	read_val_padrv_ibit(band_offset, &padrv_ibit);
+	calibrationGetSectionData(calBand, CalibrationSection_PGA_GAIN, &calRes);
+	val_pga_gain = calRes.value;
 
-	if (currentBandWidthIs25kHz)
-	{
-		// 25 kHz settings
-		read_val_xmitter_dev_wideband(band_offset, &xmitter_dev);
-	}
-	else
-	{
-		// 12.5 kHz settings
-		read_val_xmitter_dev_narrowband(band_offset, &xmitter_dev);
-	}
+	calibrationGetSectionData(calBand, CalibrationSection_VOICE_GAIN_TX, &calRes);
+	voice_gain_tx = calRes.value;
+
+	calibrationGetSectionData(calBand, CalibrationSection_GAIN_TX, &calRes);
+	gain_tx = calRes.value;
+
+	calibrationGetSectionData(calBand, CalibrationSection_PADRV_IBIT, &calRes);
+	padrv_ibit = calRes.value;
+
+
+	// 25 or 12.5 kHz settings
+	calibrationGetSectionData(calBand,
+			(currentBandWidthIs25kHz ? CalibrationSection_XMITTER_DEV_WIDEBAND : CalibrationSection_XMITTER_DEV_NARROWBAND), &calRes);
+	xmitter_dev = calRes.value;
 
 	if (currentMode == RADIO_MODE_ANALOG)
 	{
-		read_val_dac_vgain_analog(band_offset, &dac_vgain_analog);
-		read_val_volume_analog(band_offset, &volume_analog);
+		calibrationGetSectionData(calBand, CalibrationSection_DAC_VGAIN_ANALOG, &calRes);
+		dac_vgain_analog = calRes.value;
+
+		calibrationGetSectionData(calBand, CalibrationSection_VOLUME_ANALOG, &calRes);
+		volume_analog = calRes.value;
 	}
 	else
 	{
@@ -896,24 +900,21 @@ void trxUpdateAT1846SCalibration(void)
 		volume_analog = 0x0C;
 	}
 
-	if (currentBandWidthIs25kHz)
-	{
-		// 25 kHz settings
-		read_val_noise1_th_wideband(band_offset, &noise1_th);
-		read_val_noise2_th_wideband(band_offset, &noise2_th);
-		read_val_rssi3_th_wideband(band_offset, &rssi3_th);
+	calibrationGetSectionData(calBand,
+			(currentBandWidthIs25kHz ? CalibrationSection_NOISE1_TH_WIDEBAND : CalibrationSection_NOISE1_TH_NARROWBAND), &calRes);
+	noise1_th = calRes.value;
 
-		read_val_squelch_th(band_offset+freq_offset, 0, &squelch_th);
-	}
-	else
-	{
-		// 12.5 kHz settings
-		read_val_noise1_th_narrowband(band_offset, &noise1_th);
-		read_val_noise2_th_narrowband(band_offset, &noise2_th);
-		read_val_rssi3_th_narrowband(band_offset, &rssi3_th);
+	calibrationGetSectionData(calBand,
+			(currentBandWidthIs25kHz ? CalibrationSection_NOISE2_TH_WIDEBAND : CalibrationSection_NOISE2_TH_NARROWBAND), &calRes);
+	noise2_th = calRes.value;
 
-		read_val_squelch_th(band_offset+freq_offset, 3, &squelch_th);
-	}
+	calibrationGetSectionData(calBand,
+			(currentBandWidthIs25kHz ? CalibrationSection_RSSI3_TH_WIDEBAND : CalibrationSection_RSSI3_TH_NARROWBAND), &calRes);
+	rssi3_th = calRes.value;
+
+	calRes.mod = (currentBandWidthIs25kHz ? 0 : 3);
+	calibrationGetSectionData(calBand, CalibrationSection_SQUELCH_TH, &calRes);
+	squelch_th = calRes.value;
 
 	I2C_AT1846_set_register_with_mask(0x0A, 0xF83F, val_pga_gain, 6);
 	I2C_AT1846_set_register_with_mask(0x41, 0xFF80, voice_gain_tx, 0);
@@ -1103,6 +1104,8 @@ bool trxCheckCSSFlag(uint16_t tone)
 
 void trxUpdateDeviation(int channel)
 {
+	CalibrationBand_t calBand = ((trxCurrentBand[TRX_RX_FREQ_BAND] == RADIO_BAND_UHF) ? CalibrationBandUHF : CalibrationBandVHF);
+	CalibrationDataResult_t calRes;
 	uint8_t deviation;
 
 	if (nonVolatileSettings.useCalibration == false)
@@ -1113,17 +1116,20 @@ void trxUpdateDeviation(int channel)
 	taskENTER_CRITICAL();
 	switch (channel)
 	{
-	case AT1846_VOICE_CHANNEL_TONE1:
-	case AT1846_VOICE_CHANNEL_TONE2:
-		read_val_dev_tone(CAL_DEV_TONE, &deviation);
-		deviation &= 0x7f;
-		I2C_AT1846_set_register_with_mask(0x59, 0x003f, deviation, 6); // Tone deviation value
-		break;
-	case AT1846_VOICE_CHANNEL_DTMF:
-		read_val_dev_tone(CAL_DEV_DTMF, &deviation);
-		deviation &= 0x7f;
-		I2C_AT1846_set_register_with_mask(0x59, 0x003f, deviation, 6); // Tone deviation value
-		break;
+		case AT1846_VOICE_CHANNEL_TONE1:
+		case AT1846_VOICE_CHANNEL_TONE2:
+			calRes.offset = CAL_DEV_TONE;
+			calibrationGetSectionData(calBand, CalibrationSection_DEV_TONE, &calRes);
+			deviation = (calRes.value & 0x7f);
+			I2C_AT1846_set_register_with_mask(0x59, 0x003f, deviation, 6); // Tone deviation value
+			break;
+
+		case AT1846_VOICE_CHANNEL_DTMF:
+			calRes.offset = CAL_DEV_DTMF;
+			calibrationGetSectionData(calBand, CalibrationSection_DEV_TONE, &calRes);
+			deviation = (calRes.value & 0x7f);
+			I2C_AT1846_set_register_with_mask(0x59, 0x003f, deviation, 6); // Tone deviation value
+			break;
 	}
 	taskEXIT_CRITICAL();
 }
