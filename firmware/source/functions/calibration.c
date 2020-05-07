@@ -64,7 +64,7 @@ typedef struct
 	 * VHF 136Mhz , 140Mhz - 165Mhz (in 5Mhz steps), 172Mhz
 	 * UHF 405Mhz - 475Mhz (in 10Mhz steps)
 	 */
-	uint8_t TXIandQ[8]; // Don't adjust
+	uint8_t Dmr4FskDeviation[8]; // Controls the DMR 4FSK deviation produced by the C6000 chip
 
 	uint8_t DigitalRxAudioGainAndBeepVolume; // The Rx audio gain and the beep volume seem linked together.  0x1D on VHF and UHF
 
@@ -150,7 +150,7 @@ bool calibrationGetSectionData(CalibrationBand_t band, CalibrationSection_t sect
 				o->value = 0;
 				return false;
 			}
-			o->value = calibrationData.band[band].TXIandQ[o->offset];
+			o->value = calibrationData.band[band].Dmr4FskDeviation[o->offset];
 			break;
 
 		/*
