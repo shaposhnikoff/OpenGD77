@@ -98,7 +98,7 @@ def strdumpArray(buf):
     return cbuf
 
 def downloadFirmware(downloadStable):
-    url = "https://github.com/rogerclarkmelbourne/OpenGD77/releases/latest"
+    url = "https://github.com/rogerclarkmelbourne/OpenGD77/releases"
     urlBase = "http://github.com"
     httpPool = urllib3.PoolManager()
     pattern = ""
@@ -489,6 +489,8 @@ def usage():
     print("    -f, --firmware=<filename.sgl>  : Flash <filename.sgl> instead of default file \"firmware.sgl\"")
     print("    -m, --model=<type>             : Select transceiver model. Models are: {}".format(", ".join(str(x) for x in outputModes[:-1])) + ".")
     print("    -d, --download                 : Download firmware from the project website")
+    print("    -S, --stable                   : Select the stable version while downloading from the project page")
+    print("    -U, --unstable                 : Select the development version while downloading from the project page")
     print("")
 
 #####################################################
