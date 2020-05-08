@@ -365,7 +365,7 @@ bool calibrationGetRSSIMeterParams(calibrationRSSIMeter_t *rssiMeterValues)
  * This function is used to check if the calibration table has been copied to the common location
  * 0xF000 and if not, to copy it to that location in the external Flash memory
  */
-bool calibrationCheckAndCopyToCommonLocation(void)
+bool calibrationCheckAndCopyToCommonLocation(bool forceReload)
 {
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
 
@@ -381,9 +381,9 @@ const uint8_t MARKER_BYTES[] = {0xA0 ,0x0F};// DM-1801 only seems to consistentl
 
 #elif defined(PLATFORM_RD5R)
 
-const uint32_t VARIANT_CALIBRATION_BASE = 0x00017c00;	// Found by marker bytes matching
-const int MARKER_BYTES_LENGTH = 8;
-const uint8_t MARKER_BYTES[] = {0xA0 ,0x0F ,0xC0 ,0x12 ,0xA0 ,0x0F ,0xC0 ,0x12};
+const uint32_t VARIANT_CALIBRATION_BASE = 0x0008F000;	// Found by marker bytes matching
+const int MARKER_BYTES_LENGTH = 2;
+const uint8_t MARKER_BYTES[] = {0xA0 ,0x0F };
 
 #endif
 
@@ -391,7 +391,8 @@ const uint8_t MARKER_BYTES[] = {0xA0 ,0x0F ,0xC0 ,0x12 ,0xA0 ,0x0F ,0xC0 ,0x12};
 
 	if (SPI_Flash_read(CALIBRATION_BASE, (uint8_t *)tmp, MARKER_BYTES_LENGTH))
 	{
-		if (memcmp(MARKER_BYTES, tmp, MARKER_BYTES_LENGTH) == 0)
+
+		if (!forceReload && (memcmp(MARKER_BYTES, tmp, MARKER_BYTES_LENGTH) == 0))
 		{
 			// found calibration table in common location.
 			return true;

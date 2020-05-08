@@ -143,6 +143,7 @@ void fw_main_task(void *data)
 	rotarySwitchInit();
 
 	buttonsCheckButtonsEvent(&buttons, &button_event);// Read button state and event
+
 	if (buttons & BUTTON_SK2)
 	{
 		settingsRestoreDefaultSettings();
@@ -168,7 +169,7 @@ void fw_main_task(void *data)
 	dac_init();
 
 	// We shouldn't go further if calibration related initialization has failed
-	if ((SPI_Flash_init() == false) || (calibrationInit() == false) || (calibrationCheckAndCopyToCommonLocation() == false))
+	if ((SPI_Flash_init() == false) || (calibrationInit() == false) || (calibrationCheckAndCopyToCommonLocation(buttons & BUTTON_SK2) == false))
 	{
 		showErrorMessage("CAL DATA ERROR");
 		while(1U)
