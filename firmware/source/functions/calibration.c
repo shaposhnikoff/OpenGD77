@@ -337,13 +337,9 @@ bool calibrationGetPowerForFrequency(int freq, calibrationPowerValues_t *powerSe
 		}
 	}
 
-#if defined(PLATFORM_RD5R)
-	const int POWER_CAL_MULTIPLIER = 8;
-#else
-	const int POWER_CAL_MULTIPLIER = 16;
-#endif
 
-	powerSettings->lowPower  = (calibrationData.band[band].PowerSettings[offset][0] * POWER_CAL_MULTIPLIER);
+	const int POWER_CAL_MULTIPLIER = 16;
+	powerSettings->lowPower  = (calibrationData.band[band].PowerSettings[offset][0] * 16);
 	powerSettings->highPower = (calibrationData.band[band].PowerSettings[offset][1] * POWER_CAL_MULTIPLIER);
 
 	return true;
