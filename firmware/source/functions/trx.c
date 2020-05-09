@@ -701,27 +701,25 @@ void trxSetPowerFromLevel(int powerLevel)
 // Note. Fraction values for 200Mhz are currently the same as the VHF band, because there isn't any way to set the 1W value on 220Mhz as there are only 2 calibration tables
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
 
-static const float fractionalPowers[3][4] = {	{0.59,0.73,0.84,0.93},// VHF
-												{0.62,0.75,0.85,0.93},// 220Mhz
-												{0.62,0.75,0.85,0.93}};// UHF
+static const float fractionalPowers[3][7] = {	{0.59,0.73,0.84,0.93,0.60,0.72,0.77},// VHF
+												{0.62,0.75,0.85,0.93,0.49,0.64,0.71},// 220Mhz
+												{0.62,0.75,0.85,0.93,0.49,0.64,0.71}};// UHF
 
 #elif defined(PLATFORM_DM1801)
 
 
-static const float fractionalPowers[3][4] = {	{0.28,0.37,0.62,0.82},// VHF
-												{0.28,0.37,0.62,0.82},// 220Mhz
-												{0.05,0.25,0.51,0.75}};// UHF
+static const float fractionalPowers[3][7] = {	{0.28,0.37,0.62,0.82,0.60,0.72,0.77},// VHF - THESE VALUE HAVE NOT BEEN CALIBRATED
+												{0.28,0.37,0.62,0.82,0.49,0.64,0.73},// 220Mhz - THESE VALUE HAVE NOT BEEN CALIBRATED
+												{0.05,0.25,0.51,0.75,0.49,0.64,0.71}};// UHF - THESE VALUE HAVE NOT BEEN CALIBRATED
 
 #elif defined(PLATFORM_RD5R)
 
-// Fixme: Using table form DM1801
-static const float fractionalPowers[3][4] = {	{0.28,0.37,0.62,0.82},// VHF
-												{0.28,0.37,0.62,0.82},// 220Mhz
-												{0.05,0.25,0.51,0.75}};// UHF
-
+static const float fractionalPowers[3][7] = {	{0.37,0.54,0.73,0.87,0.49,0.64,0.73},// VHF
+												{0.28,0.37,0.62,0.82,0.49,0.64,0.71},// 220Mhz - THESE VALUE HAVE NOT BEEN CALIBRATED
+												{0.05,0.25,0.45,0.85,0.49,0.64,0.71}};// UHF
 
 #endif
-	int stepPerWatt = (trxPowerSettings.highPower - trxPowerSettings.lowPower)/( 5 - 1);
+
 
 	switch(powerLevel)
 	{
@@ -735,13 +733,12 @@ static const float fractionalPowers[3][4] = {	{0.28,0.37,0.62,0.82},// VHF
 			txPower = trxPowerSettings.lowPower;
 			break;
 		case 5:// 2W
-			txPower = (((powerLevel - 3) * stepPerWatt) * 0.90) + trxPowerSettings.lowPower;
-			break;
 		case 6:// 3W
-			txPower = (((powerLevel - 3) * stepPerWatt) * 0.90) + trxPowerSettings.lowPower;
-			break;
 		case 7:// 4W
-			txPower = (((powerLevel - 3) * stepPerWatt) * 0.90) + trxPowerSettings.lowPower;
+			{
+				int stepPerWatt = (trxPowerSettings.highPower - trxPowerSettings.lowPower)/( 5 - 1);
+				txPower = (((powerLevel - 3) * stepPerWatt) * fractionalPowers[trxCurrentBand[TRX_TX_FREQ_BAND]][powerLevel-1]) + trxPowerSettings.lowPower;
+			}
 			break;
 		case 8:// 5W
 			txPower = trxPowerSettings.highPower;
