@@ -38,7 +38,7 @@ static const int SYS_INT_RECEIVED_INFORMATION	= 0x04;
 static const int SYS_INT_ABNORMAL_EXIT			= 0x02;
 static const int SYS_INT_PHYSICAL_LAYER			= 0x01;
 
-static const int WAKEUP_RETRY_PERIOD			= 500;
+static const int WAKEUP_RETRY_PERIOD			= 600;// The official firmware seems to use a 600mS retry period.
 
 TaskHandle_t fwhrc6000TaskHandle;
 
