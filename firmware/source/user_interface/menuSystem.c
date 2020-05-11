@@ -346,6 +346,12 @@ int menuGetKeypadKeyValue(uiEvent_t *ev, bool digitsOnly)
 
 void menuUpdateCursor(int pos, bool moved, bool render)
 {
+#if defined(PLATFORM_RD5R)
+	const int MENU_CURSOR_Y = 32;
+#else
+	const int MENU_CURSOR_Y = 46;
+#endif
+
 	static uint32_t lastBlink = 0;
 	static bool     blink = false;
 	uint32_t        m = fw_millis();
@@ -355,13 +361,13 @@ void menuUpdateCursor(int pos, bool moved, bool render)
 	}
 	if (moved || (m - lastBlink) > 500)
 	{
-		ucDrawFastHLine(pos*8, 46, 8, blink);
+		ucDrawFastHLine(pos*8, MENU_CURSOR_Y, 8, blink);
 
 		blink = !blink;
 		lastBlink = m;
 
 		if (render) {
-			ucRenderRows(5,6);
+			ucRenderRows(MENU_CURSOR_Y/8,MENU_CURSOR_Y/8+1);
 		}
 	}
 }
