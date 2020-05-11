@@ -27,11 +27,19 @@ static void loadChannelData(bool useChannelDataInMemory);
 static void scanning(void);
 
 #if defined(PLATFORM_GD77S)
+typedef enum
+{
+	GD77S_SETTINGS_CHANNEL_DETAILS,
+	GD77S_SETTINGS_ZONE,
+	GD77S_SETTINGS_POWER,
+	GD77S_SETTINGS_MAX
+} GD77S_SETTINGS_t;
+
 static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSpeech);
 static void handleEventForGD77S(uiEvent_t *ev);
 static uint16_t getCurrentChannelInCurrentZoneForGD77S(void);
 static bool firstRunGD77S = true;
-static uint8_t inGD77SSettings;
+static GD77S_SETTINGS_t inGD77SSettings;
 #else
 static void startScan(void);
 static void handleUpKey(uiEvent_t *ev);
@@ -105,7 +113,7 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		}
 
 #if defined(PLATFORM_GD77S)
-		inGD77SSettings = 0; // Get out of the settings when selecting another channel.
+		inGD77SSettings = GD77S_SETTINGS_CHANNEL_DETAILS; // Get out of the settings when selecting another channel.
 
 		// Ensure the correct channel is loaded, on the very first run
 		if (firstRunGD77S)
@@ -734,13 +742,13 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 	}
 }
 
-static void buildSpeechSettingsFormGD77S(uint8_t *buf, uint8_t offset, uint8_t setting)
+static void buildSpeechSettingsFormGD77S(uint8_t *buf, uint8_t offset, GD77S_SETTINGS_t setting)
 {
 	const float powerLevels[] = { 0.050, 0.250, 0.500, 0.750, 1, 2, 3, 4, 5 };
 
 	switch (setting)
 	{
-		case 0: // Channel details
+		case GD77S_SETTINGS_CHANNEL_DETAILS: // Channel details
 			{
 				bool duplex = (currentChannelData->rxFreq != currentChannelData->txFreq);
 				uint8_t len;
@@ -797,7 +805,7 @@ static void buildSpeechSettingsFormGD77S(uint8_t *buf, uint8_t offset, uint8_t s
 			}
 			break;
 
-		case 1: // POWER
+		case GD77S_SETTINGS_POWER: // POWER
 			buf[0U] += 2U;
 			buf[offset + 1U] = SPEECH_SYNTHESIS_POWER;
 			buf[offset + 2U] = SPEECH_SYNTHESIS_LEVEL;
@@ -811,10 +819,13 @@ static void buildSpeechSettingsFormGD77S(uint8_t *buf, uint8_t offset, uint8_t s
 			}
 			break;
 
-		case 2: // Zone
+		case GD77S_SETTINGS_ZONE: // Zone
 			buf[0U] += 1U;
 			buf[offset + 1U] = SPEECH_SYNTHESIS_STORE;
 			buf[0U] += speechSynthesisBuildNumerical(&buf[offset + 2U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset + 2U), nonVolatileSettings.currentZone, 3, false);
+			break;
+
+		case GD77S_SETTINGS_MAX:
 			break;
 	}
 }
@@ -827,7 +838,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 	{
 		if (!trxIsTransmitting && (ev->rotary > 0))
 		{
-			inGD77SSettings = 0; // Get out of the settings when selecting another channel.
+			inGD77SSettings = GD77S_SETTINGS_CHANNEL_DETAILS; // Get out of the settings when selecting another channel.
 			nonVolatileSettings.overrideTG = 0;
 			checkAndUpdateSelectedChannelForGD77S(ev->rotary, false);
 			clearActiveDMRID();
@@ -843,17 +854,17 @@ static void handleEventForGD77S(uiEvent_t *ev)
 
 			if (ev->buttons & BUTTON_ORANGE_LONG)
 			{
-				inGD77SSettings = (inGD77SSettings + 1) % 3;
+				inGD77SSettings = (GD77S_SETTINGS_t) (inGD77SSettings + 1) % GD77S_SETTINGS_MAX;
 
 				switch (inGD77SSettings)
 				{
-					case 0: // Leaving settings
+					case GD77S_SETTINGS_CHANNEL_DETAILS: // Leaving settings
 						buf[0u] = 2U;
 						buf[1U] = SPEECH_SYNTHESIS_SET;
 						buf[2U] = SPEECH_SYNTHESIS_OFF;
 						break;
 
-					case 1: // Entering setting + Power
+					case GD77S_SETTINGS_POWER: // Entering setting + Power
 						buf[0u] = 4U;
 						buf[1U] = SPEECH_SYNTHESIS_SET;
 						buf[2U] = SPEECH_SYNTHESIS_ON;
@@ -862,15 +873,18 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						buildSpeechSettingsFormGD77S(buf, 4U, inGD77SSettings);
 						break;
 
-					case 2: // Zone
+					case GD77S_SETTINGS_ZONE: // Zone
 						buf[0u] = 0U;
 						buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
+						break;
+
+					case GD77S_SETTINGS_MAX:
 						break;
 				}
 			}
 			else
 			{
-				if (inGD77SSettings == 0)
+				if (inGD77SSettings == GD77S_SETTINGS_CHANNEL_DETAILS)
 				{
 					buf[0u] = 1U;
 					buf[1U] = SPEECH_SYNTHESIS_BATTERY;
@@ -890,11 +904,11 @@ static void handleEventForGD77S(uiEvent_t *ev)
 
 			switch (inGD77SSettings)
 			{
-				case 0: // Not in settings, spell channel details.
+				case GD77S_SETTINGS_CHANNEL_DETAILS: // Not in settings, spell channel details.
 					buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
 					break;
 
-				case 1: // Power
+				case GD77S_SETTINGS_POWER: // Power
 					if (nonVolatileSettings.txPowerLevel < MAX_POWER_SETTING_NUM)
 					{
 						nonVolatileSettings.txPowerLevel++;
@@ -902,7 +916,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					}
 					break;
 
-				case 2: // Zones
+				case GD77S_SETTINGS_ZONE: // Zones
 					nonVolatileSettings.currentZone++;
 
 					if (nonVolatileSettings.currentZone >= codeplugZonesGetCount())
@@ -918,6 +932,9 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
 					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
 					break;
+
+				case GD77S_SETTINGS_MAX:
+					break;
 			}
 
 			if (buf[0U] != 0U)
@@ -927,13 +944,13 @@ static void handleEventForGD77S(uiEvent_t *ev)
 		}
 		else if (ev->buttons & BUTTON_SK2)
 		{
-			if (inGD77SSettings != 0)
+			if (inGD77SSettings != GD77S_SETTINGS_CHANNEL_DETAILS)
 			{
 				buf[0U] = 0U;
 
 				switch (inGD77SSettings)
 				{
-					case 1: // Power
+					case GD77S_SETTINGS_POWER: // Power
 						if (nonVolatileSettings.txPowerLevel > 0)
 						{
 							nonVolatileSettings.txPowerLevel--;
@@ -941,7 +958,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						}
 						break;
 
-					case 2: // Zones
+					case GD77S_SETTINGS_ZONE: // Zones
 						if (nonVolatileSettings.currentZone == 0)
 						{
 							nonVolatileSettings.currentZone = codeplugZonesGetCount() - 1;
@@ -958,6 +975,10 @@ static void handleEventForGD77S(uiEvent_t *ev)
 
 						buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
 						menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
+						break;
+
+					case GD77S_SETTINGS_CHANNEL_DETAILS:
+					case GD77S_SETTINGS_MAX:
 						break;
 				}
 
