@@ -978,7 +978,7 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 			buffer[cpos] = 0;
 
 #if defined(PLATFORM_RD5R)
-			ucPrintCentered(28, chomp(buffer), FONT_SIZE_3);
+			ucPrintCentered(24, chomp(buffer), FONT_SIZE_3);
 #else
 			ucPrintCentered(32, chomp(buffer), FONT_SIZE_3);
 #endif
@@ -989,7 +989,7 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 
 			if (strlen(pbuf))
 #if defined(PLATFORM_RD5R)
-				printSplitOrSpanText(32, pbuf);
+				printSplitOrSpanText(33, pbuf);
 #else
 				printSplitOrSpanText(48, pbuf);
 #endif
