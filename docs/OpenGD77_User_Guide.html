@@ -25,6 +25,7 @@
 <h1 id="opengd77-opengd77s-opendm1801-openrd5r-user-guide">OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide</h1>
 <p>For latest information and discussions, please refer to the development and community forum at <a href="https://opengd77.com">https://opengd77.com</a></p>
 <!-- MDTOC maxdepth:6 firsth1:1 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
+
 <ul>
 <li><a href="#opengd77-opengd77s-opendm1801-openrd5r-user-guide">OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide</a><ul>
 <li><a href="#introduction">Introduction</a><ul>
@@ -749,7 +750,8 @@ Pressing the <strong>Red</strong> menu key closes the menu without making any ch
 <p>It is the responsibility of the user to set an appropriate power level that will not overheat and damage the PA.</p>
 <p>In Hotspot mode, if PiStar (MMDVMHost) sends a power setting of 100% it, the assumption is that that PiStar has not been correctly configured for the OpenGD77 and this value is disregarded.</p>
 <p>Instead the firmware will use the power setting specified by the user in the Utilities menu, which will default to 1W.</p>
-<p>If the power setting in the PiStar MMDVMHost Expert settings is any other value e.g. 50%, the hotspot will use that power value e.g. 2.5W (2500mW)</p>
+<p>If the power setting in the PiStar MMDVMHost Expert settings is any other value e.g. 50%, the hotspot will use that power setting closest to the chosen value.
+So 50% of 5W is 2.5W, and the closest power setting to this is 2W.</p>
 <p>The receive frequency specified by PiStar will be displayed at the bottom of the screen.</p>
 <p><em>Note.</em> Offsets should not be applied to the TX or RX frequencies in PiStar, because the radio should not need any offsets, and any offset will be reflected in the frequency displayed on the radio, because PiStar actually sends the master frequency +/- the offset to the hotspot.</p>
 <p>When the radio receives a RF DMR signal, the green LED on the top of the radio will illuminate as normal, and the name and callsign are displayed if the DMR ID database contains that ID. If the ID is not in the DMR ID database, the ID number will be shown.</p>
