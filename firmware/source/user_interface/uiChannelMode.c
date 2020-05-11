@@ -864,7 +864,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						buf[2U] = SPEECH_SYNTHESIS_OFF;
 						break;
 
-					case GD77S_SETTINGS_POWER: // Entering setting + Power
+					case GD77S_SETTINGS_ZONE: // Entering setting + Zone
 						buf[0u] = 4U;
 						buf[1U] = SPEECH_SYNTHESIS_SET;
 						buf[2U] = SPEECH_SYNTHESIS_ON;
@@ -873,7 +873,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						buildSpeechSettingsFormGD77S(buf, 4U, inGD77SSettings);
 						break;
 
-					case GD77S_SETTINGS_ZONE: // Zone
+					case GD77S_SETTINGS_POWER: // Power
 						buf[0u] = 0U;
 						buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
 						break;
