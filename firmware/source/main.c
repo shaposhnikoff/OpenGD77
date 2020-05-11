@@ -39,33 +39,32 @@
 
 bool PTTToggledDown = false; // PTT toggle feature
 
-void fw_main_task(void *data);
+void mainTask(void *data);
 #if defined(READ_CPUID)
 void debugReadCPUID(void);
 #endif
 
-const char *FIRMWARE_VERSION_STRING = "VK3KYY";//"V0.3.5";
-TaskHandle_t fwMainTaskHandle;
+TaskHandle_t mainTaskHandle;
 
 #if defined(PLATFORM_GD77S)
 static uint32_t lowbatteryTimerForGD77S = 0;
 static const int LOW_BATTERY_INTERVAL_GD77S = ((1000 * 60) * 5); // 5 minutes;
 #endif
 
-void fw_init(void)
+void mainTaskInit(void)
 {
-	xTaskCreate(fw_main_task,                    /* pointer to the task */
+	xTaskCreate(mainTask,                    /* pointer to the task */
 			"fw main task",                      /* task name for kernel awareness debugging */
 			5000L / sizeof(portSTACK_TYPE),      /* task stack size */
 			NULL,                      			 /* optional task startup argument */
 			6U,                                  /* initial priority */
-			fwMainTaskHandle					 /* optional task handle to create */
+			mainTaskHandle					 /* optional task handle to create */
 	);
 
 	vTaskStartScheduler();
 }
 
-void fw_powerOffFinalStage(void)
+void powerOffFinalStage(void)
 {
 	uint32_t m;
 
@@ -103,8 +102,7 @@ void fw_powerOffFinalStage(void)
 #endif
 }
 
-
-static void show_lowbattery(void)
+static void showLowBattery(void)
 {
 	ucClearBuf();
 	ucPrintCentered(32, currentLanguage->low_battery, FONT_SIZE_3);
@@ -118,7 +116,7 @@ static void showErrorMessage(char *message)
 	ucRender();
 }
 
-void fw_main_task(void *data)
+void mainTask(void *data)
 {
 	keyboardCode_t keys;
 	int key_event;
@@ -206,7 +204,7 @@ void fw_main_task(void *data)
 
 	if (get_battery_voltage() < CUTOFF_VOLTAGE_UPPER_HYST)
 	{
-		show_lowbattery();
+		showLowBattery();
 #if !defined(PLATFORM_RD5R)
 		GPIO_PinWrite(GPIO_Keep_Power_On, Pin_Keep_Power_On, 0);
 #endif
@@ -713,13 +711,13 @@ void fw_main_task(void *data)
 			{
 				if (battery_voltage < CUTOFF_VOLTAGE_LOWER_HYST)
 				{
-					show_lowbattery();
+					showLowBattery();
 #if defined(PLATFORM_RD5R)
-					fw_powerOffFinalStage();
+					powerOffFinalStage();
 #else
 					if (GPIO_PinRead(GPIO_Power_Switch, Pin_Power_Switch) != 0)
 					{
-						fw_powerOffFinalStage();
+						powerOffFinalStage();
 					}
 #endif
 				}

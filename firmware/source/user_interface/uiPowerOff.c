@@ -68,6 +68,6 @@ static void handleEvent(uiEvent_t *ev)
 
 	if ((ev->time - m) > 500)
 	{
-		fw_powerOffFinalStage();
+		powerOffFinalStage();
 	}
 }
