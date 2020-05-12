@@ -1943,6 +1943,8 @@ static void getVersion(void)
 			"GD-77S"
 #elif defined(PLATFORM_DM1801)
 			"DM-1801"
+#elif defined(PLATFORM_RD5R)
+			"RD-5R"
 #else
 			"Unknown"
 #endif
