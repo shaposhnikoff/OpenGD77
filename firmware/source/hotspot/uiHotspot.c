@@ -125,7 +125,7 @@ M: 2020-01-07 09:52:15.246 DMR Slot 2, received network end of voice transmissio
 
 #define MMDVM_HEADER_LENGTH 4U
 
-#define HOTSPOT_VERSION_STRING "OpenGD77_HS v0.1.3"
+#define HOTSPOT_VERSION_STRING "OpenGD77_HS v0.1.4"
 #define concat(a, b) a " GitID #" b ""
 static const char HARDWARE[] = concat(HOTSPOT_VERSION_STRING, GITVERSION);
 
@@ -294,6 +294,7 @@ static const struct
 		{',', 0xEEAEE000U, 22U},
 		{'-', 0xEAAE0000U, 18U},
 		{'=', 0xEAB80000U, 16U},
+		{'.', 0xBAEB8000U, 20U},
 		{' ', 0x00000000U, 4U},
 		{0U,  0x00000000U, 0U}
 };
@@ -1654,7 +1655,7 @@ static void hotspotStateMachine(void)
 			}
 			else
 			{
-				if ((slot_state < DMR_STATE_TX_START_1) ||
+				if ((trxIsTransmitting) ||
 						((modemState == STATE_IDLE) && trxTransmissionEnabled)) // MMDVMHost asked to go back to IDLE (mostly on shutdown)
 				{
 					disableTransmission();
