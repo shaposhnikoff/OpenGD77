@@ -25,6 +25,7 @@
 
 
 int trx_measure_count = 0;
+volatile bool trxTransmissionEnabled = false;
 volatile bool trxIsTransmitting = false;
 uint32_t trxTalkGroupOrPcId = 9;// Set to local TG just in case there is some problem with it not being loaded
 uint32_t trxDMRID = 0;// Set ID to 0. Not sure if its valid. This value needs to be loaded from the codeplug.
@@ -574,7 +575,7 @@ void trxSetFrequency(int fRx,int fTx, int dmrMode)
 
 int trxGetFrequency(void)
 {
-	if (trxIsTransmitting)
+	if (trxTransmissionEnabled)
 	{
 		return currentTxFrequency;
 	}
@@ -596,7 +597,7 @@ void trx_setRX(void)
 
 void trx_setTX(void)
 {
-	trxIsTransmitting = true;
+	trxTransmissionEnabled = true;
 
 	// RX pre-amp off
 	GPIO_PinWrite(GPIO_VHF_RX_amp_power, Pin_VHF_RX_amp_power, 0);

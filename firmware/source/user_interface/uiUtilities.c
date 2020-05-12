@@ -94,7 +94,7 @@ bool isQSODataAvailableForCurrentTalker(void)
 
 	// We're in digital mode, RXing, and current talker is already at the top of last heard list,
 	// hence immediately display complete contact/TG info on screen
-	if ((trxIsTransmitting == false) && ((trxGetMode() == RADIO_MODE_DIGITAL) && (rxID != 0) && (HRC6000GetReceivedTgOrPcId() != 0)) &&
+	if ((trxTransmissionEnabled == false) && ((trxGetMode() == RADIO_MODE_DIGITAL) && (rxID != 0) && (HRC6000GetReceivedTgOrPcId() != 0)) &&
 			(getAudioAmpStatus() & AUDIO_AMP_MODE_RF)
 			&& checkTalkGroupFilter() &&
 			(((item = lastheardFindInList(rxID)) != NULL) && (item == LinkHead)))
@@ -1165,7 +1165,7 @@ void menuUtilityRenderHeader(void)
 	static bool scanBlinkPhase = true;
 	static uint32_t blinkTime = 0;
 
-	if (!trxIsTransmitting)
+	if (!trxTransmissionEnabled)
 	{
 		drawRSSIBarGraph();
 	}

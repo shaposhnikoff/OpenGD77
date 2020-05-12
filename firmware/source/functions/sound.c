@@ -291,7 +291,7 @@ void soundSendData(void)
 // This function is used during transmission.
 void soundReceiveData(void)
 {
-	if (trxIsTransmitting==false)
+	if (trxTransmissionEnabled==false)
 	{
 		return;
 	}

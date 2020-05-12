@@ -557,7 +557,7 @@ static void updateScreen(uint8_t rxCommandState)
 
 	ucPrintAt(DISPLAY_SIZE_X - (strlen(buffer) * 6) - 4, 4, buffer, FONT_SIZE_1);
 
-	if (trxIsTransmitting)
+	if (trxTransmissionEnabled)
 	{
 		if (displayFWVersion)
 		{
@@ -729,9 +729,9 @@ static bool handleEvent(uiEvent_t *ev)
 static void hotspotExit(void)
 {
 	disableTransmission();
-	if (trxIsTransmitting)
+	if (trxTransmissionEnabled)
 	{
-		trxIsTransmitting = false;
+		trxTransmissionEnabled = false;
 		trx_setRX();
 
 		GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
@@ -1405,9 +1405,9 @@ static void hotspotStateMachine(void)
 			lastRxState = HOTSPOT_RX_UNKNOWN;
 
 			// force immediate shutdown of Tx if we get here and the tx is on for some reason.
-			if (trxIsTransmitting)
+			if (trxTransmissionEnabled)
 			{
-				trxIsTransmitting = false;
+				trxTransmissionEnabled = false;
 				disableTransmission();
 			}
 
@@ -1442,9 +1442,9 @@ static void hotspotStateMachine(void)
 
 		case HOTSPOT_STATE_RX_START:
 			// force immediate shutdown of Tx if we get here and the tx is on for some reason.
-			if (trxIsTransmitting)
+			if (trxTransmissionEnabled)
 			{
-				trxIsTransmitting = false;
+				trxTransmissionEnabled = false;
 				disableTransmission();
 			}
 
@@ -1478,9 +1478,9 @@ static void hotspotStateMachine(void)
 				rfFrameBufCount = 0;
 				wavbuffer_count = 0;
 
-				if (trxIsTransmitting)
+				if (trxTransmissionEnabled)
 				{
-					trxIsTransmitting = false;
+					trxTransmissionEnabled = false;
 					disableTransmission();
 				}
 
@@ -1635,7 +1635,7 @@ static void hotspotStateMachine(void)
 			if (wavbuffer_count == 0 || modemState == STATE_IDLE)
 			{
 				hotspotState = HOTSPOT_STATE_TX_SHUTDOWN;
-				trxIsTransmitting = false;
+				trxTransmissionEnabled = false;
 			}
 			break;
 
@@ -1655,7 +1655,7 @@ static void hotspotStateMachine(void)
 			else
 			{
 				if ((slot_state < DMR_STATE_TX_START_1) ||
-						((modemState == STATE_IDLE) && trxIsTransmitting)) // MMDVMHost asked to go back to IDLE (mostly on shutdown)
+						((modemState == STATE_IDLE) && trxTransmissionEnabled)) // MMDVMHost asked to go back to IDLE (mostly on shutdown)
 				{
 					disableTransmission();
 					hotspotState = HOTSPOT_STATE_RX_START;
@@ -2413,7 +2413,7 @@ static void handleHotspotRequest(void)
 
 	if (cwKeying)
 	{
-		if (!trxIsTransmitting)
+		if (!trxTransmissionEnabled)
 		{
 			// Start TX CWID, prepare for ANALOG
 			if (trxGetMode() != RADIO_MODE_ANALOG)
@@ -2437,10 +2437,10 @@ static void handleHotspotRequest(void)
 		{
 			disableTransmission();
 
-			if (trxIsTransmitting)
+			if (trxTransmissionEnabled)
 			{
 				// Stop TXing;
-				trxIsTransmitting = false;
+				trxTransmissionEnabled = false;
 				trx_setRX();
 				GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
 

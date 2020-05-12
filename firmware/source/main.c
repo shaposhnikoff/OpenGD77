@@ -287,17 +287,17 @@ void mainTask(void *data)
 				}
 				else
 				{
-					if (!trxIsTransmitting && voxIsTriggered() && ((buttons & BUTTON_PTT) == 0))
+					if (!trxTransmissionEnabled && voxIsTriggered() && ((buttons & BUTTON_PTT) == 0))
 					{
 						button_event = EVENT_BUTTON_CHANGE;
 						buttons |= BUTTON_PTT;
 					}
-					else if (trxIsTransmitting && ((voxIsTriggered() == false) || (keys.event & KEY_MOD_PRESS)))
+					else if (trxTransmissionEnabled && ((voxIsTriggered() == false) || (keys.event & KEY_MOD_PRESS)))
 					{
 						button_event = EVENT_BUTTON_CHANGE;
 						buttons &= ~BUTTON_PTT;
 					}
-					else if (trxIsTransmitting && voxIsTriggered())
+					else if (trxTransmissionEnabled && voxIsTriggered())
 					{
 						// Any key/button event reset the vox
 						if ((button_event != EVENT_BUTTON_NONE) || (keys.event != EVENT_KEY_NONE))
@@ -567,7 +567,7 @@ void mainTask(void *data)
 				}
 			}
 
-			if (!trxIsTransmitting && updateLastHeard==true)
+			if (!trxTransmissionEnabled && updateLastHeard==true)
 			{
 				lastHeardListUpdate((uint8_t *)DMR_frame_buffer, false);
 				updateLastHeard=false;
@@ -581,7 +581,7 @@ void mainTask(void *data)
 				{
 					menuClearPrivateCall();
 				}
-				if (!trxIsTransmitting && menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA && nonVolatileSettings.privateCalls == true)
+				if (!trxTransmissionEnabled && menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA && nonVolatileSettings.privateCalls == true)
 				{
 					if (HRC6000GetReceivedTgOrPcId() == (trxDMRID | (PC_CALL_FLAG<<24)))
 					{

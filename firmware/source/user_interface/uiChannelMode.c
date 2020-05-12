@@ -436,7 +436,7 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 			prevDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 			isDisplayingQSOData=false;
 			menuUtilityReceivedPcId = 0x00;
-			if (trxIsTransmitting)
+			if (trxTransmissionEnabled)
 			{
 				// Squelch is displayed, PTT was pressed
 				// Clear its region
@@ -551,7 +551,7 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 #endif
 			}
 			// Squelch will be cleared later, 1s after last change
-			else if(displaySquelch && !trxIsTransmitting && !displayChannelSettings)
+			else if(displaySquelch && !trxTransmissionEnabled && !displayChannelSettings)
 			{
 				static const int xbar = 74; // 128 - (51 /* max squelch px */ + 3);
 
@@ -598,11 +598,11 @@ void heartBeatActivityForGD77S(uiEvent_t *ev)
 	//   We use real time GPIO readouts, as LED could be turned on/off by another task.
 	// </paranoid_mode>
 	if ((GPIO_PinRead(GPIO_LEDred, Pin_LEDred) || GPIO_PinRead(GPIO_LEDgreen, Pin_LEDgreen)) // Any led is ON
-			&& (trxIsTransmitting || (ev->buttons & BUTTON_PTT) || (getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP)) || trxCarrierDetected() || ev->hasEvent)) // we're transmitting, or receiving, or user interaction.
+			&& (trxTransmissionEnabled || (ev->buttons & BUTTON_PTT) || (getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP)) || trxCarrierDetected() || ev->hasEvent)) // we're transmitting, or receiving, or user interaction.
 	{
 		// Turn off the red LED, if not transmitting
 		if (GPIO_PinRead(GPIO_LEDred, Pin_LEDred) // Red is ON
-				&& ((trxIsTransmitting == false) || ((ev->buttons & BUTTON_PTT) == 0))) // No TX
+				&& ((trxTransmissionEnabled == false) || ((ev->buttons & BUTTON_PTT) == 0))) // No TX
 		{
 			GPIO_PinWrite(GPIO_LEDred, Pin_LEDred, 0);
 		}
@@ -610,11 +610,11 @@ void heartBeatActivityForGD77S(uiEvent_t *ev)
 		// Turn off the green LED, if not receiving, or no AF output
 		if (GPIO_PinRead(GPIO_LEDgreen, Pin_LEDgreen)) // Green is ON
 		{
-			if ((trxIsTransmitting || (ev->buttons & BUTTON_PTT))
+			if ((trxTransmissionEnabled || (ev->buttons & BUTTON_PTT))
 					|| ((trxGetMode() == RADIO_MODE_DIGITAL) && (slot_state != DMR_STATE_IDLE))
 					|| (((getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP)) != 0) || trxCarrierDetected()))
 			{
-				if ((ev->buttons & BUTTON_PTT) && (trxIsTransmitting == false)) // RX Only or Out of Band
+				if ((ev->buttons & BUTTON_PTT) && (trxTransmissionEnabled == false)) // RX Only or Out of Band
 				{
 					GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
 				}
@@ -633,7 +633,7 @@ void heartBeatActivityForGD77S(uiEvent_t *ev)
 	}
 
 	// Nothing is happening, blink
-	if (((trxIsTransmitting == false) && ((ev->buttons & BUTTON_PTT) == 0))
+	if (((trxTransmissionEnabled == false) && ((ev->buttons & BUTTON_PTT) == 0))
 			&& ((ev->hasEvent == false) && ((getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP)) == 0) && (trxCarrierDetected() == false)))
 	{
 		// Blink both LEDs to have Orange color
@@ -825,7 +825,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 
 	if (ev->events & ROTARY_EVENT)
 	{
-		if (!trxIsTransmitting && (ev->rotary > 0))
+		if (!trxTransmissionEnabled && (ev->rotary > 0))
 		{
 			inGD77SSettings = 0; // Get out of the settings when selecting another channel.
 			nonVolatileSettings.overrideTG = 0;

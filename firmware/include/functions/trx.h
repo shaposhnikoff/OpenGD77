@@ -59,6 +59,7 @@ extern const uint16_t TRX_DCSCodes[];
 
 extern int trxDMRMode;
 
+extern volatile bool trxTransmissionEnabled;
 extern volatile bool trxIsTransmitting;
 extern uint32_t trxTalkGroupOrPcId;
 extern uint32_t trxDMRID;
