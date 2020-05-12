@@ -251,7 +251,8 @@ static void handleEvent(uiEvent_t *ev)
 		else
 		{
 			// In DMR mode, wait for the DMR system to finish before exiting
-			if (slot_state < DMR_STATE_TX_START_1)
+
+			if (!trxIsTransmitting)
 			{
 				if ((nonVolatileSettings.beepOptions & BEEP_TX_STOP) && (melody_play == NULL))
 				{
