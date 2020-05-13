@@ -36,7 +36,7 @@ typedef enum
 } GD77S_SETTINGS_t;
 
 static bool firstRunGD77S = true;
-static GD77S_SETTINGS_t inGD77SSettings = GD77S_SETTINGS_MAX;
+static GD77S_SETTINGS_t inGD77SSettings = GD77S_SETTINGS_CHANNEL_DETAILS;
 static bool channelOutOfBoundsForGD77S = false;
 
 static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSpeech);
@@ -117,8 +117,6 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		}
 
 #if defined(PLATFORM_GD77S)
-		inGD77SSettings = GD77S_SETTINGS_CHANNEL_DETAILS; // Get out of the settings when selecting another channel.
-
 		// Ensure the correct channel is loaded, on the very first run
 		if (firstRunGD77S)
 		{
@@ -614,16 +612,6 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 }
 
 #if defined(PLATFORM_GD77S)
-bool isInSettingsForGD77S(void)
-{
-	return (inGD77SSettings != GD77S_SETTINGS_CHANNEL_DETAILS);
-}
-
-void leaveSettingsForGS77S(void)
-{
-	inGD77SSettings = GD77S_SETTINGS_CHANNEL_DETAILS;
-}
-
 void heartBeatActivityForGD77S(uiEvent_t *ev)
 {
 	static const uint32_t periods[] = { 5000, 100, 100, 100, 100, 100 };
@@ -769,7 +757,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 
 	if (updateDisplay || forceSpeech)
 	{
-		if ((channelOutOfBoundsForGD77S == false) && (inGD77SSettings == GD77S_SETTINGS_CHANNEL_DETAILS))
+		if (channelOutOfBoundsForGD77S == false)
 		{
 			buf[0U] = 2U;
 			buf[1U] = SPEECH_SYNTHESIS_CHANNEL;
@@ -840,9 +828,17 @@ static void buildSpeechSettingsFormGD77S(uint8_t *buf, uint8_t offset, GD77S_SET
 
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
+					// PC/TG
 					buf[0U]++;
 					buf[++offset] = SPEECH_SYNTHESIS_ID_CODE;
 					len = speechSynthesisBuildNumerical(&buf[offset + 1U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset - 1U), (trxTalkGroupOrPcId & 0x00FFFFFF), 1, true);
+					buf[0U] += len;
+					offset += len;
+
+					// TS
+					buf[0U]++;
+					buf[++offset] = SPEECH_SYNTHESIS_KEY;
+					len = speechSynthesisBuildNumerical(&buf[offset + 1U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset - 1U), (trxGetDMRTimeSlot() + 1), 1, true);
 					buf[0U] += len;
 					offset += len;
 				}
@@ -883,7 +879,6 @@ static void handleEventForGD77S(uiEvent_t *ev)
 	{
 		if (!trxTransmissionEnabled && (ev->rotary > 0))
 		{
-			inGD77SSettings = GD77S_SETTINGS_CHANNEL_DETAILS; // Get out of the settings when selecting another channel.
 			nonVolatileSettings.overrideTG = 0;
 			checkAndUpdateSelectedChannelForGD77S(ev->rotary, false);
 			clearActiveDMRID();
@@ -902,23 +897,22 @@ static void handleEventForGD77S(uiEvent_t *ev)
 				switch (inGD77SSettings)
 				{
 					case GD77S_SETTINGS_CHANNEL_DETAILS: // Leaving settings
-						buf[0u] = 2U;
+						buf[0U] = 2U;
 						buf[1U] = SPEECH_SYNTHESIS_SET;
 						buf[2U] = SPEECH_SYNTHESIS_OFF;
 						break;
 
 					case GD77S_SETTINGS_ZONE: // Entering setting + Zone
-						buf[0u] = 4U;
+						buf[0U] = 3U;
 						buf[1U] = SPEECH_SYNTHESIS_SET;
 						buf[2U] = SPEECH_SYNTHESIS_ON;
 						buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-						buf[4U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-						buildSpeechSettingsFormGD77S(buf, 4U, inGD77SSettings);
+						buildSpeechSettingsFormGD77S(buf, buf[0U], inGD77SSettings);
 						break;
 
 					case GD77S_SETTINGS_POWER: // Power
-						buf[0u] = 0U;
-						buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
+						buf[0U] = 0U;
+						buildSpeechSettingsFormGD77S(buf, buf[0U], inGD77SSettings);
 						break;
 
 					case GD77S_SETTINGS_MAX:
@@ -927,12 +921,9 @@ static void handleEventForGD77S(uiEvent_t *ev)
 			}
 			else
 			{
-				if (inGD77SSettings == GD77S_SETTINGS_CHANNEL_DETAILS)
-				{
-					buf[0u] = 1U;
-					buf[1U] = SPEECH_SYNTHESIS_BATTERY;
-					buf[0U] += speechSynthesisBuildNumerical(&buf[2U], SPEECH_SYNTHESIS_BUFFER_SIZE - 2U, getBatteryPercentage(), 1, false);
-				}
+				buf[0U] = 1U;
+				buf[1U] = SPEECH_SYNTHESIS_BATTERY;
+				buf[0U] += speechSynthesisBuildNumerical(&buf[2U], SPEECH_SYNTHESIS_BUFFER_SIZE - 2U, getBatteryPercentage(), 1, false);
 			}
 
 			if (buf[0U] != 0U)

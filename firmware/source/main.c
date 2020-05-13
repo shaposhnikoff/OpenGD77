@@ -557,12 +557,6 @@ void mainTask(void *data)
 						}
 						if (!wasScanning)
 						{
-#if defined(PLATFORM_GD77S)
-							if (isInSettingsForGD77S())
-							{
-								leaveSettingsForGS77S();
-							}
-#endif
 							menuSystemPushNewMenu(UI_TX_SCREEN);
 						}
 					}
