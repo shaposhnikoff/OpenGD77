@@ -74,6 +74,8 @@
 
 #if defined(PLATFORM_GD77S)
 #define BUTTON_ORANGE_LONG 0x00000010
+#define BUTTON_SK1_LONG    0x00000020
+#define BUTTON_SK2_LONG    0x00000040
 #endif
 #endif
 

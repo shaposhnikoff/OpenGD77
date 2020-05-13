@@ -146,6 +146,7 @@ static SpeechCurrentSequence_t ssSeq;
 
 #endif
 
+#if defined(PLATFORM_GD77S)
 static void speechSynthesisSilence(void)
 {
 	if (trxGetMode() == RADIO_MODE_ANALOG)
@@ -177,6 +178,7 @@ static void speechSynthesisSilence(void)
 		GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
 	}
 }
+#endif
 
 void speechSynthesisInit(void)
 {

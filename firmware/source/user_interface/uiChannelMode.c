@@ -944,40 +944,45 @@ static void handleEventForGD77S(uiEvent_t *ev)
 
 		if (ev->buttons & BUTTON_SK1)
 		{
-			switch (GD77SParameters.inSettings)
+			if (ev->buttons & BUTTON_SK1_LONG)
 			{
-				case GD77S_SETTINGS_CHANNEL_DETAILS: // Not in settings, spell channel details.
-					if (GD77SParameters.channelOutOfBounds == false)
-					{
+				switch (GD77SParameters.inSettings)
+				{
+					case GD77S_SETTINGS_ZONE: // Zones
+						// No "All Channels" on GD77S
+						MENU_INC(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
+
+						nonVolatileSettings.overrideTG = 0; // remove any TG override
+						nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
+						nonVolatileSettings.currentChannelIndexInZone = -2; // Will be updated when reloading the UiChannelMode screen
+						channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
+
+						menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
+						GD77SParameters.inSettings = GD77S_SETTINGS_ZONE;
+
 						buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
-					}
-					break;
+						break;
 
-				case GD77S_SETTINGS_ZONE: // Zones
-					// No "All Channels" on GD77S
-					MENU_INC(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
+					case GD77S_SETTINGS_POWER: // Power
+						if (nonVolatileSettings.txPowerLevel < MAX_POWER_SETTING_NUM)
+						{
+							nonVolatileSettings.txPowerLevel++;
+							buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
+						}
+						break;
 
-					nonVolatileSettings.overrideTG = 0; // remove any TG override
-					nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
-					nonVolatileSettings.currentChannelIndexInZone = -2; // Will be updated when reloading the UiChannelMode screen
-					channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
+					case GD77S_SETTINGS_CHANNEL_DETAILS:
+					case GD77S_SETTINGS_MAX:
+						break;
+				}
 
-					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
-					GD77SParameters.inSettings = GD77S_SETTINGS_ZONE;
-
-					buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
-					break;
-
-				case GD77S_SETTINGS_POWER: // Power
-					if (nonVolatileSettings.txPowerLevel < MAX_POWER_SETTING_NUM)
-					{
-						nonVolatileSettings.txPowerLevel++;
-						buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
-					}
-					break;
-
-				case GD77S_SETTINGS_MAX:
-					break;
+			}
+			else // Short SK1 press
+			{
+				if (GD77SParameters.channelOutOfBounds == false)
+				{
+					buildSpeechSettingsFormGD77S(buf, 0U, GD77S_SETTINGS_CHANNEL_DETAILS);
+				}
 			}
 
 			if (buf[0U] != 0U)
@@ -987,7 +992,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 		}
 		else if (ev->buttons & BUTTON_SK2)
 		{
-			if (GD77SParameters.inSettings != GD77S_SETTINGS_CHANNEL_DETAILS)
+			if (ev->buttons & BUTTON_SK2_LONG)
 			{
 				switch (GD77SParameters.inSettings)
 				{
@@ -1024,7 +1029,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					speechSynthesisSpeak(buf);
 				}
 			}
-			else
+			else // Short SK2 press
 			{
 				uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
