@@ -35,9 +35,19 @@ typedef enum
 	GD77S_SETTINGS_MAX
 } GD77S_SETTINGS_t;
 
-static bool firstRunGD77S = true;
-static GD77S_SETTINGS_t inGD77SSettings = GD77S_SETTINGS_CHANNEL_DETAILS;
-static bool channelOutOfBoundsForGD77S = false;
+typedef struct
+{
+	bool             firstRun;
+	GD77S_SETTINGS_t inSettings;
+	bool             channelOutOfBounds;
+} GD77SParameters_t;
+
+static GD77SParameters_t GD77SParameters =
+{
+		.firstRun = true,
+		.inSettings = GD77S_SETTINGS_CHANNEL_DETAILS,
+		.channelOutOfBounds = false
+};
 
 static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSpeech);
 static void handleEventForGD77S(uiEvent_t *ev);
@@ -118,11 +128,11 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 
 #if defined(PLATFORM_GD77S)
 		// Ensure the correct channel is loaded, on the very first run
-		if (firstRunGD77S)
+		if (GD77SParameters.firstRun)
 		{
 			if (speechSynthesisIsSpeaking() == false)
 			{
-				firstRunGD77S = false;
+				GD77SParameters.firstRun = false;
 				checkAndUpdateSelectedChannelForGD77S(rotarySwitchGetPosition(), true);
 			}
 		}
@@ -149,17 +159,17 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 #if defined(PLATFORM_GD77S)
 			// Just ensure rotary's selected channel is matching the already loaded one
 			// as rotary selector could be turned while the GD is OFF, or in hotspot mode.
-			if ((rotarySwitchGetPosition() != getCurrentChannelInCurrentZoneForGD77S()) || (firstRunGD77S == true))
+			if ((rotarySwitchGetPosition() != getCurrentChannelInCurrentZoneForGD77S()) || (GD77SParameters.firstRun == true))
 			{
 				if (speechSynthesisIsSpeaking() == false)
 				{
-					checkAndUpdateSelectedChannelForGD77S(rotarySwitchGetPosition(), firstRunGD77S);
+					checkAndUpdateSelectedChannelForGD77S(rotarySwitchGetPosition(), GD77SParameters.firstRun);
 
 					// Opening channel number announce has not took place yet, probably because it was telling
 					// parameter like new hotspot mode selection.
-					if (firstRunGD77S)
+					if (GD77SParameters.firstRun)
 					{
-						firstRunGD77S = false;
+						GD77SParameters.firstRun = false;
 					}
 
 				}
@@ -690,7 +700,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 
 	if(currentZone.NOT_IN_MEMORY_isAllChannelsZone)
 	{
-		channelOutOfBoundsForGD77S = false;
+		GD77SParameters.channelOutOfBounds = false;
 		if (codeplugChannelIndexIsValid(chanNum))
 		{
 			if (chanNum != nonVolatileSettings.currentChannelIndexInAllZone)
@@ -702,7 +712,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 		}
 		else
 		{
-			channelOutOfBoundsForGD77S = true;
+			GD77SParameters.channelOutOfBounds = true;
 			if (speechSynthesisIsSpeaking() == false)
 			{
 				buf[0U] = 4U;
@@ -718,7 +728,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 	{
 		if ((chanNum - 1) < currentZone.NOT_IN_MEMORY_numChannelsInZone)
 		{
-			channelOutOfBoundsForGD77S = false;
+			GD77SParameters.channelOutOfBounds = false;
 			if ((chanNum - 1) != nonVolatileSettings.currentChannelIndexInZone)
 			{
 				nonVolatileSettings.currentChannelIndexInZone = (chanNum - 1);
@@ -728,7 +738,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 		}
 		else
 		{
-			channelOutOfBoundsForGD77S = true;
+			GD77SParameters.channelOutOfBounds = true;
 			if (speechSynthesisIsSpeaking() == false)
 			{
 				buf[0U] = 4U;
@@ -757,7 +767,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 
 	if (updateDisplay || forceSpeech)
 	{
-		if (channelOutOfBoundsForGD77S == false)
+		if (GD77SParameters.channelOutOfBounds == false)
 		{
 			buf[0U] = 2U;
 			buf[1U] = SPEECH_SYNTHESIS_CHANNEL;
@@ -892,9 +902,9 @@ static void handleEventForGD77S(uiEvent_t *ev)
 		{
 			if (ev->buttons & BUTTON_ORANGE_LONG)
 			{
-				inGD77SSettings = (GD77S_SETTINGS_t) (inGD77SSettings + 1) % GD77S_SETTINGS_MAX;
+				GD77SParameters.inSettings = (GD77S_SETTINGS_t) (GD77SParameters.inSettings + 1) % GD77S_SETTINGS_MAX;
 
-				switch (inGD77SSettings)
+				switch (GD77SParameters.inSettings)
 				{
 					case GD77S_SETTINGS_CHANNEL_DETAILS: // Leaving settings
 						buf[0U] = 2U;
@@ -907,12 +917,12 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						buf[1U] = SPEECH_SYNTHESIS_SET;
 						buf[2U] = SPEECH_SYNTHESIS_ON;
 						buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-						buildSpeechSettingsFormGD77S(buf, buf[0U], inGD77SSettings);
+						buildSpeechSettingsFormGD77S(buf, buf[0U], GD77SParameters.inSettings);
 						break;
 
 					case GD77S_SETTINGS_POWER: // Power
 						buf[0U] = 0U;
-						buildSpeechSettingsFormGD77S(buf, buf[0U], inGD77SSettings);
+						buildSpeechSettingsFormGD77S(buf, buf[0U], GD77SParameters.inSettings);
 						break;
 
 					case GD77S_SETTINGS_MAX:
@@ -934,12 +944,12 @@ static void handleEventForGD77S(uiEvent_t *ev)
 
 		if (ev->buttons & BUTTON_SK1)
 		{
-			switch (inGD77SSettings)
+			switch (GD77SParameters.inSettings)
 			{
 				case GD77S_SETTINGS_CHANNEL_DETAILS: // Not in settings, spell channel details.
-					if (channelOutOfBoundsForGD77S == false)
+					if (GD77SParameters.channelOutOfBounds == false)
 					{
-						buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
+						buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
 					}
 					break;
 
@@ -953,9 +963,9 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
 
 					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
-					inGD77SSettings = GD77S_SETTINGS_ZONE;
+					GD77SParameters.inSettings = GD77S_SETTINGS_ZONE;
 
-					buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
+					buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
 					if (buf[0U] != 0U)
 					{
 						speechSynthesisSpeak(buf);
@@ -967,7 +977,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					if (nonVolatileSettings.txPowerLevel < MAX_POWER_SETTING_NUM)
 					{
 						nonVolatileSettings.txPowerLevel++;
-						buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
+						buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
 					}
 					break;
 
@@ -982,9 +992,9 @@ static void handleEventForGD77S(uiEvent_t *ev)
 		}
 		else if (ev->buttons & BUTTON_SK2)
 		{
-			if (inGD77SSettings != GD77S_SETTINGS_CHANNEL_DETAILS)
+			if (GD77SParameters.inSettings != GD77S_SETTINGS_CHANNEL_DETAILS)
 			{
-				switch (inGD77SSettings)
+				switch (GD77SParameters.inSettings)
 				{
 					case GD77S_SETTINGS_ZONE: // Zones
 						// No "All Channels" on GD77S
@@ -996,9 +1006,9 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screeen that the channel data is now invalid and needs to be reloaded
 
 						menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
-						inGD77SSettings = GD77S_SETTINGS_ZONE;
+						GD77SParameters.inSettings = GD77S_SETTINGS_ZONE;
 
-						buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
+						buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
 						if (buf[0U] != 0U)
 						{
 							speechSynthesisSpeak(buf);
@@ -1010,7 +1020,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						if (nonVolatileSettings.txPowerLevel > 0)
 						{
 							nonVolatileSettings.txPowerLevel--;
-							buildSpeechSettingsFormGD77S(buf, 0U, inGD77SSettings);
+							buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
 						}
 						break;
 
