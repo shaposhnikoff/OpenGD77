@@ -155,6 +155,8 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 			{
 				if (speechSynthesisIsSpeaking() == false)
 				{
+					checkAndUpdateSelectedChannelForGD77S(rotarySwitchGetPosition(), firstRunGD77S);
+
 					// Opening channel number announce has not took place yet, probably because it was telling
 					// parameter like new hotspot mode selection.
 					if (firstRunGD77S)
@@ -162,7 +164,6 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 						firstRunGD77S = false;
 					}
 
-					checkAndUpdateSelectedChannelForGD77S(rotarySwitchGetPosition(), false);
 				}
 			}
 #endif
