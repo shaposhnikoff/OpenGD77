@@ -862,7 +862,7 @@ static void buildSpeechSettingsFormGD77S(uint8_t *buf, uint8_t offset, GD77S_SET
 			buf[offset + 2U] = SPEECH_SYNTHESIS_LEVEL;
 			if (nonVolatileSettings.txPowerLevel < MAX_POWER_SETTING_NUM)
 			{
-				buf[0U] += speechSynthesisBuildNumerical(&buf[offset + 3U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset + 3U), powerLevels[nonVolatileSettings.txPowerLevel], 3, false);
+				buf[0U] += speechSynthesisBuildNumerical(&buf[offset + 3U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset + 3U), powerLevels[nonVolatileSettings.txPowerLevel], 3, true);
 			}
 			else // 5W+
 			{
