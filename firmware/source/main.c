@@ -242,15 +242,22 @@ void fw_main_task(void *data)
 	// Should be initialized before the splash screen, as we don't want melodies when VOX is enabled
 	voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);
 
-	menuInitMenuSystem();
-
 #if defined(PLATFORM_GD77S)
 	// Change hotspot modem type setting
 	if (buttons & BUTTON_SK1)
 	{
+		uint8_t buf[3U] = { 0 };
+
 		nonVolatileSettings.hotspotType = (buttons & BUTTON_PTT) ? HOTSPOT_TYPE_BLUEDV : HOTSPOT_TYPE_MMDVM;
+
+		buf[0U] = 2U;
+		buf[1U] = SPEECH_SYNTHESIS_MODE;
+		buf[2U] = (nonVolatileSettings.hotspotType == HOTSPOT_TYPE_BLUEDV) ? SPEECH_SYNTHESIS_BLUE : SPEECH_SYNTHESIS_RED;
+		speechSynthesisSpeak(buf);
 	}
 #endif
+
+	menuInitMenuSystem();
 
 	// Reset buttons/key states in case some where pressed while booting.
 	button_event = EVENT_BUTTON_NONE;
@@ -552,6 +559,12 @@ void fw_main_task(void *data)
 						}
 						if (!wasScanning)
 						{
+#if defined(PLATFORM_GD77S)
+							if (isInSettingsForGD77S())
+							{
+								leaveSettingsForGS77S();
+							}
+#endif
 							menuSystemPushNewMenu(UI_TX_SCREEN);
 						}
 					}
