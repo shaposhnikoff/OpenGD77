@@ -40,7 +40,7 @@ int main(void) {
     BOARD_BootClockHSRUN();
     BOARD_InitBootPeripherals();
 
-    fw_init();
+    mainTaskInit();
 
     return 0;
 }

@@ -94,7 +94,7 @@ bool isQSODataAvailableForCurrentTalker(void)
 
 	// We're in digital mode, RXing, and current talker is already at the top of last heard list,
 	// hence immediately display complete contact/TG info on screen
-	if ((trxIsTransmitting == false) && ((trxGetMode() == RADIO_MODE_DIGITAL) && (rxID != 0) && (HRC6000GetReceivedTgOrPcId() != 0)) &&
+	if ((trxTransmissionEnabled == false) && ((trxGetMode() == RADIO_MODE_DIGITAL) && (rxID != 0) && (HRC6000GetReceivedTgOrPcId() != 0)) &&
 			(getAudioAmpStatus() & AUDIO_AMP_MODE_RF)
 			&& checkTalkGroupFilter() &&
 			(((item = lastheardFindInList(rxID)) != NULL) && (item == LinkHead)))
@@ -978,7 +978,7 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 			buffer[cpos] = 0;
 
 #if defined(PLATFORM_RD5R)
-			ucPrintCentered(28, chomp(buffer), FONT_SIZE_3);
+			ucPrintCentered(24, chomp(buffer), FONT_SIZE_3);
 #else
 			ucPrintCentered(32, chomp(buffer), FONT_SIZE_3);
 #endif
@@ -989,7 +989,7 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 
 			if (strlen(pbuf))
 #if defined(PLATFORM_RD5R)
-				printSplitOrSpanText(32, pbuf);
+				printSplitOrSpanText(33, pbuf);
 #else
 				printSplitOrSpanText(48, pbuf);
 #endif
@@ -1165,7 +1165,7 @@ void menuUtilityRenderHeader(void)
 	static bool scanBlinkPhase = true;
 	static uint32_t blinkTime = 0;
 
-	if (!trxIsTransmitting)
+	if (!trxTransmissionEnabled)
 	{
 		drawRSSIBarGraph();
 	}

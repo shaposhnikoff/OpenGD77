@@ -331,7 +331,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 						}
 					}
 
-					if (trxIsTransmitting)
+					if (trxTransmissionEnabled)
 					{
 						ucDrawRect(0, CONTACT_TX_FRAME_Y_POS, DISPLAY_SIZE_X, MENU_ENTRY_HEIGHT, true);
 					}
@@ -347,7 +347,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 
 				buffer[bufferLen - 1] = 0;
 
-				if (trxIsTransmitting)
+				if (trxTransmissionEnabled)
 				{
 					ucPrintCentered(CONTACT_TX_Y_POS, buffer, FONT_SIZE_3);
 				}
@@ -396,7 +396,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 
 			if (freq_enter_idx == 0)
 			{
-				if (!trxIsTransmitting)
+				if (!trxTransmissionEnabled)
 				{
 					// if CC scan is active, Rx freq is moved down to the Tx location,
 					// as Contact Info will be displayed here
@@ -415,9 +415,9 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					ucPrintCentered(TX_TIMER_Y_OFFSET, buffer, FONT_SIZE_4);
 				}
 
-				if (screenOperationMode[nonVolatileSettings.currentVFONumber] == VFO_SCREEN_OPERATION_NORMAL || trxIsTransmitting)
+				if (screenOperationMode[nonVolatileSettings.currentVFONumber] == VFO_SCREEN_OPERATION_NORMAL || trxTransmissionEnabled)
 				{
-					printFrequency(true, (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX || trxIsTransmitting), TX_FREQ_Y_POS, currentChannelData->txFreq, true, false);
+					printFrequency(true, (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX || trxTransmissionEnabled), TX_FREQ_Y_POS, currentChannelData->txFreq, true, false);
 				}
 				else
 				{

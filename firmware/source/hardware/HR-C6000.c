@@ -317,7 +317,7 @@ void setMicGainDMR(uint8_t gain)
 
 static inline bool checkTimeSlotFilter(void)
 {
-	if (trxIsTransmitting)
+	if (trxTransmissionEnabled)
 	{
 		return (timeCode == trxGetDMRTimeSlot());
 	}
@@ -641,6 +641,7 @@ inline static void HRC6000SysReceivedDataInt(void)
 		if (trxDMRMode == DMR_MODE_ACTIVE && callAcceptFilter())
 		{
 			slot_state = DMR_STATE_RX_END;
+			trxIsTransmitting = false;
 
 			if (settingsUsbMode == USB_MODE_HOTSPOT)
 			{
@@ -764,7 +765,7 @@ inline static void HRC6000SysInterruptHandler(void)
 	rxColorCode 	= (reg0x52 >> 4) & 0x0f;
 
 
-	if (!trxIsTransmitting) // ignore the LC data when we are transmitting
+	if (!trxTransmissionEnabled) // ignore the LC data when we are transmitting
 	{
 		if ((!ccHold) && (nonVolatileSettings.dmrFilterLevel < DMR_FILTER_CC) )
 		{
@@ -926,11 +927,10 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 	switch (slot_state)
 	{
 		case DMR_STATE_RX_1: // Start RX (first step)
-
 			if (trxDMRMode == DMR_MODE_PASSIVE)
 			{
 
-				if( !isWaking &&  trxIsTransmitting && !checkTimeSlotFilter() && (rxcnt==0) && (tsLockCount > 4))
+				if( !isWaking &&  trxTransmissionEnabled && !checkTimeSlotFilter() && (rxcnt==0) && (tsLockCount > 4))
 				{
 						HRC6000TransitionToTx();
 				}
@@ -967,12 +967,14 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
 			menuDisplayQSODataState= QSO_DISPLAY_DEFAULT_SCREEN;
 			slot_state = DMR_STATE_IDLE;
+			trxIsTransmitting = false;
 			break;
 		case DMR_STATE_TX_START_1: // Start TX (second step)
 			GPIO_PinWrite(GPIO_LEDred, Pin_LEDred, 1);// for repeater wakeup
 			setupPcOrTGHeader();
 			write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x80);    //Transmit during next Timeslot
 			write_SPI_page_reg_byte_SPI0(0x04, 0x50, 0x10);    //Set Data Type to 0001 (Voice LC Header), Data, LCSS=00
+			trxIsTransmitting = true;
 			slot_state = DMR_STATE_TX_START_2;
 			break;
 		case DMR_STATE_TX_START_2: // Start TX (third step)
@@ -1021,7 +1023,7 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			break;
 
 		case DMR_STATE_TX_1: // Ongoing TX (inactive timeslot)
-			if ((trxIsTransmitting==false) && (tx_sequence==0))
+			if ((trxTransmissionEnabled==false) && (tx_sequence==0))
 			{
 				//write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50); // Receive during next Timeslot (no Layer 2 Access)
 				write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x00); 	//Do nothing on the next TS
@@ -1036,7 +1038,7 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			break;
 
 		case DMR_STATE_TX_2: // Ongoing TX (active timeslot)
-			if (trxIsTransmitting)
+			if (trxTransmissionEnabled)
 			{
                 if (settingsUsbMode != USB_MODE_HOTSPOT)
                 {
@@ -1116,6 +1118,7 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 				init_digital_DMR_RX();
 				txstopdelay=30;
 				slot_state = DMR_STATE_IDLE;
+				trxIsTransmitting = false;
 			}
 #endif
 			break;
@@ -1132,6 +1135,7 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 				GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
 				slot_state = DMR_STATE_IDLE;
 			}
+			trxIsTransmitting = false;
 			break;
 		case DMR_STATE_REPEATER_WAKE_1:
 			{
@@ -1168,6 +1172,7 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			{
 				// wait for the signal from the repeater to have toggled timecode at least three times, i.e the signal should be stable and we should be able to go into Tx
 				slot_state = DMR_STATE_RX_1;
+				trxIsTransmitting = false;
 				isWaking = WAKING_MODE_NONE;
 			}
 			break;
@@ -1188,6 +1193,7 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			tick_cnt=0;
 			menuDisplayQSODataState= QSO_DISPLAY_DEFAULT_SCREEN;
 			slot_state = DMR_STATE_IDLE;
+			trxIsTransmitting = false;
         }
 		else
 		{
@@ -1200,6 +1206,7 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 				tick_cnt=0;
 				menuDisplayQSODataState= QSO_DISPLAY_DEFAULT_SCREEN;
 				slot_state = DMR_STATE_IDLE;
+				trxIsTransmitting = false;
 			}
 		}
 	}
@@ -1233,6 +1240,7 @@ void init_digital_state(void)
 {
 	int_timeout=0;
 	slot_state = DMR_STATE_IDLE;
+	trxIsTransmitting = false;
 	tick_cnt=0;
 	skip_count=0;
 	qsodata_timer = 0;
@@ -1321,7 +1329,7 @@ void fw_hrc6000_task(void *data)
 				if (trxGetMode() == RADIO_MODE_ANALOG && melody_play==NULL)
 				{
 					taskENTER_CRITICAL();
-					if (!trxIsTransmitting)
+					if (!trxTransmissionEnabled)
 					{
 						trxCheckAnalogSquelch();
 					}
@@ -1398,7 +1406,7 @@ void tick_HR_C6000(void)
 	}
 
 
-	if (trxIsTransmitting==true  && (isWaking == WAKING_MODE_NONE))
+	if (trxTransmissionEnabled==true  && (isWaking == WAKING_MODE_NONE))
 	{
 		if (slot_state == DMR_STATE_IDLE)
 		{
@@ -1463,6 +1471,7 @@ void tick_HR_C6000(void)
 				clearActiveDMRID();
 				menuDisplayQSODataState= QSO_DISPLAY_DEFAULT_SCREEN;
 				slot_state = DMR_STATE_IDLE;
+				trxIsTransmitting = false;
 			}
 		}
 	}
@@ -1471,7 +1480,7 @@ void tick_HR_C6000(void)
 		int_timeout=0;
 	}
 
-	if (trxIsTransmitting)
+	if (trxTransmissionEnabled)
 	{
 		if (isWaking == WAKING_MODE_WAITING)
 		{
