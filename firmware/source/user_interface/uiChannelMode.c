@@ -966,11 +966,6 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					GD77SParameters.inSettings = GD77S_SETTINGS_ZONE;
 
 					buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
-					if (buf[0U] != 0U)
-					{
-						speechSynthesisSpeak(buf);
-					}
-					return;
 					break;
 
 				case GD77S_SETTINGS_POWER: // Power
@@ -1009,11 +1004,6 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						GD77SParameters.inSettings = GD77S_SETTINGS_ZONE;
 
 						buildSpeechSettingsFormGD77S(buf, 0U, GD77SParameters.inSettings);
-						if (buf[0U] != 0U)
-						{
-							speechSynthesisSpeak(buf);
-						}
-						return;
 						break;
 
 					case GD77S_SETTINGS_POWER: // Power
