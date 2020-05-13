@@ -26,6 +26,10 @@ static uint32_t old_button_state;
 volatile bool PTTLocked = false;
 
 #if defined(PLATFORM_GD77S)
+#define MBUTTON_PRESSED  0x01
+#define MBUTTON_RELEASED 0x02
+#define MBUTTONS_RESET   0x2A
+
 typedef enum
 {
 	MBUTTON_ORANGE,
@@ -34,13 +38,7 @@ typedef enum
 	MBUTTON_MAX
 } MBUTTON_t;
 
-typedef enum
-{
-	MBUTTON_STATE_PRESSED,
-	MBUTTON_STATE_RELEASED
-} MBUTTON_STATE_t;
-
-static bool mbuttons[MBUTTON_MAX][MBUTTON_STATE_RELEASED + 1];
+static uint8_t mbuttons;
 #endif
 
 void buttonsInit(void)
@@ -60,28 +58,33 @@ void buttonsInit(void)
 #endif
 
 #if defined(PLATFORM_GD77S)
-    // Reset Orange/SK1/SK2 buttons state
-    for (uint8_t i = 0; i < MBUTTON_MAX; i++)
-    {
-    	mbuttons[i][MBUTTON_STATE_PRESSED] = false;
-    	mbuttons[i][MBUTTON_STATE_RELEASED] = true;
-    }
+    mbuttons = MBUTTONS_RESET;
 #endif
 
     old_button_state = 0;
 }
 
 #if defined(PLATFORM_GD77S)
+static bool isMButtonPressed(MBUTTON_t mbutton)
+{
+     return (((mbuttons >> (mbutton * 2)) & MBUTTON_PRESSED) & MBUTTON_PRESSED);
+}
+
+static bool isMButtonReleased(MBUTTON_t mbutton)
+{
+     return (((mbuttons >> (mbutton * 2)) & MBUTTON_RELEASED) & MBUTTON_RELEASED);
+}
+
 static void checkMButtonstate(MBUTTON_t mbutton)
 {
-	if (mbuttons[mbutton][MBUTTON_STATE_RELEASED] && (mbuttons[mbutton][MBUTTON_STATE_PRESSED] == false))
+	if (isMButtonReleased(mbutton) && (isMButtonPressed(mbutton) == false))
 	{
 		taskENTER_CRITICAL();
 		timer_mbuttons[mbutton] = (nonVolatileSettings.keypadTimerLong * 1000);
 		taskEXIT_CRITICAL();
 
-		mbuttons[mbutton][MBUTTON_STATE_PRESSED] = true;
-		mbuttons[mbutton][MBUTTON_STATE_RELEASED] = false;
+		mbuttons |= (MBUTTON_PRESSED << (mbutton * 2));
+		mbuttons &= ~(MBUTTON_RELEASED << (mbutton * 2));
 	}
 }
 #endif
@@ -134,18 +137,18 @@ static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonI
 	uint32_t tmp_timer_mbutton = timer_mbuttons[mbutton];
 	taskEXIT_CRITICAL();
 
-	if ((*buttons & buttonID) && mbuttons[mbutton][MBUTTON_STATE_PRESSED] && (mbuttons[mbutton][MBUTTON_STATE_RELEASED] == false) && (tmp_timer_mbutton == 0))
+	if ((*buttons & buttonID) && isMButtonPressed(mbutton) && (isMButtonReleased(mbutton) == false) && (tmp_timer_mbutton == 0))
 	{
 		// Long press
-		mbuttons[mbutton][MBUTTON_STATE_RELEASED] = true;
+		mbuttons |= (MBUTTON_RELEASED << (mbutton * 2));
 		// Set LONG bit
 		*buttons |= (buttonID | buttonLong);
 	}
-	else if (((*buttons & buttonID) == 0) && mbuttons[mbutton][MBUTTON_STATE_PRESSED] && (mbuttons[mbutton][MBUTTON_STATE_RELEASED] == false) && (tmp_timer_mbutton != 0))
+	else if (((*buttons & buttonID) == 0) && isMButtonPressed(mbutton) && (isMButtonReleased(mbutton) == false) && (tmp_timer_mbutton != 0))
 	{
 		// Short press/release cycle
-		mbuttons[mbutton][MBUTTON_STATE_PRESSED] = false;
-		mbuttons[mbutton][MBUTTON_STATE_RELEASED] = true;
+		mbuttons &= ~(MBUTTON_PRESSED << (mbutton * 2));
+		mbuttons |= (MBUTTON_RELEASED << (mbutton * 2));
 
 		taskENTER_CRITICAL();
 		timer_mbuttons[mbutton] = 0;
@@ -155,10 +158,10 @@ static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonI
 		*buttons |= buttonID;
 		*buttons &= ~buttonLong;
 	}
-	else if (((*buttons & buttonID) == 0) && mbuttons[mbutton][MBUTTON_STATE_PRESSED] && mbuttons[mbutton][MBUTTON_STATE_RELEASED])
+	else if (((*buttons & buttonID) == 0) && isMButtonPressed(mbutton) && isMButtonReleased(mbutton))
 	{
 		// Button was still down after a long press, now handle release
-		mbuttons[mbutton][MBUTTON_STATE_PRESSED] = false;
+		mbuttons &= ~(MBUTTON_PRESSED << (mbutton * 2));
 	}
 	else
 	{
