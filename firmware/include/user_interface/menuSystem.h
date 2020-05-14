@@ -18,6 +18,8 @@
 #ifndef _FW_MENUSYSTEM_H_
 #define _FW_MENUSYSTEM_H_
 #include "main.h"
+#include "sound.h"
+#include "settings.h"
 
 typedef enum { NO_EVENT = 0, KEY_EVENT = 0x01, BUTTON_EVENT = 0x02, FUNCTION_EVENT = 0x04, ROTARY_EVENT = 0x08 } uiEventInput_t;
 
@@ -40,8 +42,7 @@ typedef struct
 
 #define MENU_MAX_DISPLAYED_ENTRIES 3
 
-#define MENU_INC(O, M) do { O = (O + 1) % M; } while(0)
-#define MENU_DEC(O, M) do { O = (O + M - 1) % M; } while(0)
+
 
 extern bool uiChannelModeScanActive;
 extern int menuDisplayLightTimer;
@@ -109,6 +110,9 @@ void menuClearPrivateCall(void);
 void menuAcceptPrivateCall(int id);
 
 void menuHotspotRestoreSettings(void);
+
+int menuSystemMenuIncrement(int O, int M);
+int menuSystemMenuDecrement(int O, int M);
 
 #if defined(PLATFORM_GD77S)
 void heartBeatActivityForGD77S(uiEvent_t *ev);

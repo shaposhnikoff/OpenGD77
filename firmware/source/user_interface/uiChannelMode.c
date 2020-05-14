@@ -950,7 +950,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 				{
 					case GD77S_SETTINGS_ZONE: // Zones
 						// No "All Channels" on GD77S
-						MENU_INC(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
+						menuSystemMenuIncrement(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
 
 						nonVolatileSettings.overrideTG = 0; // remove any TG override
 						nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
@@ -998,7 +998,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 				{
 					case GD77S_SETTINGS_ZONE: // Zones
 						// No "All Channels" on GD77S
-						MENU_DEC(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
+						menuSystemMenuDecrement(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
 
 						nonVolatileSettings.overrideTG = 0; // remove any TG override
 						nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
@@ -1414,6 +1414,7 @@ static void handleEvent(uiEvent_t *ev)
 								> (currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1))
 						{
 							nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] = 0;
+							nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 						}
 					}
 					nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
@@ -1468,6 +1469,11 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] =
 									currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1;
+						}
+
+						if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] == 0)
+						{
+							nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 						}
 					}
 					nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
@@ -1602,6 +1608,11 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						nonVolatileSettings.currentChannelIndexInZone = currentZone.NOT_IN_MEMORY_numChannelsInZone - 1;
 					}
+					if (nonVolatileSettings.currentChannelIndexInZone == 0)
+					{
+						nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+					}
+
 				}
 			}
 			loadChannelData(false);
@@ -1692,8 +1703,9 @@ static void handleUpKey(uiEvent_t *ev)
 			nonVolatileSettings.currentChannelIndexInZone++;
 			if (nonVolatileSettings.currentChannelIndexInZone > currentZone.NOT_IN_MEMORY_numChannelsInZone - 1)
 			{
-					nonVolatileSettings.currentChannelIndexInZone = 0;
+				nonVolatileSettings.currentChannelIndexInZone = 0;
 
+				nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 			}
 		}
 		scanTimer = 500;
@@ -1840,11 +1852,11 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{
-		MENU_INC(gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
+		gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
-		MENU_DEC(gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
+		gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
 	}
 
 	updateQuickMenuScreen();

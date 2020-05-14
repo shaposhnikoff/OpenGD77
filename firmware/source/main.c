@@ -116,6 +116,37 @@ static void showErrorMessage(char *message)
 	ucRender();
 }
 
+
+static void keyBeepHandler(keyboardCode_t keys, _Bool PTTToggledDown)
+{
+	// Do not send any beep while scanning, otherwise enabling the AMP will be handled as a valid signal detection.
+	if (keys.event & KEY_MOD_UP)
+	{
+		if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
+		{
+			if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_BEEP)
+			{
+				soundSetMelody(nextKeyBeepMelody);
+			}
+			else
+			{
+				soundSetMelody(melody_key_beep);
+			}
+			nextKeyBeepMelody = (int *)melody_key_beep;// set back to the default beep
+		}
+	}
+	else
+	{
+		if ((keys.event & (KEY_MOD_LONG | KEY_MOD_DOWN)) == (KEY_MOD_LONG | KEY_MOD_DOWN))
+		{
+			if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
+			{
+				soundSetMelody(melody_key_long_beep);
+			}
+		}
+	}
+}
+
 void mainTask(void *data)
 {
 	keyboardCode_t keys;
@@ -410,22 +441,6 @@ void mainTask(void *data)
 #if ! defined(PLATFORM_GD77S)
 			if ((key_event == EVENT_KEY_CHANGE) && ((buttons & BUTTON_PTT) == 0) && (keys.key != 0))
 			{
-				// Do not send any beep while scanning, otherwise enabling the AMP will be handled as a valid signal detection.
-				if (keys.event & KEY_MOD_PRESS)
-				{
-					if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
-					{
-						soundSetMelody(melody_key_beep);
-					}
-				}
-				else if ((keys.event & (KEY_MOD_LONG | KEY_MOD_DOWN)) == (KEY_MOD_LONG | KEY_MOD_DOWN))
-				{
-					if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
-					{
-						soundSetMelody(melody_key_long_beep);
-					}
-				}
-
 				if (KEYCHECK_LONGDOWN(keys, KEY_RED) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 				{
 					contactListContactIndex = 0;
@@ -685,6 +700,10 @@ void mainTask(void *data)
 			ev.time = fw_millis();
 
 			menuSystemCallCurrentMenuTick(&ev);
+			if ((key_event == EVENT_KEY_CHANGE) && ((buttons & BUTTON_PTT) == 0) && (keys.key != 0))
+			{
+				keyBeepHandler(keys, PTTToggledDown);
+			}
 
 #if defined(PLATFORM_RD5R)
 			if (keyFunction == TOGGLE_TORCH)

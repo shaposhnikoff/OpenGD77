@@ -26,9 +26,8 @@ static void handleEvent(uiEvent_t *ev);
 
 enum SOUND_MENU_LIST { OPTIONS_MENU_TIMEOUT_BEEP = 0, OPTIONS_MENU_BEEP_VOLUME, OPTIONS_MENU_DMR_BEEP,
 						OPTIONS_MIC_GAIN_DMR, OPTIONS_MIC_GAIN_FM,
-						OPTIONS_VOX_THRESHOLD, OPTIONS_VOX_TAIL,
+						OPTIONS_VOX_THRESHOLD, OPTIONS_VOX_TAIL, OPTIONS_AUDIO_PROMPT_MODE,
 						NUM_SOUND_MENU_ITEMS};
-
 
 int menuSoundOptions(uiEvent_t *ev, bool isFirstRun)
 {
@@ -107,6 +106,27 @@ static void updateScreen(void)
 					snprintf(buf, bufferLen, "%s:%s", currentLanguage->vox_tail, currentLanguage->n_a);
 				}
 				break;
+			case OPTIONS_AUDIO_PROMPT_MODE:
+				{
+					char *audioPromptOption;
+					switch(nonVolatileSettings.audioPromptMode)
+					{
+						case AUDIO_PROMPT_MODE_NONE:
+							audioPromptOption = (char *) currentLanguage->none;
+							break;
+						case AUDIO_PROMPT_MODE_BEEP:
+							audioPromptOption = (char*) currentLanguage->beep;
+							break;
+						/* Not implemented yet
+						case AUDIO_PROMPT_MODE_VOICE:
+							audioPromptOption = currentLanguage->voice;
+							break;
+						*/
+					}
+					snprintf(buf, bufferLen, "%s:%s", currentLanguage->audio_prompt, audioPromptOption);
+				}
+				break;
+
 		}
 
 		buf[bufferLen - 1] = 0;
@@ -125,11 +145,11 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
 		{
-			MENU_INC(gMenusCurrentItemIndex, NUM_SOUND_MENU_ITEMS);
+			gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, NUM_SOUND_MENU_ITEMS);
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 		{
-			MENU_DEC(gMenusCurrentItemIndex, NUM_SOUND_MENU_ITEMS);
+			gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, NUM_SOUND_MENU_ITEMS);
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 		{
@@ -181,6 +201,13 @@ static void handleEvent(uiEvent_t *ev)
 						voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);
 					}
 					break;
+				case OPTIONS_AUDIO_PROMPT_MODE:
+					if (nonVolatileSettings.audioPromptMode < NUM_AUDIO_PROMPT_MODES - 1)
+					{
+						nonVolatileSettings.audioPromptMode++;
+					}
+					break;
+
 			}
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
@@ -232,6 +259,12 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						nonVolatileSettings.voxTailUnits--;
 						voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);
+					}
+					break;
+				case OPTIONS_AUDIO_PROMPT_MODE:
+					if (nonVolatileSettings.audioPromptMode > AUDIO_PROMPT_MODE_NONE)
+					{
+						nonVolatileSettings.audioPromptMode--;
 					}
 					break;
 			}

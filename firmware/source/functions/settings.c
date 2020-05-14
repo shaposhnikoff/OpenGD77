@@ -27,7 +27,7 @@
 
 static const int STORAGE_BASE_ADDRESS 		= 0x6000;
 
-static const int STORAGE_MAGIC_NUMBER 		= 0x4749;
+static const int STORAGE_MAGIC_NUMBER 		= 0x474A;
 
 // Bit patterns for DMR Beep
 const uint8_t BEEP_TX_NONE  = 0x00;
@@ -45,6 +45,7 @@ int contactListContactIndex;
 int settingsUsbMode = USB_MODE_CPS;
 int settingsCurrentChannelNumber=0;
 bool settingsPrivateCallMuteMode = false;
+int *nextKeyBeepMelody = (int *)melody_key_beep;
 
 bool settingsSaveSettings(bool includeVFOs)
 {
@@ -191,6 +192,7 @@ void settingsRestoreDefaultSettings(void)
 	// VOX related
 	nonVolatileSettings.voxThreshold = 20;
 	nonVolatileSettings.voxTailUnits = 4; // 2 seconds tail
+	nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_NONE;
 
 	currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];// Set the current channel data to point to the VFO data since the default screen will be the VFO
 

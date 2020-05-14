@@ -190,11 +190,11 @@ static void handleEvent(uiEvent_t *ev)
 
 		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
 		{
-			MENU_INC(gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
+			gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 		{
-			MENU_DEC(gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
+			gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 		{

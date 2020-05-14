@@ -44,6 +44,7 @@ extern const uint8_t BEEP_TX_STOP;
 
 extern int settingsCurrentChannelNumber;
 extern bool settingsPrivateCallMuteMode;
+extern int *nextKeyBeepMelody;
 extern struct_codeplugChannel_t settingsVFOChannel[2];
 
 typedef struct settingsStruct
@@ -90,6 +91,7 @@ typedef struct settingsStruct
 	uint8_t			beepOptions;
 	uint8_t			voxThreshold; // 0: disabled
 	uint8_t			voxTailUnits; // 500ms units
+	uint8_t			audioPromptMode;
 
 
 } settingsStruct_t;
@@ -97,6 +99,8 @@ typedef struct settingsStruct
 typedef enum DMR_FILTER_TYPE {DMR_FILTER_NONE = 0, DMR_FILTER_CC, DMR_FILTER_CC_TS, DMR_FILTER_CC_TS_TG, DMR_FILTER_CC_TS_DC, DMR_FILTER_CC_TS_RXG ,
 								NUM_DMR_FILTER_LEVELS} dmrFilter_t;
 typedef enum ANALOG_FILTER_TYPE {ANALOG_FILTER_NONE = 0, ANALOG_FILTER_CTCSS, NUM_ANALOG_FILTER_LEVELS} analogFilter_t;
+
+typedef enum AUDIO_PROMPT_MODE { AUDIO_PROMPT_MODE_NONE = 0, AUDIO_PROMPT_MODE_BEEP, NUM_AUDIO_PROMPT_MODES} audioPromtMode_t;// AUDIO_PROMPT_MODE_VOICE
 
 extern settingsStruct_t nonVolatileSettings;
 extern struct_codeplugChannel_t *currentChannelData;

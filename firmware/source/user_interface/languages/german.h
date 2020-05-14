@@ -153,7 +153,10 @@ const stringsTable_t germanLanguage =
 .start					= "Start", // MaxLen 16 (with ':' + .dmr_beep)
 .both					= "Beide", // MaxLen 16 (with ':' + .dmr_beep)
 .vox_threshold                          = "VOX Empf.", // MaxLen 16 (with ':' + .off or 1..30)
-.vox_tail                               = "VOX Dauer" // MaxLen 16 (with ':' + .n_a or '0.0s')
+.vox_tail                               = "VOX Dauer", // MaxLen 16 (with ':' + .n_a or '0.0s')
+.audio_prompt			= "Prompt",// Maxlen 16 (with ':' + .none or .beep or .voice
+.beep					= "Beep",// see .audio_prompt
+.voice					= "Voice" // see .audio_prompt
 };
 /********************************************************************
  *
