@@ -950,7 +950,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 				{
 					case GD77S_SETTINGS_ZONE: // Zones
 						// No "All Channels" on GD77S
-						menuSystemMenuIncrement(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
+						menuSystemMenuIncrement((int32_t *)&nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
 
 						nonVolatileSettings.overrideTG = 0; // remove any TG override
 						nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
@@ -998,7 +998,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 				{
 					case GD77S_SETTINGS_ZONE: // Zones
 						// No "All Channels" on GD77S
-						menuSystemMenuDecrement(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
+						menuSystemMenuDecrement((int32_t *)&nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
 
 						nonVolatileSettings.overrideTG = 0; // remove any TG override
 						nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
@@ -1852,11 +1852,11 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
 	}
 
 	updateQuickMenuScreen();

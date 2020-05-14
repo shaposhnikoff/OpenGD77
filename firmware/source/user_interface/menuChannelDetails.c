@@ -549,12 +549,12 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
+		 menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
 		updateScreen();
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
 		updateScreen();
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))

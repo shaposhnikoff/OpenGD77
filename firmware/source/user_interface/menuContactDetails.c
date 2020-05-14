@@ -207,13 +207,13 @@ static void handleEvent(uiEvent_t *ev)
 		{
 			if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 			{
-				gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, NUM_CONTACT_DETAILS_ITEMS);
+				menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CONTACT_DETAILS_ITEMS);
 			}
 			else
 			{
 				if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 				{
-					gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, NUM_CONTACT_DETAILS_ITEMS);
+					menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CONTACT_DETAILS_ITEMS);
 				}
 				else
 				{
@@ -228,7 +228,7 @@ static void handleEvent(uiEvent_t *ev)
 						case CONTACT_DETAILS_TG:
 							break;
 						case CONTACT_DETAILS_CALLTYPE:
-							tmpContact.callType = menuSystemMenuIncrement(tmpContact.callType,3);
+							menuSystemMenuIncrement((int32_t *)&tmpContact.callType,3);
 							break;
 						case CONTACT_DETAILS_TS:
 							switch (tmpContact.reserve1 & 0x3)
@@ -264,7 +264,7 @@ static void handleEvent(uiEvent_t *ev)
 									updateCursor(true);
 									break;
 								case CONTACT_DETAILS_CALLTYPE:
-									tmpContact.callType = menuSystemMenuDecrement(tmpContact.callType,3);
+									menuSystemMenuDecrement((int32_t *)&tmpContact.callType,3);
 									break;
 								case CONTACT_DETAILS_TS:
 									switch (tmpContact.reserve1 & 0x3)

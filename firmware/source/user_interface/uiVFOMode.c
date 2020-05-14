@@ -1543,11 +1543,11 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
 	}
 
 	updateQuickMenuScreen();
