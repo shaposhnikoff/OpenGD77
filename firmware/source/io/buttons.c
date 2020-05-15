@@ -27,8 +27,7 @@ volatile bool PTTLocked = false;
 
 #if defined(PLATFORM_GD77S)
 #define MBUTTON_PRESSED  0x01
-#define MBUTTON_RELEASED 0x02
-#define MBUTTONS_RESET   0x2A
+#define MBUTTON_LONG     0x02
 
 typedef enum
 {
@@ -58,7 +57,7 @@ void buttonsInit(void)
 #endif
 
 #if defined(PLATFORM_GD77S)
-    mbuttons = MBUTTONS_RESET;
+    mbuttons = 0x00;
 #endif
 
     old_button_state = 0;
@@ -70,21 +69,21 @@ static bool isMButtonPressed(MBUTTON_t mbutton)
      return (((mbuttons >> (mbutton * 2)) & MBUTTON_PRESSED) & MBUTTON_PRESSED);
 }
 
-static bool isMButtonReleased(MBUTTON_t mbutton)
+static bool isMButtonLong(MBUTTON_t mbutton)
 {
-     return (((mbuttons >> (mbutton * 2)) & MBUTTON_RELEASED) & MBUTTON_RELEASED);
+     return (((mbuttons >> (mbutton * 2)) & MBUTTON_LONG) & MBUTTON_LONG);
 }
 
-static void checkMButtonstate(MBUTTON_t mbutton)
+static void checkMButtonState(MBUTTON_t mbutton)
 {
-	if (isMButtonReleased(mbutton) && (isMButtonPressed(mbutton) == false))
+	if (isMButtonPressed(mbutton) == false)
 	{
 		taskENTER_CRITICAL();
 		timer_mbuttons[mbutton] = (nonVolatileSettings.keypadTimerLong * 1000);
 		taskEXIT_CRITICAL();
 
 		mbuttons |= (MBUTTON_PRESSED << (mbutton * 2));
-		mbuttons &= ~(MBUTTON_RELEASED << (mbutton * 2));
+		mbuttons &= ~(MBUTTON_LONG << (mbutton * 2));
 	}
 }
 #endif
@@ -99,7 +98,7 @@ uint32_t buttonsRead(void)
 		result |= BUTTON_ORANGE;
 
 #if defined(PLATFORM_GD77S)
-		checkMButtonstate(MBUTTON_ORANGE);
+		checkMButtonState(MBUTTON_ORANGE);
 #endif
 	}
 #endif // ! PLATFORM_RD5R
@@ -114,7 +113,7 @@ uint32_t buttonsRead(void)
 		result |= BUTTON_SK1;
 
 #if defined(PLATFORM_GD77S)
-		checkMButtonstate(MBUTTON_SK1);
+		checkMButtonState(MBUTTON_SK1);
 #endif
 	}
 
@@ -123,7 +122,7 @@ uint32_t buttonsRead(void)
 		result |= BUTTON_SK2;
 
 #if defined(PLATFORM_GD77S)
-		checkMButtonstate(MBUTTON_SK2);
+		checkMButtonState(MBUTTON_SK2);
 #endif
 	}
 
@@ -137,18 +136,34 @@ static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonI
 	uint32_t tmp_timer_mbutton = timer_mbuttons[mbutton];
 	taskEXIT_CRITICAL();
 
-	if ((*buttons & buttonID) && isMButtonPressed(mbutton) && (isMButtonReleased(mbutton) == false) && (tmp_timer_mbutton == 0))
+	// Note: Short press are send async
+
+	if ((*buttons & buttonID) && isMButtonPressed(mbutton) && isMButtonLong(mbutton))
 	{
-		// Long press
-		mbuttons |= (MBUTTON_RELEASED << (mbutton * 2));
-		// Set LONG bit
-		*buttons |= (buttonID | buttonLong);
+		// button is still down
+		*buttons |= buttonLong;
 	}
-	else if (((*buttons & buttonID) == 0) && isMButtonPressed(mbutton) && (isMButtonReleased(mbutton) == false) && (tmp_timer_mbutton != 0))
+	else if ((*buttons & buttonID) && isMButtonPressed(mbutton) && (isMButtonLong(mbutton) == false))
+	{
+		if (tmp_timer_mbutton == 0)
+		{
+			// Long press
+			mbuttons |= (MBUTTON_LONG << (mbutton * 2));
+
+			// Set LONG bit
+			*buttons |= buttonLong;
+		}
+		else
+		{
+			// Still not a short or long press
+			*buttons &= ~buttonID;
+		}
+	}
+	else if (((*buttons & buttonID) == 0) && isMButtonPressed(mbutton) && (isMButtonLong(mbutton) == false) && (tmp_timer_mbutton != 0))
 	{
 		// Short press/release cycle
 		mbuttons &= ~(MBUTTON_PRESSED << (mbutton * 2));
-		mbuttons |= (MBUTTON_RELEASED << (mbutton * 2));
+		mbuttons &= ~(MBUTTON_LONG << (mbutton * 2));
 
 		taskENTER_CRITICAL();
 		timer_mbuttons[mbutton] = 0;
@@ -158,15 +173,14 @@ static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonI
 		*buttons |= buttonID;
 		*buttons &= ~buttonLong;
 	}
-	else if (((*buttons & buttonID) == 0) && isMButtonPressed(mbutton) && isMButtonReleased(mbutton))
+	else if (((*buttons & buttonID) == 0) && isMButtonPressed(mbutton) && isMButtonLong(mbutton))
 	{
 		// Button was still down after a long press, now handle release
 		mbuttons &= ~(MBUTTON_PRESSED << (mbutton * 2));
-	}
-	else
-	{
-		// Hide Orange state, as short will happen on press/release cycle
-		*buttons &= ~(buttonID | buttonLong);
+		mbuttons &= ~(MBUTTON_LONG << (mbutton * 2));
+
+		// Remove LONG
+		*buttons &= ~buttonLong;
 	}
 }
 #endif
