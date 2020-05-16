@@ -114,7 +114,7 @@ void menuSystemPushNewMenu(int menuNumber)
 		menuControlData.itemIndex[menuControlData.stackPosition] = gMenusCurrentItemIndex;
 		menuControlData.stackPosition++;
 		menuControlData.stack[menuControlData.stackPosition] = menuNumber;
-		gMenusCurrentItemIndex = (menuNumber == MENU_MAIN_MENU) ? 1 : 0;
+		gMenusCurrentItemIndex = 0;//(menuNumber == MENU_MAIN_MENU) ? 1 : 0;
 		menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);
 	}
 }
