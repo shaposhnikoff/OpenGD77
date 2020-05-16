@@ -28,7 +28,6 @@ int menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
 	{
 		int currentMenuNumber = menuSystemGetCurrentMenuNumber();
 		gMenuCurrentMenuList = (menuItemNewData_t *)menusData[currentMenuNumber]->items;
-//		gMenuCurrentMenuList = ((menuItemNewData_t *)&(menusData[currentMenuNumber]->items;
 		gMenusEndIndex = menusData[currentMenuNumber]->numItems;
 		updateScreen();
 	}
