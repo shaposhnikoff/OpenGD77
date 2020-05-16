@@ -1891,6 +1891,12 @@ static void handleEventForGD77S(uiEvent_t *ev)
 		{
 			if (ev->buttons & BUTTON_ORANGE_LONG)
 			{
+				buf[0U] = 1U;
+				buf[1U] = SPEECH_SYNTHESIS_BATTERY;
+				buf[0U] += speechSynthesisBuildNumerical(&buf[2U], SPEECH_SYNTHESIS_BUFFER_SIZE - 2U, getBatteryPercentage(), 1, false);
+			}
+			else
+			{
 				GD77SParameters.uiMode = (GD77S_UIMODES_t) (GD77SParameters.uiMode + 1) % GD77S_UIMODE_MAX;
 
 				switch (GD77SParameters.uiMode)
@@ -1930,12 +1936,6 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					case GD77S_UIMODE_MAX:
 						break;
 				}
-			}
-			else
-			{
-				buf[0U] = 1U;
-				buf[1U] = SPEECH_SYNTHESIS_BATTERY;
-				buf[0U] += speechSynthesisBuildNumerical(&buf[2U], SPEECH_SYNTHESIS_BUFFER_SIZE - 2U, getBatteryPercentage(), 1, false);
 			}
 
 			if (buf[0U] != 0U)
