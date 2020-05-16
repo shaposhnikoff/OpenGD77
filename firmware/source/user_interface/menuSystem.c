@@ -76,8 +76,8 @@ const menuFunctionPointer_t menuFunctions[] = { uiSplashScreen,
 												uiPowerOff,
 												uiVFOMode,
 												uiChannelMode,
-												menuDisplayMenuList,
-												menuDisplayMenuList,
+												menuDisplayMenuList,// display Main menu using the menu display system
+												menuDisplayMenuList,// display Contact menu using the menu display system
 												menuZoneList,
 												menuBattery,
 												menuFirmwareInfoScreen,
@@ -239,7 +239,6 @@ void menuSystemLanguageHasChanged(void)
 }
 
 const menuItemNewData_t mainMenuItems[] = {
-	{ 2,  MENU_CREDITS },
 	{ 3,  MENU_ZONE_LIST },
 	{ 4,  MENU_RSSI_SCREEN },
 	{ 5,  MENU_BATTERY },
@@ -250,7 +249,8 @@ const menuItemNewData_t mainMenuItems[] = {
 	{ 10, MENU_DISPLAY },
 	{ 11, MENU_SOUND },
 	{ 12, MENU_CHANNEL_DETAILS},
-	{ 13, MENU_LANGUAGE}
+	{ 13, MENU_LANGUAGE},
+	{ 2,  MENU_CREDITS },
 };
 
 const menuItemsList_t menuDataMainMenu = {
@@ -259,8 +259,8 @@ const menuItemsList_t menuDataMainMenu = {
 };
 
 const menuItemNewData_t contractMenuItems[] = {
-	{ 14, MENU_CONTACT_NEW },
 	{ 15, MENU_CONTACT_LIST },
+	{ 14, MENU_CONTACT_NEW },
 };
 
 const menuItemsList_t menuDataContact = {
