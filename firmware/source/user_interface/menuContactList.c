@@ -147,7 +147,7 @@ static void handleEvent(uiEvent_t *ev)
 	case MENU_CONTACT_LIST_DISPLAY:
 		if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 		{
-			gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, gMenusEndIndex);
+			menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 			contactListContactIndex = codeplugContactGetDataForNumber(
 					gMenusCurrentItemIndex + 1, contactCallType,
 					&contactListContactData);
@@ -155,7 +155,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 		{
-			gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, gMenusEndIndex);
+			menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 			contactListContactIndex = codeplugContactGetDataForNumber(
 					gMenusCurrentItemIndex + 1, contactCallType,
 					&contactListContactData);
@@ -309,12 +309,12 @@ static void handleSubMenuEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, NUM_CONTACT_LIST_QUICK_MENU_ITEMS);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CONTACT_LIST_QUICK_MENU_ITEMS);
 		updateSubMenuScreen();
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, NUM_CONTACT_LIST_QUICK_MENU_ITEMS);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CONTACT_LIST_QUICK_MENU_ITEMS);
 		updateSubMenuScreen();
 	}
 }

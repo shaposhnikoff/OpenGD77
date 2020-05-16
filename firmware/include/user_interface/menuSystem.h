@@ -111,8 +111,8 @@ void menuAcceptPrivateCall(int id);
 
 void menuHotspotRestoreSettings(void);
 
-int menuSystemMenuIncrement(int O, int M);
-int menuSystemMenuDecrement(int O, int M);
+void menuSystemMenuIncrement(int32_t *O, int32_t M);
+void menuSystemMenuDecrement(int32_t *O, int32_t M);
 
 #if defined(PLATFORM_GD77S)
 void heartBeatActivityForGD77S(uiEvent_t *ev);

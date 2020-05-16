@@ -71,12 +71,12 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuIncrement(gMenusCurrentItemIndex, gMenusEndIndex);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen();
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
-		gMenusCurrentItemIndex = menuSystemMenuDecrement(gMenusCurrentItemIndex, gMenusEndIndex);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen();
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))

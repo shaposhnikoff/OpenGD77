@@ -411,22 +411,20 @@ void moveCursorRightInString(char *str, int *pos, int max, bool insert)
 	}
 }
 
-int menuSystemMenuIncrement(int currentItem, int numItems)
+void menuSystemMenuIncrement(int32_t *currentItem, int32_t numItems)
 {
-	currentItem = (currentItem + 1) % numItems;
-	if (currentItem == 0)
+	*currentItem = (*currentItem + 1) % numItems;
+	if (*currentItem == 0)
 	{
 		nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 	}
-	return currentItem;
 }
 
-int menuSystemMenuDecrement(int currentItem, int numItems)
+void menuSystemMenuDecrement(int32_t *currentItem, int32_t numItems)
 {
-	currentItem = (currentItem + numItems - 1) % numItems;
-	if (currentItem == 0)
+	*currentItem = (*currentItem + numItems - 1) % numItems;
+	if (*currentItem == 0)
 	{
 		nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 	}
-	return currentItem;
 }
