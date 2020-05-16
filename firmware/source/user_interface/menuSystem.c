@@ -21,8 +21,8 @@
 #include <ticks.h>
 
 int menuDisplayLightTimer=-1;
-menuItemNew_t *gMenuCurrentMenuList;
 
+menuItemNewData_t *gMenuCurrentMenuList;
 int gMenusCurrentItemIndex; // each menu can re-use this var to hold the position in their display list. To save wasted memory if they each had their own variable
 int gMenusStartIndex;// as above
 int gMenusEndIndex;// as above
@@ -40,12 +40,12 @@ menuControlDataStruct_t menuControlData = { .stackPosition = 0, .stack = {0,0,0,
  *
  * ---------------------- IMPORTANT ----------------------------
  */
-const menuItemNew_t * menusData[] = { 	NULL,// splash
+const menuItemsList_t * menusData[] = {	NULL,// splash
 										NULL,// power off
 										NULL,// vfo mode
 										NULL,// channel mode
-										menuDataMainMenu,
-										menuDataContact,
+										&menuDataMainMenu,
+										&menuDataContact,
 										NULL,// zone
 										NULL,// Battery
 										NULL,// Firmwareinfo
@@ -238,8 +238,7 @@ void menuSystemLanguageHasChanged(void)
 	uiChannelModeColdStart();
 }
 
-const menuItemNew_t menuDataMainMenu[] = {
-	{ 12, 12 }, // Special entry: number of menus entries, both member must be set to the same number
+const menuItemNewData_t mainMenuItems[] = {
 	{ 2,  MENU_CREDITS },
 	{ 3,  MENU_ZONE_LIST },
 	{ 4,  MENU_RSSI_SCREEN },
@@ -251,24 +250,23 @@ const menuItemNew_t menuDataMainMenu[] = {
 	{ 10, MENU_DISPLAY },
 	{ 11, MENU_SOUND },
 	{ 12, MENU_CHANNEL_DETAILS},
-	{ 13, MENU_LANGUAGE},
+	{ 13, MENU_LANGUAGE}
 };
-const menuItemNew_t menuDataContact[] = {
-	{ 2, 2} , // Special entry: number of menus entries, both member must be set to the same number
+
+const menuItemsList_t menuDataMainMenu = {
+	.numItems = 12,
+	.items = mainMenuItems
+};
+
+const menuItemNewData_t contractMenuItems[] = {
 	{ 14, MENU_CONTACT_NEW },
 	{ 15, MENU_CONTACT_LIST },
 };
 
-/*
-const menuItemNew_t menuDataContactContact [] = {
-	{ 6,6 },// length
-	{ 9, -1 },// InBox
-	{ 10, -1 },// New Message
-	{ 11, -1 },// Manual Dial
-	{ 12, -1 },// OutBox
-	{ 13, -1 },// Draft
-	{ 14, -1 }// Quick Test
-};*/
+const menuItemsList_t menuDataContact = {
+	.numItems = 2,
+	.items = contractMenuItems
+};
 
 void menuDisplayTitle(const char *title)
 {

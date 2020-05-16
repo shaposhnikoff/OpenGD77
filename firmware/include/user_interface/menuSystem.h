@@ -58,11 +58,18 @@ typedef struct menuControlDataStruct
 	int itemIndex[16];
 } menuControlDataStruct_t;
 
-typedef struct menuItemNew
+
+typedef struct menuItemNewData
 {
-       int stringOffset; // String offset in stringsTable_t
-       int menuNum;
-} menuItemNew_t;
+       const int stringOffset; // String offset in stringsTable_t
+       const int menuNum;
+} menuItemNewData_t;
+
+typedef struct menuItemsList
+{
+	const int	numItems;
+	const menuItemNewData_t *items;
+} menuItemsList_t;
 
 extern menuControlDataStruct_t menuControlData;
 
@@ -173,14 +180,14 @@ extern int gMenusCurrentItemIndex;
 
 extern int gMenusStartIndex;
 extern int gMenusEndIndex;
-extern menuItemNew_t *gMenuCurrentMenuList;
+extern menuItemNewData_t *gMenuCurrentMenuList;
 
 extern const char menuStringTable[32][17];
 
-extern const menuItemNew_t menuDataMainMenu[];
-extern const menuItemNew_t menuDataContact[];
-extern const menuItemNew_t menuDataContactContact [];
-extern const menuItemNew_t * menusData[];
+extern const menuItemsList_t menuDataMainMenu;
+extern const menuItemsList_t menuDataContact;
+extern const menuItemsList_t menuDataContactContact;
+extern const menuItemsList_t * menusData[];
 
 int uiVFOMode(uiEvent_t *event, bool isFirstRun);
 int uiVFOModeQuickMenu(uiEvent_t *event, bool isFirstRun);
