@@ -278,7 +278,7 @@ static void handleEvent(uiEvent_t *ev)
 		if (PTTToggledDown == false)
 		{
 			// Send 1750Hz
-			if ((ev->buttons & BUTTON_SK2) != 0)
+			if (ev->buttons & BUTTON_SK2)
 			{
 				trxIsTransmittingTone = true;
 				trxSetTone1(1750);
