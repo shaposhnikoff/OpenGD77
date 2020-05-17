@@ -1005,6 +1005,10 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelModeUpdateScreen(0);
 					SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
 				}
+				if (nonVolatileSettings.txPowerLevel==0)
+				{
+					nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+				}
 			}
 			else
 			{
@@ -1129,6 +1133,12 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					nonVolatileSettings.currentZone--;
 				}
+
+				if (nonVolatileSettings.currentZone==0)
+				{
+					nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+				}
+
 				nonVolatileSettings.overrideTG = 0; // remove any TG override
 				nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
 				nonVolatileSettings.currentChannelIndexInZone = 0;// Since we are switching zones the channel index should be reset
@@ -1229,6 +1239,7 @@ static void handleUpKey(uiEvent_t *ev)
 		if (nonVolatileSettings.currentZone >= numZones)
 		{
 			nonVolatileSettings.currentZone = 0;
+			nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 		}
 		nonVolatileSettings.overrideTG = 0; // remove any TG override
 		nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel

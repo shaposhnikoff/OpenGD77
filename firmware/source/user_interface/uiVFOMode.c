@@ -1052,6 +1052,11 @@ static void handleEvent(uiEvent_t *ev)
 						uiVFOModeUpdateScreen(0);
 						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
 					}
+
+					if (nonVolatileSettings.txPowerLevel==0)
+					{
+						nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+					}
 				}
 				else
 				{
