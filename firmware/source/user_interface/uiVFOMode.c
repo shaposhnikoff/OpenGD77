@@ -49,11 +49,12 @@ static bool isDisplayingQSOData=false;
 static int tmpQuickMenuDmrFilterLevel;
 static int tmpQuickMenuAnalogFilterLevel;
 static int16_t newChannelIndex = 0;
-bool toneScanActive = false;//tone scan active flag  (CTCSS)
-static const int TONESCANINTERVAL = 200;//time between each tone for lowest tone. (higher tones take less time.)
+
+bool scanToneActive = false;//tone scan active flag  (CTCSS/DCS)
+static const int SCAN_TONE_INTERVAL = 200;//time between each tone for lowest tone. (higher tones take less time.)
 static int scanToneIndex = 0;
-static uint16_t scanTone;
 static CSSTypes_t scanToneType = CSS_CTCSS;
+
 static bool displayChannelSettings;
 static int prevDisplayQSODataState;
 static vfoScreenOperationMode_t screenOperationMode[2] = {VFO_SCREEN_OPERATION_NORMAL,VFO_SCREEN_OPERATION_NORMAL};// For VFO A and B
@@ -111,7 +112,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		if (currentChannelData->chMode == RADIO_MODE_ANALOG)
 		{
 			trxSetModeAndBandwidth(currentChannelData->chMode, ((currentChannelData->flag4 & 0x02) == 0x02));
-			if (!toneScanActive)
+			if (!scanToneActive)
 			{
 				trxSetRxCSS(currentChannelData->rxTone);
 			}
@@ -228,7 +229,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 			}
 
-			if (toneScanActive == true)
+			if (scanToneActive == true)
 			{
 				toneScan();
 			}
@@ -249,7 +250,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 				}
 
 				// Scanning barrier
-				if (toneScanActive)
+				if (scanToneActive)
 				{
 #if defined(PLATFORM_RD5R) // virtual ORANGE button will be implemented later, this CPP will be removed then.
 					if ((ev->keys.key != 0) && (ev->keys.event & KEY_MOD_UP))
@@ -396,15 +397,15 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					displaySquelch = false;
 				}
 
-				if(toneScanActive == true)
+				if(scanToneActive == true)
 				{
 					if (scanToneType == CSS_CTCSS)
 					{
-						sprintf(buffer, "%CTCSS %3d.%dHz", scanTone / 10, scanTone % 10);
+						sprintf(buffer, "%CTCSS %3d.%dHz", currentChannelData->rxTone / 10, currentChannelData->rxTone % 10);
 					}
 					else if (scanToneType == CSS_DCS)
 					{
-						sprintf(buffer, "DCS D%03oN", scanTone & 0777);
+						sprintf(buffer, "DCS D%03oN", currentChannelData->rxTone & 0777);
 					}
 					else
 					{
@@ -563,10 +564,10 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 
 void uiVFOModeStopScanning(void)
 {
-	if (toneScanActive)
+	if (scanToneActive)
 	{
 		trxSetRxCSS(currentChannelData->rxTone);
-		toneScanActive = false;
+		scanToneActive = false;
 	}
 	scanActive = false;
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -1503,14 +1504,14 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 				}
 				break;
 			case VFO_SCREEN_CODE_SCAN:
-				if(trxGetMode() == RADIO_MODE_ANALOG)
+				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
-					toneScanActive = true;
-					scanTimer = TONESCANINTERVAL;
+					scanToneActive = true;
+					scanTimer = SCAN_TONE_INTERVAL;
 					scanToneIndex = 0;
 					scanToneType = CSS_CTCSS;
-					scanTone = TRX_CTCSSTones[scanToneIndex];
-					trxSetRxCSS(scanTone);
+					currentChannelData->rxTone = TRX_CTCSSTones[scanToneIndex];
+					trxSetRxCSS(currentChannelData->rxTone);
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
 				}
 				break;
@@ -1615,18 +1616,17 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 
 bool uiVFOModeIsScanning(void)
 {
-	return (toneScanActive || scanActive);
+	return (scanToneActive || scanActive);
 }
 
 static void toneScan(void)
 {
 	if (getAudioAmpStatus() & AUDIO_AMP_MODE_RF)
 	{
-		currentChannelData->txTone = scanTone;
-		currentChannelData->rxTone = scanTone;
+		currentChannelData->txTone = currentChannelData->rxTone;
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 		uiVFOModeUpdateScreen(0);
-		toneScanActive = false;
+		scanToneActive = false;
 		return;
 	}
 
@@ -1636,10 +1636,10 @@ static void toneScan(void)
 	}
 	else
 	{
-		cssIncrement(&scanTone, &scanToneIndex, &scanToneType, true);
+		cssIncrement(&currentChannelData->rxTone, &scanToneIndex, &scanToneType, true);
 		trxAT1846RxOff();
-		trxSetRxCSS(scanTone);
-		scanTimer = TONESCANINTERVAL - (scanToneType == CSS_CTCSS ? (scanToneIndex * 2) : 0);
+		trxSetRxCSS(currentChannelData->rxTone);
+		scanTimer = ((scanToneType == CSS_CTCSS) ? (SCAN_TONE_INTERVAL - (scanToneIndex * 2)) : SCAN_TONE_INTERVAL);
 		trx_measure_count = 0;//synchronise the measurement with the scan.
 		trxAT1846RxOn();
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -1688,7 +1688,6 @@ static void setCurrentFreqToScanLimits(void)
 
 static void initScan(void)
 {
-
 	screenOperationMode[nonVolatileSettings.currentVFONumber] = VFO_SCREEN_OPERATION_SCAN;
 	scanDirection = 1;
 
@@ -1708,7 +1707,7 @@ static void initScan(void)
 
 	selectedFreq = VFO_SELECTED_FREQUENCY_INPUT_RX;
 
-	scanTimer=500;
+	scanTimer = 500;
 	scanState = SCAN_SCANNING;
 	menuSystemPopAllAndDisplaySpecificRootMenu(UI_VFO_MODE, true);
 }

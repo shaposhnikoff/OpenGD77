@@ -552,7 +552,7 @@ void mainTask(void *data)
 					{
 						bool wasScanning = false;
 
-						if (toneScanActive)
+						if (scanToneActive)
 						{
 							uiVFOModeStopScanning();
 						}
