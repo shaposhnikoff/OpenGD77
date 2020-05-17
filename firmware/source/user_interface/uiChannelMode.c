@@ -960,6 +960,11 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] = 0;
 						}
+
+						if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] == 0)
+						{
+							nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+						}
 					}
 					nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
 					menuClearPrivateCall();
@@ -1014,6 +1019,12 @@ static void handleEvent(uiEvent_t *ev)
 							nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] =
 									currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1;
 						}
+
+						if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] == 0)
+						{
+							nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+						}
+
 					}
 					nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
 					menuClearPrivateCall();
@@ -1139,6 +1150,11 @@ static void handleEvent(uiEvent_t *ev)
 							nonVolatileSettings.currentChannelIndexInAllZone = 1024;
 						}
 					} while(!codeplugChannelIndexIsValid(nonVolatileSettings.currentChannelIndexInAllZone));
+
+					if (nonVolatileSettings.currentChannelIndexInAllZone==1)
+					{
+						nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+					}
 				}
 				else
 				{
@@ -1146,6 +1162,11 @@ static void handleEvent(uiEvent_t *ev)
 					if (nonVolatileSettings.currentChannelIndexInZone < 0)
 					{
 						nonVolatileSettings.currentChannelIndexInZone = currentZone.NOT_IN_MEMORY_numChannelsInZone - 1;
+					}
+
+					if (nonVolatileSettings.currentChannelIndexInZone==0)
+					{
+						nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 					}
 				}
 			}
@@ -1228,6 +1249,7 @@ static void handleUpKey(uiEvent_t *ev)
 				if (nonVolatileSettings.currentChannelIndexInAllZone > 1024)
 				{
 					nonVolatileSettings.currentChannelIndexInAllZone = 1;
+					nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 				}
 
 			} while(!codeplugChannelIndexIsValid(nonVolatileSettings.currentChannelIndexInAllZone));
@@ -1239,6 +1261,7 @@ static void handleUpKey(uiEvent_t *ev)
 			{
 					nonVolatileSettings.currentChannelIndexInZone = 0;
 
+					nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 			}
 		}
 		scanTimer = 500;
