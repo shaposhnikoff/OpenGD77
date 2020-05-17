@@ -2122,8 +2122,8 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						if (nonVolatileSettings.txPowerLevel < MAX_POWER_SETTING_NUM)
 						{
 							nonVolatileSettings.txPowerLevel++;
-							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
 						}
+						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
 						break;
 
 					case GD77S_UIMODE_MAX:
@@ -2279,8 +2279,8 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						if (nonVolatileSettings.txPowerLevel > 0)
 						{
 							nonVolatileSettings.txPowerLevel--;
-							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
 						}
+						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
 						break;
 
 					case GD77S_UIMODE_MAX:
