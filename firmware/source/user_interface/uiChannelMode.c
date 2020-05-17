@@ -1656,7 +1656,7 @@ void toggleTimeslotForGD77S(void)
 void heartBeatActivityForGD77S(uiEvent_t *ev)
 {
 	static const uint32_t periods[] = { 5000, 100, 100, 100, 100, 100 };
-	static const uint32_t periodsScan[] = { 1000, 100, 1000, 100, 1000, 100 };
+	static const uint32_t periodsScan[] = { 2000, 50, 2000, 50, 2000, 50 };
 	static uint8_t        beatRoll = 0;
 	static uint32_t       mTime = 0;
 
