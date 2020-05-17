@@ -22,20 +22,23 @@
 
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
+static menuStatus_t menuLanguageExitCode = MENU_STATUS_SUCCESS;
 
-
-int menuLanguage(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuLanguage(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
 		updateScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuLanguageExitCode = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
 			handleEvent(ev);
 	}
-	return 0;
+	return menuLanguageExitCode;
 }
 
 static void updateScreen(void)
@@ -64,11 +67,13 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_LANGUAGES);
 		updateScreen();
+		menuLanguageExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_LANGUAGES);
 		updateScreen();
+		menuLanguageExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
 	{

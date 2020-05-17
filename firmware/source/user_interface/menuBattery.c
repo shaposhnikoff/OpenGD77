@@ -94,7 +94,7 @@ static size_t circularBufferGetData(voltageCircularBuffer_t *cb, int32_t *data, 
      return count;
 }
 
-int menuBattery(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuBattery(uiEvent_t *ev, bool isFirstRun)
 {
 	static uint32_t m = 0;
 
@@ -118,7 +118,7 @@ int menuBattery(uiEvent_t *ev, bool isFirstRun)
 		if (ev->hasEvent)
 			handleEvent(ev);
 	}
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }
 
 static void updateScreen(bool forceRedraw)
@@ -284,7 +284,7 @@ static void handleEvent(uiEvent_t *ev)
 		menuSystemPopPreviousMenu();
 		return;
 	}
-	else if (KEYCHECK_PRESS(ev->keys,KEY_GREEN))
+	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
 	{
 		menuSystemPopAllAndDisplayRootMenu();
 		return;

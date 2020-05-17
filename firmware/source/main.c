@@ -117,10 +117,11 @@ static void showErrorMessage(char *message)
 }
 
 
-static void keyBeepHandler(keyboardCode_t keys, _Bool PTTToggledDown)
+static void keyBeepHandler(uiEvent_t *ev, bool PTTToggledDown)
 {
 	// Do not send any beep while scanning, otherwise enabling the AMP will be handled as a valid signal detection.
-	if (keys.event & KEY_MOD_UP)
+	if (((ev->keys.event & (KEY_MOD_LONG | KEY_MOD_PRESS)) == (KEY_MOD_LONG | KEY_MOD_PRESS)) ||
+			((ev->keys.event & KEY_MOD_UP) == KEY_MOD_UP))
 	{
 		if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 		{
@@ -134,10 +135,15 @@ static void keyBeepHandler(keyboardCode_t keys, _Bool PTTToggledDown)
 			}
 			nextKeyBeepMelody = (int *)melody_key_beep;// set back to the default beep
 		}
+		else
+		{ 	// Reset the beep sound if we are scanning, otherwise the AudioAssist
+			// beep will be played instead of the normal one.
+			soundSetMelody(melody_key_beep);
+		}
 	}
 	else
 	{
-		if ((keys.event & (KEY_MOD_LONG | KEY_MOD_DOWN)) == (KEY_MOD_LONG | KEY_MOD_DOWN))
+		if ((ev->keys.event & (KEY_MOD_LONG | KEY_MOD_DOWN)) == (KEY_MOD_LONG | KEY_MOD_DOWN))
 		{
 			if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 			{
@@ -641,7 +647,7 @@ void mainTask(void *data)
 					keyFunction = (MENU_BATTERY << 8);
 					break;
 				case '3':
-					keyFunction = ( MENU_LAST_HEARD << 8);
+					keyFunction = (MENU_LAST_HEARD << 8);
 					break;
 				case '4':
 					keyFunction = ( MENU_CHANNEL_DETAILS << 8) | 2;
@@ -700,9 +706,17 @@ void mainTask(void *data)
 			ev.time = fw_millis();
 
 			menuSystemCallCurrentMenuTick(&ev);
-			if ((key_event == EVENT_KEY_CHANGE) && ((buttons & BUTTON_PTT) == 0) && (keys.key != 0))
+
+			if ((((key_event == EVENT_KEY_CHANGE) || (button_event == EVENT_BUTTON_CHANGE))
+					&& ((buttons & BUTTON_PTT) == 0) && (ev.keys.key != 0))
+					|| (function_event == FUNCTION_EVENT))
 			{
-				keyBeepHandler(keys, PTTToggledDown);
+				if (function_event == FUNCTION_EVENT)
+				{
+					ev.keys.event |= KEY_MOD_UP;
+				}
+
+				keyBeepHandler(&ev, PTTToggledDown);
 			}
 
 #if defined(PLATFORM_RD5R)

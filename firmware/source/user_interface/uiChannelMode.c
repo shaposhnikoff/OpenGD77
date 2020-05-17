@@ -86,6 +86,9 @@ static struct_codeplugChannel_t channelNextChannelData={.rxFreq=0};
 static bool nextChannelReady = false;
 static int nextChannelIndex = 0;
 
+static menuStatus_t menuChannelExitStatus = MENU_STATUS_SUCCESS;
+static menuStatus_t menuQuickChannelExitStatus = MENU_STATUS_SUCCESS;
+
 #if defined(PLATFORM_RD5R)
 static const int  CH_NAME_Y_POS = 40;
 static const int  XBAR_Y_POS = 15;
@@ -96,8 +99,7 @@ static const int  XBAR_Y_POS = 17;
 static const int  XBAR_H = 9;
 #endif
 
-
-int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 {
 	static uint32_t m = 0, sqm = 0;
 
@@ -149,9 +151,12 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 			scanState = SCAN_SCANNING;
 		}
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
+
+		menuChannelExitStatus = MENU_STATUS_SUCCESS; // Due to Orange Quick Menu
 	}
 	else
 	{
+		menuChannelExitStatus = MENU_STATUS_SUCCESS;
 
 #if defined(PLATFORM_GD77S)
 		heartBeatActivityForGD77S(ev);
@@ -242,7 +247,7 @@ int uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 			}
 		}
 	}
-	return 0;
+	return menuChannelExitStatus;
 }
 
 #if 0 // rename: we have an union declared (fw_sound.c) with the same name.
@@ -804,6 +809,12 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				// Quick Menu
 				menuSystemPushNewMenu(UI_CHANNEL_QUICK_MENU);
+
+				// Trick to beep (AudioAssist), since ORANGE button doesn't produce any beep event
+				ev->keys.event |= KEY_MOD_UP;
+				ev->keys.key = 127;
+				menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+				// End Trick
 			}
 
 			return;
@@ -863,7 +874,9 @@ static void handleEvent(uiEvent_t *ev)
 				if ((ev->buttons & BUTTON_SK2) != 0)
 				{
 					menuSystemPushNewMenu(MENU_CONTACT_QUICKLIST);
-				} else {
+				}
+				else
+				{
 					menuSystemPushNewMenu(MENU_NUMERICAL_ENTRY);
 				}
 				return;
@@ -915,6 +928,12 @@ static void handleEvent(uiEvent_t *ev)
 			else
 			{
 				menuSystemPushNewMenu(UI_CHANNEL_QUICK_MENU);
+
+				// Trick to beep (AudioAssist), since ORANGE button doesn't produce any beep event
+				ev->keys.event |= KEY_MOD_UP;
+				ev->keys.key = 127;
+				menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+				// End Trick
 			}
 
 			return;
@@ -959,11 +978,7 @@ static void handleEvent(uiEvent_t *ev)
 								> (currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1))
 						{
 							nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] = 0;
-						}
-
-						if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] == 0)
-						{
-							nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+							menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 						}
 					}
 					nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
@@ -1005,9 +1020,10 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelModeUpdateScreen(0);
 					SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
 				}
-				if (nonVolatileSettings.txPowerLevel==0)
+
+				if (nonVolatileSettings.txPowerLevel == 0)
 				{
-					nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+					menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 				}
 			}
 			else
@@ -1024,11 +1040,10 @@ static void handleEvent(uiEvent_t *ev)
 									currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1;
 						}
 
-						if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] == 0)
+						if (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] == 0)
 						{
-							nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+							menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 						}
-
 					}
 					nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
 					menuClearPrivateCall();
@@ -1134,17 +1149,18 @@ static void handleEvent(uiEvent_t *ev)
 					nonVolatileSettings.currentZone--;
 				}
 
-				if (nonVolatileSettings.currentZone==0)
-				{
-					nextKeyBeepMelody = (int *)melody_key_beep_first_item;
-				}
-
 				nonVolatileSettings.overrideTG = 0; // remove any TG override
 				nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
 				nonVolatileSettings.currentChannelIndexInZone = 0;// Since we are switching zones the channel index should be reset
 				channelScreenChannelData.rxFreq=0x00; // Flag to the Channel screeen that the channel data is now invalid and needs to be reloaded
 				menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
 				SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
+
+				if (nonVolatileSettings.currentZone == 0)
+				{
+					menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+				}
+
 				return;
 			}
 			else
@@ -1161,9 +1177,9 @@ static void handleEvent(uiEvent_t *ev)
 						}
 					} while(!codeplugChannelIndexIsValid(nonVolatileSettings.currentChannelIndexInAllZone));
 
-					if (nonVolatileSettings.currentChannelIndexInAllZone==1)
+					if (nonVolatileSettings.currentChannelIndexInAllZone == 1)
 					{
-						nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+						menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 					}
 				}
 				else
@@ -1174,9 +1190,9 @@ static void handleEvent(uiEvent_t *ev)
 						nonVolatileSettings.currentChannelIndexInZone = currentZone.NOT_IN_MEMORY_numChannelsInZone - 1;
 					}
 
-					if (nonVolatileSettings.currentChannelIndexInZone==0)
+					if (nonVolatileSettings.currentChannelIndexInZone == 0)
 					{
-						nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+						menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 					}
 				}
 			}
@@ -1239,13 +1255,17 @@ static void handleUpKey(uiEvent_t *ev)
 		if (nonVolatileSettings.currentZone >= numZones)
 		{
 			nonVolatileSettings.currentZone = 0;
-			nextKeyBeepMelody = (int *)melody_key_beep_first_item;
 		}
 		nonVolatileSettings.overrideTG = 0; // remove any TG override
 		nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
 		nonVolatileSettings.currentChannelIndexInZone = 0;// Since we are switching zones the channel index should be reset
 		channelScreenChannelData.rxFreq=0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
 		menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
+		if (nonVolatileSettings.currentZone == 0)
+		{
+			nonVolatileSettings.currentZone = 0;
+			menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+		}
 		return;
 	}
 	else
@@ -1260,7 +1280,7 @@ static void handleUpKey(uiEvent_t *ev)
 				if (nonVolatileSettings.currentChannelIndexInAllZone > 1024)
 				{
 					nonVolatileSettings.currentChannelIndexInAllZone = 1;
-					nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+					menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 				}
 
 			} while(!codeplugChannelIndexIsValid(nonVolatileSettings.currentChannelIndexInAllZone));
@@ -1271,8 +1291,7 @@ static void handleUpKey(uiEvent_t *ev)
 			if (nonVolatileSettings.currentChannelIndexInZone > currentZone.NOT_IN_MEMORY_numChannelsInZone - 1)
 			{
 					nonVolatileSettings.currentChannelIndexInZone = 0;
-
-					nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+					menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 			}
 		}
 		scanTimer = 500;
@@ -1419,16 +1438,18 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	else if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
+		menuQuickChannelExitStatus |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
+		menuQuickChannelExitStatus |= MENU_STATUS_LIST_TYPE;
 	}
 
 	updateQuickMenuScreen();
 }
 
-int uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -1436,13 +1457,17 @@ int uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 		tmpQuickMenuDmrFilterLevel = nonVolatileSettings.dmrFilterLevel;
 		tmpQuickMenuAnalogFilterLevel = nonVolatileSettings.analogFilterLevel;
 		updateQuickMenuScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuQuickChannelExitStatus = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
 			handleQuickMenuEvent(ev);
 	}
-	return 0;
+
+	return menuQuickChannelExitStatus;
 }
 
 #if ! defined(PLATFORM_GD77S)

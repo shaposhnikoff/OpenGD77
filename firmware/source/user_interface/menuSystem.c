@@ -104,61 +104,88 @@ const menuFunctionPointer_t menuFunctions[] = { uiSplashScreen,
 												menuPrivateCall
 };
 
+static void menuSystemCheckForFirstEntryAudible(menuStatus_t status)
+{
+	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_BEEP)
+	{
+		 if (((status & MENU_STATUS_LIST_TYPE) && (gMenusCurrentItemIndex == 0)) || (status & MENU_STATUS_FORCE_FIRST))
+		 {
+			 nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+		 }
+		 else if (status & MENU_STATUS_INPUT_TYPE)
+		 {
+			 nextKeyBeepMelody = (int *)melody_ACK_beep;
+		 }
+	}
+}
+
 void menuSystemPushNewMenu(int menuNumber)
 {
 	if (menuControlData.stackPosition < 15)
 	{
 		uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = 0, .events = NO_EVENT, .hasEvent = false, .time = fw_millis() };
+		menuStatus_t status;
 
 		keyboardReset();
 		menuControlData.itemIndex[menuControlData.stackPosition] = gMenusCurrentItemIndex;
 		menuControlData.stackPosition++;
 		menuControlData.stack[menuControlData.stackPosition] = menuNumber;
-		gMenusCurrentItemIndex = 0;//(menuNumber == MENU_MAIN_MENU) ? 1 : 0;
-		menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);
+		gMenusCurrentItemIndex = 0;
+		status = menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);
+		menuSystemCheckForFirstEntryAudible(status);
 	}
 }
 
+#if 0 // Unused
 void menuSystemPushNewMenuWithQuickFunction(int menuNumber, int quickFunction)
 {
 	if (menuControlData.stackPosition < 15)
 	{
 		uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = quickFunction, .events = FUNCTION_EVENT, .hasEvent = false, .time = fw_millis() };
+		menuStatus_t status;
 
 		keyboardReset();
 		menuControlData.itemIndex[menuControlData.stackPosition] = gMenusCurrentItemIndex;
 		menuControlData.stackPosition++;
 		menuControlData.stack[menuControlData.stackPosition] = menuNumber;
-		gMenusCurrentItemIndex = (menuNumber == MENU_MAIN_MENU) ? 1 : 0;
-		menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);
+		gMenusCurrentItemIndex = 0;
+		status = menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);
+		menuSystemCheckForFirstEntryAudible(status);
 	}
 }
+#endif
 
 void menuSystemPopPreviousMenu(void)
 {
 	uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = 0, .events = NO_EVENT, .hasEvent = false, .time = fw_millis() };
+	menuStatus_t status;
 
 	keyboardReset();
 	menuControlData.itemIndex[menuControlData.stackPosition] = 0;
 	menuControlData.stackPosition -= (menuControlData.stackPosition > 0) ? 1 : 0; // Avoid crashing if something goes wrong.
 	gMenusCurrentItemIndex = menuControlData.itemIndex[menuControlData.stackPosition];
-	menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev,true);
+	status = menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);
+	menuSystemCheckForFirstEntryAudible(status);
 }
 
 void menuSystemPopAllAndDisplayRootMenu(void)
 {
 	uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = 0, .events = NO_EVENT, .hasEvent = false, .time = fw_millis() };
+	menuStatus_t status;
 
 	keyboardReset();
 	memset(menuControlData.itemIndex, 0, sizeof(menuControlData.itemIndex));
 	menuControlData.stackPosition = 0;
 	gMenusCurrentItemIndex = 0;
-	menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev,true);
+	status = menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);
+	menuSystemCheckForFirstEntryAudible(status);
+
 }
 
 void menuSystemPopAllAndDisplaySpecificRootMenu(int newRootMenu, bool resetKeyboard)
 {
 	uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = 0, .events = NO_EVENT, .hasEvent = false, .time = fw_millis() };
+	menuStatus_t status;
 
 	if (resetKeyboard)
 	{
@@ -167,18 +194,21 @@ void menuSystemPopAllAndDisplaySpecificRootMenu(int newRootMenu, bool resetKeybo
 	memset(menuControlData.itemIndex, 0, sizeof(menuControlData.itemIndex));
 	menuControlData.stack[0]  = newRootMenu;
 	menuControlData.stackPosition = 0;
-	gMenusCurrentItemIndex = (newRootMenu == MENU_MAIN_MENU) ? 1 : 0;
-	menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev,true);
+	gMenusCurrentItemIndex = 0;
+	status = menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);
+	menuSystemCheckForFirstEntryAudible(status);
 }
 
 void menuSystemSetCurrentMenu(int menuNumber)
 {
 	uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = 0, .events = NO_EVENT, .hasEvent = false, .time = fw_millis() };
+	menuStatus_t status;
 
 	keyboardReset();
 	menuControlData.stack[menuControlData.stackPosition] = menuNumber;
 	gMenusCurrentItemIndex = menuControlData.itemIndex[menuControlData.stackPosition];
-	menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev,true);
+	status = menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);
+	menuSystemCheckForFirstEntryAudible(status);
 }
 
 int menuSystemGetCurrentMenuNumber(void)
@@ -188,7 +218,10 @@ int menuSystemGetCurrentMenuNumber(void)
 
 void menuSystemCallCurrentMenuTick(uiEvent_t *ev)
 {
-	menuFunctions[menuControlData.stack[menuControlData.stackPosition]](ev,false);
+	menuStatus_t status;
+
+	status = menuFunctions[menuControlData.stack[menuControlData.stackPosition]](ev, false);
+	menuSystemCheckForFirstEntryAudible(status);
 }
 
 void displayLightTrigger(void)
@@ -412,17 +445,9 @@ void moveCursorRightInString(char *str, int *pos, int max, bool insert)
 void menuSystemMenuIncrement(int32_t *currentItem, int32_t numItems)
 {
 	*currentItem = (*currentItem + 1) % numItems;
-	if (*currentItem == 0)
-	{
-		nextKeyBeepMelody = (int *)melody_key_beep_first_item;
-	}
 }
 
 void menuSystemMenuDecrement(int32_t *currentItem, int32_t numItems)
 {
 	*currentItem = (*currentItem + numItems - 1) % numItems;
-	if (*currentItem == 0)
-	{
-		nextKeyBeepMelody = (int *)melody_key_beep_first_item;
-	}
 }

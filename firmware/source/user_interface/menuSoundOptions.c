@@ -24,25 +24,30 @@
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
 
+static menuStatus_t menuSoundExitCode = MENU_STATUS_SUCCESS;
+
 enum SOUND_MENU_LIST { OPTIONS_MENU_TIMEOUT_BEEP = 0, OPTIONS_MENU_BEEP_VOLUME, OPTIONS_MENU_DMR_BEEP,
 						OPTIONS_MIC_GAIN_DMR, OPTIONS_MIC_GAIN_FM,
 						OPTIONS_VOX_THRESHOLD, OPTIONS_VOX_TAIL, OPTIONS_AUDIO_PROMPT_MODE,
 						NUM_SOUND_MENU_ITEMS};
 
-int menuSoundOptions(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuSoundOptions(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
 		// Store original settings, used on cancel event.
 		memcpy(&originalNonVolatileSettings, &nonVolatileSettings, sizeof(settingsStruct_t));
 		updateScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuSoundExitCode = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
 			handleEvent(ev);
 	}
-	return 0;
+	return menuSoundExitCode;
 }
 
 static void updateScreen(void)
@@ -146,10 +151,12 @@ static void handleEvent(uiEvent_t *ev)
 		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
 		{
 			menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_SOUND_MENU_ITEMS);
+			menuSoundExitCode |= MENU_STATUS_LIST_TYPE;
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 		{
 			menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_SOUND_MENU_ITEMS);
+			menuSoundExitCode |= MENU_STATUS_LIST_TYPE;
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 		{

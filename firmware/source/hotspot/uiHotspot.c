@@ -335,7 +335,7 @@ static void sendDebug5(const char *text, int16_t n1, int16_t n2, int16_t n3, int
 #endif
 
 
-int menuHotspotMode(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuHotspotMode(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -435,7 +435,7 @@ int menuHotspotMode(uiEvent_t *ev, bool isFirstRun)
 		{
 			if (handleEvent(ev) == false)
 			{
-				return 0;
+				return MENU_STATUS_SUCCESS;
 			}
 		}
 	}
@@ -457,7 +457,7 @@ int menuHotspotMode(uiEvent_t *ev, bool isFirstRun)
 		}
 	}
 
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }
 
 void menuHotspotRestoreSettings(void)

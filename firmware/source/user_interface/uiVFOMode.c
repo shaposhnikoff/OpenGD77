@@ -56,6 +56,10 @@ static bool displayChannelSettings;
 static int prevDisplayQSODataState;
 static vfoScreenOperationMode_t screenOperationMode[2] = {VFO_SCREEN_OPERATION_NORMAL,VFO_SCREEN_OPERATION_NORMAL};// For VFO A and B
 
+static menuStatus_t menuVFOExitStatus = MENU_STATUS_SUCCESS;
+static menuStatus_t menuQuickVFOExitStatus = MENU_STATUS_SUCCESS;
+
+
 #if defined(PLATFORM_RD5R)
 const int RX_FREQ_Y_POS = 31;
 const int TX_FREQ_Y_POS = 40;
@@ -78,7 +82,7 @@ const int XBAR_H = 9;
 
 
 // Public interface
-int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 {
 	static uint32_t m = 0, sqm = 0, curm = 0;
 
@@ -166,9 +170,13 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		displayLightTrigger();
 		uiVFOModeUpdateScreen(0);
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);
+
+		menuVFOExitStatus = MENU_STATUS_SUCCESS;
 	}
 	else
 	{
+		menuVFOExitStatus = MENU_STATUS_SUCCESS;
+
 		if (ev->events == NO_EVENT)
 		{
 			// We are entering digits, so update the screen as we have a cursor to blink
@@ -252,7 +260,7 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 						uiVFOModeStopScanning();
 					}
 
-					return 0;
+					return MENU_STATUS_SUCCESS;
 				}
 
 				handleEvent(ev);
@@ -260,7 +268,7 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 		}
 	}
-	return 0;
+	return menuVFOExitStatus;
 }
 
 void uiVFOModeUpdateScreen(int txTimeSecs)
@@ -756,6 +764,12 @@ static void handleEvent(uiEvent_t *ev)
 			else
 			{
 				menuSystemPushNewMenu(UI_VFO_QUICK_MENU);
+
+				// Trick to beep (AudioAssist), since ORANGE button doesn't produce any beep event
+				ev->keys.event |= KEY_MOD_UP;
+				ev->keys.key = 127;
+				menuVFOExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+				// End Trick
 			}
 
 			return;
@@ -792,7 +806,9 @@ static void handleEvent(uiEvent_t *ev)
 					if ((ev->buttons & BUTTON_SK2) != 0)
 					{
 						menuSystemPushNewMenu(MENU_CONTACT_QUICKLIST);
-					} else {
+					}
+					else
+					{
 						menuSystemPushNewMenu(MENU_NUMERICAL_ENTRY);
 					}
 				}
@@ -956,6 +972,12 @@ static void handleEvent(uiEvent_t *ev)
 			else
 			{
 				menuSystemPushNewMenu(UI_VFO_QUICK_MENU);
+
+				// Trick to beep (AudioAssist), since ORANGE button doesn't produce any beep event
+				ev->keys.event |= KEY_MOD_UP;
+				ev->keys.key = 127;
+				menuVFOExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+				// End Trick
 			}
 
 			return;
@@ -1011,7 +1033,7 @@ static void handleEvent(uiEvent_t *ev)
 
 						if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] == 0)
 						{
-							nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+							menuVFOExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 						}
 						nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
 						menuClearPrivateCall();
@@ -1053,9 +1075,9 @@ static void handleEvent(uiEvent_t *ev)
 						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
 					}
 
-					if (nonVolatileSettings.txPowerLevel==0)
+					if (nonVolatileSettings.txPowerLevel == 0)
 					{
-						nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+						menuVFOExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 					}
 				}
 				else
@@ -1074,7 +1096,7 @@ static void handleEvent(uiEvent_t *ev)
 
 							if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] == 0)
 							{
-								nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+								menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
 							}
 						}
 						nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
@@ -1292,20 +1314,23 @@ enum VFO_SCREEN_QUICK_MENU_ITEMS // The last item in the list is used so that we
 	NUM_VFO_SCREEN_QUICK_MENU_ITEMS
 };
 
-int uiVFOModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t uiVFOModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
 		tmpQuickMenuDmrFilterLevel = nonVolatileSettings.dmrFilterLevel;
 		tmpQuickMenuAnalogFilterLevel = nonVolatileSettings.analogFilterLevel;
 		updateQuickMenuScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuQuickVFOExitStatus = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
 			handleQuickMenuEvent(ev);
 	}
-	return 0;
+	return menuQuickVFOExitStatus;
 }
 
 static void updateQuickMenuScreen(void)
@@ -1481,6 +1506,15 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 		nonVolatileSettings.currentVFONumber = 1 - nonVolatileSettings.currentVFONumber;// Switch to other VFO
 		currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
 		menuSystemPopPreviousMenu();
+		if (nonVolatileSettings.currentVFONumber == 0)
+		{
+			// Trick to beep (AudioAssist), since ORANGE button doesn't produce any beep event
+			ev->keys.event |= KEY_MOD_UP;
+			ev->keys.key = 127;
+			// End Trick
+
+			menuQuickVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
+		}
 		return;
 	}
 #endif
@@ -1526,6 +1560,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					nonVolatileSettings.currentVFONumber--;
 					currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
 				}
+				menuQuickVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
 				break;
 #endif
 			case VFO_SCREEN_QUICK_MENU_FILTER:
@@ -1549,10 +1584,12 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	else if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
+		menuQuickVFOExitStatus |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
+		menuQuickVFOExitStatus |= MENU_STATUS_LIST_TYPE;
 	}
 
 	updateQuickMenuScreen();
