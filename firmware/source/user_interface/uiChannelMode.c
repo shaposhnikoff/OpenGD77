@@ -1958,6 +1958,13 @@ static void handleEventForGD77S(uiEvent_t *ev)
 	{
 		if (!trxTransmissionEnabled && (ev->rotary > 0))
 		{
+			if (scanActive)
+			{
+				uiChannelModeStopScanning();
+				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+				uiChannelModeUpdateScreen(0);
+			}
+
 			nonVolatileSettings.overrideTG = 0;
 			checkAndUpdateSelectedChannelForGD77S(ev->rotary, false);
 			clearActiveDMRID();
@@ -1969,6 +1976,16 @@ static void handleEventForGD77S(uiEvent_t *ev)
 	{
 		if (ev->buttons & BUTTON_ORANGE)
 		{
+			if (scanActive)
+			{
+				uiChannelModeStopScanning();
+				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+				uiChannelModeUpdateScreen(0);
+				buildSpeechUiModeForGD77S(buf, 0U, GD77S_UIMODE_SCAN);
+				speechSynthesisSpeak(buf);
+				return;
+			}
+
 			if (ev->buttons & BUTTON_ORANGE_LONG)
 			{
 				buf[0U] = 1U;
@@ -2030,11 +2047,6 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					case GD77S_UIMODE_MAX:
 						break;
 				}
-			}
-
-			if (buf[0U] != 0U)
-			{
-				speechSynthesisSpeak(buf);
 			}
 		}
 
@@ -2130,11 +2142,6 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						break;
 				}
 
-			}
-
-			if (buf[0U] != 0U)
-			{
-				speechSynthesisSpeak(buf);
 			}
 		}
 		else if (ev->buttons & BUTTON_SK2)
@@ -2286,12 +2293,12 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					case GD77S_UIMODE_MAX:
 						break;
 				}
-
-				if (buf[0U] != 0U)
-				{
-					speechSynthesisSpeak(buf);
-				}
 			}
+		}
+
+		if (buf[0U] != 0U)
+		{
+			speechSynthesisSpeak(buf);
 		}
 	}
 }

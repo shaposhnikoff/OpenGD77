@@ -627,10 +627,10 @@ void mainTask(void *data)
 			}
 
 #if defined(PLATFORM_GD77S) && defined(READ_CPUID)
-	if ((buttons & (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT)) == (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT))
-	{
-		debugReadCPUID();
-	}
+			if ((buttons & (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT)) == (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT))
+			{
+				debugReadCPUID();
+			}
 #endif
 
 			ev.function = 0;
