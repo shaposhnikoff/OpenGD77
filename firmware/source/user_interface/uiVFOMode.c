@@ -229,12 +229,12 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 			}
 
-			if (scanToneActive == true)
+			if (scanToneActive)
 			{
 				toneScan();
 			}
 
-			if (scanActive == true)
+			if (scanActive)
 			{
 				scanning();
 			}
@@ -397,7 +397,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					displaySquelch = false;
 				}
 
-				if(scanToneActive == true)
+				if(scanToneActive)
 				{
 					if (scanToneType == CSS_CTCSS)
 					{
