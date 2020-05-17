@@ -844,6 +844,7 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							loadContact();
 						}
+						menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
 					}
 					else
 					{
