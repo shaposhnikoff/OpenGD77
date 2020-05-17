@@ -844,6 +844,7 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							loadContact();
 						}
+						menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
 					}
 					else
 					{
@@ -866,6 +867,11 @@ static void handleEvent(uiEvent_t *ev)
 						lastHeardClearLastID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
+
+						if (trxGetDMRTimeSlot() == 0)
+						{
+							menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
+						}
 					}
 					else
 					{

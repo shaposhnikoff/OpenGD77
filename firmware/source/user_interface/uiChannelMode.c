@@ -1080,6 +1080,8 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					channelScreenChannelData.chMode = RADIO_MODE_DIGITAL;
 					trxSetModeAndBandwidth(channelScreenChannelData.chMode, false);
+
+					menuChannelExitStatus |= MENU_STATUS_FORCE_FIRST;
 				}
 				else
 				{
@@ -1105,6 +1107,11 @@ static void handleEvent(uiEvent_t *ev)
 					lastHeardClearLastID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
+
+					if (trxGetDMRTimeSlot() == 0)
+					{
+						menuChannelExitStatus |= MENU_STATUS_FORCE_FIRST;
+					}
 				}
 				else
 				{
