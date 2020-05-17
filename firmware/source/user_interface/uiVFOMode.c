@@ -945,6 +945,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					clearActiveDMRID();
 				}
+				menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;// Audible signal that the Channel screen has been selected
 				menuSystemSetCurrentMenu(UI_CHANNEL_MODE);
 #endif
 				return;
@@ -956,6 +957,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					clearActiveDMRID();
 				}
+				menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;// Audible signal that the Channel screen has been selected
 				menuSystemSetCurrentMenu(UI_CHANNEL_MODE);
 				return;
 			}
