@@ -33,7 +33,7 @@ static bool isShowingLastHeard;
 extern bool PTTToggledDown;
 static bool startBeepPlayed;
 
-int menuTxScreen(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 {
 	static uint32_t m = 0, micm = 0, mto = 0;
 
@@ -181,7 +181,7 @@ int menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 		if ((currentChannelData->tot != 0) && (timeInSeconds == 0))
 		{
 			if ((ev->time - mto) < 500)
-				return 0;
+				return MENU_STATUS_SUCCESS;
 		}
 
 
@@ -195,7 +195,7 @@ int menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 			m = ev->time;
 		}
 	}
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }
 
 static void updateScreen(void)
@@ -278,7 +278,7 @@ static void handleEvent(uiEvent_t *ev)
 		if (PTTToggledDown == false)
 		{
 			// Send 1750Hz
-			if ((ev->buttons & BUTTON_SK2) != 0)
+			if (ev->buttons & BUTTON_SK2)
 			{
 				trxIsTransmittingTone = true;
 				trxSetTone1(1750);

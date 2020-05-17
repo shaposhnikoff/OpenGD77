@@ -43,7 +43,7 @@ static int menuContactDetailsState;
 static int menuContactDetailsTimeout;
 enum MENU_CONTACT_DETAILS_STATE {MENU_CONTACT_DETAILS_DISPLAY=0, MENU_CONTACT_DETAILS_SAVED, MENU_CONTACT_DETAILS_EXISTS};
 
-int menuContactDetails(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuContactDetails(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -76,6 +76,8 @@ int menuContactDetails(uiEvent_t *ev, bool isFirstRun)
 
 		updateScreen();
 		updateCursor(true);
+
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
@@ -86,7 +88,7 @@ int menuContactDetails(uiEvent_t *ev, bool isFirstRun)
 
 		}
 	}
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }
 
 static void updateCursor(bool moved)

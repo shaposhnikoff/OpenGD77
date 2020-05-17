@@ -22,7 +22,9 @@
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
 
-int menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
+static menuStatus_t menuDisplayListExitCode = MENU_STATUS_SUCCESS;
+
+menuStatus_t menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -30,15 +32,18 @@ int menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
 		gMenuCurrentMenuList = (menuItemNewData_t *)menusData[currentMenuNumber]->items;
 		gMenusEndIndex = menusData[currentMenuNumber]->numItems;
 		updateScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuDisplayListExitCode = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
 		{
 			handleEvent(ev);
 		}
 	}
-	return 0;
+	return menuDisplayListExitCode;
 }
 
 static void updateScreen(void)
@@ -73,11 +78,13 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen();
+		menuDisplayListExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen();
+		menuDisplayListExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
 	{

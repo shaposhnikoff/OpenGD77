@@ -21,7 +21,7 @@
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
 
-int uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
 {
 	uint8_t melodyBuf[512];
 
@@ -50,7 +50,7 @@ int uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
 		handleEvent(ev);
 	}
 
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }
 
 static void updateScreen(void)

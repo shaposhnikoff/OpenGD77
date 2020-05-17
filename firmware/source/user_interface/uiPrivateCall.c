@@ -27,7 +27,7 @@ static void handleEvent(uiEvent_t *ev);
 int uiPrivateCallState = NOT_IN_CALL;
 int uiPrivateCallLastID;
 
-int menuPrivateCall(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuPrivateCall(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -45,7 +45,7 @@ int menuPrivateCall(uiEvent_t *ev, bool isFirstRun)
 			handleEvent(ev);
 		}
 	}
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }
 
 static void updateScreen(void)

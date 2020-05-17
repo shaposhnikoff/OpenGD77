@@ -37,8 +37,12 @@ static const int MAX_TG_OR_PC_VALUE = 16777215;
 
 static const char *menuName[4];
 enum DISPLAY_MENU_LIST { ENTRY_TG = 0, ENTRY_PC, ENTRY_SELECT_CONTACT, ENTRY_USER_DMR_ID, NUM_ENTRY_ITEMS};
+
+static menuStatus_t menuNumericalExitStatus = MENU_STATUS_SUCCESS;
+
+
 // public interface
-int menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -50,9 +54,13 @@ int menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
 		digits[0] = 0;
 		pcIdx = 0;
 		updateScreen();
+		return (MENU_STATUS_INPUT_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		// Clear input type beep for AudioAssist
+		menuNumericalExitStatus = MENU_STATUS_SUCCESS;
+
 		if (ev->events == EVENT_BUTTON_NONE)
 		{
 			updateCursor();
@@ -70,7 +78,7 @@ int menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
 			}
 		}
 	}
-	return 0;
+	return menuNumericalExitStatus;
 }
 
 static void updateCursor(void)
@@ -212,6 +220,8 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				pcIdx = 0;
 
+				menuNumericalExitStatus |= MENU_STATUS_INPUT_TYPE;
+
 				if (((ev->buttons & BUTTON_SK2) != 0) && (gMenusCurrentItemIndex == ENTRY_SELECT_CONTACT))
 				{
 					snprintf(digits, 8, "%d", trxDMRID);
@@ -229,11 +239,14 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						if (gMenusCurrentItemIndex == ENTRY_SELECT_CONTACT)
 						{
+							menuNumericalExitStatus &= ~MENU_STATUS_INPUT_TYPE;
+
 							pcIdx = getNextContact(0, 1, &contact);
 
 							if (pcIdx != 0)
 							{
 								itoa(contact.tgNumber, digits, 10);
+								menuNumericalExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 							}
 						}
 					}
@@ -258,10 +271,16 @@ static void handleEvent(uiEvent_t *ev)
 				idx = getNextContact(pcIdx, -1, &contact);
 			}
 		}
-		if (pcIdx != idx )
+		if (pcIdx != idx)
 		{
 			pcIdx = idx;
 			itoa(contact.tgNumber, digits, 10);
+
+			if (pcIdx == 1)
+			{
+				menuNumericalExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+			}
+
 			updateScreen();
 		}
 	}

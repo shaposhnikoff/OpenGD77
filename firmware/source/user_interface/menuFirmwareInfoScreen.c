@@ -21,7 +21,7 @@
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
 
-int menuFirmwareInfoScreen(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuFirmwareInfoScreen(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -34,7 +34,7 @@ int menuFirmwareInfoScreen(uiEvent_t *ev, bool isFirstRun)
 			handleEvent(ev);
 		}
 	}
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }
 
 static void updateScreen(void)
@@ -77,12 +77,12 @@ static void handleEvent(uiEvent_t *ev)
 {
 	displayLightTrigger();
 
-	if (KEYCHECK_PRESS(ev->keys,KEY_RED))
+	if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
 	{
 		menuSystemPopPreviousMenu();
 		return;
 	}
-	else if (KEYCHECK_PRESS(ev->keys,KEY_GREEN))
+	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
 	{
 		menuSystemPopAllAndDisplayRootMenu();
 		return;

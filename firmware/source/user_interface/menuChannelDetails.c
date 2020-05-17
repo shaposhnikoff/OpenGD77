@@ -41,6 +41,8 @@ static struct_codeplugChannel_t tmpChannel;// update a temporary copy of the cha
 static char channelName[17];
 static int namePos;
 
+static menuStatus_t menuChannelDetailsExitCode = MENU_STATUS_SUCCESS;
+
 
 enum CHANNEL_DETAILS_DISPLAY_LIST { CH_DETAILS_NAME = 0,
 									CH_DETAILS_RXFREQ, CH_DETAILS_TXFREQ,
@@ -233,7 +235,7 @@ static void cssDecrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index,
 	}
 }
 
-int menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -272,14 +274,18 @@ int menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 
 		updateScreen();
 		updateCursor(true);
+
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuChannelDetailsExitCode = MENU_STATUS_SUCCESS;
+
 		updateCursor(false);
 		if (ev->hasEvent)
 			handleEvent(ev);
 	}
-	return 0;
+	return menuChannelDetailsExitCode;
 }
 
 static void updateCursor(bool moved)
@@ -549,13 +555,15 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
-		 menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
 		updateScreen();
+		menuChannelDetailsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
 		updateScreen();
+		menuChannelDetailsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 	{
