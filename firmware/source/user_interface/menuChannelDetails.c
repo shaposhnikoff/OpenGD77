@@ -30,11 +30,6 @@ static void handleEvent(uiEvent_t *ev);
 
 static int32_t RxCSSIndex = 0;
 static int32_t TxCSSIndex = 0;
-typedef enum {
-	CSS_NONE = 0,
-	CSS_CTCSS,
-	CSS_DCS
-} CSSTypes_t;
 static CSSTypes_t RxCSSType = CSS_NONE;
 static CSSTypes_t TxCSSType = CSS_NONE;
 static struct_codeplugChannel_t tmpChannel;// update a temporary copy of the channel and only write back if green menu is pressed
@@ -81,7 +76,7 @@ static int cssIndex(uint16_t tone, CSSTypes_t type)
 	return 0;
 }
 
-static void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type)
+void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type, bool loop)
 {
 	(*index)++;
 	if (*type == CSS_CTCSS)
@@ -99,6 +94,14 @@ static void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type)
 	{
 		if (*index >= TRX_NUM_DCS)
 		{
+			if (loop)
+			{
+				*type = CSS_CTCSS;
+				*index = 0;
+				*tone = TRX_CTCSSTones[*index];
+				return;
+			}
+
 			*index = TRX_NUM_DCS - 1;
 		}
 		*tone = TRX_DCSCodes[*index] | 0x8000;
@@ -152,7 +155,7 @@ static void cssIncrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index,
 		{
 			*index += 4;
 		}
-		cssIncrement(tone, index, type);
+		cssIncrement(tone, index, type, false);
 	}
 }
 

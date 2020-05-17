@@ -50,8 +50,10 @@ static int tmpQuickMenuDmrFilterLevel;
 static int tmpQuickMenuAnalogFilterLevel;
 static int16_t newChannelIndex = 0;
 bool toneScanActive = false;//tone scan active flag  (CTCSS)
-static const int TONESCANINTERVAL=200;//time between each tone for lowest tone. (higher tones take less time.)
-static int scanIndex=0;
+static const int TONESCANINTERVAL = 200;//time between each tone for lowest tone. (higher tones take less time.)
+static int scanToneIndex = 0;
+static uint16_t scanTone;
+static CSSTypes_t scanToneType = CSS_CTCSS;
 static bool displayChannelSettings;
 static int prevDisplayQSODataState;
 static vfoScreenOperationMode_t screenOperationMode[2] = {VFO_SCREEN_OPERATION_NORMAL,VFO_SCREEN_OPERATION_NORMAL};// For VFO A and B
@@ -396,7 +398,19 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 
 				if(toneScanActive == true)
 				{
-					sprintf(buffer, "CTCSS %3d.%dHz", TRX_CTCSSTones[scanIndex] / 10, TRX_CTCSSTones[scanIndex] % 10);
+					if (scanToneType == CSS_CTCSS)
+					{
+						sprintf(buffer, "%CTCSS %3d.%dHz", scanTone / 10, scanTone % 10);
+					}
+					else if (scanToneType == CSS_DCS)
+					{
+						sprintf(buffer, "DCS D%03oN", scanTone & 0777);
+					}
+					else
+					{
+						sprintf(buffer, "%s", "TONE ERROR");
+					}
+
 					ucPrintCentered(16, buffer, FONT_SIZE_3);
 				}
 
@@ -1249,7 +1263,7 @@ static void handleUpKey(uiEvent_t *ev)
 		}
 		uiVFOModeUpdateScreen(0);
 	}
-	scanTimer=500;
+	scanTimer = 500;
 	scanState = SCAN_SCANNING;
 	SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);
 }
@@ -1491,8 +1505,10 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 				{
 					toneScanActive = true;
 					scanTimer = TONESCANINTERVAL;
-					scanIndex = 1;
-					trxSetRxCSS(TRX_CTCSSTones[scanIndex]);
+					scanToneIndex = 0;
+					scanToneType = CSS_CTCSS;
+					scanTone = TRX_CTCSSTones[scanToneIndex];
+					trxSetRxCSS(scanTone);
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
 				}
 				break;
@@ -1604,8 +1620,8 @@ static void toneScan(void)
 {
 	if (getAudioAmpStatus() & AUDIO_AMP_MODE_RF)
 	{
-		currentChannelData->txTone = TRX_CTCSSTones[scanIndex];
-		currentChannelData->rxTone = TRX_CTCSSTones[scanIndex];
+		currentChannelData->txTone = scanTone;
+		currentChannelData->rxTone = scanTone;
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 		uiVFOModeUpdateScreen(0);
 		toneScanActive = false;
@@ -1618,14 +1634,10 @@ static void toneScan(void)
 	}
 	else
 	{
-		scanIndex++;
-		if(scanIndex > (TRX_NUM_CTCSS-1))
-		{
-			scanIndex = 1;
-		}
+		cssIncrement(&scanTone, &scanToneIndex, &scanToneType, true);
 		trxAT1846RxOff();
-		trxSetRxCSS(TRX_CTCSSTones[scanIndex]);
-		scanTimer = TONESCANINTERVAL - (scanIndex * 2);
+		trxSetRxCSS(scanTone);
+		scanTimer = TONESCANINTERVAL - (scanToneType == CSS_CTCSS ? (scanToneIndex * 2) : 0);
 		trx_measure_count = 0;//synchronise the measurement with the scan.
 		trxAT1846RxOn();
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;

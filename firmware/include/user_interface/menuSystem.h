@@ -132,6 +132,9 @@ void menuHotspotRestoreSettings(void);
 void menuSystemMenuIncrement(int32_t *O, int32_t M);
 void menuSystemMenuDecrement(int32_t *O, int32_t M);
 
+void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type, bool loop);
+
+
 #if defined(PLATFORM_GD77S)
 void heartBeatActivityForGD77S(uiEvent_t *ev);
 #endif
