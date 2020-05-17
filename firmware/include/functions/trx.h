@@ -24,6 +24,13 @@
 #include "calibration.h"
 #include "codeplug.h"
 
+typedef enum
+{
+	CSS_NONE = 0,
+	CSS_CTCSS,
+	CSS_DCS
+} CSSTypes_t;
+
 typedef struct frequencyBand
 {
 	int calTableMinFreq;
