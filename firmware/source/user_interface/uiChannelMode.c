@@ -30,7 +30,9 @@ static void scanning(void);
 typedef enum
 {
 	GD77S_UIMODE_CHANNEL,
+	GD77S_UIMODE_SCAN,
 	GD77S_UIMODE_TS,
+	GD77S_UIMODE_DMR_FILTER,
 	GD77S_UIMODE_ZONE,
 	GD77S_UIMODE_POWER,
 	GD77S_UIMODE_MAX
@@ -58,13 +60,13 @@ static uint16_t getCurrentChannelInCurrentZoneForGD77S(void);
 
 #else // ! PLATFORM_GD77S
 
-static void startScan(void);
 static void handleUpKey(uiEvent_t *ev);
-#endif // PLATFORM_GD77S
-
-static void uiChannelUpdateTrxID(void);
 static void updateQuickMenuScreen(void);
 static void handleQuickMenuEvent(uiEvent_t *ev);
+#endif // PLATFORM_GD77S
+
+static void startScan(void);
+static void uiChannelUpdateTrxID(void);
 static void searchNextChannel(void);
 static void setNextChannel(void);
 
@@ -167,7 +169,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 #if defined(PLATFORM_GD77S)
 			// Just ensure rotary's selected channel is matching the already loaded one
 			// as rotary selector could be turned while the GD is OFF, or in hotspot mode.
-			if ((rotarySwitchGetPosition() != getCurrentChannelInCurrentZoneForGD77S()) || (GD77SParameters.firstRun == true))
+			if ((scanActive == false) && ((rotarySwitchGetPosition() != getCurrentChannelInCurrentZoneForGD77S()) || (GD77SParameters.firstRun == true)))
 			{
 				if (speechSynthesisIsSpeaking() == false)
 				{
@@ -179,7 +181,6 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 					{
 						GD77SParameters.firstRun = false;
 					}
-
 				}
 			}
 #endif
@@ -1477,7 +1478,6 @@ menuStatus_t uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 	return menuQuickChannelExitStatus;
 }
 
-#if ! defined(PLATFORM_GD77S)
 //Scan Mode
 static void startScan(void)
 {
@@ -1506,7 +1506,6 @@ static void startScan(void)
 	nextChannelReady = false;
 
 }
-#endif // ! PLATFORM_GD77S
 
 static void uiChannelUpdateTrxID(void)
 {
@@ -1657,6 +1656,7 @@ void toggleTimeslotForGD77S(void)
 void heartBeatActivityForGD77S(uiEvent_t *ev)
 {
 	static const uint32_t periods[] = { 5000, 100, 100, 100, 100, 100 };
+	static const uint32_t periodsScan[] = { 2000, 50, 2000, 50, 2000, 50 };
 	static uint8_t        beatRoll = 0;
 	static uint32_t       mTime = 0;
 
@@ -1703,10 +1703,10 @@ void heartBeatActivityForGD77S(uiEvent_t *ev)
 			&& ((ev->hasEvent == false) && ((getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP)) == 0) && (trxCarrierDetected() == false)))
 	{
 		// Blink both LEDs to have Orange color
-		if ((ev->time - mTime) > periods[beatRoll])
+		if ((ev->time - mTime) > (scanActive ? periodsScan[beatRoll] : periods[beatRoll]))
 		{
 			mTime = ev->time;
-			beatRoll = (beatRoll + 1) % (sizeof(periods) / sizeof(periods[0]));
+			beatRoll = (beatRoll + 1) % (scanActive ? (sizeof(periodsScan) / sizeof(periodsScan[0])) : (sizeof(periods) / sizeof(periods[0])));
 			GPIO_PinWrite(GPIO_LEDred, Pin_LEDred, (beatRoll % 2));
 			GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, (beatRoll % 2));
 		}
@@ -1894,6 +1894,12 @@ static uint8_t buildSpeechUiModeForGD77S(uint8_t *buf, uint8_t offset, GD77S_UIM
 			}
 			break;
 
+		case GD77S_UIMODE_SCAN:
+			buf[0U] += 2;
+			buf[++offset] = SPEECH_SYNTHESIS_SCAN;
+			buf[++offset] = (scanActive ? SPEECH_SYNTHESIS_ON : SPEECH_SYNTHESIS_OFF);
+			break;
+
 		case GD77S_UIMODE_TS:
 			if (trxGetMode() == RADIO_MODE_DIGITAL)
 			{
@@ -1903,6 +1909,16 @@ static uint8_t buildSpeechUiModeForGD77S(uint8_t *buf, uint8_t offset, GD77S_UIM
 				len = speechSynthesisBuildNumerical(&buf[offset + 1U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset - 1U), (trxGetDMRTimeSlot() + 1), 1, true);
 				buf[0U] += len;
 				offset += len;
+			}
+			break;
+
+		case GD77S_UIMODE_DMR_FILTER:
+			if (trxGetMode() == RADIO_MODE_DIGITAL)
+			{
+				// DMR Filter
+				buf[0U] += 2U;
+				buf[++offset] = SPEECH_SYNTHESIS_LEVEL;
+				buf[++offset] = ((nonVolatileSettings.dmrFilterLevel == DMR_FILTER_CC_TS_TG) ? SPEECH_SYNTHESIS_ON : SPEECH_SYNTHESIS_OFF);
 			}
 			break;
 
@@ -1942,6 +1958,13 @@ static void handleEventForGD77S(uiEvent_t *ev)
 	{
 		if (!trxTransmissionEnabled && (ev->rotary > 0))
 		{
+			if (scanActive)
+			{
+				uiChannelModeStopScanning();
+				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+				uiChannelModeUpdateScreen(0);
+			}
+
 			nonVolatileSettings.overrideTG = 0;
 			checkAndUpdateSelectedChannelForGD77S(ev->rotary, false);
 			clearActiveDMRID();
@@ -1953,6 +1976,16 @@ static void handleEventForGD77S(uiEvent_t *ev)
 	{
 		if (ev->buttons & BUTTON_ORANGE)
 		{
+			if (scanActive)
+			{
+				uiChannelModeStopScanning();
+				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+				uiChannelModeUpdateScreen(0);
+				buildSpeechUiModeForGD77S(buf, 0U, GD77S_UIMODE_SCAN);
+				speechSynthesisSpeak(buf);
+				return;
+			}
+
 			if (ev->buttons & BUTTON_ORANGE_LONG)
 			{
 				buf[0U] = 1U;
@@ -1973,9 +2006,23 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						buildSpeechUiModeForGD77S(buf, buf[0U], GD77SParameters.uiMode);
 						break;
 
+					case GD77S_UIMODE_SCAN:
+						buf[0U] = 2U;
+						buf[1U] = SPEECH_SYNTHESIS_SCAN;
+						buf[2U] = SPEECH_SYNTHESIS_MODE;
+						break;
+
 					case GD77S_UIMODE_TS: // Timeslot Mode
 						buf[0U] = 3U;
 						buf[1U] = SPEECH_SYNTHESIS_KEY;
+						buf[2U] = SPEECH_SYNTHESIS_MODE;
+						buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
+						buildSpeechUiModeForGD77S(buf, buf[0U], GD77SParameters.uiMode);
+						break;
+
+					case GD77S_UIMODE_DMR_FILTER: // DMR Filter (DMR_FILTER_CC_TS or DMR_FILTER_CC_TS_TG)
+						buf[0U] = 3U;
+						buf[1U] = SPEECH_SYNTHESIS_LEVEL;
 						buf[2U] = SPEECH_SYNTHESIS_MODE;
 						buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
 						buildSpeechUiModeForGD77S(buf, buf[0U], GD77SParameters.uiMode);
@@ -2001,16 +2048,18 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						break;
 				}
 			}
-
-			if (buf[0U] != 0U)
-			{
-				speechSynthesisSpeak(buf);
-			}
 		}
 
 		if (ev->buttons & BUTTON_SK1)
 		{
 			if (ev->buttons & BUTTON_SK1_LONG)
+			{
+				if (GD77SParameters.channelOutOfBounds == false)
+				{
+					buildSpeechChannelDetailsForGD77S(buf, 0U);
+				}
+			}
+			else // Short SK1 press
 			{
 				switch (GD77SParameters.uiMode)
 				{
@@ -2034,10 +2083,34 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						}
 						break;
 
+					case GD77S_UIMODE_SCAN:
+						if (scanActive)
+						{
+							uiChannelModeStopScanning();
+							menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+							uiChannelModeUpdateScreen(0);
+						}
+						else
+						{
+							startScan();
+						}
+						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						break;
+
 					case GD77S_UIMODE_TS:
 						if (trxGetMode() == RADIO_MODE_DIGITAL)
 						{
 							toggleTimeslotForGD77S();
+							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						}
+						break;
+
+					case GD77S_UIMODE_DMR_FILTER:
+						if (trxGetMode() == RADIO_MODE_DIGITAL)
+						{
+							nonVolatileSettings.dmrFilterLevel = DMR_FILTER_CC_TS_TG;
+							init_digital_DMR_RX();
+							disableAudioAmp(AUDIO_AMP_MODE_RF);
 							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
 						}
 						break;
@@ -2061,96 +2134,19 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						if (nonVolatileSettings.txPowerLevel < MAX_POWER_SETTING_NUM)
 						{
 							nonVolatileSettings.txPowerLevel++;
-							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
 						}
+						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
 						break;
 
 					case GD77S_UIMODE_MAX:
 						break;
 				}
 
-			}
-			else // Short SK1 press
-			{
-				if (GD77SParameters.channelOutOfBounds == false)
-				{
-					buildSpeechChannelDetailsForGD77S(buf, 0U);
-				}
-			}
-
-			if (buf[0U] != 0U)
-			{
-				speechSynthesisSpeak(buf);
 			}
 		}
 		else if (ev->buttons & BUTTON_SK2)
 		{
 			if (ev->buttons & BUTTON_SK2_LONG)
-			{
-				switch (GD77SParameters.uiMode)
-				{
-					case GD77S_UIMODE_CHANNEL: // Previous in TGList
-						if (trxGetMode() == RADIO_MODE_DIGITAL)
-						{
-							// To Do change TG in on same channel freq
-							if (nonVolatileSettings.overrideTG == 0)
-							{
-								nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE]--;
-								if (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] < 0)
-								{
-									nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] = currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1;
-								}
-							}
-							nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
-							menuClearPrivateCall();
-							uiChannelUpdateTrxID();
-							menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-							uiChannelModeUpdateScreen(0);
-							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
-						}
-						break;
-
-					case GD77S_UIMODE_TS:
-						if (trxGetMode() == RADIO_MODE_DIGITAL)
-						{
-							toggleTimeslotForGD77S();
-							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
-						}
-						break;
-
-					case GD77S_UIMODE_ZONE: // Zones
-						// No "All Channels" on GD77S
-						menuSystemMenuDecrement((int32_t *)&nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
-
-						nonVolatileSettings.overrideTG = 0; // remove any TG override
-						nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
-						nonVolatileSettings.currentChannelIndexInZone = -2; // Will be updated when reloading the UiChannelMode screen
-						channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screeen that the channel data is now invalid and needs to be reloaded
-
-						menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
-						GD77SParameters.uiMode = GD77S_UIMODE_ZONE;
-
-						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
-						break;
-
-					case GD77S_UIMODE_POWER: // Power
-						if (nonVolatileSettings.txPowerLevel > 0)
-						{
-							nonVolatileSettings.txPowerLevel--;
-							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
-						}
-						break;
-
-					case GD77S_UIMODE_MAX:
-						break;
-				}
-
-				if (buf[0U] != 0U)
-				{
-					speechSynthesisSpeak(buf);
-				}
-			}
-			else // Short SK2 press
 			{
 				uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
@@ -2194,6 +2190,115 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					return;
 				}
 			}
+			else // Short SK2 press
+			{
+				switch (GD77SParameters.uiMode)
+				{
+					case GD77S_UIMODE_CHANNEL: // Previous in TGList
+						if (trxGetMode() == RADIO_MODE_DIGITAL)
+						{
+							// To Do change TG in on same channel freq
+							if (nonVolatileSettings.overrideTG == 0)
+							{
+								nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE]--;
+								if (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] < 0)
+								{
+									nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] = currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1;
+								}
+							}
+							nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
+							menuClearPrivateCall();
+							uiChannelUpdateTrxID();
+							menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+							uiChannelModeUpdateScreen(0);
+							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						}
+						break;
+
+					case GD77S_UIMODE_SCAN:
+						if (scanActive)
+						{
+							// if we are scanning and down key is pressed then enter current channel into nuisance delete array.
+							if(scanState == SCAN_PAUSED)
+							{
+								// There is no more channel available in the Zone, just stop scanning
+								if (nuisanceDeleteIndex == (currentZone.NOT_IN_MEMORY_numChannelsInZone - 1))
+								{
+									uiChannelModeStopScanning();
+									menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+									uiChannelModeUpdateScreen(0);
+									return;
+								}
+
+								nuisanceDelete[nuisanceDeleteIndex++] = settingsCurrentChannelNumber;
+								if(nuisanceDeleteIndex > (MAX_ZONE_SCAN_NUISANCE_CHANNELS - 1))
+								{
+									nuisanceDeleteIndex = 0; //rolling list of last MAX_NUISANCE_CHANNELS deletes.
+								}
+								scanTimer = SCAN_SKIP_CHANNEL_INTERVAL;	//force scan to continue;
+								scanState = SCAN_SCANNING;
+								return;
+							}
+
+							// Left key reverses the scan direction
+							if (scanState == SCAN_SCANNING)
+							{
+								scanDirection *= -1;
+								return;
+							}
+						}
+						break;
+
+					case GD77S_UIMODE_TS:
+						if (trxGetMode() == RADIO_MODE_DIGITAL)
+						{
+							toggleTimeslotForGD77S();
+							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						}
+						break;
+
+					case GD77S_UIMODE_DMR_FILTER:
+						if (trxGetMode() == RADIO_MODE_DIGITAL)
+						{
+							nonVolatileSettings.dmrFilterLevel = DMR_FILTER_CC_TS;
+							init_digital_DMR_RX();
+							disableAudioAmp(AUDIO_AMP_MODE_RF);
+							buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						}
+						break;
+
+					case GD77S_UIMODE_ZONE: // Zones
+						// No "All Channels" on GD77S
+						menuSystemMenuDecrement((int32_t *)&nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
+
+						nonVolatileSettings.overrideTG = 0; // remove any TG override
+						nonVolatileSettings.tsManualOverride &= 0xF0; // remove TS override from channel
+						nonVolatileSettings.currentChannelIndexInZone = -2; // Will be updated when reloading the UiChannelMode screen
+						channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screeen that the channel data is now invalid and needs to be reloaded
+
+						menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
+						GD77SParameters.uiMode = GD77S_UIMODE_ZONE;
+
+						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						break;
+
+					case GD77S_UIMODE_POWER: // Power
+						if (nonVolatileSettings.txPowerLevel > 0)
+						{
+							nonVolatileSettings.txPowerLevel--;
+						}
+						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						break;
+
+					case GD77S_UIMODE_MAX:
+						break;
+				}
+			}
+		}
+
+		if (buf[0U] != 0U)
+		{
+			speechSynthesisSpeak(buf);
 		}
 	}
 }

@@ -152,7 +152,12 @@ void settingsRestoreDefaultSettings(void)
 	nonVolatileSettings.keypadTimerLong = 5;
 	nonVolatileSettings.keypadTimerRepeat = 3;
 	nonVolatileSettings.currentVFONumber = 0;
-	nonVolatileSettings.dmrFilterLevel = DMR_FILTER_CC_TS;
+	nonVolatileSettings.dmrFilterLevel =
+#if defined(PLATFORM_GD77S)
+			DMR_FILTER_CC_TS_TG;
+#else
+			DMR_FILTER_CC_TS;
+#endif
 	nonVolatileSettings.dmrCaptureTimeout=10;// Default to holding 10 seconds after a call ends
 	nonVolatileSettings.analogFilterLevel = ANALOG_FILTER_CTCSS;
 	nonVolatileSettings.languageIndex=0;

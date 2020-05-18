@@ -68,7 +68,7 @@ static dmrIDsCache_t dmrIDsCache;
 int nuisanceDelete[MAX_ZONE_SCAN_NUISANCE_CHANNELS];
 int nuisanceDeleteIndex;
 int scanTimer=0;
-bool scanActive=false;
+bool scanActive = false;
 ScanState_t scanState = SCAN_SCANNING;		//state flag for scan routine.
 int scanDirection = 1;
 
