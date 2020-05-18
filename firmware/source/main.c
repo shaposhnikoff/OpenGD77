@@ -707,16 +707,33 @@ void mainTask(void *data)
 
 			menuSystemCallCurrentMenuTick(&ev);
 
-			if ((((key_event == EVENT_KEY_CHANGE) || (button_event == EVENT_BUTTON_CHANGE))
-					&& ((buttons & BUTTON_PTT) == 0) && (ev.keys.key != 0))
-					|| (function_event == FUNCTION_EVENT))
+			// Beep sounds aren't allowed in these modes.
+			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
 			{
-				if (function_event == FUNCTION_EVENT)
+				if (melody_play != NULL)
 				{
-					ev.keys.event |= KEY_MOD_UP;
+					melody_play = NULL;
 				}
 
-				keyBeepHandler(&ev, PTTToggledDown);
+				// AMBE thing, if any
+				if ((buttons & BUTTON_PTT) == 0)
+				{
+
+				}
+			}
+			else
+			{
+				if ((((key_event == EVENT_KEY_CHANGE) || (button_event == EVENT_BUTTON_CHANGE))
+						&& ((buttons & BUTTON_PTT) == 0) && (ev.keys.key != 0))
+						|| (function_event == FUNCTION_EVENT))
+				{
+					if (function_event == FUNCTION_EVENT)
+					{
+						ev.keys.event |= KEY_MOD_UP;
+					}
+
+					keyBeepHandler(&ev, PTTToggledDown);
+				}
 			}
 
 #if defined(PLATFORM_RD5R)
