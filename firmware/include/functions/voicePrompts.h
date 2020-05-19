@@ -30,13 +30,13 @@ enum voicePrompts {	PROMPT_0 = 0 ,PROMPT_1,PROMPT_2,PROMPT_3,PROMPT_4,PROMPT_5,P
 
 extern bool voicePromptIsActive;
 
-void voicePromptsPlaySqeuence(int pn);
-void voicePromptsTick(void);
 
-void voicePromptsInit(void);
-void voicePromptsAppendPrompt(uint8_t prompt);
-void voicePromptsAppendString(char *);
+void voicePromptsTick(void);// Called from HR-C6000.c
 
-void voicePromptsPlay(void);
+void voicePromptsInit(void);// Call before building the prompt sequence
+void voicePromptsAppendPrompt(uint8_t prompt);// Append an individual prompt item. This can be a single letter number or a phrase
+void voicePromptsAppendString(char *);// Append a text string e.g. "VK3KYY"
+
+void voicePromptsPlay(void);// Starts prompt playback
 
 #endif
