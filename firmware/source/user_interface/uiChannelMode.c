@@ -21,6 +21,7 @@
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiUtilities.h>
 #include <user_interface/uiLocalisation.h>
+#include <functions/voicePrompts.h>
 
 static void handleEvent(uiEvent_t *ev);
 static void loadChannelData(bool useChannelDataInMemory);
@@ -69,6 +70,7 @@ static void startScan(void);
 static void uiChannelUpdateTrxID(void);
 static void searchNextChannel(void);
 static void setNextChannel(void);
+static void announceChannelName(void);
 
 static struct_codeplugZone_t currentZone;
 static char currentZoneName[17];
@@ -154,6 +156,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		}
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
 
+		announceChannelName();
 		menuChannelExitStatus = MENU_STATUS_SUCCESS; // Due to Orange Quick Menu
 	}
 	else
@@ -1202,6 +1205,7 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 					}
+					announceChannelName();
 				}
 			}
 			loadChannelData(false);
@@ -1301,6 +1305,7 @@ static void handleUpKey(uiEvent_t *ev)
 					nonVolatileSettings.currentChannelIndexInZone = 0;
 					menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 			}
+			announceChannelName();
 		}
 		scanTimer = 500;
 		scanState = SCAN_SCANNING;
@@ -1631,6 +1636,17 @@ bool uiChannelModeIsScanning(void)
 void uiChannelModeColdStart(void)
 {
 	channelScreenChannelData.rxFreq = 0;	// Force to re-read codeplug data (needed due to "All Channels" translation)
+}
+static void announceChannelName(void)
+{
+	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	{
+		char voiceBuf[17];
+		codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
+		voicePromptsInit();
+		voicePromptsAppendString(voiceBuf);
+		voicePromptsPlay();
+	}
 }
 
 #if defined(PLATFORM_GD77S)
