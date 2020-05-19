@@ -156,7 +156,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		}
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
 
-		announceChannelName();
+		//announceChannelName();
 		menuChannelExitStatus = MENU_STATUS_SUCCESS; // Due to Orange Quick Menu
 	}
 	else

@@ -92,9 +92,10 @@ void soundTickMelody(void);
 
 
 //bit masks to track amp usage
-#define AUDIO_AMP_MODE_NONE 0B00000000
-#define AUDIO_AMP_MODE_BEEP 0B00000001
-#define AUDIO_AMP_MODE_RF 	0B00000010
+#define AUDIO_AMP_MODE_NONE 	0B00000000
+#define AUDIO_AMP_MODE_BEEP 	0B00000001
+#define AUDIO_AMP_MODE_RF 		0B00000010
+#define AUDIO_AMP_MODE_PROMPT 	0B00000100
 
 
 uint8_t getAudioAmpStatus(void);

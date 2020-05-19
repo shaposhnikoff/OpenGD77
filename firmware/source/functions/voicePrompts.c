@@ -1396,7 +1396,7 @@ void voicePromptsTick(void)
 			if (wavbuffer_count==0)
 			{
 				voicePromptIsActive = false;
-				disableAudioAmp(AUDIO_AMP_MODE_RF);
+				disableAudioAmp(AUDIO_AMP_MODE_PROMPT);
 				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
 					GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1); // connect AT1846S audio to speaker
@@ -1459,7 +1459,7 @@ void voicePromptsPlay(void)
 	ambeData = (uint8_t *)&ambePrompts[promptPositions[promptNumber]];
 
     GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 0);// set the audio mux   HR-C6000 -> audio amp
-	enableAudioAmp(AUDIO_AMP_MODE_RF);
+	enableAudioAmp(AUDIO_AMP_MODE_PROMPT);
 
 	init_codec();
 	promptDataPosition=0;
