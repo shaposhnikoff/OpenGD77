@@ -27,6 +27,7 @@
 #include <trx.h>
 #include <hotspot/uiHotspot.h>
 #include <user_interface/uiUtilities.h>
+#include <functions/voicePrompts.h>
 
 
 static const int SYS_INT_SEND_REQUEST_REJECTED  = 0x80;
@@ -1551,11 +1552,19 @@ void tick_HR_C6000(void)
 		}
 		else
 		{
-			if (hasEncodedAudio)
+			// voice prompts take priority over incoming DMR audio
+			if (voicePromptIsActive)
 			{
-				hasEncodedAudio=false;
-				tick_codec_decode((uint8_t *)DMR_frame_buffer+0x0C);
-				soundTickRXBuffer();
+				voicePromptsTick();
+			}
+			else
+			{
+				if (hasEncodedAudio)
+				{
+					hasEncodedAudio=false;
+					tick_codec_decode((uint8_t *)DMR_frame_buffer+0x0C);
+					soundTickRXBuffer();
+				}
 			}
 		}
 
@@ -1628,4 +1637,3 @@ void HRC6000ClearTimecodeSynchronisation(void)
 {
 	timeCode = -1;
 }
-
