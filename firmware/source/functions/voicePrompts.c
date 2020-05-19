@@ -25,13 +25,13 @@ static int promptDataPosition=-1;
 static int currentPromptLength;
 static uint8_t * ambeData;
 
-#define VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE 256
+#define VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE 32
 
 typedef struct
 {
 	uint8_t  Buffer[VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE];
-	uint8_t  Pos;
-	uint8_t  Length;
+	int  Pos;
+	int  Length;
 } VoicePromptsSequence_t;
 
 static VoicePromptsSequence_t voicePromptsCurrentSequence =
