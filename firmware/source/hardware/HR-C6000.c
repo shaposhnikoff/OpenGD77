@@ -1327,14 +1327,22 @@ void fw_hrc6000_task(void *data)
 			}
 			else
 			{
-				if (trxGetMode() == RADIO_MODE_ANALOG && melody_play==NULL)
+				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
-					taskENTER_CRITICAL();
-					if (!trxTransmissionEnabled)
+					if (voicePromptIsActive)
 					{
-						trxCheckAnalogSquelch();
+						voicePromptsTick();
 					}
-					taskEXIT_CRITICAL();
+
+					if (melody_play==NULL)
+					{
+						taskENTER_CRITICAL();
+						if (!trxTransmissionEnabled)
+						{
+							trxCheckAnalogSquelch();
+						}
+						taskEXIT_CRITICAL();
+					}
 				}
 			}
 		}
