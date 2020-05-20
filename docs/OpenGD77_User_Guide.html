@@ -34,6 +34,7 @@
 </ul>
 </li>
 <li><a href="#installation">Installation</a></li>
+<li><a href="#codeplug-compatibility">Codeplug compatibility</a></li>
 <li><a href="#variations-between-different-supported-radios">Variations between different supported radios</a></li>
 <li><a href="#main-screens-vfo-and-channel-screens">Main screens (VFO and Channel screens)</a><ul>
 <li><a href="#changing-between-vfo-and-channel">Changing between VFO and Channel</a></li>
@@ -208,7 +209,7 @@
 
 <p><img src="media/OpenGD77-logo.png" alt></p>
 <h2 id="introduction">Introduction</h2>
-<p>This user guide is a work in progress as is the OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R and OpenGD77S_HS firmware. If you find any errors or omissions please let me know so they can be corrected.</p>
+<p>This user guide is a work in progress as is the OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R and OpenGD77S firmware. If you find any errors or omissions please let me know so they can be corrected.</p>
 <p>Due to the rapid pace of development some of photos of screens are now out of date and not completely accurate.</p>
 <p>The photos will be updated when the firmware in a particular area stabilises</p>
 <p>The intention of the project is to create a fully featured non-commercial firmware that entirely replaces the Radioddity GD-77, and Baofeng DM-1801 factory firmware.
@@ -256,6 +257,13 @@ Other code sections were written or bug fixed by Daniel F1RMB, Alex DL4LEX, Coli
 <p>Or using the FirmwareLoader.exe in the firmware release</p>
 <p>Installation of the firmware is undertaken at the owners own risk, but the official firmware can usually be reloaded onto the radio if the user has problems with the firmware.</p>
 <p><em>Note:</em> The official Radioddity CPS PC software is not compatible with the firmware, and the &#x201C;Community CPS&#x201D; or the &quot;OpenGD77 CPS&quot; should be used instead. This can be downloaded from the link show in section 1.1 of this guide. This CPS must also be used for the Baofeng DM-1801</p>
+<h2 id="codeplug-compatibility">Codeplug compatibility</h2>
+<p>The offficial frimware for each of these radios use slighly different codeplug formats.</p>
+<p>Users radios other than the GD-77 will need to convert their codeplug using the tools written by Colin G4EML.
+See <a href="http://www.gb3gf.co.uk/downloads.html">http://www.gb3gf.co.uk/downloads.html</a>
+Specifically export their existing codeplug to CSV format, and then import those CSV files into the OpenGD77 version of Colin&apos;s tools.</p>
+<p>The codeplug can only be uploaded to the firmware using the OpenGD77CPS.</p>
+<p>Its also recommended that you restructure your codeplug to remove any duplicate channels which are the same frequency but use different TalkGroup. See the section &apos;Programming Channels and Talkgroups for use with the firmware&apos; at the end of this User Guide</p>
 <h2 id="variations-between-different-supported-radios">Variations between different supported radios</h2>
 <p>Not all the supported radios have the same number of buttons, or the same size screen, hence there are some differences when operating radios other than the Radioddity GD-77</p>
 <ul>
@@ -746,6 +754,50 @@ Pressing the <strong>Red</strong> menu key closes the menu without making any ch
 <p>If the radio still fails to enter hotspot mode, check your USB connections.</p>
 <p><em>Note.</em> By default PiStar configures the &#x201C;modem&#x201D; to have a power setting of &#x201C;100&#x201D; in the Expert -&gt; MMDVMHost settings.</p>
 <p>This is 100% of the maximum power of the modem, and in the case of the radio the maximum power output is 5W, but the radio is not designed to operate as a hotspot, where it may be continuously transmitting.</p>
+<table>
+<thead>
+<tr>
+<th>Power</th>
+<th>PiStar RFLevel</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>50mW</td>
+<td>1</td>
+</tr>
+<tr>
+<td>250mW</td>
+<td>5</td>
+</tr>
+<tr>
+<td>500mW</td>
+<td>10</td>
+</tr>
+<tr>
+<td>750mW</td>
+<td>15</td>
+</tr>
+<tr>
+<td>1W</td>
+<td>20</td>
+</tr>
+<tr>
+<td>2W</td>
+<td>40</td>
+</tr>
+<tr>
+<td>4W</td>
+<td>80</td>
+</tr>
+<tr>
+<td>5W</td>
+<td>99</td>
+</tr>
+<tr>
+<td>5W++</td>
+<td>N/A</td>
+</tr>
+</tbody></table>
 <p>The maximum power setting that the radio can support for continuous transmission will vary depending on the operating environment, including the ambient temperature and antenna SWR, etc.</p>
 <p>It is the responsibility of the user to set an appropriate power level that will not overheat and damage the PA.</p>
 <p>In Hotspot mode, if PiStar (MMDVMHost) sends a power setting of 100% it, the assumption is that that PiStar has not been correctly configured for the OpenGD77 and this value is disregarded.</p>

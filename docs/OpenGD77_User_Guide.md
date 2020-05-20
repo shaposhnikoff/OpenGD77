@@ -11,6 +11,7 @@ For latest information and discussions, please refer to the development and comm
       - [Credits](#credits)
       - [Download links and other resources](#download-links-and-other-resources)
    - [Installation](#installation)
+   - [Codeplug compatibility](#codeplug-compatibility)
    - [Variations between different supported radios](#variations-between-different-supported-radios)
    - [Main screens (VFO and Channel screens)](#main-screens-vfo-and-channel-screens)
       - [Changing between VFO and Channel](#changing-between-vfo-and-channel)
@@ -146,7 +147,7 @@ For latest information and discussions, please refer to the development and comm
 
 ## Introduction
 
-This user guide is a work in progress as is the OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R and OpenGD77S_HS firmware. If you find any errors or omissions please let me know so they can be corrected.
+This user guide is a work in progress as is the OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R and OpenGD77S firmware. If you find any errors or omissions please let me know so they can be corrected.
 
 Due to the rapid pace of development some of photos of screens are now out of date and not completely accurate.
 
@@ -217,6 +218,20 @@ Or using the FirmwareLoader.exe in the firmware release
 Installation of the firmware is undertaken at the owners own risk, but the official firmware can usually be reloaded onto the radio if the user has problems with the firmware.
 
 *Note:* The official Radioddity CPS PC software is not compatible with the firmware, and the “Community CPS” or the "OpenGD77 CPS" should be used instead. This can be downloaded from the link show in section 1.1 of this guide. This CPS must also be used for the Baofeng DM-1801
+
+
+## Codeplug compatibility
+
+The offficial frimware for each of these radios use slighly different codeplug formats.
+
+Users radios other than the GD-77 will need to convert their codeplug using the tools written by Colin G4EML.
+See http://www.gb3gf.co.uk/downloads.html
+Specifically export their existing codeplug to CSV format, and then import those CSV files into the OpenGD77 version of Colin's tools.
+
+The codeplug can only be uploaded to the firmware using the OpenGD77CPS.
+
+Its also recommended that you restructure your codeplug to remove any duplicate channels which are the same frequency but use different TalkGroup. See the section 'Programming Channels and Talkgroups for use with the firmware' at the end of this User Guide
+
 
 ## Variations between different supported radios
 
@@ -1108,6 +1123,19 @@ If the radio still fails to enter hotspot mode, check your USB connections.
 *Note.* By default PiStar configures the “modem” to have a power setting of “100” in the Expert -> MMDVMHost settings.
 
 This is 100% of the maximum power of the modem, and in the case of the radio the maximum power output is 5W, but the radio is not designed to operate as a hotspot, where it may be continuously transmitting.
+
+
+Power | PiStar RFLevel
+--- | ---
+50mW  | 1
+250mW  | 5
+500mW  |10
+750mW  |15
+1W  |  20
+2W  | 40
+4W  | 80
+5W  | 99
+5W++ | N/A
 
 The maximum power setting that the radio can support for continuous transmission will vary depending on the operating environment, including the ambient temperature and antenna SWR, etc.
 
