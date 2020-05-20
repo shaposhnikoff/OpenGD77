@@ -90,7 +90,6 @@ uint32_t buttonsRead(void)
 	if (GPIO_PinRead(GPIO_Orange, Pin_Orange) == 0)
 	{
 		result |= BUTTON_ORANGE;
-
 		checkMButtonState(MBUTTON_ORANGE);
 	}
 #endif // ! PLATFORM_RD5R
