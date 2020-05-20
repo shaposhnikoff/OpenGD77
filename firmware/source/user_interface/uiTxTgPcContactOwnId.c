@@ -29,7 +29,7 @@ static int pcIdx;
 static struct_codeplugContact_t contact;
 
 static void updateCursor(void);
-static void updateScreen(bool inPutModeHasChanged);
+static void updateScreen(bool inputModeHasChanged);
 static void handleEvent(uiEvent_t *ev);
 
 static const uint32_t CURSOR_UPDATE_TIMEOUT = 500;
@@ -109,7 +109,7 @@ static void updateCursor(void)
 	}
 }
 
-static void updateScreen(bool inPutModeHasChanged)
+static void updateScreen(bool inputModeHasChanged)
 {
 	char buf[33];
 	size_t sLen = strlen(menuName[gMenusCurrentItemIndex]) * 8;
@@ -122,25 +122,29 @@ static void updateScreen(bool inPutModeHasChanged)
 	// Not really centered, off by 2 pixels
 	ucPrintAt(((DISPLAY_SIZE_X - sLen) >> 1) - 2, y, (char *)menuName[gMenusCurrentItemIndex], FONT_SIZE_3);
 
-	if (inPutModeHasChanged && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+
+	if (inputModeHasChanged)
 	{
-		voicePromptsInit();
-		switch(gMenusCurrentItemIndex)
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 		{
-			case ENTRY_TG:
-				voicePromptsAppendPrompt(PROMPT_TALKGROUP);
-				break;
-			case ENTRY_PC:
-				voicePromptsAppendPrompt(PROMPT_PRIVATECALL);
-				break;
-			case ENTRY_SELECT_CONTACT:
-				voicePromptsAppendPrompt(PROMPT_CONTACT);
-				break;
-			case ENTRY_USER_DMR_ID:
-				voicePromptsAppendString("ID");
-				break;
+			voicePromptsInit();
+			switch(gMenusCurrentItemIndex)
+			{
+				case ENTRY_TG:
+					voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+					break;
+				case ENTRY_PC:
+					voicePromptsAppendPrompt(PROMPT_PRIVATECALL);
+					break;
+				case ENTRY_SELECT_CONTACT:
+					voicePromptsAppendPrompt(PROMPT_CONTACT);
+					break;
+				case ENTRY_USER_DMR_ID:
+					voicePromptsAppendString("ID");
+					break;
+			}
+			voicePromptsPlay();
 		}
-		voicePromptsPlay();
 	}
 
 	if (pcIdx == 0)
@@ -257,6 +261,7 @@ static void handleEvent(uiEvent_t *ev)
 					gMenusCurrentItemIndex++;
 					if (gMenusCurrentItemIndex > ENTRY_SELECT_CONTACT)
 					{
+						digits[0] = 0;
 						gMenusCurrentItemIndex = ENTRY_TG;
 					}
 					else
