@@ -25,7 +25,7 @@ static int promptDataPosition=-1;
 static int currentPromptLength;
 static uint8_t * ambeData;
 
-#define VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE 32
+#define VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE 128
 
 typedef struct
 {
@@ -1395,14 +1395,17 @@ void voicePromptsTick(void)
 			// wait for wave buffer to empty when prompt has finished playing
 			if (wavbuffer_count==0)
 			{
-				voicePromptIsActive = false;
+
 				disableAudioAmp(AUDIO_AMP_MODE_PROMPT);
 				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
 					GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1); // connect AT1846S audio to speaker
 				}
+				taskENTER_CRITICAL();
+				voicePromptIsActive = false;
 				voicePromptsCurrentSequence.Pos=0;
-				voicePromptsCurrentSequence.Length=0;
+				//voicePromptsCurrentSequence.Length=0;
+				taskEXIT_CRITICAL();
 			}
 		}
 	}
@@ -1414,13 +1417,39 @@ void voicePromptsInit(void)
 	voicePromptsCurrentSequence.Pos = 0;
 }
 
+void voicePromptsTerminateAndInit()
+{
+	taskENTER_CRITICAL();
+	voicePromptIsActive=false;
+	soundTerminateSound();// terminate current I2S transfers
+	soundInit();// reset buffer pointers etc
+	voicePromptsCurrentSequence.Length = 0;
+	voicePromptsCurrentSequence.Pos = 0;
+	taskEXIT_CRITICAL();
+}
+
 void voicePromptsAppendPrompt(uint8_t prompt)
 {
-	voicePromptsCurrentSequence.Buffer[voicePromptsCurrentSequence.Length++] = prompt;
+	if (voicePromptIsActive)
+	{
+		voicePromptsTerminateAndInit();
+	}
+	voicePromptsCurrentSequence.Buffer[voicePromptsCurrentSequence.Length] = prompt;
+	if (voicePromptsCurrentSequence.Length < VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE)
+	{
+		voicePromptsCurrentSequence.Length++;
+	}
 }
+
+
 
 void voicePromptsAppendString(char *promptString)
 {
+	if (voicePromptIsActive)
+	{
+		voicePromptsTerminateAndInit();
+	}
+
 	for(;*promptString !=0;promptString++)
 	{
 		if (*promptString >='0' && *promptString <= '9')
@@ -1453,15 +1482,18 @@ void voicePromptsAppendString(char *promptString)
 
 void voicePromptsPlay(void)
 {
-	int promptNumber = voicePromptsCurrentSequence.Buffer[0];
-	voicePromptsCurrentSequence.Pos = 0;
-	currentPromptLength = promptPositions[promptNumber +1] - promptPositions[promptNumber];
-	ambeData = (uint8_t *)&ambePrompts[promptPositions[promptNumber]];
+	if (voicePromptIsActive==false && voicePromptsCurrentSequence.Length != 0 )
+	{
+		int promptNumber = voicePromptsCurrentSequence.Buffer[0];
+		voicePromptsCurrentSequence.Pos = 0;
+		currentPromptLength = promptPositions[promptNumber +1] - promptPositions[promptNumber];
+		ambeData = (uint8_t *)&ambePrompts[promptPositions[promptNumber]];
 
-    GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 0);// set the audio mux   HR-C6000 -> audio amp
-	enableAudioAmp(AUDIO_AMP_MODE_PROMPT);
+		GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 0);// set the audio mux   HR-C6000 -> audio amp
+		enableAudioAmp(AUDIO_AMP_MODE_PROMPT);
 
-	init_codec();
-	promptDataPosition=0;
-	voicePromptIsActive=true;// Start the playback
+		init_codec();
+		promptDataPosition=0;
+		voicePromptIsActive=true;// Start the playback
+	}
 }

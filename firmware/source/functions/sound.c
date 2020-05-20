@@ -185,7 +185,6 @@ sai_transfer_t xfer;
 
 void soundInit(void)
 {
-
     g_TX_SAI_in_use = false;
     SAI_TxSoftwareReset(I2S0, kSAI_ResetAll);
 	SAI_TxEnable(I2S0, true);

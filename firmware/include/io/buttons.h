@@ -72,11 +72,11 @@
 #if !defined(PLATFORM_RD5R)
 #define BUTTON_ORANGE      0x00000008
 
-#if defined(PLATFORM_GD77S)
+// Long press
 #define BUTTON_ORANGE_LONG 0x00000010
 #define BUTTON_SK1_LONG    0x00000020
 #define BUTTON_SK2_LONG    0x00000040
-#endif
+
 #endif
 
 #define EVENT_BUTTON_NONE   0

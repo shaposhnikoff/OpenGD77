@@ -22,13 +22,14 @@
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiUtilities.h>
 #include <user_interface/uiLocalisation.h>
+#include <functions/voicePrompts.h>
 
 static char digits[9];
 static int pcIdx;
 static struct_codeplugContact_t contact;
 
 static void updateCursor(void);
-static void updateScreen(void);
+static void updateScreen(bool inPutModeHasChanged);
 static void handleEvent(uiEvent_t *ev);
 
 static const uint32_t CURSOR_UPDATE_TIMEOUT = 500;
@@ -53,7 +54,7 @@ menuStatus_t menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
 		gMenusCurrentItemIndex = ENTRY_TG;
 		digits[0] = 0;
 		pcIdx = 0;
-		updateScreen();
+		updateScreen(true);
 		return (MENU_STATUS_INPUT_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
@@ -68,7 +69,9 @@ menuStatus_t menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
 		else
 		{
 			if (ev->hasEvent)
+			{
 				handleEvent(ev);
+			}
 			else
 			{
 				if ((gMenusCurrentItemIndex != ENTRY_SELECT_CONTACT) && (strlen(digits) <= NUM_PC_OR_TG_DIGITS))
@@ -106,7 +109,7 @@ static void updateCursor(void)
 	}
 }
 
-static void updateScreen(void)
+static void updateScreen(bool inPutModeHasChanged)
 {
 	char buf[33];
 	size_t sLen = strlen(menuName[gMenusCurrentItemIndex]) * 8;
@@ -118,6 +121,27 @@ static void updateScreen(void)
 
 	// Not really centered, off by 2 pixels
 	ucPrintAt(((DISPLAY_SIZE_X - sLen) >> 1) - 2, y, (char *)menuName[gMenusCurrentItemIndex], FONT_SIZE_3);
+
+	if (inPutModeHasChanged && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	{
+		voicePromptsInit();
+		switch(gMenusCurrentItemIndex)
+		{
+			case ENTRY_TG:
+				voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+				break;
+			case ENTRY_PC:
+				voicePromptsAppendPrompt(PROMPT_PRIVATECALL);
+				break;
+			case ENTRY_SELECT_CONTACT:
+				voicePromptsAppendPrompt(PROMPT_CONTACT);
+				break;
+			case ENTRY_USER_DMR_ID:
+				voicePromptsAppendString("ID");
+				break;
+		}
+		voicePromptsPlay();
+	}
 
 	if (pcIdx == 0)
 	{
@@ -251,7 +275,7 @@ static void handleEvent(uiEvent_t *ev)
 						}
 					}
 				}
-				updateScreen();
+				updateScreen(true);
 			}
 		}
 	}
@@ -281,7 +305,7 @@ static void handleEvent(uiEvent_t *ev)
 				menuNumericalExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 			}
 
-			updateScreen();
+			updateScreen(false);
 		}
 	}
 	else
@@ -341,6 +365,14 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							char c[2] = {0, 0};
 							c[0] = keyval+'0';
+
+							if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+							{
+								voicePromptsInit();
+								voicePromptsAppendString(c);
+								voicePromptsPlay();
+							}
+
 							strcat(digits, c);
 							refreshScreen = true;
 						}
@@ -350,7 +382,7 @@ static void handleEvent(uiEvent_t *ev)
 
 			if (refreshScreen)
 			{
-				updateScreen();
+				updateScreen(false);
 			}
 
 			updateCursor();

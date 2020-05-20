@@ -71,6 +71,7 @@ static void uiChannelUpdateTrxID(void);
 static void searchNextChannel(void);
 static void setNextChannel(void);
 static void announceChannelName(void);
+static void announceTG(void);
 
 static struct_codeplugZone_t currentZone;
 static char currentZoneName[17];
@@ -156,7 +157,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		}
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
 
-		//announceChannelName();
+		announceChannelName();
 		menuChannelExitStatus = MENU_STATUS_SUCCESS; // Due to Orange Quick Menu
 	}
 	else
@@ -704,6 +705,14 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
+		if (ev->buttons & BUTTON_SK2)
+		{
+			if (ev->buttons & BUTTON_SK2_LONG)
+			{
+				voicePromptsPlay();
+			}
+		}
+
 		uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
 		// If Blue button is pressed during reception it sets the Tx TG to the incoming TG
@@ -990,6 +999,7 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelUpdateTrxID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
+					announceTG();
 				}
 				else
 				{
@@ -1054,6 +1064,7 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelUpdateTrxID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
+					announceTG();
 				}
 				else
 				{
@@ -1205,10 +1216,11 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 					}
-					announceChannelName();
+
 				}
 			}
 			loadChannelData(false);
+			announceChannelName();
 			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 			uiChannelModeUpdateScreen(0);
 			SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1305,13 +1317,14 @@ static void handleUpKey(uiEvent_t *ev)
 					nonVolatileSettings.currentChannelIndexInZone = 0;
 					menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 			}
-			announceChannelName();
+
 		}
 		scanTimer = 500;
 		scanState = SCAN_SCANNING;
 	}
 
 	loadChannelData(false);
+	announceChannelName();
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 	uiChannelModeUpdateScreen(0);
 }
@@ -1645,8 +1658,13 @@ static void announceChannelName(void)
 		codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
 		voicePromptsInit();
 		voicePromptsAppendString(voiceBuf);
-		voicePromptsPlay();
 	}
+}
+
+static void announceTG()
+{
+	voicePromptsInit();
+	voicePromptsAppendString(currentContactData.name);
 }
 
 #if defined(PLATFORM_GD77S)
