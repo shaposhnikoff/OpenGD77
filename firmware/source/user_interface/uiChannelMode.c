@@ -1698,7 +1698,7 @@ void heartBeatActivityForGD77S(uiEvent_t *ev)
 	//   We use real time GPIO readouts, as LED could be turned on/off by another task.
 	// </paranoid_mode>
 	if ((GPIO_PinRead(GPIO_LEDred, Pin_LEDred) || GPIO_PinRead(GPIO_LEDgreen, Pin_LEDgreen)) // Any led is ON
-			&& (trxTransmissionEnabled || (ev->buttons & BUTTON_PTT) || (getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP)) || trxCarrierDetected() || ev->hasEvent)) // we're transmitting, or receiving, or user interaction.
+			&& (trxTransmissionEnabled || (ev->buttons & BUTTON_PTT) || (getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP | AUDIO_AMP_MODE_PROMPT)) || trxCarrierDetected() || ev->hasEvent)) // we're transmitting, or receiving, or user interaction.
 	{
 		// Turn off the red LED, if not transmitting
 		if (GPIO_PinRead(GPIO_LEDred, Pin_LEDred) // Red is ON
@@ -1712,7 +1712,7 @@ void heartBeatActivityForGD77S(uiEvent_t *ev)
 		{
 			if ((trxTransmissionEnabled || (ev->buttons & BUTTON_PTT))
 					|| ((trxGetMode() == RADIO_MODE_DIGITAL) && (slot_state != DMR_STATE_IDLE))
-					|| (((getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP)) != 0) || trxCarrierDetected()))
+					|| (((getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP | AUDIO_AMP_MODE_PROMPT)) != 0) || trxCarrierDetected()))
 			{
 				if ((ev->buttons & BUTTON_PTT) && (trxTransmissionEnabled == false)) // RX Only or Out of Band
 				{
@@ -1734,7 +1734,7 @@ void heartBeatActivityForGD77S(uiEvent_t *ev)
 
 	// Nothing is happening, blink
 	if (((trxTransmissionEnabled == false) && ((ev->buttons & BUTTON_PTT) == 0))
-			&& ((ev->hasEvent == false) && ((getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP)) == 0) && (trxCarrierDetected() == false)))
+			&& ((ev->hasEvent == false) && ((getAudioAmpStatus() & (AUDIO_AMP_MODE_RF | AUDIO_AMP_MODE_BEEP | AUDIO_AMP_MODE_PROMPT)) == 0) && (trxCarrierDetected() == false)))
 	{
 		// Blink both LEDs to have Orange color
 		if ((ev->time - mTime) > (scanActive ? periodsScan[beatRoll] : periods[beatRoll]))
