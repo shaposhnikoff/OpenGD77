@@ -1430,11 +1430,6 @@ void voicePromptsTerminateAndInit()
 
 void voicePromptsAppendPrompt(uint8_t prompt)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
-	{
-		return;
-	}
-
 	if (voicePromptIsActive)
 	{
 		voicePromptsTerminateAndInit();
@@ -1450,11 +1445,6 @@ void voicePromptsAppendPrompt(uint8_t prompt)
 
 void voicePromptsAppendString(char *promptString)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
-	{
-		return;
-	}
-
 	if (voicePromptIsActive)
 	{
 		voicePromptsTerminateAndInit();
@@ -1492,11 +1482,6 @@ void voicePromptsAppendString(char *promptString)
 
 void voicePromptsPlay(void)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
-	{
-		return;
-	}
-
 	if (voicePromptIsActive==false && voicePromptsCurrentSequence.Length != 0 )
 	{
 		int promptNumber = voicePromptsCurrentSequence.Buffer[0];
