@@ -20,7 +20,7 @@
  * Translators: OK2HAD
  *
  *
- * Rev: 2.2
+ * Rev: 3.8
  */
 #ifndef USER_INTERFACE_LANGUAGES_CZECH_H_
 #define USER_INTERFACE_LANGUAGES_CZECH_H_
@@ -151,9 +151,9 @@ const stringsTable_t czechLanguage =
 .priority_order				= "íst ID", // MaxLen 16 (with ':' + 'Cc/DB/TA')
 .dmr_beep				= "pípDMR", // MaxLen 16 (with ':' + .star/.stop/.both/.none)
 .start					= "start", // MaxLen 16 (with ':' + .dmr_beep)
-.both					= "StartStop", // MaxLen 16 (with ':' + .dmr_beep)
-.vox_threshold                          = "VOX Thres.", // MaxLen 16 (with ':' + .off or 1..30)
-.vox_tail                               = "VOX Tail", // MaxLen 16 (with ':' + .n_a or '0.0s')
+.both					= "StartStop" // MaxLen 16 (with ':' + .dmr_beep)
+.vox_threshold                          = "VOX Práh", // MaxLen 16 (with ':' + .off or 1..30)
+.vox_tail                               = "VOX Dozvuk", // MaxLen 16 (with ':' + .n_a or '0.0s')
 .audio_prompt				= "Prompt",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice)
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
