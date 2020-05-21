@@ -106,7 +106,7 @@ const menuFunctionPointer_t menuFunctions[] = { uiSplashScreen,
 
 static void menuSystemCheckForFirstEntryAudible(menuStatus_t status)
 {
-	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_BEEP)
+	if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_BEEP) || (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE))
 	{
 		 if (((status & MENU_STATUS_LIST_TYPE) && (gMenusCurrentItemIndex == 0)) || (status & MENU_STATUS_FORCE_FIRST))
 		 {
