@@ -157,7 +157,6 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		}
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
 
-		announceChannelName();
 		menuChannelExitStatus = MENU_STATUS_SUCCESS; // Due to Orange Quick Menu
 	}
 	else
@@ -436,6 +435,7 @@ static void loadChannelData(bool useChannelDataInMemory)
 			trxSetDMRTimeSlot ((nonVolatileSettings.tsManualOverride & 0x0F) -1);
 		}
 	}
+	announceChannelName();
 }
 
 void uiChannelModeUpdateScreen(int txTimeSecs)
@@ -844,6 +844,8 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						nonVolatileSettings.currentChannelIndexInAllZone = directChannelNumber;
 						loadChannelData(false);
+						announceChannelName();
+
 					}
 					else
 					{
@@ -856,6 +858,7 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						nonVolatileSettings.currentChannelIndexInZone = directChannelNumber-1;
 						loadChannelData(false);
+						announceChannelName();
 					}
 					else
 					{
@@ -1217,7 +1220,6 @@ static void handleEvent(uiEvent_t *ev)
 				}
 			}
 			loadChannelData(false);
-			announceChannelName();
 			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 			uiChannelModeUpdateScreen(0);
 			SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1321,7 +1323,6 @@ static void handleUpKey(uiEvent_t *ev)
 	}
 
 	loadChannelData(false);
-	announceChannelName();
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 	uiChannelModeUpdateScreen(0);
 }
