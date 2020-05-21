@@ -291,7 +291,7 @@ static void handleEvent(uiEvent_t *ev)
 {
 	displayLightTrigger();
 
-	if (ev->buttons & (BUTTON_SK2 | BUTTON_SK2_LONG))
+	if (ev->buttons & BUTTON_SK1)
 	{
 		voicePromptsPlay();
 	}
