@@ -20,7 +20,7 @@
  * Translators: OK2HAD
  *
  *
- * Rev: 3.8
+ * Rev: 3.9
  */
 #ifndef USER_INTERFACE_LANGUAGES_CZECH_H_
 #define USER_INTERFACE_LANGUAGES_CZECH_H_
@@ -154,11 +154,11 @@ const stringsTable_t czechLanguage =
 .both					= "StartStop", // MaxLen 16 (with ':' + .dmr_beep)
 .vox_threshold                          = "VOX Práh", // MaxLen 16 (with ':' + .off or 1..30)
 .vox_tail                               = "VOX Dozvuk", // MaxLen 16 (with ':' + .n_a or '0.0s')
-.audio_prompt				= "Prompt",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice)
-.silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
-.normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
-.beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.audio_prompt				= "VýzvaZvuk",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice)
+.silent                                 = "Tichý", // Maxlen 16 (with : + audio_prompt)
+.normal                                 = "Normál", // Maxlen 16 (with : + audio_prompt)
+.beep					= "Pípá", // Maxlen 16 (with : + audio_prompt)
+.voice					= "Hlas" // Maxlen 16 (with : + audio_prompt)
 };
 /********************************************************************
  *
