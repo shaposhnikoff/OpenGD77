@@ -27,7 +27,6 @@ volatile bool PTTLocked = false;
 
 #define MBUTTON_PRESSED  0x01
 #define MBUTTON_LONG     0x02
-#define MBUTTON_DOWN     0x04 // Maybe not needed
 
 typedef enum
 {
@@ -37,7 +36,7 @@ typedef enum
 	MBUTTON_MAX
 } MBUTTON_t;
 
-static uint16_t mbuttons;
+static uint8_t mbuttons;
 
 void buttonsInit(void)
 {
@@ -61,12 +60,12 @@ void buttonsInit(void)
 
 static bool isMButtonPressed(MBUTTON_t mbutton)
 {
-     return (((mbuttons >> (mbutton * 3)) & MBUTTON_PRESSED) & MBUTTON_PRESSED);
+     return (((mbuttons >> (mbutton * 2)) & MBUTTON_PRESSED) & MBUTTON_PRESSED);
 }
 
 static bool isMButtonLong(MBUTTON_t mbutton)
 {
-     return (((mbuttons >> (mbutton * 3)) & MBUTTON_LONG) & MBUTTON_LONG);
+     return (((mbuttons >> (mbutton * 2)) & MBUTTON_LONG) & MBUTTON_LONG);
 }
 
 static void checkMButtonState(MBUTTON_t mbutton)
@@ -77,8 +76,8 @@ static void checkMButtonState(MBUTTON_t mbutton)
 		timer_mbuttons[mbutton] = (nonVolatileSettings.keypadTimerLong * 1000);
 		taskEXIT_CRITICAL();
 
-		mbuttons |= (MBUTTON_PRESSED << (mbutton * 3));
-		mbuttons &= ~(MBUTTON_LONG << (mbutton * 3));
+		mbuttons |= (MBUTTON_PRESSED << (mbutton * 2));
+		mbuttons &= ~(MBUTTON_LONG << (mbutton * 2));
 	}
 }
 
@@ -134,7 +133,7 @@ static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonI
 		if (tmp_timer_mbutton == 0)
 		{
 			// Long press
-			mbuttons |= (MBUTTON_LONG << (mbutton * 3));
+			mbuttons |= (MBUTTON_LONG << (mbutton * 2));
 
 			// Set LONG bit
 			*buttons |= buttonLong;
@@ -148,8 +147,8 @@ static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonI
 	else if (((*buttons & buttonID) == 0) && isMButtonPressed(mbutton) && (isMButtonLong(mbutton) == false) && (tmp_timer_mbutton != 0))
 	{
 		// Short press/release cycle
-		mbuttons &= ~(MBUTTON_PRESSED << (mbutton * 3));
-		mbuttons &= ~(MBUTTON_LONG << (mbutton * 3));
+		mbuttons &= ~(MBUTTON_PRESSED << (mbutton * 2));
+		mbuttons &= ~(MBUTTON_LONG << (mbutton * 2));
 
 		taskENTER_CRITICAL();
 		timer_mbuttons[mbutton] = 0;
@@ -162,8 +161,8 @@ static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonI
 	else if (((*buttons & buttonID) == 0) && isMButtonPressed(mbutton) && isMButtonLong(mbutton))
 	{
 		// Button was still down after a long press, now handle release
-		mbuttons &= ~(MBUTTON_PRESSED << (mbutton * 3));
-		mbuttons &= ~(MBUTTON_LONG << (mbutton * 3));
+		mbuttons &= ~(MBUTTON_PRESSED << (mbutton * 2));
+		mbuttons &= ~(MBUTTON_LONG << (mbutton * 2));
 
 		// Remove LONG
 		*buttons &= ~buttonLong;
