@@ -1658,15 +1658,15 @@ static void announceChannelName(void)
 		voicePromptsAppendString(voiceBuf);
 	}
 }
-
+#if ! defined(PLATFORM_GD77S)
 static void announceTG()
 {
 	voicePromptsInit();
 	voicePromptsAppendString(currentContactData.name);
 }
+#endif
 
 #if defined(PLATFORM_GD77S)
-
 void toggleTimeslotForGD77S(void)
 {
 	if (trxGetMode() == RADIO_MODE_DIGITAL)
