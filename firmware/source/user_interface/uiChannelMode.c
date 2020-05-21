@@ -705,9 +705,9 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
-		if (ev->buttons & BUTTON_SK2)
+		if (ev->buttons & BUTTON_SK1)
 		{
-			if (ev->buttons & BUTTON_SK2_LONG)
+			if (ev->buttons & BUTTON_SK1_LONG)
 			{
 				voicePromptsPlay();
 			}
