@@ -71,7 +71,9 @@ static void uiChannelUpdateTrxID(void);
 static void searchNextChannel(void);
 static void setNextChannel(void);
 static void announceChannelName(void);
+#if ! defined(PLATFORM_GD77S)
 static void announceTG(void);
+#endif
 
 static struct_codeplugZone_t currentZone;
 static char currentZoneName[17];
@@ -647,7 +649,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		// Key pressed during scanning
 
-		if ((ev->buttons & BUTTON_SK2) == 0)
+		if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0)
 		{
 			// if we are scanning and down key is pressed then enter current channel into nuisance delete array.
 			if((scanState == SCAN_PAUSED) && (ev->keys.key == KEY_RIGHT))
@@ -683,7 +685,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		// stop the scan on any button except UP without Shift (allows scan to be manually continued)
 		// or SK2 on its own (allows Backlight to be triggered)
-		if (((ev->keys.key == KEY_UP) && (ev->buttons & BUTTON_SK2) == 0) == false)
+		if (((ev->keys.key == KEY_UP) && BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0) == false)
 		{
 			uiChannelModeStopScanning();
 			keyboardReset();
@@ -705,7 +707,7 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
-		if (ev->buttons & BUTTON_SK1)
+		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
 		{
 			voicePromptsPlay();
 		}
@@ -713,7 +715,7 @@ static void handleEvent(uiEvent_t *ev)
 		uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
 		// If Blue button is pressed during reception it sets the Tx TG to the incoming TG
-		if (isDisplayingQSOData && (ev->buttons & BUTTON_SK2) && trxGetMode() == RADIO_MODE_DIGITAL &&
+		if (isDisplayingQSOData && BUTTONCHECK_DOWN(ev, BUTTON_SK2) && trxGetMode() == RADIO_MODE_DIGITAL &&
 				(trxTalkGroupOrPcId != tg ||
 				(dmrMonitorCapturedTS!=-1 && dmrMonitorCapturedTS != trxGetDMRTimeSlot()) ||
 				(trxGetDMRColourCode() != currentChannelData->rxColor)))
@@ -747,7 +749,7 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 
-		if ((reverseRepeater == false) && ((ev->buttons & BUTTON_SK1) && (ev->buttons & BUTTON_SK2)))
+		if ((reverseRepeater == false) && (BUTTONCHECK_DOWN(ev, BUTTON_SK1) && BUTTONCHECK_DOWN(ev, BUTTON_SK2)))
 		{
 			trxSetFrequency(channelScreenChannelData.txFreq, channelScreenChannelData.rxFreq, DMR_MODE_ACTIVE);// Swap Tx and Rx freqs but force DMR Active
 			reverseRepeater = true;
@@ -755,7 +757,7 @@ static void handleEvent(uiEvent_t *ev)
 			uiChannelModeUpdateScreen(0);
 			return;
 		}
-		else if ((reverseRepeater == true) && ((ev->buttons & BUTTON_SK2) == 0))
+		else if ((reverseRepeater == true) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 		{
 			trxSetFrequency(channelScreenChannelData.rxFreq, channelScreenChannelData.txFreq, DMR_MODE_AUTO);
 			reverseRepeater = false;
@@ -770,7 +772,7 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 		// Display channel settings (RX/TX/etc) while SK1 is pressed
-		else if ((displayChannelSettings == false) && (ev->buttons & BUTTON_SK1))
+		else if ((displayChannelSettings == false) && BUTTONCHECK_DOWN(ev, BUTTON_SK1))
 		{
 			int prevQSODisp = prevDisplayQSODataState;
 			displayChannelSettings = true;
@@ -780,7 +782,7 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 
 		}
-		else if ((displayChannelSettings == true) && ((ev->buttons & BUTTON_SK1) == 0))
+		else if ((displayChannelSettings == true) && (BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0))
 		{
 			displayChannelSettings = false;
 			menuDisplayQSODataState = prevDisplayQSODataState;
@@ -807,9 +809,9 @@ static void handleEvent(uiEvent_t *ev)
 		}
 
 #if !defined(PLATFORM_RD5R)
-		if ((ev->buttons & BUTTON_ORANGE) && ((ev->buttons & BUTTON_SK1) == 0))
+		if (BUTTONCHECK_DOWN(ev, BUTTON_ORANGE) && (BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				settingsPrivateCallMuteMode = !settingsPrivateCallMuteMode;// Toggle PC mute only mode
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -870,7 +872,7 @@ static void handleEvent(uiEvent_t *ev)
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				uiChannelModeUpdateScreen(0);
 			}
-			else if (ev->buttons & BUTTON_SK2 )
+			else if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				menuSystemPushNewMenu(MENU_CHANNEL_DETAILS);
 			}
@@ -884,7 +886,7 @@ static void handleEvent(uiEvent_t *ev)
 		{
 			if (trxGetMode() == RADIO_MODE_DIGITAL)
 			{
-				if ((ev->buttons & BUTTON_SK2) != 0)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) != 0)
 				{
 					menuSystemPushNewMenu(MENU_CONTACT_QUICKLIST);
 				}
@@ -897,7 +899,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
 		{
-			if ((ev->buttons & BUTTON_SK2 ) != 0 && menuUtilityTgBeforePcMode != 0)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) && (menuUtilityTgBeforePcMode != 0))
 			{
 				nonVolatileSettings.overrideTG = menuUtilityTgBeforePcMode;
 				menuClearPrivateCall();
@@ -930,9 +932,9 @@ static void handleEvent(uiEvent_t *ev)
 		}
 #endif
 #if defined(PLATFORM_RD5R)
-		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_VFO_MR) && ((ev->buttons & BUTTON_SK1) == 0))
+		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_VFO_MR) && (BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				settingsPrivateCallMuteMode = !settingsPrivateCallMuteMode;// Toggle PC mute only mode
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -955,7 +957,7 @@ static void handleEvent(uiEvent_t *ev)
 		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_RIGHT))
 		{
 			// Long press allows the 5W+ power setting to be selected immediately
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				if (nonVolatileSettings.txPowerLevel == (MAX_POWER_SETTING_NUM - 1))
 				{
@@ -969,7 +971,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_PRESS(ev->keys, KEY_RIGHT))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				if (nonVolatileSettings.txPowerLevel < (MAX_POWER_SETTING_NUM - 1))
 				{
@@ -1024,7 +1026,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				if (nonVolatileSettings.txPowerLevel > 0)
 				{
@@ -1089,7 +1091,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_STAR))
 		{
-			if (ev->buttons & BUTTON_SK2)  // Toggle Channel Mode
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))  // Toggle Channel Mode
 			{
 				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
@@ -1134,7 +1136,7 @@ static void handleEvent(uiEvent_t *ev)
 				}
 			}
 		}
-		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_STAR) && ((ev->buttons & BUTTON_SK2) == 0))
+		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_STAR) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 		{
 			if (trxGetMode() == RADIO_MODE_DIGITAL)
 			{
@@ -1158,7 +1160,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_DOWN) || KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_DOWN))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				int numZones = codeplugZonesGetCount();
 
@@ -1230,7 +1232,7 @@ static void handleEvent(uiEvent_t *ev)
 			SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
 			return;
 		}
-		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_UP) && ((ev->buttons & BUTTON_SK2) == 0))
+		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_UP) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 		{
 			startScan();
 		}
@@ -1270,7 +1272,7 @@ static void handleEvent(uiEvent_t *ev)
 #if ! defined(PLATFORM_GD77S)
 static void handleUpKey(uiEvent_t *ev)
 {
-	if (ev->buttons & BUTTON_SK2)
+	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		int numZones = codeplugZonesGetCount();
 
@@ -2006,7 +2008,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
-		if (ev->buttons & BUTTON_ORANGE)
+		if (BUTTONCHECK_DOWN(ev, BUTTON_ORANGE))
 		{
 			if (scanActive)
 			{
@@ -2018,7 +2020,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 				return;
 			}
 
-			if (ev->buttons & BUTTON_ORANGE_LONG)
+			if (BUTTONCHECK_LONGDOWN(ev, BUTTON_ORANGE))
 			{
 				buf[0U] = 1U;
 				buf[1U] = SPEECH_SYNTHESIS_BATTERY;
@@ -2082,9 +2084,9 @@ static void handleEventForGD77S(uiEvent_t *ev)
 			}
 		}
 
-		if (ev->buttons & BUTTON_SK1)
+		if (BUTTONCHECK_DOWN(ev, BUTTON_SK1))
 		{
-			if (ev->buttons & BUTTON_SK1_LONG)
+			if (BUTTONCHECK_LONGDOWN(ev, BUTTON_SK1))
 			{
 				if (GD77SParameters.channelOutOfBounds == false)
 				{
@@ -2176,14 +2178,14 @@ static void handleEventForGD77S(uiEvent_t *ev)
 
 			}
 		}
-		else if (ev->buttons & BUTTON_SK2)
+		else if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 		{
-			if (ev->buttons & BUTTON_SK2_LONG)
+			if (BUTTONCHECK_LONGDOWN(ev, BUTTON_SK2))
 			{
 				uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
 				// If Blue button is pressed during reception it sets the Tx TG to the incoming TG
-				if (isDisplayingQSOData && (ev->buttons & BUTTON_SK2) && (trxGetMode() == RADIO_MODE_DIGITAL) &&
+				if (isDisplayingQSOData && BUTTONCHECK_DOWN(ev, BUTTON_SK2) && (trxGetMode() == RADIO_MODE_DIGITAL) &&
 						((trxTalkGroupOrPcId != tg) ||
 								((dmrMonitorCapturedTS != -1) && (dmrMonitorCapturedTS != trxGetDMRTimeSlot())) ||
 								(trxGetDMRColourCode() != currentChannelData->rxColor)))

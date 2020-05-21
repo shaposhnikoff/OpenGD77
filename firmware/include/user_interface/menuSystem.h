@@ -42,6 +42,12 @@ typedef struct
 
 #define MENU_MAX_DISPLAYED_ENTRIES 3
 
+// Short press event
+#define BUTTONCHECK_SHORTUP(e, sk) (((e)->keys.key == 0) && ((e)->buttons & sk ## _SHORT_UP))
+// Long press event
+#define BUTTONCHECK_LONGDOWN(e, sk) (((e)->keys.key == 0) && ((e)->buttons & sk ## _LONG_DOWN))
+// SK*/ORANGE button is down, regardless event status
+#define BUTTONCHECK_DOWN(e, sk) (((e)->buttons & sk))
 
 
 extern bool uiChannelModeScanActive;
