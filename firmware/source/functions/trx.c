@@ -246,7 +246,7 @@ void trxSetModeAndBandwidth(int mode, bool bandwidthIs25kHz)
 		case RADIO_MODE_ANALOG:
 			GPIO_PinWrite(GPIO_TX_audio_mux, Pin_TX_audio_mux, 0); // Connect mic to mic input of AT-1846
 			GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1); // connect AT1846S audio to speaker
-			soundTerminateSound();
+			//soundTerminateSound(); This does not seem to be necessary and also causes problems with the voice prompts
 			terminate_digital();
 
 			AT1846SetMode();
