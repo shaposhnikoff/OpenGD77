@@ -64,6 +64,8 @@ static uint16_t getCurrentChannelInCurrentZoneForGD77S(void);
 static void handleUpKey(uiEvent_t *ev);
 static void updateQuickMenuScreen(void);
 static void handleQuickMenuEvent(uiEvent_t *ev);
+static void announceTG(void);
+
 #endif // PLATFORM_GD77S
 
 static void startScan(void);
@@ -71,7 +73,7 @@ static void uiChannelUpdateTrxID(void);
 static void searchNextChannel(void);
 static void setNextChannel(void);
 static void announceChannelName(void);
-static void announceTG(void);
+
 
 static struct_codeplugZone_t currentZone;
 static char currentZoneName[17];
