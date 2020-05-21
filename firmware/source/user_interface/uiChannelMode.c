@@ -707,10 +707,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (ev->buttons & BUTTON_SK1)
 		{
-			if (ev->buttons & BUTTON_SK1_LONG)
-			{
-				voicePromptsPlay();
-			}
+			voicePromptsPlay();
 		}
 
 		uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);

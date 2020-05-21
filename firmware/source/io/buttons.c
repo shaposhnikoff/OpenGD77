@@ -58,7 +58,7 @@ void buttonsInit(void)
 
     old_button_state = 0;
 }
-
+#if defined(PLATFORM_GD77S)
 static bool isMButtonPressed(MBUTTON_t mbutton)
 {
      return (((mbuttons >> (mbutton * 2)) & MBUTTON_PRESSED) & MBUTTON_PRESSED);
@@ -81,7 +81,7 @@ static void checkMButtonState(MBUTTON_t mbutton)
 		mbuttons &= ~(MBUTTON_LONG << (mbutton * 2));
 	}
 }
-
+#endif
 uint32_t buttonsRead(void)
 {
 	uint32_t result = BUTTON_NONE;
@@ -90,7 +90,9 @@ uint32_t buttonsRead(void)
 	if (GPIO_PinRead(GPIO_Orange, Pin_Orange) == 0)
 	{
 		result |= BUTTON_ORANGE;
+#if defined(PLATFORM_GD77S)
 		checkMButtonState(MBUTTON_ORANGE);
+#endif
 	}
 #endif // ! PLATFORM_RD5R
 
@@ -102,18 +104,22 @@ uint32_t buttonsRead(void)
 	if (GPIO_PinRead(GPIO_SK1, Pin_SK1) == 0)
 	{
 		result |= BUTTON_SK1;
+#if defined(PLATFORM_GD77S)
 		checkMButtonState(MBUTTON_SK1);
+#endif
 	}
 
 	if (GPIO_PinRead(GPIO_SK2, Pin_SK2) == 0)
 	{
 		result |= BUTTON_SK2;
+#if defined(PLATFORM_GD77S)
 		checkMButtonState(MBUTTON_SK2);
+#endif
 	}
 
 	return result;
 }
-
+#if defined(PLATFORM_GD77S)
 static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonID, uint32_t buttonLong)
 {
 	taskENTER_CRITICAL();
@@ -167,6 +173,7 @@ static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonI
 		*buttons &= ~buttonLong;
 	}
 }
+#endif
 
 void buttonsCheckButtonsEvent(uint32_t *buttons, int *event)
 {
@@ -174,9 +181,9 @@ void buttonsCheckButtonsEvent(uint32_t *buttons, int *event)
 
 #if defined(PLATFORM_GD77S)
 	checkMButtons(buttons, MBUTTON_ORANGE, BUTTON_ORANGE, BUTTON_ORANGE_LONG);
-#endif
 	checkMButtons(buttons, MBUTTON_SK1, BUTTON_SK1, BUTTON_SK1_LONG);
 	checkMButtons(buttons, MBUTTON_SK2, BUTTON_SK2, BUTTON_SK2_LONG);
+#endif
 
 	if (old_button_state != *buttons)
 	{
