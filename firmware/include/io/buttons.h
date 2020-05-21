@@ -78,9 +78,7 @@
 #define BUTTON_ORANGE_SHORT_UP  0x00000100
 
 // Long press
-#if defined(PLATFORM_GD77S)
 #define BUTTON_ORANGE_LONG_DOWN 0x00000200
-#endif
 #endif // ! PLATFORM_RD5R
 
 #define EVENT_BUTTON_NONE   0

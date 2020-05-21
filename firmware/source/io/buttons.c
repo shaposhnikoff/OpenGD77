@@ -89,9 +89,7 @@ uint32_t buttonsRead(void)
 	if (GPIO_PinRead(GPIO_Orange, Pin_Orange) == 0)
 	{
 		result |= BUTTON_ORANGE;
-#if defined(PLATFORM_GD77S)
 		checkMButtonState(MBUTTON_ORANGE);
-#endif
 	}
 #endif // ! PLATFORM_RD5R
 
@@ -138,11 +136,6 @@ static void checkMButtons(uint32_t *buttons, MBUTTON_t mbutton, uint32_t buttonI
 			// Set LONG bit
 			*buttons |= buttonLong;
 		}
-		else
-		{
-			// Still not a short or long press
-			//*buttons &= ~buttonID;
-		}
 	}
 	else if (((*buttons & buttonID) == 0) && isMButtonPressed(mbutton) && (isMButtonLong(mbutton) == false) && (tmp_timer_mbutton != 0))
 	{
@@ -173,9 +166,9 @@ void buttonsCheckButtonsEvent(uint32_t *buttons, int *event, bool keyIsDown)
 {
 	*buttons = buttonsRead();
 
-#if defined(PLATFORM_GD77S)
+#if ! defined(PLATFORM_RD5R)
 	checkMButtons(buttons, MBUTTON_ORANGE, BUTTON_ORANGE, BUTTON_ORANGE_SHORT_UP, BUTTON_ORANGE_LONG_DOWN);
-#endif
+#endif // ! PLATFORM_RD5R
 	checkMButtons(buttons, MBUTTON_SK1, BUTTON_SK1, BUTTON_SK1_SHORT_UP, BUTTON_SK1_LONG_DOWN);
 	checkMButtons(buttons, MBUTTON_SK2, BUTTON_SK2, BUTTON_SK2_SHORT_UP, BUTTON_SK2_LONG_DOWN);
 
@@ -186,20 +179,14 @@ void buttonsCheckButtonsEvent(uint32_t *buttons, int *event, bool keyIsDown)
 				( (*buttons & BUTTON_SK1_SHORT_UP) || (*buttons & BUTTON_SK1_LONG_DOWN)
 						|| (*buttons & BUTTON_SK2_SHORT_UP) || (*buttons & BUTTON_SK2_LONG_DOWN)
 #if ! defined(PLATFORM_RD5R)
-						|| (*buttons & BUTTON_ORANGE_SHORT_UP)
-#if defined(PLATFORM_GD77S)
-						|| (*buttons & BUTTON_ORANGE_LONG_DOWN)
-#endif
+						|| (*buttons & BUTTON_ORANGE_SHORT_UP) || (*buttons & BUTTON_ORANGE_LONG_DOWN)
 #endif // ! PLATFORM_RD5R
 				) )
 		{
 			// Clear shortup/longdown bits
 			*buttons &= ~(BUTTON_SK1_SHORT_UP | BUTTON_SK1_LONG_DOWN | BUTTON_SK2_SHORT_UP | BUTTON_SK2_LONG_DOWN
 #if ! defined(PLATFORM_RD5R)
-					| BUTTON_ORANGE_SHORT_UP
-#if defined(PLATFORM_GD77S)
-					| BUTTON_ORANGE_LONG_DOWN
-#endif
+					| BUTTON_ORANGE_SHORT_UP | BUTTON_ORANGE_LONG_DOWN
 #endif // ! PLATFORM_RD5R
 			);
 
