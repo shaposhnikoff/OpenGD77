@@ -27,7 +27,7 @@
 #include "hr-c6000_spi.h"
 #include "usb_com.h"
 
-#include "codec.h"
+#include "dmr_codec/codec.h"
 
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
 

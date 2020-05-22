@@ -15,9 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+#include "dmr_codec/codec.h"
 #include "functions/sound.h"
 #include "functions/voicePrompts.h"
-#include "codec/codec.h"
 #include "functions/settings.h"
 
 bool voicePromptIsActive=false;

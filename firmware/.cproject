@@ -87,7 +87,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
@@ -148,7 +147,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
@@ -899,7 +897,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
@@ -958,7 +955,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
@@ -1197,7 +1193,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
@@ -1258,7 +1253,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
@@ -2012,7 +2006,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
@@ -2073,7 +2066,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
@@ -2839,7 +2831,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
@@ -2900,7 +2891,6 @@
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../include"/>
 									<listOptionValue builtIn="false" value="../include/hardware"/>
-									<listOptionValue builtIn="false" value="../include/codec"/>
 									<listOptionValue builtIn="false" value="../include/functions"/>
 									<listOptionValue builtIn="false" value="../include/interfaces"/>
 									<listOptionValue builtIn="false" value="../include/io"/>
