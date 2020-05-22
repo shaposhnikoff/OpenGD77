@@ -19,7 +19,6 @@
 #ifndef _FW_CALIBRATION_H_
 #define _FW_CALIBRATION_H_
 
-#include "common.h"
 #include "SPI_Flash.h"
 
 typedef enum

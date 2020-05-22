@@ -20,7 +20,6 @@
 #ifndef _FW_SETTINGS_H_
 #define _FW_SETTINGS_H_
 
-#include "common.h"
 #include "codeplug.h"
 #include "trx.h"
 

@@ -22,7 +22,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "common.h"
 #include "hr-c6000_spi.h"
 #include "trx.h"
 #include "fsl_sai.h"

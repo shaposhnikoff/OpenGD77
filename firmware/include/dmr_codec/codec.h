@@ -19,7 +19,6 @@
 #ifndef _FW_CODEC_H_
 #define _FW_CODEC_H_
 
-#include "common.h"
 #include "HR-C6000.h"
 
 #include "sound.h"
