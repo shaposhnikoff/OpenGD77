@@ -117,7 +117,7 @@ void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type, bool loop)
 
 static void cssIncrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index, CSSTypes_t *type)
 {
-	if (ev->buttons & BUTTON_SK2)
+	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		switch (*type)
 		{
@@ -193,7 +193,7 @@ static void cssDecrement(uint16_t *tone, int32_t *index, CSSTypes_t *type)
 
 static void cssDecrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index, CSSTypes_t *type)
 {
-	if (ev->buttons & BUTTON_SK2)
+	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		switch (*type)
 		{
@@ -575,7 +575,7 @@ static void handleEvent(uiEvent_t *ev)
 			case CH_DETAILS_NAME:
 				if (settingsCurrentChannelNumber != -1)
 				{
-					moveCursorRightInString(channelName, &namePos, 16, (ev->buttons & BUTTON_SK2));
+					moveCursorRightInString(channelName, &namePos, 16, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 					updateCursor(true);
 				}
 				break;
@@ -670,7 +670,7 @@ static void handleEvent(uiEvent_t *ev)
 			case CH_DETAILS_NAME:
 				if (settingsCurrentChannelNumber != -1)
 				{
-					moveCursorLeftInString(channelName, &namePos, (ev->buttons & BUTTON_SK2));
+					moveCursorLeftInString(channelName, &namePos, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 					updateCursor(true);
 				}
 				break;
@@ -771,7 +771,7 @@ static void handleEvent(uiEvent_t *ev)
 		// settingsCurrentChannelNumber is -1 when in VFO mode
 		// But the VFO is stored in the nonVolatile settings, and not saved back to the codeplug
 		// Also don't store this back to the codeplug unless the Function key (Blue / SK2 ) is pressed at the same time.
-		if (settingsCurrentChannelNumber != -1 && (ev->buttons & BUTTON_SK2))
+		if (settingsCurrentChannelNumber != -1 && BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 		{
 			codeplugChannelSaveDataForIndex(settingsCurrentChannelNumber, currentChannelData);
 		}

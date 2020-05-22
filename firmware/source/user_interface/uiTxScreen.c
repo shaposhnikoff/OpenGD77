@@ -278,7 +278,7 @@ static void handleEvent(uiEvent_t *ev)
 		if (PTTToggledDown == false)
 		{
 			// Send 1750Hz
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				trxIsTransmittingTone = true;
 				trxSetTone1(1750);
@@ -303,21 +303,21 @@ static void handleEvent(uiEvent_t *ev)
 	}
 
 	// Stop xmitting Tone
-	if (trxIsTransmittingTone && ((ev->buttons & BUTTON_SK2) == 0) && ((ev->keys.key == 0) || (ev->keys.event & KEY_MOD_UP)))
+	if (trxIsTransmittingTone && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0) && ((ev->keys.key == 0) || (ev->keys.event & KEY_MOD_UP)))
 	{
 		trxIsTransmittingTone = false;
 		trxSelectVoiceChannel(AT1846_VOICE_CHANNEL_MIC);
 		disableAudioAmp(AUDIO_AMP_MODE_RF);
 	}
 
-	if (trxGetMode() == RADIO_MODE_DIGITAL && (ev->buttons & BUTTON_SK1) && isShowingLastHeard==false && trxTransmissionEnabled==true)
+	if (trxGetMode() == RADIO_MODE_DIGITAL && BUTTONCHECK_DOWN(ev, BUTTON_SK1) && isShowingLastHeard==false && trxTransmissionEnabled==true)
 	{
 		isShowingLastHeard=true;
 		menuLastHeardUpdateScreen(false, false);
 	}
 	else
 	{
-		if (isShowingLastHeard && (ev->buttons & BUTTON_SK1)==0)
+		if (isShowingLastHeard && BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0)
 		{
 			isShowingLastHeard=false;
 			updateScreen();

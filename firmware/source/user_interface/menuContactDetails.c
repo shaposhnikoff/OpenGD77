@@ -224,7 +224,7 @@ static void handleEvent(uiEvent_t *ev)
 						switch(gMenusCurrentItemIndex)
 						{
 						case CONTACT_DETAILS_NAME:
-							moveCursorRightInString(contactName, &namePos, 16, (ev->buttons & BUTTON_SK2));
+							moveCursorRightInString(contactName, &namePos, 16, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 							updateCursor(true);
 							break;
 						case CONTACT_DETAILS_TG:
@@ -256,7 +256,7 @@ static void handleEvent(uiEvent_t *ev)
 							switch(gMenusCurrentItemIndex)
 							{
 								case CONTACT_DETAILS_NAME:
-									moveCursorLeftInString(contactName, &namePos, (ev->buttons & BUTTON_SK2));
+									moveCursorLeftInString(contactName, &namePos, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 									updateCursor(true);
 									break;
 								case CONTACT_DETAILS_TG:
