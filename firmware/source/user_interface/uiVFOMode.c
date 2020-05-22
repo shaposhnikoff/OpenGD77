@@ -256,7 +256,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 					if ((ev->keys.key != 0) && (ev->keys.event & KEY_MOD_UP))
 #else
 					// PTT key is already handled in main().
-					if (((ev->events & BUTTON_EVENT) && (ev->buttons & BUTTON_ORANGE)) ||
+					if (((ev->events & BUTTON_EVENT) && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE)) ||
 							((ev->keys.key != 0) && (ev->keys.event & KEY_MOD_UP)))
 #endif
 					{
@@ -643,7 +643,7 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (scanActive && (ev->events & KEY_EVENT))
 	{
-		if (!(ev->buttons & BUTTON_SK2))
+		if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0)
 		{
 			// Right key sets the current frequency as a 'nuisance' frequency.
 			if(scanState==SCAN_PAUSED &&  ev->keys.key == KEY_RIGHT)
@@ -670,7 +670,7 @@ static void handleEvent(uiEvent_t *ev)
 
 		// Stop the scan on any key except UP without Shift (allows scan to be manually continued)
 		// or SK2 on its own (allows Backlight to be triggered)
-		if (((ev->keys.key == KEY_UP) && (ev->buttons & BUTTON_SK2) == 0) == false)
+		if (((ev->keys.key == KEY_UP) && BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0) == false)
 		{
 			uiVFOModeStopScanning();
 			keyboardReset();
@@ -693,7 +693,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 #if ! defined(PLATFORM_RD5R)
 		// Stop the scan if any button is pressed.
-		if (scanActive && (ev->buttons & BUTTON_ORANGE))
+		if (scanActive && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE))
 		{
 			uiVFOModeStopScanning();
 			return;
@@ -703,7 +703,7 @@ static void handleEvent(uiEvent_t *ev)
 		uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
 		// If Blue button is pressed during reception it sets the Tx TG to the incoming TG
-		if (isDisplayingQSOData && (ev->buttons & BUTTON_SK2) && trxGetMode() == RADIO_MODE_DIGITAL &&
+		if (isDisplayingQSOData && BUTTONCHECK_DOWN(ev, BUTTON_SK2) && trxGetMode() == RADIO_MODE_DIGITAL &&
 					(trxTalkGroupOrPcId != tg ||
 					(dmrMonitorCapturedTS!=-1 && dmrMonitorCapturedTS != trxGetDMRTimeSlot()) ||
 					(trxGetDMRColourCode() != currentChannelData->rxColor)))
@@ -738,7 +738,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 
 		// Display channel settings (CTCSS, Squelch) while SK1 is pressed
-		if ((displayChannelSettings == false) && (ev->buttons & BUTTON_SK1))
+		if ((displayChannelSettings == false) && BUTTONCHECK_DOWN(ev, BUTTON_SK1))
 		{
 			int prevQSODisp = prevDisplayQSODataState;
 
@@ -748,7 +748,7 @@ static void handleEvent(uiEvent_t *ev)
 			prevDisplayQSODataState = prevQSODisp;
 			return;
 		}
-		else if ((displayChannelSettings == true) && (ev->buttons & BUTTON_SK1) == 0)
+		else if ((displayChannelSettings == true) && BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0)
 		{
 			displayChannelSettings = false;
 			menuDisplayQSODataState = prevDisplayQSODataState;
@@ -768,9 +768,9 @@ static void handleEvent(uiEvent_t *ev)
 		}
 
 #if !defined(PLATFORM_RD5R)
-		if (ev->buttons & BUTTON_ORANGE)
+		if (BUTTONCHECK_DOWN(ev, BUTTON_ORANGE))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				settingsPrivateCallMuteMode = !settingsPrivateCallMuteMode;// Toggle PC mute only mode
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -796,7 +796,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				menuSystemPushNewMenu(MENU_CHANNEL_DETAILS);
 				reset_freq_enter_digits();
@@ -818,7 +818,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					if ((ev->buttons & BUTTON_SK2) != 0)
+					if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 					{
 						menuSystemPushNewMenu(MENU_CONTACT_QUICKLIST);
 					}
@@ -832,7 +832,7 @@ static void handleEvent(uiEvent_t *ev)
 
 			if (KEYCHECK_SHORTUP(ev->keys,KEY_STAR))
 			{
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					if (trxGetMode() == RADIO_MODE_ANALOG)
 					{
@@ -905,7 +905,7 @@ static void handleEvent(uiEvent_t *ev)
 			else if (KEYCHECK_SHORTUP(ev->keys, KEY_DOWN) || KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_DOWN))
 			{
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					// Don't permit to switch from RX/TX while scanning
 					if (screenOperationMode[nonVolatileSettings.currentVFONumber] != VFO_SCREEN_OPERATION_SCAN)
@@ -933,7 +933,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				handleUpKey(ev);
 			}
-			else if (KEYCHECK_LONGDOWN(ev->keys, KEY_UP) && ((ev->buttons & BUTTON_SK2) == 0))
+			else if (KEYCHECK_LONGDOWN(ev->keys, KEY_UP) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 			{
 				if (screenOperationMode[nonVolatileSettings.currentVFONumber] != VFO_SCREEN_OPERATION_SCAN)
 				{
@@ -951,7 +951,7 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			else if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
 			{
-				if ((ev->buttons & BUTTON_SK2 )!=0 && menuUtilityTgBeforePcMode != 0)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) && (menuUtilityTgBeforePcMode != 0))
 				{
 					nonVolatileSettings.overrideTG = menuUtilityTgBeforePcMode;
 					uiVFOUpdateTrxID();
@@ -984,9 +984,9 @@ static void handleEvent(uiEvent_t *ev)
 			}
 #endif
 #if defined(PLATFORM_RD5R)
-		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_VFO_MR) && ((ev->buttons & BUTTON_SK1) == 0))
+		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_VFO_MR) && (BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				settingsPrivateCallMuteMode = !settingsPrivateCallMuteMode;// Toggle PC mute only mode
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -1019,7 +1019,7 @@ static void handleEvent(uiEvent_t *ev)
 			else if (KEYCHECK_LONGDOWN(ev->keys, KEY_RIGHT))
 			{
 				// Long press allows the 5W+ power setting to be selected immediately
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					if (nonVolatileSettings.txPowerLevel == (MAX_POWER_SETTING_NUM - 1))
 					{
@@ -1033,7 +1033,7 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			else if (KEYCHECK_PRESS(ev->keys, KEY_RIGHT))
 			{
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					if (nonVolatileSettings.txPowerLevel < (MAX_POWER_SETTING_NUM - 1))
 					{
@@ -1087,7 +1087,7 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
 			{
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					if (nonVolatileSettings.txPowerLevel > 0)
 					{
@@ -1252,7 +1252,7 @@ static void handleEvent(uiEvent_t *ev)
 static void handleUpKey(uiEvent_t *ev)
 {
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-	if (ev->buttons & BUTTON_SK2)
+	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		// Don't permit to switch from RX/TX while scanning
 		if (screenOperationMode[nonVolatileSettings.currentVFONumber] != VFO_SCREEN_OPERATION_SCAN)
@@ -1526,7 +1526,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 		return;
 	}
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
-	else if (((ev->events & BUTTON_EVENT) && (ev->buttons & BUTTON_ORANGE)) && (gMenusCurrentItemIndex==VFO_SCREEN_QUICK_MENU_VFO_A_B))
+	else if (((ev->events & BUTTON_EVENT) && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE)) && (gMenusCurrentItemIndex == VFO_SCREEN_QUICK_MENU_VFO_A_B))
 	{
 		nonVolatileSettings.currentVFONumber = 1 - nonVolatileSettings.currentVFONumber;// Switch to other VFO
 		currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];

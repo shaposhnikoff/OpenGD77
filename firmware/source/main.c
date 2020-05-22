@@ -125,7 +125,7 @@ static void keyBeepHandler(uiEvent_t *ev, bool PTTToggledDown)
 	{
 		if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 		{
-			if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_BEEP)
+			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_BEEP) || (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE))
 			{
 				soundSetMelody(nextKeyBeepMelody);
 			}
@@ -177,7 +177,7 @@ void mainTask(void *data)
 	keyboardInit();
 	rotarySwitchInit();
 
-	buttonsCheckButtonsEvent(&buttons, &button_event);// Read button state and event
+	buttonsCheckButtonsEvent(&buttons, &button_event, false);// Read button state and event
 
 	if (buttons & BUTTON_SK2)
 	{
@@ -315,9 +315,9 @@ void mainTask(void *data)
 
 			tick_com_request();
 
-			buttonsCheckButtonsEvent(&buttons, &button_event); // Read button state and event
-
 			keyboardCheckKeyEvent(&keys, &key_event); // Read keyboard state and event
+
+			buttonsCheckButtonsEvent(&buttons, &button_event, (keys.key != 0)); // Read button state and event
 
 			rotarySwitchCheckRotaryEvent(&rotary, &rotary_event); // Rotary switch state and event (GD-77S only)
 

@@ -228,7 +228,7 @@ static void handleEvent(uiEvent_t *ev)
 				else
 				{
 					trxDMRID = tmpID;
-					if (ev->buttons & BUTTON_SK2)
+					if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 					{
 						// make the change to DMR ID permanent if Function + Green is pressed
 						codeplugSetUserDMRID(trxDMRID);
@@ -250,7 +250,7 @@ static void handleEvent(uiEvent_t *ev)
 
 				menuNumericalExitStatus |= MENU_STATUS_INPUT_TYPE;
 
-				if (((ev->buttons & BUTTON_SK2) != 0) && (gMenusCurrentItemIndex == ENTRY_SELECT_CONTACT))
+				if ((BUTTONCHECK_DOWN(ev, BUTTON_SK2) != 0) && (gMenusCurrentItemIndex == ENTRY_SELECT_CONTACT))
 				{
 					snprintf(digits, 8, "%d", trxDMRID);
 					digits[8] = 0;

@@ -26,10 +26,8 @@ volatile uint32_t timer_keypad;
 volatile uint32_t timer_keypad_timeout;
 volatile uint32_t PITCounter;
 
-//#if defined(PLATFORM_GD77S)
 volatile uint32_t timer_mbuttons[3];
 volatile uint32_t timer_mbuttons_timeout[3];
-//#endif
 
 void init_pit(void)
 {
@@ -40,10 +38,8 @@ void init_pit(void)
 	timer_watchdogtask=0;
 	timer_keypad=0;
 	timer_keypad_timeout=0;
-//#if defined(PLATFORM_GD77S)
 	timer_mbuttons[0] = timer_mbuttons[1] = timer_mbuttons[2] = 0;
 	timer_mbuttons_timeout[0] = timer_mbuttons_timeout[1] = timer_mbuttons_timeout[1] = 0;
-//#endif
 	taskEXIT_CRITICAL();
 
 	pit_config_t pitConfig;
@@ -86,7 +82,6 @@ void PIT0_IRQHandler(void)
 	{
 		timer_keypad_timeout--;
 	}
-//#if defined(PLATFORM_GD77S)
 	if (timer_mbuttons[0]>0)
 	{
 		timer_mbuttons[0]--;
@@ -111,7 +106,6 @@ void PIT0_IRQHandler(void)
 	{
 		timer_mbuttons_timeout[2]--;
 	}
-//#endif
 
     /* Clear interrupt flag.*/
     PIT_ClearStatusFlags(PIT, kPIT_Chnl_0, kPIT_TimerFlag);
