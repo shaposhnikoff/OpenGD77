@@ -565,7 +565,7 @@ inline static void HRC6000SysPostAccessInt(void)
 	// Late entry into ongoing RX
 	if (slot_state == DMR_STATE_IDLE)
 	{
-		init_codec();
+		codecInit();
 		GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 1);
 
 		write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50);     //Receive only in next timeslot
@@ -674,7 +674,7 @@ inline static void HRC6000SysReceivedDataInt(void)
 		{
 			if (checkColourCodeFilter())// Voice LC Header
 			{
-				init_codec();
+				codecInit();
 				GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 1);
 
 				write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50);     //Receive only in next timeslot
@@ -885,7 +885,7 @@ static void HRC6000TransitionToTx(void)
 {
 	disableAudioAmp(AUDIO_AMP_MODE_RF);
 	GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
-	init_codec();
+	codecInit();
 
 	write_SPI_page_reg_byte_SPI0(0x04, 0x21, 0xA2); // Set Polite to Color Code and Reset vocoder encodingbuffer
 	write_SPI_page_reg_byte_SPI0(0x04, 0x22, 0x86); // Start Vocoder Encode, I2S mode
@@ -1265,7 +1265,7 @@ void init_digital(void)
 	init_digital_DMR_RX();
 	init_digital_state();
 	NVIC_EnableIRQ(PORTC_IRQn);
-	init_codec();
+	codecInit();
 }
 
 void terminate_digital(void)
@@ -1433,7 +1433,7 @@ void tick_HR_C6000(void)
 			{
 				if (settingsUsbMode != USB_MODE_HOTSPOT)
 				{
-					init_codec();
+					codecInit();
 				}
 				else
 				{
@@ -1450,7 +1450,7 @@ void tick_HR_C6000(void)
 			{
 				if (settingsUsbMode != USB_MODE_HOTSPOT)
 				{
-					init_codec();
+					codecInit();
 				}
 				isWaking = WAKING_MODE_WAITING;
 				slot_state = DMR_STATE_REPEATER_WAKE_1;
@@ -1537,7 +1537,7 @@ void tick_HR_C6000(void)
 				// the data is ready to be used in the TS ISR
 				if (wavbuffer_count >= 6)
 				{
-					tick_codec_encode((uint8_t *)deferredUpdateBuffer);
+					codecEncode((uint8_t *)deferredUpdateBuffer);
 				}
 			}
 		}
@@ -1570,7 +1570,7 @@ void tick_HR_C6000(void)
 				if (hasEncodedAudio)
 				{
 					hasEncodedAudio=false;
-					tick_codec_decode((uint8_t *)DMR_frame_buffer+0x0C);
+					codecDecode((uint8_t *)DMR_frame_buffer+0x0C);
 					soundTickRXBuffer();
 				}
 			}

@@ -29,7 +29,7 @@ short bitbuffer_decode[49];
 char ambe_d[49];
 short bitbuffer_encode[72];
 
-void init_codec(void)
+void codecInit(void)
 {
 	// Need to prevent the DMR side of the code initialising the codec and sound buffers when the voice prompts are playing
 	// This could be done in every location this function is called, but it saves space if the check is done inside the function.
@@ -43,7 +43,7 @@ void init_codec(void)
 	soundInit();
 }
 
-void tick_codec_decode(uint8_t *indata_ptr)
+void codecDecode(uint8_t *indata_ptr)
 {
 	int errs1;
 	int errs2;
@@ -107,7 +107,7 @@ void tick_codec_decode(uint8_t *indata_ptr)
     }
 }
 
-void tick_codec_encode(uint8_t *outdata_ptr)
+void codecEncode(uint8_t *outdata_ptr)
 {
 	memset((uint8_t *)outdata_ptr, 0, 27);// fills with zeros
 

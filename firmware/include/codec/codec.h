@@ -35,8 +35,8 @@
 #define AMBE_ENCODE_BUFFER 0x1FFF6B60;
 #define AMBE_ENCODE_ECC_BUFFER 0x1FFF8244;
 
-void init_codec(void);
-void tick_codec_decode(uint8_t *indata_ptr);
-void tick_codec_encode(uint8_t *outdata_ptr);
+void codecInit(void);
+void codecDecode(uint8_t *indata_ptr);
+void codecEncode(uint8_t *outdata_ptr);
 
 #endif /* _FW_CODEC_H_ */

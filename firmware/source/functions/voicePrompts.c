@@ -1367,7 +1367,7 @@ void voicePromptsTick(void)
 	{
 		if (wavbuffer_count < (WAV_BUFFER_COUNT-6))
 		{
-			tick_codec_decode((uint8_t *)&ambeData[promptDataPosition]);
+			codecDecode((uint8_t *)&ambeData[promptDataPosition]);
 			soundTickRXBuffer();
 			promptDataPosition+=27;
 		}
@@ -1508,7 +1508,7 @@ void voicePromptsPlay(void)
 		GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 0);// set the audio mux   HR-C6000 -> audio amp
 		enableAudioAmp(AUDIO_AMP_MODE_PROMPT);
 
-		init_codec();
+		codecInit();
 		promptDataPosition=0;
 		voicePromptIsActive=true;// Start the playback
 	}
