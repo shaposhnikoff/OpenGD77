@@ -1367,7 +1367,7 @@ void voicePromptsTick(void)
 	{
 		if (wavbuffer_count < (WAV_BUFFER_COUNT-6))
 		{
-			codecDecode((uint8_t *)&ambeData[promptDataPosition]);
+			codecDecode((uint8_t *)&ambeData[promptDataPosition],3);
 			soundTickRXBuffer();
 			promptDataPosition+=27;
 		}

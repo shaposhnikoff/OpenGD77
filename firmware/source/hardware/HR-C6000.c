@@ -1537,7 +1537,7 @@ void tick_HR_C6000(void)
 				// the data is ready to be used in the TS ISR
 				if (wavbuffer_count >= 6)
 				{
-					codecEncode((uint8_t *)deferredUpdateBuffer);
+					codecEncode((uint8_t *)deferredUpdateBuffer,3);
 				}
 			}
 		}
@@ -1570,7 +1570,7 @@ void tick_HR_C6000(void)
 				if (hasEncodedAudio)
 				{
 					hasEncodedAudio=false;
-					codecDecode((uint8_t *)DMR_frame_buffer+0x0C);
+					codecDecode((uint8_t *)DMR_frame_buffer+0x0C,3);
 					soundTickRXBuffer();
 				}
 			}

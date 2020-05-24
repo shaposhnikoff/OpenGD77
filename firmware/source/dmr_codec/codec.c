@@ -43,7 +43,7 @@ void codecInit(void)
 	soundInit();
 }
 
-void codecDecode(uint8_t *indata_ptr)
+void codecDecode(uint8_t *indata_ptr, int numbBlocks)
 {
 	int errs1;
 	int errs2;
@@ -52,7 +52,7 @@ void codecDecode(uint8_t *indata_ptr)
 	register int r1 asm ("r1") __attribute__((unused));
 	register int r2 asm ("r2") __attribute__((unused));
 
-    for (int idx=0;idx<3;idx++)
+    for (int idx=0;idx<numbBlocks;idx++)
     {
 		prepare_framedata(indata_ptr, ambe_d, &errs1, &errs2);
 		indata_ptr=indata_ptr+9;
@@ -107,7 +107,7 @@ void codecDecode(uint8_t *indata_ptr)
     }
 }
 
-void codecEncode(uint8_t *outdata_ptr)
+void codecEncode(uint8_t *outdata_ptr, int numbBlocks)
 {
 	memset((uint8_t *)outdata_ptr, 0, 27);// fills with zeros
 
@@ -115,7 +115,7 @@ void codecEncode(uint8_t *outdata_ptr)
 	register int r1 asm ("r1") __attribute__((unused));
 	register int r2 asm ("r2") __attribute__((unused));
 
-	for (int i=0;i<3;i++)
+	for (int i=0; i<numbBlocks;i++)
 	{
 
 		memset(bitbuffer_encode,0,72);// faster to call memset as it will be compiled as optimised code

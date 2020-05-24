@@ -35,7 +35,7 @@
 #define AMBE_ENCODE_ECC_BUFFER 0x1FFF8244;
 
 void codecInit(void);
-void codecDecode(uint8_t *indata_ptr);
-void codecEncode(uint8_t *outdata_ptr);
+void codecDecode(uint8_t *indata_ptr, int numbBlocks);
+void codecEncode(uint8_t *outdata_ptr, int numbBlocks);
 
 #endif /* _FW_CODEC_H_ */
