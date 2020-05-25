@@ -74,7 +74,7 @@ namespace GD77_FirmwareLoader
 			public OutputType Type { get; set; }
 		}
 
-		public static OutputType outputType = OutputType.OutputType_UNKNOWN;
+		public static OutputType outputType = OutputType.OutputType_GD77;
 
 		public static String getModelString(OutputType type)
 		{
