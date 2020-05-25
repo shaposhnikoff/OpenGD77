@@ -59,6 +59,7 @@ extern union sharedDataBuffer
 {
 	volatile uint8_t wavbuffer[WAV_BUFFER_COUNT][WAV_BUFFER_SIZE];
 	volatile uint8_t hotspotBuffer[HOTSPOT_BUFFER_COUNT][HOTSPOT_BUFFER_SIZE];
+	volatile uint8_t rawBuffer[HOTSPOT_BUFFER_COUNT * HOTSPOT_BUFFER_SIZE];
 } audioAndHotspotDataBuffer;
 
 extern volatile int wavbuffer_read_idx;

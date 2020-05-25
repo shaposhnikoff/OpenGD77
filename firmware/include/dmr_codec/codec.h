@@ -34,7 +34,9 @@
 #define AMBE_ENCODE_BUFFER 0x1FFF6B60;
 #define AMBE_ENCODE_ECC_BUFFER 0x1FFF8244;
 
+
 void codecInit(void);
+void codecInitInternalBuffers(void);
 void codecDecode(uint8_t *indata_ptr, int numbBlocks);
 void codecEncode(uint8_t *outdata_ptr, int numbBlocks);
 

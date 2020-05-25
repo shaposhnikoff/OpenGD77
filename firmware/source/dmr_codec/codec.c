@@ -29,6 +29,13 @@ short bitbuffer_decode[49];
 char ambe_d[49];
 short bitbuffer_encode[72];
 
+void codecInitInternalBuffers(void)
+{
+	memcpy(ambebuffer_decode,ambebuffer_decode_init,0x7ec);
+	memcpy(ambebuffer_encode,ambebuffer_encode_init,0x2000);
+	memcpy(ambebuffer_encode_ecc,ambebuffer_encode_ecc_init,0x100);
+}
+
 void codecInit(void)
 {
 	// Need to prevent the DMR side of the code initialising the codec and sound buffers when the voice prompts are playing
@@ -37,9 +44,7 @@ void codecInit(void)
 	{
 		return;
 	}
-	memcpy(ambebuffer_decode,ambebuffer_decode_init,0x7ec);
-	memcpy(ambebuffer_encode,ambebuffer_encode_init,0x2000);
-	memcpy(ambebuffer_encode_ecc,ambebuffer_encode_ecc_init,0x100);
+	codecInitInternalBuffers();
 	soundInit();
 }
 

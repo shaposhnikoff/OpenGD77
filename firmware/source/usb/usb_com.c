@@ -64,7 +64,7 @@ void tick_com_request(void)
 	}
 }
 
-enum CPS_ACCESS_AREA { CPS_ACCESS_FLASH = 1,CPS_ACCESS_EEPROM = 2, CPS_ACCESS_MCU_ROM=5,CPS_ACCESS_DISPLAY_BUFFER=6};
+enum CPS_ACCESS_AREA { CPS_ACCESS_FLASH = 1,CPS_ACCESS_EEPROM = 2, CPS_ACCESS_MCU_ROM=5,CPS_ACCESS_DISPLAY_BUFFER=6,CPS_ACCESS_WAV_BUFFER=7,CPS_COMPRESS_AND_ACCESS_AMBE_BUFFER=8};
 
 static void cpsHandleReadCommand(void)
 {
@@ -97,6 +97,19 @@ static void cpsHandleReadCommand(void)
 			memcpy(&usbComSendBuf[3],&screenBuf[address],length);
 			result = true;
 			break;
+		case CPS_ACCESS_WAV_BUFFER:
+			memcpy(&usbComSendBuf[3],(uint8_t *)&audioAndHotspotDataBuffer.rawBuffer[address],length);
+			result = true;
+			break;
+		case CPS_COMPRESS_AND_ACCESS_AMBE_BUFFER:// read from ambe audio buffer
+			{
+				uint8_t ambeBuf[32];// ambe data is up to 27 bytes long, but the normal transfer length for the CPS is 32, so make the buffer big enough for that transfer size
+				memset(ambeBuf,0,32);// Clear the ambe output buffer
+				codecEncode((uint8_t *)ambeBuf,3);
+				memcpy(&usbComSendBuf[3],ambeBuf,length);// The ambe data is only 27 bytes long but the normal CPS request size is 32
+				result = true;
+			}
+			break;
 	}
 
 	if (result)
@@ -115,7 +128,6 @@ static void cpsHandleReadCommand(void)
 
 static void cpsHandleWriteCommand()
 {
-
 	bool ok=false;
 	switch(com_requestbuffer[1])
 	{
@@ -189,7 +201,15 @@ static void cpsHandleWriteCommand()
 				ok = EEPROM_Write(address, (uint8_t*)com_requestbuffer+8, length);
 			}
 			break;
-
+		case CPS_ACCESS_WAV_BUFFER:// write to raw audio buffer
+			{
+				uint32_t address=(com_requestbuffer[2]<<24)+(com_requestbuffer[3]<<16)+(com_requestbuffer[4]<<8)+(com_requestbuffer[5]<<0);
+				uint32_t length=(com_requestbuffer[6]<<8)+(com_requestbuffer[7]<<0);
+				wavbuffer_count = (address + length)/WAV_BUFFER_SIZE;
+				memcpy((uint8_t *)&audioAndHotspotDataBuffer.rawBuffer[address],(uint8_t *)&com_requestbuffer[8],length);
+				ok = true;
+			}
+			break;
 	}
 
 	if (ok)
@@ -279,6 +299,12 @@ static void cpsHandleCommand(void)
 					case 4:
 						// flash red LED
 						uiCPSUpdate(5,0,0,FONT_SIZE_1,TEXT_ALIGN_LEFT,0,NULL);
+						break;
+					case 5:
+						codecInitInternalBuffers();
+						break;
+					case 6:
+						soundInit();// Resets the sound buffers
 						break;
 					default:
 						break;
