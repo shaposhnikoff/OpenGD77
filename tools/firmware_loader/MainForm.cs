@@ -45,13 +45,20 @@ namespace GD77_FirmwareLoader
 {
 	public partial class MainForm : Form
 	{
-
 		private static String tempFile = "";
 		private WebClient wc = null;
+
+		private void PostActivated(object sender, EventArgs e)
+		{
+			this.Activated -= PostActivated;
+
+			this.Activate();
+		}
 
 		public MainForm()
 		{
 			InitializeComponent();
+			this.Activated += PostActivated;
 		}
 
 		private void rbModel_CheckedChanged(object sender, EventArgs e)
@@ -82,7 +89,7 @@ namespace GD77_FirmwareLoader
 			this.progressBar.Value = ev.ProgressPercentage;
 		}
 
-		private DialogResult DialogBox(String title, String message, String btn1Label = "Yes", String btn2Label = "No", String btn3Label = "Cancel")
+		private DialogResult DialogBox(String title, String message, String btn1Label = "&Yes", String btn2Label = "&No", String btn3Label = "&Cancel")
 		{
 			int buttonX = 10;
 			int buttonY = 120 - 25 - 5;
@@ -254,8 +261,8 @@ namespace GD77_FirmwareLoader
 				String message;
 				String[] buttonsLabel = new String[2];
 
-				buttonsLabel[0] = "Stable ";
-				buttonsLabel[1] = "Unstable ";
+				buttonsLabel[0] = "&Stable ";
+				buttonsLabel[1] = "&Unstable ";
 
 				// Extract release version
 				patternR = @"/R([0-9\.]+)/";
@@ -297,11 +304,13 @@ namespace GD77_FirmwareLoader
 				{
 					case DialogResult.Yes:
 						// Stable
+						Console.WriteLine("STABLE");
 						urlFW = releaseURL;
 						break;
 
 					case DialogResult.No:
 						// Devel
+						Console.WriteLine("UNSTABLE");
 						urlFW = develURL;
 						break;
 
