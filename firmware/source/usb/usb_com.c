@@ -305,6 +305,7 @@ static void cpsHandleCommand(void)
 						break;
 					case 6:
 						soundInit();// Resets the sound buffers
+						memset((uint8_t *)&audioAndHotspotDataBuffer.rawBuffer[0],0,(6 * WAV_BUFFER_SIZE));// clear 1 dmr frame size of wav buffer memory
 						break;
 					default:
 						break;
