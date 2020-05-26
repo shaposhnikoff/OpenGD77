@@ -146,6 +146,11 @@ typedef struct stringsTable
    const char *both;
    const char *vox_threshold;
    const char *vox_tail;
+   const char *audio_prompt;
+   const char *silent;
+   const char *normal;
+   const char *beep;
+   const char *voice;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

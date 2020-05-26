@@ -32,7 +32,6 @@
 #include "virtual_com.h"
 #include "usb_com.h"
 
-#include "common.h"
 #include "buttons.h"
 #include "LEDs.h"
 #include "keyboard.h"

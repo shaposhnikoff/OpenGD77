@@ -22,7 +22,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "common.h"
 #include "hr-c6000_spi.h"
 #include "trx.h"
 #include "fsl_sai.h"
@@ -45,6 +44,7 @@ extern const int melody_tx_timeout_beep[];
 extern const int melody_private_call[];
 extern const int melody_dmr_tx_start_beep[];
 extern const int melody_dmr_tx_stop_beep[];
+extern const int melody_key_beep_first_item[];
 extern volatile int *melody_play;
 extern volatile int melody_idx;
 extern volatile int micAudioSamplesTotal;
@@ -59,6 +59,7 @@ extern union sharedDataBuffer
 {
 	volatile uint8_t wavbuffer[WAV_BUFFER_COUNT][WAV_BUFFER_SIZE];
 	volatile uint8_t hotspotBuffer[HOTSPOT_BUFFER_COUNT][HOTSPOT_BUFFER_SIZE];
+	volatile uint8_t rawBuffer[HOTSPOT_BUFFER_COUNT * HOTSPOT_BUFFER_SIZE];
 } audioAndHotspotDataBuffer;
 
 extern volatile int wavbuffer_read_idx;
@@ -91,9 +92,10 @@ void soundTickMelody(void);
 
 
 //bit masks to track amp usage
-#define AUDIO_AMP_MODE_NONE 0B00000000
-#define AUDIO_AMP_MODE_BEEP 0B00000001
-#define AUDIO_AMP_MODE_RF 	0B00000010
+#define AUDIO_AMP_MODE_NONE 	0B00000000
+#define AUDIO_AMP_MODE_BEEP 	0B00000001
+#define AUDIO_AMP_MODE_RF 		0B00000010
+#define AUDIO_AMP_MODE_PROMPT 	0B00000100
 
 
 uint8_t getAudioAmpStatus(void);

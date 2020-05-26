@@ -49,12 +49,19 @@ static bool isDisplayingQSOData=false;
 static int tmpQuickMenuDmrFilterLevel;
 static int tmpQuickMenuAnalogFilterLevel;
 static int16_t newChannelIndex = 0;
-bool toneScanActive = false;//tone scan active flag  (CTCSS)
-static const int TONESCANINTERVAL=200;//time between each tone for lowest tone. (higher tones take less time.)
-static int scanIndex=0;
+
+bool scanToneActive = false;//tone scan active flag  (CTCSS/DCS)
+static const int SCAN_TONE_INTERVAL = 200;//time between each tone for lowest tone. (higher tones take less time.)
+static int scanToneIndex = 0;
+static CSSTypes_t scanToneType = CSS_CTCSS;
+
 static bool displayChannelSettings;
 static int prevDisplayQSODataState;
 static vfoScreenOperationMode_t screenOperationMode[2] = {VFO_SCREEN_OPERATION_NORMAL,VFO_SCREEN_OPERATION_NORMAL};// For VFO A and B
+
+static menuStatus_t menuVFOExitStatus = MENU_STATUS_SUCCESS;
+static menuStatus_t menuQuickVFOExitStatus = MENU_STATUS_SUCCESS;
+
 
 #if defined(PLATFORM_RD5R)
 const int RX_FREQ_Y_POS = 31;
@@ -78,7 +85,7 @@ const int XBAR_H = 9;
 
 
 // Public interface
-int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 {
 	static uint32_t m = 0, sqm = 0, curm = 0;
 
@@ -105,7 +112,7 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		if (currentChannelData->chMode == RADIO_MODE_ANALOG)
 		{
 			trxSetModeAndBandwidth(currentChannelData->chMode, ((currentChannelData->flag4 & 0x02) == 0x02));
-			if (!toneScanActive)
+			if (!scanToneActive)
 			{
 				trxSetRxCSS(currentChannelData->rxTone);
 			}
@@ -166,9 +173,13 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		displayLightTrigger();
 		uiVFOModeUpdateScreen(0);
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);
+
+		menuVFOExitStatus = MENU_STATUS_SUCCESS;
 	}
 	else
 	{
+		menuVFOExitStatus = MENU_STATUS_SUCCESS;
+
 		if (ev->events == NO_EVENT)
 		{
 			// We are entering digits, so update the screen as we have a cursor to blink
@@ -218,12 +229,12 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 			}
 
-			if (toneScanActive == true)
+			if (scanToneActive)
 			{
 				toneScan();
 			}
 
-			if (scanActive == true)
+			if (scanActive)
 			{
 				scanning();
 			}
@@ -239,20 +250,20 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 				}
 
 				// Scanning barrier
-				if (toneScanActive)
+				if (scanToneActive)
 				{
 #if defined(PLATFORM_RD5R) // virtual ORANGE button will be implemented later, this CPP will be removed then.
 					if ((ev->keys.key != 0) && (ev->keys.event & KEY_MOD_UP))
 #else
 					// PTT key is already handled in main().
-					if (((ev->events & BUTTON_EVENT) && (ev->buttons & BUTTON_ORANGE)) ||
+					if (((ev->events & BUTTON_EVENT) && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE)) ||
 							((ev->keys.key != 0) && (ev->keys.event & KEY_MOD_UP)))
 #endif
 					{
 						uiVFOModeStopScanning();
 					}
 
-					return 0;
+					return MENU_STATUS_SUCCESS;
 				}
 
 				handleEvent(ev);
@@ -260,7 +271,7 @@ int uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 		}
 	}
-	return 0;
+	return menuVFOExitStatus;
 }
 
 void uiVFOModeUpdateScreen(int txTimeSecs)
@@ -331,7 +342,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 						}
 					}
 
-					if (trxIsTransmitting)
+					if (trxTransmissionEnabled)
 					{
 						ucDrawRect(0, CONTACT_TX_FRAME_Y_POS, DISPLAY_SIZE_X, MENU_ENTRY_HEIGHT, true);
 					}
@@ -347,7 +358,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 
 				buffer[bufferLen - 1] = 0;
 
-				if (trxIsTransmitting)
+				if (trxTransmissionEnabled)
 				{
 					ucPrintCentered(CONTACT_TX_Y_POS, buffer, FONT_SIZE_3);
 				}
@@ -386,9 +397,21 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					displaySquelch = false;
 				}
 
-				if(toneScanActive == true)
+				if(scanToneActive)
 				{
-					sprintf(buffer, "CTCSS %3d.%dHz", TRX_CTCSSTones[scanIndex] / 10, TRX_CTCSSTones[scanIndex] % 10);
+					if (scanToneType == CSS_CTCSS)
+					{
+						sprintf(buffer, "%CTCSS %3d.%dHz", currentChannelData->rxTone / 10, currentChannelData->rxTone % 10);
+					}
+					else if (scanToneType == CSS_DCS)
+					{
+						sprintf(buffer, "DCS D%03oN", currentChannelData->rxTone & 0777);
+					}
+					else
+					{
+						sprintf(buffer, "%s", "TONE ERROR");
+					}
+
 					ucPrintCentered(16, buffer, FONT_SIZE_3);
 				}
 
@@ -396,7 +419,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 
 			if (freq_enter_idx == 0)
 			{
-				if (!trxIsTransmitting)
+				if (!trxTransmissionEnabled)
 				{
 					// if CC scan is active, Rx freq is moved down to the Tx location,
 					// as Contact Info will be displayed here
@@ -415,9 +438,9 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					ucPrintCentered(TX_TIMER_Y_OFFSET, buffer, FONT_SIZE_4);
 				}
 
-				if (screenOperationMode[nonVolatileSettings.currentVFONumber] == VFO_SCREEN_OPERATION_NORMAL || trxIsTransmitting)
+				if (screenOperationMode[nonVolatileSettings.currentVFONumber] == VFO_SCREEN_OPERATION_NORMAL || trxTransmissionEnabled)
 				{
-					printFrequency(true, (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX || trxIsTransmitting), TX_FREQ_Y_POS, currentChannelData->txFreq, true, false);
+					printFrequency(true, (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX || trxTransmissionEnabled), TX_FREQ_Y_POS, currentChannelData->txFreq, true, false);
 				}
 				else
 				{
@@ -541,10 +564,10 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 
 void uiVFOModeStopScanning(void)
 {
-	if (toneScanActive)
+	if (scanToneActive)
 	{
 		trxSetRxCSS(currentChannelData->rxTone);
-		toneScanActive = false;
+		scanToneActive = false;
 	}
 	scanActive = false;
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -620,7 +643,7 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (scanActive && (ev->events & KEY_EVENT))
 	{
-		if (!(ev->buttons & BUTTON_SK2))
+		if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0)
 		{
 			// Right key sets the current frequency as a 'nuisance' frequency.
 			if(scanState==SCAN_PAUSED &&  ev->keys.key == KEY_RIGHT)
@@ -647,7 +670,7 @@ static void handleEvent(uiEvent_t *ev)
 
 		// Stop the scan on any key except UP without Shift (allows scan to be manually continued)
 		// or SK2 on its own (allows Backlight to be triggered)
-		if (((ev->keys.key == KEY_UP) && (ev->buttons & BUTTON_SK2) == 0) == false)
+		if (((ev->keys.key == KEY_UP) && BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0) == false)
 		{
 			uiVFOModeStopScanning();
 			keyboardReset();
@@ -670,7 +693,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 #if ! defined(PLATFORM_RD5R)
 		// Stop the scan if any button is pressed.
-		if (scanActive && (ev->buttons & BUTTON_ORANGE))
+		if (scanActive && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE))
 		{
 			uiVFOModeStopScanning();
 			return;
@@ -680,7 +703,7 @@ static void handleEvent(uiEvent_t *ev)
 		uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
 		// If Blue button is pressed during reception it sets the Tx TG to the incoming TG
-		if (isDisplayingQSOData && (ev->buttons & BUTTON_SK2) && trxGetMode() == RADIO_MODE_DIGITAL &&
+		if (isDisplayingQSOData && BUTTONCHECK_DOWN(ev, BUTTON_SK2) && trxGetMode() == RADIO_MODE_DIGITAL &&
 					(trxTalkGroupOrPcId != tg ||
 					(dmrMonitorCapturedTS!=-1 && dmrMonitorCapturedTS != trxGetDMRTimeSlot()) ||
 					(trxGetDMRColourCode() != currentChannelData->rxColor)))
@@ -715,7 +738,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 
 		// Display channel settings (CTCSS, Squelch) while SK1 is pressed
-		if ((displayChannelSettings == false) && (ev->buttons & BUTTON_SK1))
+		if ((displayChannelSettings == false) && BUTTONCHECK_DOWN(ev, BUTTON_SK1))
 		{
 			int prevQSODisp = prevDisplayQSODataState;
 
@@ -725,7 +748,7 @@ static void handleEvent(uiEvent_t *ev)
 			prevDisplayQSODataState = prevQSODisp;
 			return;
 		}
-		else if ((displayChannelSettings == true) && (ev->buttons & BUTTON_SK1) == 0)
+		else if ((displayChannelSettings == true) && BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0)
 		{
 			displayChannelSettings = false;
 			menuDisplayQSODataState = prevDisplayQSODataState;
@@ -745,9 +768,9 @@ static void handleEvent(uiEvent_t *ev)
 		}
 
 #if !defined(PLATFORM_RD5R)
-		if (ev->buttons & BUTTON_ORANGE)
+		if (BUTTONCHECK_DOWN(ev, BUTTON_ORANGE))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				settingsPrivateCallMuteMode = !settingsPrivateCallMuteMode;// Toggle PC mute only mode
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -756,6 +779,12 @@ static void handleEvent(uiEvent_t *ev)
 			else
 			{
 				menuSystemPushNewMenu(UI_VFO_QUICK_MENU);
+
+				// Trick to beep (AudioAssist), since ORANGE button doesn't produce any beep event
+				ev->keys.event |= KEY_MOD_UP;
+				ev->keys.key = 127;
+				menuVFOExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+				// End Trick
 			}
 
 			return;
@@ -767,7 +796,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				menuSystemPushNewMenu(MENU_CHANNEL_DETAILS);
 				reset_freq_enter_digits();
@@ -789,10 +818,12 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					if ((ev->buttons & BUTTON_SK2) != 0)
+					if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 					{
 						menuSystemPushNewMenu(MENU_CONTACT_QUICKLIST);
-					} else {
+					}
+					else
+					{
 						menuSystemPushNewMenu(MENU_NUMERICAL_ENTRY);
 					}
 				}
@@ -801,7 +832,7 @@ static void handleEvent(uiEvent_t *ev)
 
 			if (KEYCHECK_SHORTUP(ev->keys,KEY_STAR))
 			{
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					if (trxGetMode() == RADIO_MODE_ANALOG)
 					{
@@ -813,6 +844,7 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							loadContact();
 						}
+						menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
 					}
 					else
 					{
@@ -835,6 +867,11 @@ static void handleEvent(uiEvent_t *ev)
 						lastHeardClearLastID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
+
+						if (trxGetDMRTimeSlot() == 0)
+						{
+							menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
+						}
 					}
 					else
 					{
@@ -868,7 +905,7 @@ static void handleEvent(uiEvent_t *ev)
 			else if (KEYCHECK_SHORTUP(ev->keys, KEY_DOWN) || KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_DOWN))
 			{
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					// Don't permit to switch from RX/TX while scanning
 					if (screenOperationMode[nonVolatileSettings.currentVFONumber] != VFO_SCREEN_OPERATION_SCAN)
@@ -896,7 +933,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				handleUpKey(ev);
 			}
-			else if (KEYCHECK_LONGDOWN(ev->keys, KEY_UP) && ((ev->buttons & BUTTON_SK2) == 0))
+			else if (KEYCHECK_LONGDOWN(ev->keys, KEY_UP) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 			{
 				if (screenOperationMode[nonVolatileSettings.currentVFONumber] != VFO_SCREEN_OPERATION_SCAN)
 				{
@@ -914,7 +951,7 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			else if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
 			{
-				if ((ev->buttons & BUTTON_SK2 )!=0 && menuUtilityTgBeforePcMode != 0)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) && (menuUtilityTgBeforePcMode != 0))
 				{
 					nonVolatileSettings.overrideTG = menuUtilityTgBeforePcMode;
 					uiVFOUpdateTrxID();
@@ -929,6 +966,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					clearActiveDMRID();
 				}
+				menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;// Audible signal that the Channel screen has been selected
 				menuSystemSetCurrentMenu(UI_CHANNEL_MODE);
 #endif
 				return;
@@ -940,14 +978,15 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					clearActiveDMRID();
 				}
+				menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;// Audible signal that the Channel screen has been selected
 				menuSystemSetCurrentMenu(UI_CHANNEL_MODE);
 				return;
 			}
 #endif
 #if defined(PLATFORM_RD5R)
-		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_VFO_MR) && ((ev->buttons & BUTTON_SK1) == 0))
+		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_VFO_MR) && (BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0))
 		{
-			if (ev->buttons & BUTTON_SK2)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				settingsPrivateCallMuteMode = !settingsPrivateCallMuteMode;// Toggle PC mute only mode
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -956,6 +995,12 @@ static void handleEvent(uiEvent_t *ev)
 			else
 			{
 				menuSystemPushNewMenu(UI_VFO_QUICK_MENU);
+
+				// Trick to beep (AudioAssist), since ORANGE button doesn't produce any beep event
+				ev->keys.event |= KEY_MOD_UP;
+				ev->keys.key = 127;
+				menuVFOExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+				// End Trick
 			}
 
 			return;
@@ -974,7 +1019,7 @@ static void handleEvent(uiEvent_t *ev)
 			else if (KEYCHECK_LONGDOWN(ev->keys, KEY_RIGHT))
 			{
 				// Long press allows the 5W+ power setting to be selected immediately
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					if (nonVolatileSettings.txPowerLevel == (MAX_POWER_SETTING_NUM - 1))
 					{
@@ -988,7 +1033,7 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			else if (KEYCHECK_PRESS(ev->keys, KEY_RIGHT))
 			{
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					if (nonVolatileSettings.txPowerLevel < (MAX_POWER_SETTING_NUM - 1))
 					{
@@ -1007,6 +1052,11 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber]++;
 							checkAndFixIndexInRxGroup();
+						}
+
+						if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] == 0)
+						{
+							menuVFOExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 						}
 						nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
 						menuClearPrivateCall();
@@ -1037,7 +1087,7 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
 			{
-				if (ev->buttons & BUTTON_SK2)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
 					if (nonVolatileSettings.txPowerLevel > 0)
 					{
@@ -1046,6 +1096,11 @@ static void handleEvent(uiEvent_t *ev)
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
 						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
+					}
+
+					if (nonVolatileSettings.txPowerLevel == 0)
+					{
+						menuVFOExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 					}
 				}
 				else
@@ -1060,6 +1115,11 @@ static void handleEvent(uiEvent_t *ev)
 							{
 								nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] =
 										currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1;
+							}
+
+							if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] == 0)
+							{
+								menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
 							}
 						}
 						nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
@@ -1192,7 +1252,7 @@ static void handleEvent(uiEvent_t *ev)
 static void handleUpKey(uiEvent_t *ev)
 {
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-	if (ev->buttons & BUTTON_SK2)
+	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		// Don't permit to switch from RX/TX while scanning
 		if (screenOperationMode[nonVolatileSettings.currentVFONumber] != VFO_SCREEN_OPERATION_SCAN)
@@ -1212,7 +1272,7 @@ static void handleUpKey(uiEvent_t *ev)
 		}
 		uiVFOModeUpdateScreen(0);
 	}
-	scanTimer=500;
+	scanTimer = 500;
 	scanState = SCAN_SCANNING;
 	SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);
 }
@@ -1277,20 +1337,23 @@ enum VFO_SCREEN_QUICK_MENU_ITEMS // The last item in the list is used so that we
 	NUM_VFO_SCREEN_QUICK_MENU_ITEMS
 };
 
-int uiVFOModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t uiVFOModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
 		tmpQuickMenuDmrFilterLevel = nonVolatileSettings.dmrFilterLevel;
 		tmpQuickMenuAnalogFilterLevel = nonVolatileSettings.analogFilterLevel;
 		updateQuickMenuScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuQuickVFOExitStatus = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
 			handleQuickMenuEvent(ev);
 	}
-	return 0;
+	return menuQuickVFOExitStatus;
 }
 
 static void updateQuickMenuScreen(void)
@@ -1447,12 +1510,14 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 				}
 				break;
 			case VFO_SCREEN_CODE_SCAN:
-				if(trxGetMode() == RADIO_MODE_ANALOG)
+				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
-					toneScanActive = true;
-					scanTimer = TONESCANINTERVAL;
-					scanIndex = 1;
-					trxSetRxCSS(TRX_CTCSSTones[scanIndex]);
+					scanToneActive = true;
+					scanTimer = SCAN_TONE_INTERVAL;
+					scanToneIndex = 0;
+					scanToneType = CSS_CTCSS;
+					currentChannelData->rxTone = TRX_CTCSSTones[scanToneIndex];
+					trxSetRxCSS(currentChannelData->rxTone);
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
 				}
 				break;
@@ -1461,11 +1526,20 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 		return;
 	}
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
-	else if (((ev->events & BUTTON_EVENT) && (ev->buttons & BUTTON_ORANGE)) && (gMenusCurrentItemIndex==VFO_SCREEN_QUICK_MENU_VFO_A_B))
+	else if (((ev->events & BUTTON_EVENT) && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE)) && (gMenusCurrentItemIndex == VFO_SCREEN_QUICK_MENU_VFO_A_B))
 	{
 		nonVolatileSettings.currentVFONumber = 1 - nonVolatileSettings.currentVFONumber;// Switch to other VFO
 		currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
 		menuSystemPopPreviousMenu();
+		if (nonVolatileSettings.currentVFONumber == 0)
+		{
+			// Trick to beep (AudioAssist), since ORANGE button doesn't produce any beep event
+			ev->keys.event |= KEY_MOD_UP;
+			ev->keys.key = 127;
+			// End Trick
+
+			menuQuickVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
+		}
 		return;
 	}
 #endif
@@ -1511,6 +1585,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					nonVolatileSettings.currentVFONumber--;
 					currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
 				}
+				menuQuickVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
 				break;
 #endif
 			case VFO_SCREEN_QUICK_MENU_FILTER:
@@ -1533,11 +1608,13 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
-		MENU_INC(gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
+		menuQuickVFOExitStatus |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
-		MENU_DEC(gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
+		menuQuickVFOExitStatus |= MENU_STATUS_LIST_TYPE;
 	}
 
 	updateQuickMenuScreen();
@@ -1545,18 +1622,17 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 
 bool uiVFOModeIsScanning(void)
 {
-	return (toneScanActive || scanActive);
+	return (scanToneActive || scanActive);
 }
 
 static void toneScan(void)
 {
 	if (getAudioAmpStatus() & AUDIO_AMP_MODE_RF)
 	{
-		currentChannelData->txTone = TRX_CTCSSTones[scanIndex];
-		currentChannelData->rxTone = TRX_CTCSSTones[scanIndex];
+		currentChannelData->txTone = currentChannelData->rxTone;
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 		uiVFOModeUpdateScreen(0);
-		toneScanActive = false;
+		scanToneActive = false;
 		return;
 	}
 
@@ -1566,14 +1642,10 @@ static void toneScan(void)
 	}
 	else
 	{
-		scanIndex++;
-		if(scanIndex > (TRX_NUM_CTCSS-1))
-		{
-			scanIndex = 1;
-		}
+		cssIncrement(&currentChannelData->rxTone, &scanToneIndex, &scanToneType, true);
 		trxAT1846RxOff();
-		trxSetRxCSS(TRX_CTCSSTones[scanIndex]);
-		scanTimer = TONESCANINTERVAL - (scanIndex * 2);
+		trxSetRxCSS(currentChannelData->rxTone);
+		scanTimer = ((scanToneType == CSS_CTCSS) ? (SCAN_TONE_INTERVAL - (scanToneIndex * 2)) : SCAN_TONE_INTERVAL);
 		trx_measure_count = 0;//synchronise the measurement with the scan.
 		trxAT1846RxOn();
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -1622,7 +1694,6 @@ static void setCurrentFreqToScanLimits(void)
 
 static void initScan(void)
 {
-
 	screenOperationMode[nonVolatileSettings.currentVFONumber] = VFO_SCREEN_OPERATION_SCAN;
 	scanDirection = 1;
 
@@ -1642,7 +1713,7 @@ static void initScan(void)
 
 	selectedFreq = VFO_SELECTED_FREQUENCY_INPUT_RX;
 
-	scanTimer=500;
+	scanTimer = 500;
 	scanState = SCAN_SCANNING;
 	menuSystemPopAllAndDisplaySpecificRootMenu(UI_VFO_MODE, true);
 }

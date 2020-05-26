@@ -97,11 +97,13 @@ def strdumpArray(buf):
         cbuf = cbuf + chr(b)
     return cbuf
 
-def downloadFirmware():
-    url = "https://github.com/rogerclarkmelbourne/OpenGD77/releases/latest"
+def downloadFirmware(downloadStable):
+    url = "https://github.com/rogerclarkmelbourne/OpenGD77/releases"
     urlBase = "http://github.com"
     httpPool = urllib3.PoolManager()
     pattern = ""
+    fwVersion = "UNKNOWN"
+    fwVersionPatternFormat = r'/{}([0-9\.]+)/'
     urlFW = ""
     webContent = ""
         
@@ -117,27 +119,34 @@ def downloadFirmware():
     webContent = str(response.data)
     
     if (outputFormat == SGLFormatOutput.GD_77):
-        pattern = r'/rogerclarkmelbourne/OpenGD77/releases/download/R([0-9\.]+)/OpenGD77\.sgl'
+        patternFormat = r'/rogerclarkmelbourne/OpenGD77/releases/download/{}([0-9\.]+)/OpenGD77\.sgl'
     elif (outputFormat == SGLFormatOutput.GD_77S):
-        pattern = '/rogerclarkmelbourne/OpenGD77/releases/download/R([0-9\.]+)/OpenGD77S\.sgl'
+        patternFormat = r'/rogerclarkmelbourne/OpenGD77/releases/download/{}([0-9\.]+)/OpenGD77S\.sgl'
     elif (outputFormat == SGLFormatOutput.DM_1801):
-        pattern = '/rogerclarkmelbourne/OpenGD77/releases/download/R([0-9\.]+)/OpenDM1801\.sgl'
+        patternFormat = r'/rogerclarkmelbourne/OpenGD77/releases/download/{}([0-9\.]+)/OpenDM1801\.sgl'
     elif (outputFormat == SGLFormatOutput.DM_5R):
-        pattern = '/rogerclarkmelbourne/OpenGD77/releases/download/R([0-9\.]+)/OpenDM5R\.sgl'
-    
+        patternFormat = r'/rogerclarkmelbourne/OpenGD77/releases/download/{}([0-9\.]+)/OpenDM5R\.sgl'
+
+    pattern = patternFormat.format("R" if downloadStable == True else "D")
+    fwVersionPattern = fwVersionPatternFormat.format("R" if downloadStable == True else "D") 
     contentArray = webContent.split("\n")    
     
     for l in contentArray:
         m = re.search(pattern, l)
         if (m != None):
             urlFW = urlBase + m.group(0)
+            
+            m = re.search(fwVersionPattern, urlFW)
+            if (m != None):
+                fwVersion = m.group(0).strip('/')
+            
             break
     
     if (len(urlFW)):
         global downloadedFW
         downloadedFW = os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()) + '.sgl')
         
-        print(" - " + "Downloading the firmware, please wait");
+        print(" - " + "Downloading the firmware version {}, please wait".format(fwVersion));
         
         try:
             response = httpPool.request('GET', urlFW, preload_content=False)
@@ -480,6 +489,8 @@ def usage():
     print("    -f, --firmware=<filename.sgl>  : Flash <filename.sgl> instead of default file \"firmware.sgl\"")
     print("    -m, --model=<type>             : Select transceiver model. Models are: {}".format(", ".join(str(x) for x in outputModes[:-1])) + ".")
     print("    -d, --download                 : Download firmware from the project website")
+    print("    -S, --stable                   : Select the stable version while downloading from the project page")
+    print("    -U, --unstable                 : Select the development version while downloading from the project page")
     print("")
 
 #####################################################
@@ -488,12 +499,13 @@ def usage():
 def main():
     global outputFormat
     sglFile = "firmware.sgl"
+    downloadStable = True
     doDownload = False
     doForce = False
 
     # Command line argument parsing
     try:                                
-        opts, args = getopt.getopt(sys.argv[1:], "hf:m:dF", ["help", "firmware=", "model=", "download", "force"])
+        opts, args = getopt.getopt(sys.argv[1:], "hf:m:dSUF", ["help", "firmware=", "model=", "download", "stable", "unstable", "force"])
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -520,6 +532,10 @@ def main():
                 
         elif opt in ["-d", "--download"]:
             doDownload = True
+        elif opt in ["-S", "--stable"]:
+            downloadStable = True
+        elif opt in ["-U", "--unstable"]:
+            downloadStable = False
         elif opt in ["-F", "--force"]:
             doForce = True
         else:
@@ -547,7 +563,7 @@ def main():
         
         # Try to download the firmware
         if (doDownload == True):
-            if (downloadFirmware() == True):
+            if (downloadFirmware(downloadStable) == True):
                 sglFile = downloadedFW
             else:
                 print("Firmware download failed")

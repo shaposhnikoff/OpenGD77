@@ -22,13 +22,14 @@
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiUtilities.h>
 #include <user_interface/uiLocalisation.h>
+#include <functions/voicePrompts.h>
 
 static char digits[9];
 static int pcIdx;
 static struct_codeplugContact_t contact;
 
 static void updateCursor(void);
-static void updateScreen(void);
+static void updateScreen(bool inputModeHasChanged);
 static void handleEvent(uiEvent_t *ev);
 
 static const uint32_t CURSOR_UPDATE_TIMEOUT = 500;
@@ -37,8 +38,12 @@ static const int MAX_TG_OR_PC_VALUE = 16777215;
 
 static const char *menuName[4];
 enum DISPLAY_MENU_LIST { ENTRY_TG = 0, ENTRY_PC, ENTRY_SELECT_CONTACT, ENTRY_USER_DMR_ID, NUM_ENTRY_ITEMS};
+
+static menuStatus_t menuNumericalExitStatus = MENU_STATUS_SUCCESS;
+
+
 // public interface
-int menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -49,10 +54,14 @@ int menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
 		gMenusCurrentItemIndex = ENTRY_TG;
 		digits[0] = 0;
 		pcIdx = 0;
-		updateScreen();
+		updateScreen(true);
+		return (MENU_STATUS_INPUT_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		// Clear input type beep for AudioAssist
+		menuNumericalExitStatus = MENU_STATUS_SUCCESS;
+
 		if (ev->events == EVENT_BUTTON_NONE)
 		{
 			updateCursor();
@@ -60,7 +69,9 @@ int menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
 		else
 		{
 			if (ev->hasEvent)
+			{
 				handleEvent(ev);
+			}
 			else
 			{
 				if ((gMenusCurrentItemIndex != ENTRY_SELECT_CONTACT) && (strlen(digits) <= NUM_PC_OR_TG_DIGITS))
@@ -70,7 +81,7 @@ int menuNumericalEntry(uiEvent_t *ev, bool isFirstRun)
 			}
 		}
 	}
-	return 0;
+	return menuNumericalExitStatus;
 }
 
 static void updateCursor(void)
@@ -98,7 +109,7 @@ static void updateCursor(void)
 	}
 }
 
-static void updateScreen(void)
+static void updateScreen(bool inputModeHasChanged)
 {
 	char buf[33];
 	size_t sLen = strlen(menuName[gMenusCurrentItemIndex]) * 8;
@@ -110,6 +121,31 @@ static void updateScreen(void)
 
 	// Not really centered, off by 2 pixels
 	ucPrintAt(((DISPLAY_SIZE_X - sLen) >> 1) - 2, y, (char *)menuName[gMenusCurrentItemIndex], FONT_SIZE_3);
+
+
+	if (inputModeHasChanged)
+	{
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			voicePromptsInit();
+			switch(gMenusCurrentItemIndex)
+			{
+				case ENTRY_TG:
+					voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+					break;
+				case ENTRY_PC:
+					voicePromptsAppendPrompt(PROMPT_PRIVATECALL);
+					break;
+				case ENTRY_SELECT_CONTACT:
+					voicePromptsAppendPrompt(PROMPT_CONTACT);
+					break;
+				case ENTRY_USER_DMR_ID:
+					voicePromptsAppendString("ID");
+					break;
+			}
+			voicePromptsPlay();
+		}
+	}
 
 	if (pcIdx == 0)
 	{
@@ -192,7 +228,7 @@ static void handleEvent(uiEvent_t *ev)
 				else
 				{
 					trxDMRID = tmpID;
-					if (ev->buttons & BUTTON_SK2)
+					if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 					{
 						// make the change to DMR ID permanent if Function + Green is pressed
 						codeplugSetUserDMRID(trxDMRID);
@@ -212,7 +248,9 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				pcIdx = 0;
 
-				if (((ev->buttons & BUTTON_SK2) != 0) && (gMenusCurrentItemIndex == ENTRY_SELECT_CONTACT))
+				menuNumericalExitStatus |= MENU_STATUS_INPUT_TYPE;
+
+				if ((BUTTONCHECK_DOWN(ev, BUTTON_SK2) != 0) && (gMenusCurrentItemIndex == ENTRY_SELECT_CONTACT))
 				{
 					snprintf(digits, 8, "%d", trxDMRID);
 					digits[8] = 0;
@@ -223,22 +261,26 @@ static void handleEvent(uiEvent_t *ev)
 					gMenusCurrentItemIndex++;
 					if (gMenusCurrentItemIndex > ENTRY_SELECT_CONTACT)
 					{
+						digits[0] = 0;
 						gMenusCurrentItemIndex = ENTRY_TG;
 					}
 					else
 					{
 						if (gMenusCurrentItemIndex == ENTRY_SELECT_CONTACT)
 						{
+							menuNumericalExitStatus &= ~MENU_STATUS_INPUT_TYPE;
+
 							pcIdx = getNextContact(0, 1, &contact);
 
 							if (pcIdx != 0)
 							{
 								itoa(contact.tgNumber, digits, 10);
+								menuNumericalExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 							}
 						}
 					}
 				}
-				updateScreen();
+				updateScreen(true);
 			}
 		}
 	}
@@ -258,11 +300,17 @@ static void handleEvent(uiEvent_t *ev)
 				idx = getNextContact(pcIdx, -1, &contact);
 			}
 		}
-		if (pcIdx != idx )
+		if (pcIdx != idx)
 		{
 			pcIdx = idx;
 			itoa(contact.tgNumber, digits, 10);
-			updateScreen();
+
+			if (pcIdx == 1)
+			{
+				menuNumericalExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
+			}
+
+			updateScreen(false);
 		}
 	}
 	else
@@ -322,6 +370,14 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							char c[2] = {0, 0};
 							c[0] = keyval+'0';
+
+							if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+							{
+								voicePromptsInit();
+								voicePromptsAppendString(c);
+								voicePromptsPlay();
+							}
+
 							strcat(digits, c);
 							refreshScreen = true;
 						}
@@ -331,7 +387,7 @@ static void handleEvent(uiEvent_t *ev)
 
 			if (refreshScreen)
 			{
-				updateScreen();
+				updateScreen(false);
 			}
 
 			updateCursor();

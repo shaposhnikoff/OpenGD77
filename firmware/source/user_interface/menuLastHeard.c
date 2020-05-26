@@ -22,11 +22,12 @@
 
 static const int LAST_HEARD_NUM_LINES_ON_DISPLAY = 3;
 static bool displayLHDetails = false;
+static menuStatus_t menuLastHeardExitCode = MENU_STATUS_SUCCESS;
 
 static void handleEvent(uiEvent_t *ev);
 static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails);
 
-int menuLastHeard(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 {
 	static uint32_t m = 0;
 
@@ -38,9 +39,12 @@ int menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 		displayLightTrigger();
 		menuLastHeardUpdateScreen(true, displayLHDetails);
 		m = ev->time;
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuLastHeardExitCode = MENU_STATUS_SUCCESS;
+
 		// do live update by checking if the item at the top of the list has changed
 		if ((gMenusStartIndex != LinkHead->id) || (menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA))
 		{
@@ -67,7 +71,7 @@ int menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 		}
 
 	}
-	return 0;
+	return menuLastHeardExitCode;
 }
 
 void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails)
@@ -139,16 +143,15 @@ static void handleEvent(uiEvent_t *ev)
 {
 	displayLightTrigger();
 
-	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN) && (gMenusEndIndex != 0))
+	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{
-		gMenusCurrentItemIndex++;
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
+		menuLastHeardExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
-		if (gMenusCurrentItemIndex > 0)
-		{
-			gMenusCurrentItemIndex--;
-		}
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
+		menuLastHeardExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
@@ -162,7 +165,7 @@ static void handleEvent(uiEvent_t *ev)
 	}
 
 	// Toggles LH simple/details view on SK2 press
-	if (ev->buttons & BUTTON_SK2)
+	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		displayLHDetails = true;//!displayLHDetails;
 	}

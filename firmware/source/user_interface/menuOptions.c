@@ -23,6 +23,8 @@
 
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
+
+static menuStatus_t menuOptionsExitCode = MENU_STATUS_SUCCESS;
 static bool	doFactoryReset;
 enum OPTIONS_MENU_LIST { OPTIONS_MENU_FACTORY_RESET = 0, OPTIONS_MENU_USE_CALIBRATION,
 							OPTIONS_MENU_TX_FREQ_LIMITS,
@@ -33,7 +35,7 @@ enum OPTIONS_MENU_LIST { OPTIONS_MENU_FACTORY_RESET = 0, OPTIONS_MENU_USE_CALIBR
 							OPTIONS_MENU_PRIVATE_CALLS,
 							NUM_OPTIONS_MENU_ITEMS};
 
-int menuOptions(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuOptions(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -41,13 +43,16 @@ int menuOptions(uiEvent_t *ev, bool isFirstRun)
 		// Store original settings, used on cancel event.
 		memcpy(&originalNonVolatileSettings, &nonVolatileSettings, sizeof(settingsStruct_t));
 		updateScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuOptionsExitCode = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
 			handleEvent(ev);
 	}
-	return 0;
+	return menuOptionsExitCode;
 }
 
 static void updateScreen(void)
@@ -155,11 +160,13 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
 	{
-		MENU_INC(gMenusCurrentItemIndex, NUM_OPTIONS_MENU_ITEMS);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_OPTIONS_MENU_ITEMS);
+		menuOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
-		MENU_DEC(gMenusCurrentItemIndex, NUM_OPTIONS_MENU_ITEMS);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_OPTIONS_MENU_ITEMS);
+		menuOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 	{

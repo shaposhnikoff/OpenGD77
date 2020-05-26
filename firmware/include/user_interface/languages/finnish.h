@@ -153,7 +153,13 @@ const stringsTable_t finnishLanguage =
 .start			= "Alku", 		// MaxLen 16 (with ':' + .dmr_beep)
 .both			= "Molemm",		// MaxLen 16 (with ':' + .dmr_beep)
 .vox_threshold          = "VOX Herkk.",		// MaxLen 16 (with ':' + .off or 1..30)
-.vox_tail               = "VOX Viive"		// MaxLen 16 (with ':' + .n_a or '0.0s')
+.vox_tail               = "VOX Viive",		// MaxLen 16 (with ':' + .n_a or '0.0s')
+.audio_prompt				= "Prompt",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice)
+.silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
+.normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
+.beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+
 };
 /********************************************************************
  *

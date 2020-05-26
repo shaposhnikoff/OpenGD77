@@ -65,7 +65,7 @@ namespace GD77_FirmwareLoader
 			OutputType_GD77S,
 			OutputType_DM1801,
 			OutputType_RD5R,
-			OutputType_UNKOWN
+			OutputType_UNKNOWN
 		}
 
 		class StringAndOutputType
@@ -74,7 +74,7 @@ namespace GD77_FirmwareLoader
 			public OutputType Type { get; set; }
 		}
 
-		public static OutputType outputType = OutputType.OutputType_UNKOWN;
+		public static OutputType outputType = OutputType.OutputType_GD77;
 
 		public static String getModelString(OutputType type)
 		{
@@ -127,7 +127,7 @@ namespace GD77_FirmwareLoader
 					break;
 
 
-				case OutputType.OutputType_UNKOWN:
+				case OutputType.OutputType_UNKNOWN:
 					Console.WriteLine("Error. Unknown model type");
 					return -99;
 			}
@@ -473,7 +473,7 @@ namespace GD77_FirmwareLoader
 			if (_specifiedDevice == null)
 			{
 				Console.WriteLine("Error. Can't connect the transceiver");
-				return OutputType.OutputType_UNKOWN;
+				return OutputType.OutputType_UNKNOWN;
 			}
 
 			while (commandNumber < commandID.Length)
@@ -483,7 +483,7 @@ namespace GD77_FirmwareLoader
 					Console.WriteLine("Error sending command.");
 					_specifiedDevice.Dispose();
 					_specifiedDevice = null;
-					return OutputType.OutputType_UNKOWN;
+					return OutputType.OutputType_UNKNOWN;
 				}
 
 				commandNumber = commandNumber + 1;
@@ -506,7 +506,7 @@ namespace GD77_FirmwareLoader
 
 			_specifiedDevice.Dispose();
 			_specifiedDevice = null;
-			return OutputType.OutputType_UNKOWN;
+			return OutputType.OutputType_UNKNOWN;
 		}
 
 		static private bool sendInitialCommands(byte[] encodeKey)

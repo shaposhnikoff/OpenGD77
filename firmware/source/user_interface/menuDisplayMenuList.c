@@ -22,21 +22,28 @@
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
 
-int menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
+static menuStatus_t menuDisplayListExitCode = MENU_STATUS_SUCCESS;
+
+menuStatus_t menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
-		gMenuCurrentMenuList = (menuItemNew_t *)menusData[menuSystemGetCurrentMenuNumber()];
-		gMenusEndIndex = gMenuCurrentMenuList[0].menuNum;// first entry actually contains the number of entries
-		gMenuCurrentMenuList = &gMenuCurrentMenuList[1];// move to first real index
+		int currentMenuNumber = menuSystemGetCurrentMenuNumber();
+		gMenuCurrentMenuList = (menuItemNewData_t *)menusData[currentMenuNumber]->items;
+		gMenusEndIndex = menusData[currentMenuNumber]->numItems;
 		updateScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuDisplayListExitCode = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
+		{
 			handleEvent(ev);
+		}
 	}
-	return 0;
+	return menuDisplayListExitCode;
 }
 
 static void updateScreen(void)
@@ -69,13 +76,15 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
-		MENU_INC(gMenusCurrentItemIndex, gMenusEndIndex);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen();
+		menuDisplayListExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
-		MENU_DEC(gMenusCurrentItemIndex, gMenusEndIndex);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen();
+		menuDisplayListExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
 	{

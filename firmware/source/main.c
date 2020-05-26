@@ -116,6 +116,43 @@ static void showErrorMessage(char *message)
 	ucRender();
 }
 
+
+static void keyBeepHandler(uiEvent_t *ev, bool PTTToggledDown)
+{
+	// Do not send any beep while scanning, otherwise enabling the AMP will be handled as a valid signal detection.
+	if (((ev->keys.event & (KEY_MOD_LONG | KEY_MOD_PRESS)) == (KEY_MOD_LONG | KEY_MOD_PRESS)) ||
+			((ev->keys.event & KEY_MOD_UP) == KEY_MOD_UP))
+	{
+		if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
+		{
+			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_BEEP) || (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE))
+			{
+				soundSetMelody(nextKeyBeepMelody);
+			}
+			else
+			{
+				soundSetMelody(melody_key_beep);
+			}
+			nextKeyBeepMelody = (int *)melody_key_beep;// set back to the default beep
+		}
+		else
+		{ 	// Reset the beep sound if we are scanning, otherwise the AudioAssist
+			// beep will be played instead of the normal one.
+			soundSetMelody(melody_key_beep);
+		}
+	}
+	else
+	{
+		if ((ev->keys.event & (KEY_MOD_LONG | KEY_MOD_DOWN)) == (KEY_MOD_LONG | KEY_MOD_DOWN))
+		{
+			if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
+			{
+				soundSetMelody(melody_key_long_beep);
+			}
+		}
+	}
+}
+
 void mainTask(void *data)
 {
 	keyboardCode_t keys;
@@ -140,7 +177,8 @@ void mainTask(void *data)
 	keyboardInit();
 	rotarySwitchInit();
 
-	buttonsCheckButtonsEvent(&buttons, &button_event);// Read button state and event
+	buttonsCheckButtonsEvent(&buttons, &button_event, false);// Read button state and event
+
 	if (buttons & BUTTON_SK2)
 	{
 		settingsRestoreDefaultSettings();
@@ -165,9 +203,8 @@ void mainTask(void *data)
 	// Init DAC
 	dac_init();
 
-	SPI_Flash_init();
-
-	if (!checkAndCopyCalibrationToCommonLocation())
+	// We shouldn't go further if calibration related initialization has failed
+	if ((SPI_Flash_init() == false) || (calibrationInit() == false) || (calibrationCheckAndCopyToCommonLocation(false) == false))
 	{
 		showErrorMessage("CAL DATA ERROR");
 		while(1U)
@@ -177,14 +214,14 @@ void mainTask(void *data)
 	}
 
 	// Init AT1846S
-	I2C_AT1846S_init();
+	AT1846Init();
 
 	// Init HR-C6000
 	SPI_HR_C6000_init();
 
 	// Additional init stuff
 	SPI_C6000_postinit();
-	I2C_AT1846_Postinit();
+	AT1846Postinit();
 
 	// Init HR-C6000 interrupts
 	init_HR_C6000_interrupts();
@@ -240,15 +277,22 @@ void mainTask(void *data)
 	// Should be initialized before the splash screen, as we don't want melodies when VOX is enabled
 	voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);
 
-	menuInitMenuSystem();
-
 #if defined(PLATFORM_GD77S)
 	// Change hotspot modem type setting
 	if (buttons & BUTTON_SK1)
 	{
+		uint8_t buf[3U] = { 0 };
+
 		nonVolatileSettings.hotspotType = (buttons & BUTTON_PTT) ? HOTSPOT_TYPE_BLUEDV : HOTSPOT_TYPE_MMDVM;
+
+		buf[0U] = 2U;
+		buf[1U] = SPEECH_SYNTHESIS_MODE;
+		buf[2U] = (nonVolatileSettings.hotspotType == HOTSPOT_TYPE_BLUEDV) ? SPEECH_SYNTHESIS_BLUE : SPEECH_SYNTHESIS_RED;
+		speechSynthesisSpeak(buf);
 	}
 #endif
+
+	menuInitMenuSystem();
 
 	// Reset buttons/key states in case some where pressed while booting.
 	button_event = EVENT_BUTTON_NONE;
@@ -271,9 +315,9 @@ void mainTask(void *data)
 
 			tick_com_request();
 
-			buttonsCheckButtonsEvent(&buttons, &button_event); // Read button state and event
-
 			keyboardCheckKeyEvent(&keys, &key_event); // Read keyboard state and event
+
+			buttonsCheckButtonsEvent(&buttons, &button_event, (keys.key != 0)); // Read button state and event
 
 			rotarySwitchCheckRotaryEvent(&rotary, &rotary_event); // Rotary switch state and event (GD-77S only)
 
@@ -287,17 +331,17 @@ void mainTask(void *data)
 				}
 				else
 				{
-					if (!trxIsTransmitting && voxIsTriggered() && ((buttons & BUTTON_PTT) == 0))
+					if (!trxTransmissionEnabled && voxIsTriggered() && ((buttons & BUTTON_PTT) == 0))
 					{
 						button_event = EVENT_BUTTON_CHANGE;
 						buttons |= BUTTON_PTT;
 					}
-					else if (trxIsTransmitting && ((voxIsTriggered() == false) || (keys.event & KEY_MOD_PRESS)))
+					else if (trxTransmissionEnabled && ((voxIsTriggered() == false) || (keys.event & KEY_MOD_PRESS)))
 					{
 						button_event = EVENT_BUTTON_CHANGE;
 						buttons &= ~BUTTON_PTT;
 					}
-					else if (trxIsTransmitting && voxIsTriggered())
+					else if (trxTransmissionEnabled && voxIsTriggered())
 					{
 						// Any key/button event reset the vox
 						if ((button_event != EVENT_BUTTON_NONE) || (keys.event != EVENT_KEY_NONE))
@@ -403,22 +447,6 @@ void mainTask(void *data)
 #if ! defined(PLATFORM_GD77S)
 			if ((key_event == EVENT_KEY_CHANGE) && ((buttons & BUTTON_PTT) == 0) && (keys.key != 0))
 			{
-				// Do not send any beep while scanning, otherwise enabling the AMP will be handled as a valid signal detection.
-				if (keys.event & KEY_MOD_PRESS)
-				{
-					if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
-					{
-						soundSetMelody(melody_key_beep);
-					}
-				}
-				else if ((keys.event & (KEY_MOD_LONG | KEY_MOD_DOWN)) == (KEY_MOD_LONG | KEY_MOD_DOWN))
-				{
-					if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
-					{
-						soundSetMelody(melody_key_long_beep);
-					}
-				}
-
 				if (KEYCHECK_LONGDOWN(keys, KEY_RED) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 				{
 					contactListContactIndex = 0;
@@ -524,7 +552,7 @@ void mainTask(void *data)
 					{
 						bool wasScanning = false;
 
-						if (toneScanActive)
+						if (scanToneActive)
 						{
 							uiVFOModeStopScanning();
 						}
@@ -567,7 +595,7 @@ void mainTask(void *data)
 				}
 			}
 
-			if (!trxIsTransmitting && updateLastHeard==true)
+			if (!trxTransmissionEnabled && updateLastHeard==true)
 			{
 				lastHeardListUpdate((uint8_t *)DMR_frame_buffer, false);
 				updateLastHeard=false;
@@ -581,7 +609,7 @@ void mainTask(void *data)
 				{
 					menuClearPrivateCall();
 				}
-				if (!trxIsTransmitting && menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA && nonVolatileSettings.privateCalls == true)
+				if (!trxTransmissionEnabled && menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA && nonVolatileSettings.privateCalls == true)
 				{
 					if (HRC6000GetReceivedTgOrPcId() == (trxDMRID | (PC_CALL_FLAG<<24)))
 					{
@@ -599,10 +627,10 @@ void mainTask(void *data)
 			}
 
 #if defined(PLATFORM_GD77S) && defined(READ_CPUID)
-	if ((buttons & (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT)) == (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT))
-	{
-		debugReadCPUID();
-	}
+			if ((buttons & (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT)) == (BUTTON_SK1 | BUTTON_ORANGE | BUTTON_PTT))
+			{
+				debugReadCPUID();
+			}
 #endif
 
 			ev.function = 0;
@@ -619,7 +647,7 @@ void mainTask(void *data)
 					keyFunction = (MENU_BATTERY << 8);
 					break;
 				case '3':
-					keyFunction = ( MENU_LAST_HEARD << 8);
+					keyFunction = (MENU_LAST_HEARD << 8);
 					break;
 				case '4':
 					keyFunction = ( MENU_CHANNEL_DETAILS << 8) | 2;
@@ -678,6 +706,35 @@ void mainTask(void *data)
 			ev.time = fw_millis();
 
 			menuSystemCallCurrentMenuTick(&ev);
+
+			// Beep sounds aren't allowed in these modes.
+			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
+			{
+				if (melody_play != NULL)
+				{
+					melody_play = NULL;
+				}
+
+				// AMBE thing, if any
+				if ((buttons & BUTTON_PTT) == 0)
+				{
+
+				}
+			}
+			else
+			{
+				if ((((key_event == EVENT_KEY_CHANGE) || (button_event == EVENT_BUTTON_CHANGE))
+						&& ((buttons & BUTTON_PTT) == 0) && (ev.keys.key != 0))
+						|| (function_event == FUNCTION_EVENT))
+				{
+					if (function_event == FUNCTION_EVENT)
+					{
+						ev.keys.event |= KEY_MOD_UP;
+					}
+
+					keyBeepHandler(&ev, PTTToggledDown);
+				}
+			}
 
 #if defined(PLATFORM_RD5R)
 			if (keyFunction == TOGGLE_TORCH)

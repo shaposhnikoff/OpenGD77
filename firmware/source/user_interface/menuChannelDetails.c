@@ -30,16 +30,13 @@ static void handleEvent(uiEvent_t *ev);
 
 static int32_t RxCSSIndex = 0;
 static int32_t TxCSSIndex = 0;
-typedef enum {
-	CSS_NONE = 0,
-	CSS_CTCSS,
-	CSS_DCS
-} CSSTypes_t;
 static CSSTypes_t RxCSSType = CSS_NONE;
 static CSSTypes_t TxCSSType = CSS_NONE;
 static struct_codeplugChannel_t tmpChannel;// update a temporary copy of the channel and only write back if green menu is pressed
 static char channelName[17];
 static int namePos;
+
+static menuStatus_t menuChannelDetailsExitCode = MENU_STATUS_SUCCESS;
 
 
 enum CHANNEL_DETAILS_DISPLAY_LIST { CH_DETAILS_NAME = 0,
@@ -79,7 +76,7 @@ static int cssIndex(uint16_t tone, CSSTypes_t type)
 	return 0;
 }
 
-static void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type)
+void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type, bool loop)
 {
 	(*index)++;
 	if (*type == CSS_CTCSS)
@@ -97,6 +94,14 @@ static void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type)
 	{
 		if (*index >= TRX_NUM_DCS)
 		{
+			if (loop)
+			{
+				*type = CSS_CTCSS;
+				*index = 0;
+				*tone = TRX_CTCSSTones[*index];
+				return;
+			}
+
 			*index = TRX_NUM_DCS - 1;
 		}
 		*tone = TRX_DCSCodes[*index] | 0x8000;
@@ -112,7 +117,7 @@ static void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type)
 
 static void cssIncrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index, CSSTypes_t *type)
 {
-	if (ev->buttons & BUTTON_SK2)
+	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		switch (*type)
 		{
@@ -150,7 +155,7 @@ static void cssIncrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index,
 		{
 			*index += 4;
 		}
-		cssIncrement(tone, index, type);
+		cssIncrement(tone, index, type, false);
 	}
 }
 
@@ -188,7 +193,7 @@ static void cssDecrement(uint16_t *tone, int32_t *index, CSSTypes_t *type)
 
 static void cssDecrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index, CSSTypes_t *type)
 {
-	if (ev->buttons & BUTTON_SK2)
+	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		switch (*type)
 		{
@@ -233,7 +238,7 @@ static void cssDecrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index,
 	}
 }
 
-int menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -272,14 +277,18 @@ int menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 
 		updateScreen();
 		updateCursor(true);
+
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuChannelDetailsExitCode = MENU_STATUS_SUCCESS;
+
 		updateCursor(false);
 		if (ev->hasEvent)
 			handleEvent(ev);
 	}
-	return 0;
+	return menuChannelDetailsExitCode;
 }
 
 static void updateCursor(bool moved)
@@ -549,13 +558,15 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
-		MENU_INC(gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
 		updateScreen();
+		menuChannelDetailsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
-		MENU_DEC(gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
 		updateScreen();
+		menuChannelDetailsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 	{
@@ -564,7 +575,7 @@ static void handleEvent(uiEvent_t *ev)
 			case CH_DETAILS_NAME:
 				if (settingsCurrentChannelNumber != -1)
 				{
-					moveCursorRightInString(channelName, &namePos, 16, (ev->buttons & BUTTON_SK2));
+					moveCursorRightInString(channelName, &namePos, 16, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 					updateCursor(true);
 				}
 				break;
@@ -659,7 +670,7 @@ static void handleEvent(uiEvent_t *ev)
 			case CH_DETAILS_NAME:
 				if (settingsCurrentChannelNumber != -1)
 				{
-					moveCursorLeftInString(channelName, &namePos, (ev->buttons & BUTTON_SK2));
+					moveCursorLeftInString(channelName, &namePos, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 					updateCursor(true);
 				}
 				break;
@@ -760,7 +771,7 @@ static void handleEvent(uiEvent_t *ev)
 		// settingsCurrentChannelNumber is -1 when in VFO mode
 		// But the VFO is stored in the nonVolatile settings, and not saved back to the codeplug
 		// Also don't store this back to the codeplug unless the Function key (Blue / SK2 ) is pressed at the same time.
-		if (settingsCurrentChannelNumber != -1 && (ev->buttons & BUTTON_SK2))
+		if (settingsCurrentChannelNumber != -1 && BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 		{
 			codeplugChannelSaveDataForIndex(settingsCurrentChannelNumber, currentChannelData);
 		}

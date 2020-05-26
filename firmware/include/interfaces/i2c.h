@@ -27,10 +27,8 @@
 #include "common.h"
 
 #define I2C_BAUDRATE (100000) /* 100K */
-#define I2C_MASTER_SLAVE_ADDR_7BIT (0x71U)
+#define AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT (0x71U)
 
-#define I2C_DATA_LENGTH (32)  /* MAX is 256 */
-extern uint8_t i2c_master_buff[I2C_DATA_LENGTH];
 extern volatile int isI2cInUse;
 
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
@@ -101,16 +99,8 @@ extern volatile int isI2cInUse;
 
 #endif
 
-
-
-
 void init_I2C0a(void);
 void init_I2C0b(void);
 void setup_I2C0(void);
-
-void clear_I2C_buffer(void);
-int write_I2C_reg_2byte(uint8_t addr, uint8_t reg, uint8_t val1, uint8_t val2);
-int read_I2C_reg_2byte(uint8_t addr, uint8_t reg, uint8_t* val1, uint8_t* val2);
-int set_clear_I2C_reg_2byte_with_mask(uint8_t reg, uint8_t mask1, uint8_t mask2, uint8_t val1, uint8_t val2);
 
 #endif /* _FW_I2C_H_ */

@@ -29,6 +29,7 @@ static int contactCallType;
 static int menuContactListDisplayState;
 static int menuContactListTimeout;
 static int menuContactListOverrideState = 0;
+static menuStatus_t menuContactListExitCode = MENU_STATUS_SUCCESS;
 
 enum MENU_CONTACT_LIST_STATE
 {
@@ -51,7 +52,7 @@ static void reloadContactList(void)
 	}
 }
 
-int menuContactList(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuContactList(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -73,15 +74,18 @@ int menuContactList(uiEvent_t *ev, bool isFirstRun)
 		}
 
 		updateScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuContactListExitCode = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent || (menuContactListTimeout > 0))
 		{
 			handleEvent(ev);
 		}
 	}
-	return 0;
+	return menuContactListExitCode;
 }
 
 static void updateScreen(void)
@@ -147,19 +151,21 @@ static void handleEvent(uiEvent_t *ev)
 	case MENU_CONTACT_LIST_DISPLAY:
 		if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 		{
-			MENU_INC(gMenusCurrentItemIndex, gMenusEndIndex);
+			menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 			contactListContactIndex = codeplugContactGetDataForNumber(
 					gMenusCurrentItemIndex + 1, contactCallType,
 					&contactListContactData);
 			updateScreen();
+			menuContactListExitCode |= MENU_STATUS_LIST_TYPE;
 		}
 		else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 		{
-			MENU_DEC(gMenusCurrentItemIndex, gMenusEndIndex);
+			menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 			contactListContactIndex = codeplugContactGetDataForNumber(
 					gMenusCurrentItemIndex + 1, contactCallType,
 					&contactListContactData);
 			updateScreen();
+			menuContactListExitCode |= MENU_STATUS_LIST_TYPE;
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_HASH))
 		{
@@ -309,27 +315,28 @@ static void handleSubMenuEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{
-		MENU_INC(gMenusCurrentItemIndex, NUM_CONTACT_LIST_QUICK_MENU_ITEMS);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CONTACT_LIST_QUICK_MENU_ITEMS);
 		updateSubMenuScreen();
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
-		MENU_DEC(gMenusCurrentItemIndex, NUM_CONTACT_LIST_QUICK_MENU_ITEMS);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CONTACT_LIST_QUICK_MENU_ITEMS);
 		updateSubMenuScreen();
 	}
 }
 
-int menuContactListSubMenu(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuContactListSubMenu(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
 		updateSubMenuScreen();
 		keyboardInit();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
 		if (ev->hasEvent)
 			handleSubMenuEvent(ev);
 	}
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }

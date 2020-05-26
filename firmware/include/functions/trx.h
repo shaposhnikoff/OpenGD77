@@ -24,6 +24,13 @@
 #include "calibration.h"
 #include "codeplug.h"
 
+typedef enum
+{
+	CSS_NONE = 0,
+	CSS_CTCSS,
+	CSS_DCS
+} CSSTypes_t;
+
 typedef struct frequencyBand
 {
 	int calTableMinFreq;
@@ -59,6 +66,7 @@ extern const uint16_t TRX_DCSCodes[];
 
 extern int trxDMRMode;
 
+extern volatile bool trxTransmissionEnabled;
 extern volatile bool trxIsTransmitting;
 extern uint32_t trxTalkGroupOrPcId;
 extern uint32_t trxDMRID;
@@ -111,5 +119,6 @@ void trxSetTone2(int toneFreq);
 void trxSetDTMF(int code);
 void trxUpdateTsForCurrentChannelWithSpecifiedContact(struct_codeplugContact_t *contactData);
 uint32_t trxDCSEncode(uint16_t dcsCode);
+void setMicGainFM(uint8_t gain);
 
 #endif /* _FW_TRX_H_ */

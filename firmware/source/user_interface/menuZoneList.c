@@ -24,20 +24,25 @@
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
 
-int menuZoneList(uiEvent_t *ev, bool isFirstRun)
+static menuStatus_t menuZoneExitCode = MENU_STATUS_SUCCESS;
+
+menuStatus_t menuZoneList(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
 		gMenusEndIndex = codeplugZonesGetCount();
 		gMenusCurrentItemIndex = nonVolatileSettings.currentZone;
 		updateScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuZoneExitCode = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
 			handleEvent(ev);
 	}
-	return 0;
+	return menuZoneExitCode;
 }
 
 static void updateScreen(void)
@@ -74,13 +79,15 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
-		MENU_INC(gMenusCurrentItemIndex, gMenusEndIndex);
+		menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen();
+		menuZoneExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
-		MENU_DEC(gMenusCurrentItemIndex, gMenusEndIndex);
+		menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen();
+		menuZoneExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
 	{

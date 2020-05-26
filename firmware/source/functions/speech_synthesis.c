@@ -146,6 +146,40 @@ static SpeechCurrentSequence_t ssSeq;
 
 #endif
 
+#if defined(PLATFORM_GD77S)
+static void speechSynthesisSilence(void)
+{
+	if (trxGetMode() == RADIO_MODE_ANALOG)
+	{
+		/*
+		 *  The DM-1801 audio amplifier seems very slow to respond to the control signal
+		 *  probably because the amp does not have an integrated enabled / disable pin,
+		 *  and instead the power to the amp is turned on and and off via a transistor.
+		 *  In FM mode when there is no signal, this results in the unsquelched hiss being heard at the end of the beep,
+		 *  in the time between the beep ending and the amp turning off.
+		 *  To resolve this problem, the audio mux control to the amp input, is left set to the output of the C6000
+		 *  unless there is a RF audio signal.
+		 *
+		 *  Note. Its quicker just to read the Green LED pin to see if there is an RF signal, but its safer to get he audio amp status
+		 *  to see if the amp is already on because of an RF signal.
+		 *
+		 *  On the GD-77. A click also seems to be induced at the end of the beep when the mux is changed back to the RF chip (AT1846)
+		 *  So this fix seems to slighly improve the GD-77 beep on FM
+		 */
+		if (getAudioAmpStatus() & AUDIO_AMP_MODE_RF)
+		{
+			GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1);// Set the audio path to AT1846 -> audio amp.
+		}
+	}
+
+	disableAudioAmp(AUDIO_AMP_MODE_BEEP);
+	if (((getAudioAmpStatus() & AUDIO_AMP_MODE_RF) == 0) && (trxCarrierDetected() == 0))
+	{
+		GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
+	}
+}
+#endif
+
 void speechSynthesisInit(void)
 {
 #if defined(PLATFORM_GD77S)
@@ -163,6 +197,12 @@ void speechSynthesisSpeak(uint8_t *sentence)
 #if defined(PLATFORM_GD77S)
 	if (!trxIsTransmitting && ((sentence[0] > 0) && (sentence[0] <= sizeof(ssSeq.Buffer))))
 	{
+		// Speech is currently running, silence it first, to avoid crackling sounds.
+		if ((ssSeq.Pos != 0) && (ssSeq.Length != 0))
+		{
+			speechSynthesisSilence();
+		}
+
 		ssSeq.Pos = 0;
 		ssSeq.Length = sentence[0];
 
@@ -207,34 +247,7 @@ void speechSynthesisTick(void)
 		// We have reached the end of the speech sequence
 		if (ssSeq.Pos >= ssSeq.Length)
 		{
-			if (trxGetMode() == RADIO_MODE_ANALOG)
-			{
-				/*
-				 *  The DM-1801 audio amplifier seems very slow to respond to the control signal
-				 *  probably because the amp does not have an integrated enabled / disable pin,
-				 *  and instead the power to the amp is turned on and and off via a transistor.
-				 *  In FM mode when there is no signal, this results in the unsquelched hiss being heard at the end of the beep,
-				 *  in the time between the beep ending and the amp turning off.
-				 *  To resolve this problem, the audio mux control to the amp input, is left set to the output of the C6000
-				 *  unless there is a RF audio signal.
-				 *
-				 *  Note. Its quicker just to read the Green LED pin to see if there is an RF signal, but its safer to get he audio amp status
-				 *  to see if the amp is already on because of an RF signal.
-				 *
-				 *  On the GD-77. A click also seems to be induced at the end of the beep when the mux is changed back to the RF chip (AT1846)
-				 *  So this fix seems to slighly improve the GD-77 beep on FM
-				 */
-				if (getAudioAmpStatus() & AUDIO_AMP_MODE_RF)
-				{
-					GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1);// Set the audio path to AT1846 -> audio amp.
-				}
-			}
-
-			disableAudioAmp(AUDIO_AMP_MODE_BEEP);
-			if (((getAudioAmpStatus() & AUDIO_AMP_MODE_RF) == 0) && (trxCarrierDetected() == 0))
-			{
-				GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
-			}
+			speechSynthesisSilence();
 			ssSeq.Length = 0;
 		}
 		else

@@ -26,6 +26,8 @@ static void handleEvent(uiEvent_t *ev);
 static void updateBacklightMode(uint8_t mode);
 static void setDisplayInvert(bool invert);
 
+static menuStatus_t menuDisplayOptionsExitCode = MENU_STATUS_SUCCESS;
+
 static const int BACKLIGHT_MAX_TIMEOUT = 30;
 #if defined (PLATFORM_RD5R)
 	static const int CONTRAST_MAX_VALUE = 10;// Maximum value which still seems to be readable
@@ -47,7 +49,7 @@ enum DISPLAY_MENU_LIST { 	DISPLAY_MENU_BRIGHTNESS = 0, DISPLAY_MENU_BRIGHTNESS_O
 							NUM_DISPLAY_MENU_ITEMS};
 
 
-int menuDisplayOptions(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuDisplayOptions(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
@@ -55,13 +57,16 @@ int menuDisplayOptions(uiEvent_t *ev, bool isFirstRun)
 		memcpy(&originalNonVolatileSettings, &nonVolatileSettings, sizeof(settingsStruct_t));
 
 		updateScreen();
+		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
 	{
+		menuDisplayOptionsExitCode = MENU_STATUS_SUCCESS;
+
 		if (ev->hasEvent)
 			handleEvent(ev);
 	}
-	return 0;
+	return menuDisplayOptionsExitCode;
 }
 
 static void updateScreen(void)
@@ -190,11 +195,13 @@ static void handleEvent(uiEvent_t *ev)
 
 		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
 		{
-			MENU_INC(gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
+			menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
+			menuDisplayOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 		{
-			MENU_DEC(gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
+			menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
+			menuDisplayOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 		{

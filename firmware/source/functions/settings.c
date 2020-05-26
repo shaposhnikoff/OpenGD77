@@ -27,7 +27,7 @@
 
 static const int STORAGE_BASE_ADDRESS 		= 0x6000;
 
-static const int STORAGE_MAGIC_NUMBER 		= 0x4749;
+static const int STORAGE_MAGIC_NUMBER 		= 0x474B;
 
 // Bit patterns for DMR Beep
 const uint8_t BEEP_TX_NONE  = 0x00;
@@ -45,6 +45,7 @@ int contactListContactIndex;
 int settingsUsbMode = USB_MODE_CPS;
 int settingsCurrentChannelNumber=0;
 bool settingsPrivateCallMuteMode = false;
+int *nextKeyBeepMelody = (int *)melody_key_beep;
 
 bool settingsSaveSettings(bool includeVFOs)
 {
@@ -151,7 +152,12 @@ void settingsRestoreDefaultSettings(void)
 	nonVolatileSettings.keypadTimerLong = 5;
 	nonVolatileSettings.keypadTimerRepeat = 3;
 	nonVolatileSettings.currentVFONumber = 0;
-	nonVolatileSettings.dmrFilterLevel = DMR_FILTER_CC_TS;
+	nonVolatileSettings.dmrFilterLevel =
+#if defined(PLATFORM_GD77S)
+			DMR_FILTER_CC_TS_TG;
+#else
+			DMR_FILTER_CC_TS;
+#endif
 	nonVolatileSettings.dmrCaptureTimeout=10;// Default to holding 10 seconds after a call ends
 	nonVolatileSettings.analogFilterLevel = ANALOG_FILTER_CTCSS;
 	nonVolatileSettings.languageIndex=0;
@@ -191,6 +197,12 @@ void settingsRestoreDefaultSettings(void)
 	// VOX related
 	nonVolatileSettings.voxThreshold = 20;
 	nonVolatileSettings.voxTailUnits = 4; // 2 seconds tail
+	nonVolatileSettings.audioPromptMode =
+#if defined(PLATFORM_GD77S)
+			AUDIO_PROMPT_MODE_SILENT;
+#else
+			AUDIO_PROMPT_MODE_NORMAL;
+#endif
 
 	currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];// Set the current channel data to point to the VFO data since the default screen will be the VFO
 

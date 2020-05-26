@@ -26,7 +26,7 @@ static calibrationRSSIMeter_t rssiCalibration;
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
 
-int menuRSSIScreen(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuRSSIScreen(uiEvent_t *ev, bool isFirstRun)
 {
 	static uint32_t m = 0;
 
@@ -46,7 +46,7 @@ int menuRSSIScreen(uiEvent_t *ev, bool isFirstRun)
 			updateScreen();
 		}
 	}
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }
 
 

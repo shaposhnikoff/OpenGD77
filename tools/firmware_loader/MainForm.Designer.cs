@@ -47,7 +47,7 @@ namespace GD77_FirmwareLoader
 			this.rbModels = new System.Windows.Forms.RadioButton[4];
 
 			this.rbModels[0] = new System.Windows.Forms.RadioButton();
-			this.rbModels[0].Text = "Radioddity GD-77 / TYT MD-760";
+			this.rbModels[0].Text = "Radioddity GD-&77 / TYT MD-760";
 			this.rbModels[0].Location = new System.Drawing.Point(5, 15);
 			this.rbModels[0].UseVisualStyleBackColor = true;
 			this.rbModels[0].Tag = (int)FirmwareLoader.OutputType.OutputType_GD77;
@@ -55,7 +55,7 @@ namespace GD77_FirmwareLoader
 			this.rbModels[0].CheckedChanged += new System.EventHandler(this.rbModel_CheckedChanged);
 
 			this.rbModels[1] = new System.Windows.Forms.RadioButton();
-			this.rbModels[1].Text = "Radioddity GD-77S / TYT MD-730";
+			this.rbModels[1].Text = "Radioddity GD-77&S / TYT MD-730";
 			this.rbModels[1].Location = new System.Drawing.Point(5, 35);
 			this.rbModels[1].UseVisualStyleBackColor = true;
 			this.rbModels[1].Tag = (int)FirmwareLoader.OutputType.OutputType_GD77S;
@@ -63,7 +63,7 @@ namespace GD77_FirmwareLoader
 			this.rbModels[1].CheckedChanged += new System.EventHandler(this.rbModel_CheckedChanged);
 
 			this.rbModels[2] = new System.Windows.Forms.RadioButton();
-			this.rbModels[2].Text = "Baofeng DM-1801 / DM-860";
+			this.rbModels[2].Text = "Baofeng DM-&1801 / DM-860";
 			this.rbModels[2].Location = new System.Drawing.Point(5, 55);
 			this.rbModels[2].UseVisualStyleBackColor = true;
 			this.rbModels[2].Tag = (int)FirmwareLoader.OutputType.OutputType_DM1801;
@@ -71,17 +71,12 @@ namespace GD77_FirmwareLoader
 			this.rbModels[2].CheckedChanged += new System.EventHandler(this.rbModel_CheckedChanged);
 
 			this.rbModels[3] = new System.Windows.Forms.RadioButton();
-			this.rbModels[3].Text = "Baofeng RD-5R / DM-5R Tier2";
+			this.rbModels[3].Text = "Baofeng RD-&5R / DM-5R Tier2";
 			this.rbModels[3].Location = new System.Drawing.Point(5, 75);
 			this.rbModels[3].UseVisualStyleBackColor = true;
 			this.rbModels[3].Tag = (int)FirmwareLoader.OutputType.OutputType_RD5R;
 			this.rbModels[3].AutoSize = true;
 			this.rbModels[3].CheckedChanged += new System.EventHandler(this.rbModel_CheckedChanged);
-
-			if (FirmwareLoader.outputType != FirmwareLoader.OutputType.OutputType_UNKOWN)
-			{
-				this.rbModels[(int)FirmwareLoader.outputType].Checked = true;
-			}
 
 			this.grpboxModel.Controls.Add(this.rbModels[0]);
 			this.grpboxModel.Controls.Add(this.rbModels[1]);
@@ -108,7 +103,7 @@ namespace GD77_FirmwareLoader
 			this.btnDownload.Name = "btnDownload";
 			this.btnDownload.Size = new System.Drawing.Size(130, 24);
 			this.btnDownload.TabIndex = 1;
-			this.btnDownload.Text = "Download && Update";
+			this.btnDownload.Text = "&Download && Update";
 			this.btnDownload.UseVisualStyleBackColor = true;
 			this.btnDownload.Enabled = false;
 			this.btnDownload.Click += new System.EventHandler(this.btnDownload_Click);
@@ -120,7 +115,7 @@ namespace GD77_FirmwareLoader
 			this.btnOpenFile.Name = "btnOpenFile";
 			this.btnOpenFile.Size = new System.Drawing.Size(130, 24);
 			this.btnOpenFile.TabIndex = 2;
-			this.btnOpenFile.Text = "Select a File && Update";
+			this.btnOpenFile.Text = "Select a &File && Update";
 			this.btnOpenFile.UseVisualStyleBackColor = true;
 			this.btnOpenFile.Enabled = false;
 			this.btnOpenFile.Click += new System.EventHandler(this.btnOpenFile_Click);
@@ -137,6 +132,13 @@ namespace GD77_FirmwareLoader
 			this.btnDetect.Click += new System.EventHandler(this.btnDetect_Click);
 			this.btnDetect.Visible = false;
 
+
+			if (FirmwareLoader.outputType != FirmwareLoader.OutputType.OutputType_UNKNOWN)
+			{
+				this.rbModels[(int)FirmwareLoader.outputType].Checked = true;
+				this.btnDownload.Enabled = true;
+				this.btnOpenFile.Enabled = true;
+			}
 
 			// 
 			// MainForm

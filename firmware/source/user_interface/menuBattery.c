@@ -17,7 +17,7 @@
  */
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiLocalisation.h>
-
+#include <functions/voicePrompts.h>
 
 SemaphoreHandle_t battSemaphore = NULL;
 
@@ -94,18 +94,30 @@ static size_t circularBufferGetData(voltageCircularBuffer_t *cb, int32_t *data, 
      return count;
 }
 
-int menuBattery(uiEvent_t *ev, bool isFirstRun)
+menuStatus_t menuBattery(uiEvent_t *ev, bool isFirstRun)
 {
 	static uint32_t m = 0;
 
 	if (isFirstRun)
 	{
+		char buffer[17];
 		ucClearBuf();
 		menuDisplayTitle(currentLanguage->battery);
 		ucRenderRows(0, 2);
 
 		displayLightTrigger();
 		updateScreen(true);
+
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			voicePromptsInit();
+			voicePromptsAppendPrompt(PROMPT_BATTERY);
+			int val1 = averageBatteryVoltage / 10;
+			int val2 = averageBatteryVoltage - (val1 * 10);
+			snprintf(buffer, 17, " %1d.%1d", val1, val2);
+			voicePromptsAppendString(buffer);
+			voicePromptsPlay();
+		}
 	}
 	else
 	{
@@ -118,7 +130,7 @@ int menuBattery(uiEvent_t *ev, bool isFirstRun)
 		if (ev->hasEvent)
 			handleEvent(ev);
 	}
-	return 0;
+	return MENU_STATUS_SUCCESS;
 }
 
 static void updateScreen(bool forceRedraw)
@@ -279,12 +291,17 @@ static void handleEvent(uiEvent_t *ev)
 {
 	displayLightTrigger();
 
+	if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+	{
+		voicePromptsPlay();
+	}
+
 	if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
 	{
 		menuSystemPopPreviousMenu();
 		return;
 	}
-	else if (KEYCHECK_PRESS(ev->keys,KEY_GREEN))
+	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
 	{
 		menuSystemPopAllAndDisplayRootMenu();
 		return;

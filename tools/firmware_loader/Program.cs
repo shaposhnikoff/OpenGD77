@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace GD77_FirmwareLoader
 {
 	static class Program
@@ -29,8 +30,8 @@ namespace GD77_FirmwareLoader
 			*/
 			if (args.Length == 0)
 			{
-//				FirmwareLoader.outputType = FirmwareLoader.OutputType.OutputType_UNKOWN; //FirmwareLoader.probeModel();
-				FirmwareLoader.outputType = FirmwareLoader.OutputType.OutputType_UNKOWN;// FirmwareLoader.OutputType.OutputType_GD77;// Probe is not currently working, so default to the GD-77
+				//				FirmwareLoader.outputType = FirmwareLoader.OutputType.OutputType_UNKOWN; //FirmwareLoader.probeModel();
+				//FirmwareLoader.outputType = FirmwareLoader.OutputType.OutputType_GD77;// Probe is not currently working, so default to the GD-77
 
 				/*				
 				if ((FirmwareLoader.outputType < FirmwareLoader.OutputType.OutputType_GD77) || (FirmwareLoader.outputType > FirmwareLoader.OutputType.OutputType_RD5R))
@@ -57,7 +58,7 @@ namespace GD77_FirmwareLoader
 						FirmwareLoader.getModelString(FirmwareLoader.OutputType.OutputType_GD77),
 						FirmwareLoader.getModelString(FirmwareLoader.OutputType.OutputType_GD77S),
 						FirmwareLoader.getModelString(FirmwareLoader.OutputType.OutputType_DM1801),
-                        FirmwareLoader.getModelString(FirmwareLoader.OutputType.OutputType_RD5R)
+						FirmwareLoader.getModelString(FirmwareLoader.OutputType.OutputType_RD5R)
 						};
 					String allModels = String.Join(" | ", modelsString);
 
@@ -90,7 +91,7 @@ namespace GD77_FirmwareLoader
 					FirmwareLoader.outputType = FirmwareLoader.OutputType.OutputType_RD5R;
 					args = RemoveArgAt(args, idxRD5R);
 				}
-				else
+				else if (FirmwareLoader.outputType == FirmwareLoader.OutputType.OutputType_UNKNOWN)
 				{
 					String[] modelsString = {
 						FirmwareLoader.getModelString(FirmwareLoader.OutputType.OutputType_GD77),
@@ -107,6 +108,7 @@ namespace GD77_FirmwareLoader
 				{
 					Application.EnableVisualStyles();
 					Application.SetCompatibleTextRenderingDefault(false);
+
 					Application.Run(new MainForm());
 				}
 
