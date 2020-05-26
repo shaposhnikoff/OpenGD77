@@ -262,12 +262,13 @@ def createChecksumData(buf, startAddress, endAddress):
 
 
 def updateBlockAddressAndLength(buf, address, length):
-	buf[5] = ((length) % 256) & 0xff
-	buf[4] = ((length >> 8) % 256) & 0xff
-	buf[3] = ((address) % 256) & 0xff
-	buf[2] = ((address >> 8) % 256) & 0xff
-	buf[1] = ((address >> 16) % 256) & 0xff
-	buf[0] = ((address >> 24) % 256) & 0xff
+    buf[5] = ((length) % 256) & 0xff
+    buf[4] = ((length >> 8) % 256) & 0xff
+    buf[3] = ((address) % 256) & 0xff
+    buf[2] = ((address >> 8) % 256) & 0xff
+    buf[1] = ((address >> 16) % 256) & 0xff
+    buf[0] = ((address >> 24) % 256) & 0xff
+    return buf
 
 
 #####################################################
@@ -287,7 +288,7 @@ def sendFileData(fileBuf, dev):
         if ((address % BLOCK_LENGTH) == 0):
             checksumStartAddress = address
             
-        updateBlockAddressAndLength(dataHeader, address, DATA_TRANSFER_SIZE)
+        dataHeader = updateBlockAddressAndLength(dataHeader, address, DATA_TRANSFER_SIZE)
         
         if ((address + DATA_TRANSFER_SIZE) < fileLength):
             
@@ -319,7 +320,7 @@ def sendFileData(fileBuf, dev):
             
             DATA_TRANSFER_SIZE = fileLength - address
 
-            updateBlockAddressAndLength(dataHeader, address, DATA_TRANSFER_SIZE)
+            dataHeader = updateBlockAddressAndLength(dataHeader, address, DATA_TRANSFER_SIZE)
             
             for i in range(DATA_TRANSFER_SIZE):
                 if (sys.version_info > (3, 0)):
@@ -385,7 +386,7 @@ def sendInitialCommands(dev, encodeKey):
         command4            =[[0x53, 0x47, 0x2d, 0x4d, 0x44, 0x2d, 0x37, 0x36, 0x30, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff],responseOK] #SG-MD-760
         command5            =[[0x4d, 0x44, 0x2d, 0x37, 0x36, 0x30, 0xff, 0xff],responseOK] #MD-760..
     elif (outputFormat == SGLFormatOutput.GD_77S):
-        command2            =[[0x44, 0x56, 0x30, 0x32, 0x47, 0x70, 0x6d, 0x4a],[0x44, 0x56, 0x30, 0x32]] #.... DV02Gpmj (thanks Wireshark)
+        command2            =[[0x44, 0x56, 0x30, 0x32, 0x6D, 0x40, 0x7D, 0x63],[0x44, 0x56, 0x30, 0x32]] #.... DV02Gpmj (thanks Wireshark)
         command4            =[[0x53, 0x47, 0x2d, 0x4d, 0x44, 0x2d, 0x37, 0x33, 0x30, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff],responseOK] #SG-MD-730
         command5            =[[0x4d, 0x44, 0x2d, 0x37, 0x33, 0x30, 0xff, 0xff],responseOK] #MD-730..
     elif (outputFormat == SGLFormatOutput.DM_1801):
@@ -400,14 +401,14 @@ def sendInitialCommands(dev, encodeKey):
     command6            =[[0x56, 0x31, 0x2e, 0x30, 0x30, 0x2e, 0x30, 0x31],responseOK] #V1.00.01
     commandErase        =[[0x46, 0x2d, 0x45, 0x52, 0x41, 0x53, 0x45, 0xff],responseOK] #F-ERASE
     commandPostErase    =[commandLetterA,responseOK] 
-    commandProgram      =[[0x50, 0x52, 0x4f, 0x47, 0x52, 0x41, 0x4d, 0xf],responseOK] #PROGRAM    
+    commandProgram      =[[0x50, 0x52, 0x4f, 0x47, 0x52, 0x41, 0x4d, 0xf],responseOK] #PROGRAM
     commands            =[command0,command1,command2,command3,command4,command5,command6,commandErase,commandPostErase,commandProgram]
     commandNames        =["Sending Download command", "Sending ACK", "Sending encryption key", "Sending F-PROG command", "Sending radio modem number", "Sending radio modem number 2", "Sending version", "Sending erase command", "Send post erase command", "Sending Program command"]
     commandNumber = 0
     
     # Buffer.BlockCopy(encodeKey, 0, command2[0], 4, 4);
-    command2 = encodeKey + command2
-
+    command2[0] = command2[0][0:4] + encodeKey
+    
     # Send the commands which the GD-77 expects before the start of the data
     while commandNumber < len(commands):
         print(" - " + commandNames[commandNumber])
@@ -422,8 +423,9 @@ def sendInitialCommands(dev, encodeKey):
 ###########################################################################################################################################
 #
 ###########################################################################################################################################
-def checkForSGLAndReturnEncryptedData(fileBuf, encodeKey, headerModel):
+def checkForSGLAndReturnEncryptedData(fileBuf):
     header_tag = list("SGL!")
+    headerModel = []
     
     if (sys.version_info > (3, 0)):
         buf_in_4 = list("".join(map(chr, fileBuf[0:4])))
@@ -473,10 +475,10 @@ def checkForSGLAndReturnEncryptedData(fileBuf, encodeKey, headerModel):
         retBuf = [0x00] * length;
         retBuf = fileBuf[len(fileBuf) - length : len(fileBuf) - length + len(retBuf) ]
 
-        return retBuf
+        return retBuf, encodeKey, headerModel
     
     print("ERROR: SGL! header is missing.")
-    return None
+    return None, None, None
 
 ###########################################################################################################################################
 #
@@ -585,7 +587,7 @@ def main():
         if (outputFormat == SGLFormatOutput.GD_77):
             encodeKey = [ (0x61 + 0x00), (0x61 + 0x0C), (0x61 + 0x0D), (0x61 + 0x01) ]
         elif (outputFormat == SGLFormatOutput.GD_77S):
-            encodeKey = [ (0x47), (0x70), (0x6d), (0x4a) ]
+            encodeKey = [ (0x6D), (0x40), (0x7D), (0x63) ] ## Original header (smaller filelength): was (0x47), (0x70), (0x6d), (0x4a)
         elif (outputFormat == SGLFormatOutput.DM_1801):
             encodeKey = [ (0x74), (0x21), (0x44), (0x39) ]
         elif (outputFormat == SGLFormatOutput.DM_5R):
@@ -593,10 +595,9 @@ def main():
 
         if (file_extension == ".sgl"):
             firmwareModelTag = { SGLFormatOutput.GD_77: 0x1B , SGLFormatOutput.GD_77S: 0x70, SGLFormatOutput.DM_1801: 0x4F, SGLFormatOutput.DM_5R: 0x5C}
-            headerModel = []
             
             ## Could be a SGL file !
-            fileBuf = checkForSGLAndReturnEncryptedData(fileBuf, encodeKey, headerModel)
+            fileBuf, encodeKey, headerModel = checkForSGLAndReturnEncryptedData(fileBuf)
 
             if (fileBuf == None):
                 print("Error. Missing SGL in .sgl file header")
