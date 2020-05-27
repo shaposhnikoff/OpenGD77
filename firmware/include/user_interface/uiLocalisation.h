@@ -125,8 +125,8 @@ typedef struct stringsTable
    const char *colour_normal;
    const char *backlight_timeout;
    const char *scan_delay;
-   const char *YES;
-   const char *NO;
+   const char *yes___in_uppercase;
+   const char *no___in_uppercase;
    const char *DISMISS;
    const char *scan_mode;
    const char *hold;
