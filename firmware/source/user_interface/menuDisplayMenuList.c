@@ -61,7 +61,8 @@ static void updateScreen(void)
 		{
 			if (gMenuCurrentMenuList[mNum].stringOffset >= 0)
 			{
-				menuDisplayEntry(i, mNum, (const char *)currentLanguage + (gMenuCurrentMenuList[mNum].stringOffset * LANGUAGE_TEXTS_LENGTH));
+				char **menuName = (char **)((int)&currentLanguage->LANGUAGE_NAME + (gMenuCurrentMenuList[mNum].stringOffset * sizeof(char *)));
+				menuDisplayEntry(i, mNum, (const char *)*menuName);
 			}
 		}
 	}
