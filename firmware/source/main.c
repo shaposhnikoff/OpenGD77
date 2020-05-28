@@ -23,6 +23,7 @@
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiUtilities.h>
 #include <user_interface/uiLocalisation.h>
+#include <functions/voicePrompts.h>
 
 
 #if defined(USE_SEGGER_RTT)
@@ -273,6 +274,7 @@ void mainTask(void *data)
 	lastheardInitList();
 	codeplugInitContactsCache();
 	dmrIDCacheInit();
+	voicePromptsCacheInit();
 
 	// Should be initialized before the splash screen, as we don't want melodies when VOX is enabled
 	voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);

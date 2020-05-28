@@ -20,33 +20,28 @@
 #include "functions/voicePrompts.h"
 #include "functions/settings.h"
 
+const uint32_t VOICE_PROMPTS_DATA_MAGIC = 0x5056;//'VP'
+const uint32_t VOICE_PROMPTS_DATA_VERSION = 0x0001;
+#define VOICE_PROMPTS_TOC_SIZE 256
+
+typedef struct
+{
+	uint32_t magic;
+	uint32_t version;
+} VoicePromptsDataHeader_t;
+
+const uint32_t VOICE_PROMPTS_FLASH_HEADER_ADDRESS = 0xE0000;
+const uint32_t VOICE_PROMPTS_FLASH_DATA_ADDRESS = VOICE_PROMPTS_FLASH_HEADER_ADDRESS + sizeof(VoicePromptsDataHeader_t) + sizeof(uint32_t)*VOICE_PROMPTS_TOC_SIZE ;
+// 76 x 27 byte ambe frames
+#define AMBE_DATA_BUFFER_SIZE  2052
+bool voicePromptDataIsLoaded = false;
 bool voicePromptIsActive=false;
 static int promptDataPosition=-1;
 
 static int currentPromptLength;
-static uint8_t * ambeData;
+__attribute__((section(".data.$RAM4")))static uint8_t ambeData[AMBE_DATA_BUFFER_SIZE];
 
 #define VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE 128
-
-typedef struct
-{
-	uint8_t  Buffer[VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE];
-	int  Pos;
-	int  Length;
-} VoicePromptsSequence_t;
-
-static VoicePromptsSequence_t voicePromptsCurrentSequence =
-{
-	.Pos = 0,
-	.Length = 0
-};
-
-static const int promptPositions[] = {0,270,477,711,963,1215,1467,1737,2007,2259,
-								2475,2727,2961,3240,3492,3798,4104,4374,4644,4896,
-								5175,5418,5652,5886,6102,6318,6534,6786,7020,7326,
-								7542,7785,8001,8316,8559,8802,9018,9261,9531,9774,
-								10179,10503,10836,11394,11610,12096,12447,12816,13104,13311,13581,
-								13986,14499,14823,15192,15543};
 
 
 const unsigned char ambeSilence600mS[] = {
@@ -61,7 +56,7 @@ const unsigned char ambeSilence600mS[] = {
 	0xAC,0xAA,0x40,0x20,0x00,0x44,0x40,0x80,0x80,0xAC,0xAA,0x40,0x20,0x00,0x44,0x40,0x80,0x80,0xAC,0xAA,0x40,0x20,0x00,0x44,0x40,0x80,0x80,
 	0xAC,0xAA,0x40,0x20,0x00,0x44,0x40,0x80,0x80,0xAC,0xAA,0x40,0x20,0x00,0x44,0x40,0x80,0x80,0xAC,0xAA,0x40,0x20,0x00,0x44,0x40,0x80,0x80,
 };
-
+/*
 const unsigned char ambePrompts[] = {
 	0x95, 0x4B, 0xE6, 0x50, 0x03, 0x10, 0xB0, 0x07, 0x77, 0x85, 0x68, 0xE4,
 	0x62, 0x02, 0x14, 0xC5, 0x21, 0x12, 0xBF, 0x17, 0x8B, 0x2C, 0x44, 0xA3,
@@ -1360,12 +1355,50 @@ const unsigned char ambePrompts[] = {
 	0x9A, 0xC2, 0x26, 0xC7, 0x8F, 0x23, 0x6E, 0xDE, 0x2E, 0xBA, 0x4D, 0xB0,
 	0x3D, 0x2F, 0x2B
 };
+*/
+
+typedef struct
+{
+	uint8_t  Buffer[VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE];
+	int  Pos;
+	int  Length;
+} VoicePromptsSequence_t;
+
+__attribute__((section(".data.$RAM4"))) static VoicePromptsSequence_t voicePromptsCurrentSequence =
+{
+	.Pos = 0,
+	.Length = 0
+};
+
+__attribute__((section(".data.$RAM4"))) uint32_t tableOfContents[VOICE_PROMPTS_TOC_SIZE];/* = {0,270,477,711,963,1215,1467,1737,2007,2259,
+		2475,2727,2961,3240,3492,3798,4104,4374,4644,4896,
+		5175,5418,5652,5886,6102,6318,6534,6786,7020,7326,
+		7542,7785,8001,8316,8559,8802,9018,9261,9531,9774,
+		10179,10503,10836,11394,11610,12096,12447,12816,13104,13311,13581,
+		13986,14499,14823,15192,15543};*/
+
+void voicePromptsCacheInit(void)
+{
+	VoicePromptsDataHeader_t header;
+	SPI_Flash_read(VOICE_PROMPTS_FLASH_HEADER_ADDRESS,(uint8_t *)&header,sizeof(VoicePromptsDataHeader_t));
+	if ((header.magic == VOICE_PROMPTS_DATA_MAGIC) && (header.version == 0x0001))
+	{
+		voicePromptDataIsLoaded = SPI_Flash_read(VOICE_PROMPTS_FLASH_HEADER_ADDRESS + sizeof(VoicePromptsDataHeader_t),(uint8_t *)&tableOfContents,sizeof(uint32_t) * VOICE_PROMPTS_TOC_SIZE);
+	}
+}
+static void getAmbeData(int offset,int length)
+{
+	if (length<=AMBE_DATA_BUFFER_SIZE)
+	{
+		SPI_Flash_read(VOICE_PROMPTS_FLASH_DATA_ADDRESS + offset,(uint8_t *)ambeData,length);
+	}
+}
 
 void voicePromptsTick(void)
 {
 	if (promptDataPosition < currentPromptLength)
 	{
-		if (wavbuffer_count < (WAV_BUFFER_COUNT-6))
+		if (wavbuffer_count < (WAV_BUFFER_COUNT- 6))
 		{
 			codecDecode((uint8_t *)&ambeData[promptDataPosition],3);
 			soundTickRXBuffer();
@@ -1382,12 +1415,13 @@ void voicePromptsTick(void)
 			if (promptNumber == PROMPT_SILENCE )
 			{
 				currentPromptLength = 27 * 5;// only use half of the buffer of 10 x 27
-				ambeData = (uint8_t *)&ambeSilence600mS[0];
+				memcpy(ambeData,(uint8_t *)&ambeSilence600mS[0],currentPromptLength);
 			}
 			else
 			{
-				currentPromptLength = promptPositions[promptNumber+1] - promptPositions[promptNumber];
-				ambeData = (uint8_t *)&ambePrompts[promptPositions[promptNumber]];
+				currentPromptLength = tableOfContents[promptNumber+1] - tableOfContents[promptNumber];
+				getAmbeData(tableOfContents[promptNumber],currentPromptLength);
+
 			}
 
 		}
@@ -1447,8 +1481,6 @@ void voicePromptsAppendPrompt(uint8_t prompt)
 	}
 }
 
-
-
 void voicePromptsAppendString(char *promptString)
 {
 	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
@@ -1502,8 +1534,8 @@ void voicePromptsPlay(void)
 	{
 		int promptNumber = voicePromptsCurrentSequence.Buffer[0];
 		voicePromptsCurrentSequence.Pos = 0;
-		currentPromptLength = promptPositions[promptNumber +1] - promptPositions[promptNumber];
-		ambeData = (uint8_t *)&ambePrompts[promptPositions[promptNumber]];
+		currentPromptLength = tableOfContents[promptNumber +1] - tableOfContents[promptNumber];
+		getAmbeData(tableOfContents[promptNumber],currentPromptLength);
 
 		GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 0);// set the audio mux   HR-C6000 -> audio amp
 		enableAudioAmp(AUDIO_AMP_MODE_PROMPT);
