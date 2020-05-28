@@ -139,7 +139,6 @@ const stringsTable_t finnishLanguage =
 .group_call		= "Ryhm‰ Puhelu", 	// MaxLen: 16
 .all_call		= "Puhelu kaikille", 	// MaxLen: 16
 .tone_scan		= "Ali‰‰ni scan",	// MaxLen: 16
-.cc_scan		= "V‰rikoodi scan", 	// MaxLen: 16
 .low_battery		= "Akku V‰hiss‰ !",	// MaxLen: 16
 .Auto			= "Automaatti",		// MaxLen 16 (with .mode + ':') 
 .manual			= "Manuaali",		// MaxLen 16 (with .mode + ':') 

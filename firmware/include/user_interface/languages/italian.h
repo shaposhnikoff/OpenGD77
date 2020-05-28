@@ -139,7 +139,6 @@ const stringsTable_t italianLanguage =
 .group_call				= "Chiama Gruppo", // MaxLen: 16
 .all_call				= "Chiama Tutti", // MaxLen: 16
 .tone_scan				= "Scansione Toni",//// MaxLen: 16
-.cc_scan				= "Scansione CC",//// MaxLen: 16
 .low_battery			= "BATTERIA SCARICA",//// MaxLen: 16
 .Auto					= "Automatico", // MaxLen 16 (with .mode + ':') 
 .manual					= "Manuale",  // MaxLen 16 (with .mode + ':') 

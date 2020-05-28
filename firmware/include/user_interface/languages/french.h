@@ -139,7 +139,6 @@ const stringsTable_t frenchLanguage =
 .group_call				= "Appel de Groupe",
 .all_call				= "All Call",
 .tone_scan				= "Scan tons",
-.cc_scan				= "Scan CC",
 .low_battery			        = "BATT. FAIBLE !!!",//// MaxLen: 16
 .Auto					= "Auto", // MaxLen 16 (with .mode + ':') 
 .manual					= "Manuel",  // MaxLen 16 (with .mode + ':') }

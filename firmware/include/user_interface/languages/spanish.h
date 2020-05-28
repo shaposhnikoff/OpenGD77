@@ -139,7 +139,6 @@ const stringsTable_t spanishLanguage =
 .group_call				= "Llamada Grupo", // MaxLen: 16
 .all_call				= "Llamada Todos", // MaxLen: 16
 .tone_scan				= "Tono scan",//// MaxLen: 16
-.cc_scan				= "CC scan",//// MaxLen: 16
 .low_battery			= "BATERÍA BAJA!!!",//// MaxLen: 16
 .Auto					= "Auto", // MaxLen 16 (with .mode + ':') 
 .manual					= "Manual",  // MaxLen 16 (with .mode + ':') 

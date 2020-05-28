@@ -139,7 +139,6 @@ const stringsTable_t danishLanguage =
 .group_call				= "Grupe Kald",
 .all_call				= "Alle Kald",
 .tone_scan				= "Tone scan",//// MaxLen: 16
-.cc_scan				= "CC scan",//// MaxLen: 16
 .low_battery			= "LOW BATTERY !!!",//// MaxLen: 16
 .Auto					= "Auto", // MaxLen 16 (with .mode + ':') 
 .manual					= "Manual",  // MaxLen 16 (with .mode + ':') 

@@ -139,7 +139,6 @@ const stringsTable_t germanLanguage =
 .group_call				= "Gruppenruf", // MaxLen: 16
 .all_call				= "Ruf an alle", // MaxLen: 16
 .tone_scan				= "CTCSS Scan",//// MaxLen: 16
-.cc_scan				= "CC Scan",//// MaxLen: 16
 .low_battery			= "AKKU LEER!",//// MaxLen: 16
 .Auto					= "Auto", // MaxLen 16 (with .mode + ':') 
 .manual					= "Manuell",  // MaxLen 16 (with .mode + ':') 

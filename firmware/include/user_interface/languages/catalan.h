@@ -139,7 +139,6 @@ const stringsTable_t catalanLanguage=
 .group_call				= "Cridar a Grup",
 .all_call				= "Cridar a Tots",
 .tone_scan				= "Scan CCTCS",//// MaxLen: 16
-.cc_scan				= "Scan CColor",//// MaxLen: 16
 .low_battery			= "BATERIA BAIXA !!",//// MaxLen: 16
 .Auto					= "Auto", // MaxLen 16 (with .mode + ':') 
 .manual					= "Manual",  // MaxLen 16 (with .mode + ':') 

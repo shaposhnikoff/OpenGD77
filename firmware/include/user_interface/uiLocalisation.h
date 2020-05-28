@@ -142,7 +142,6 @@ typedef struct stringsTable
    const char *group_call;
    const char *all_call;
    const char *tone_scan;
-   const char *cc_scan;
    const char *low_battery;
    const char *Auto;
    const char *manual;

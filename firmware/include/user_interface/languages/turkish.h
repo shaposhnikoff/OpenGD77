@@ -139,7 +139,6 @@ const stringsTable_t turkishLanguage =
 .group_call				= "Grup Ça˜r“s“", // MaxLen: 16
 .all_call				= "Tüm aramalar", // MaxLen: 16
 .tone_scan				= "Ton tarama", // MaxLen: 16
-.cc_scan				= "CC tarama", // MaxLen: 16
 .low_battery				= "DÜ•ÜK BATARYA !", // MaxLen: 16
 .Auto					= "Otomatik", // MaxLen 16 (with .mode + ':') 
 .manual					= "Manüel",  // MaxLen 16 (with .mode + ':')

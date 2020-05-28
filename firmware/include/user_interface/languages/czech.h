@@ -139,7 +139,6 @@ const stringsTable_t czechLanguage =
 .group_call				= "Seznam Group", // MaxLen: 16
 .all_call				= "Všechny €ísla", // MaxLen: 16
 .tone_scan				= "CTCSS Sken",//// MaxLen: 16
-.cc_scan				= "CC Sken",//// MaxLen: 16
 .low_battery			= "SLABÁ BATERIE!",//// MaxLen: 16
 .Auto					= "Automat.", // MaxLen 16 (with .mode + ':') 
 .manual					= "Manualní",  // MaxLen 16 (with .mode + ':') 

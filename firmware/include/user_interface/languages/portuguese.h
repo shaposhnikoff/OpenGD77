@@ -139,7 +139,6 @@ const stringsTable_t portuguesLanguage =
 .group_call				= "Group Call",
 .all_call				= "All Call",
 .tone_scan				= "Tone scan",//// MaxLen: 16
-.cc_scan				= "CC scan",//// MaxLen: 16
 .low_battery			= "LOW BATTERY !!!",//// MaxLen: 16
 .Auto					= "Auto", // MaxLen 16 (with .mode + ':') 
 .manual					= "Manual",  // MaxLen 16 (with .mode + ':') 

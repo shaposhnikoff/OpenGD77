@@ -139,7 +139,6 @@ const stringsTable_t polishLanguage =
 .group_call				= "Grupy", // MaxLen: 16
 .all_call				= "‡„cze wszystkich", // MaxLen: 16
 .tone_scan				= "Skan tonu CTCSS",//// MaxLen: 16
-.cc_scan				= "Skan CC",//// MaxLen: 16
 .low_battery				= "S‡ABA BATERIA!!!",//// MaxLen: 16
 .Auto					= "Automat", // MaxLen 16 (with .mode + ':')
 .manual					= "Manualny",  // MaxLen 16 (with .mode + ':') 
