@@ -23,27 +23,39 @@
 
 typedef struct stringsTable
 {
-// Fixed length texts used in the menu system. These are treated as an array and MUST be fixed length
-   const char LANGUAGE_NAME[LANGUAGE_TEXTS_LENGTH];// Menu number 0
-   const char menu[LANGUAGE_TEXTS_LENGTH];// Menu number  1
-   const char credits[LANGUAGE_TEXTS_LENGTH];// Menu number  2
-   const char zone[LANGUAGE_TEXTS_LENGTH];// Menu number 3
-   const char rssi[LANGUAGE_TEXTS_LENGTH];// Menu number  4
-   const char battery[LANGUAGE_TEXTS_LENGTH];// Menu number  5
-   const char contacts[LANGUAGE_TEXTS_LENGTH];// Menu number  6
-   const char last_heard[LANGUAGE_TEXTS_LENGTH];// Menu number  7
-   const char firmware_info[LANGUAGE_TEXTS_LENGTH];// Menu number  8
-   const char options[LANGUAGE_TEXTS_LENGTH];// Menu number  9
-   const char display_options[LANGUAGE_TEXTS_LENGTH];// Menu number  10
-   const char sound_options[LANGUAGE_TEXTS_LENGTH];// Menu number  11
-   const char channel_details[LANGUAGE_TEXTS_LENGTH];// Menu number  12
-   const char language[LANGUAGE_TEXTS_LENGTH];// Menu number  13
-   const char new_contact[LANGUAGE_TEXTS_LENGTH];// Menu number  14
-   const char contact_list[LANGUAGE_TEXTS_LENGTH];// Menu number  15
-   const char contact_details[LANGUAGE_TEXTS_LENGTH];// Menu number 16
-   const char hotspot_mode[LANGUAGE_TEXTS_LENGTH];// Menu number 17
+/*
+ * IMPORTANT
+ *
+ * The first set of strings are used for menu names
+ *
+ * DO NOT RE-ORGANISE THIS LIST as the items are accessed using pointer arithmetic
+ * from menuSystem. c mainMenuItems[]
+ *
+ */
+   const char *LANGUAGE_NAME;// Menu number 0
+   const char *menu;// Menu number  1
+   const char *credits;// Menu number  2
+   const char *zone;// Menu number 3
+   const char *rssi;// Menu number  4
+   const char *battery;// Menu number  5
+   const char *contacts;// Menu number  6
+   const char *last_heard;// Menu number  7
+   const char *firmware_info;// Menu number  8
+   const char *options;// Menu number  9
+   const char *display_options;// Menu number  10
+   const char *sound_options;// Menu number  11
+   const char *channel_details;// Menu number  12
+   const char *language;// Menu number  13
+   const char *new_contact;// Menu number  14
+   const char *contact_list;// Menu number  15
+   const char *contact_details;// Menu number 16
+   const char *hotspot_mode;// Menu number 17
 
-// Variable length texts
+  /*
+   * DO NOT RE-ORGANISE THIS LIST as the items are accessed using pointer arithmetic
+   * for the voice prompts
+   */
+
    const char *built;//
    const char *zones;//
    const char *keypad;//
@@ -113,8 +125,8 @@ typedef struct stringsTable
    const char *colour_normal;
    const char *backlight_timeout;
    const char *scan_delay;
-   const char *YES;
-   const char *NO;
+   const char *yes___in_uppercase;
+   const char *no___in_uppercase;
    const char *DISMISS;
    const char *scan_mode;
    const char *hold;
@@ -130,7 +142,6 @@ typedef struct stringsTable
    const char *group_call;
    const char *all_call;
    const char *tone_scan;
-   const char *cc_scan;
    const char *low_battery;
    const char *Auto;
    const char *manual;
