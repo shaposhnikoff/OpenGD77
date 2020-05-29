@@ -204,13 +204,13 @@ void voicePromptsAppendString(char *promptString)
 	}
 }
 
-void voicePromptsAppendLanguageString(const char *languageString)
+void voicePromptsAppendLanguageString(const char * const *languageStringAdd)
 {
 	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
-	voicePromptsAppendPrompt(NUM_VOICE_PROMPTS +  (languageString - currentLanguage->LANGUAGE_NAME)/sizeof(char *));
+	voicePromptsAppendPrompt(NUM_VOICE_PROMPTS + (languageStringAdd - &currentLanguage->LANGUAGE_NAME));
 }
 
 

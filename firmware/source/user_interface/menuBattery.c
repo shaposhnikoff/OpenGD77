@@ -110,7 +110,7 @@ menuStatus_t menuBattery(uiEvent_t *ev, bool isFirstRun)
 		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 		{
 			voicePromptsInit();
-			voicePromptsAppendLanguageString(currentLanguage->battery);
+			voicePromptsAppendLanguageString(&currentLanguage->battery);
 			int val1 = averageBatteryVoltage / 10;
 			int val2 = averageBatteryVoltage - (val1 * 10);
 			snprintf(buffer, 17, " %1d.%1d", val1, val2);
