@@ -20,6 +20,7 @@
 #include "main.h"
 #include "sound.h"
 #include "settings.h"
+#include <functions/voicePrompts.h>
 
 typedef enum { NO_EVENT = 0, KEY_EVENT = 0x01, BUTTON_EVENT = 0x02, FUNCTION_EVENT = 0x04, ROTARY_EVENT = 0x08 } uiEventInput_t;
 

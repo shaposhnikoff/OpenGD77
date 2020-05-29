@@ -710,7 +710,7 @@ void mainTask(void *data)
 			menuSystemCallCurrentMenuTick(&ev);
 
 			// Beep sounds aren't allowed in these modes.
-			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
+			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT || voicePromptIsActive) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
 			{
 				if (melody_play != NULL)
 				{

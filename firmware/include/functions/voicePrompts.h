@@ -50,6 +50,8 @@ void voicePromptsTick(void);// Called from HR-C6000.c
 void voicePromptsInit(void);// Call before building the prompt sequence
 void voicePromptsAppendPrompt(uint8_t prompt);// Append an individual prompt item. This can be a single letter number or a phrase
 void voicePromptsAppendString(char *);// Append a text string e.g. "VK3KYY"
+void voicePromptsAppendLanguageString(const char *languageString);// Append a text currentLanguage->battery
 void voicePromptsPlay(void);// Starts prompt playback
+
 
 #endif
