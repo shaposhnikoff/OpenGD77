@@ -125,7 +125,7 @@ void voicePromptsTick(void)
 
 void voicePromptsInit(void)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
@@ -146,7 +146,7 @@ void voicePromptsTerminateAndInit()
 
 void voicePromptsAppendPrompt(uint8_t prompt)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
@@ -164,7 +164,7 @@ void voicePromptsAppendPrompt(uint8_t prompt)
 
 void voicePromptsAppendString(char *promptString)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
@@ -206,7 +206,7 @@ void voicePromptsAppendString(char *promptString)
 
 void voicePromptsAppendLanguageString(const char * const *languageStringAdd)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
@@ -216,7 +216,7 @@ void voicePromptsAppendLanguageString(const char * const *languageStringAdd)
 
 void voicePromptsPlay(void)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
