@@ -129,7 +129,7 @@ void voicePromptsTerminate(void)
 		taskENTER_CRITICAL();
 		voicePromptIsActive = false;
 		voicePromptsCurrentSequence.Pos=0;
-	taskEXIT_CRITICAL();
+		taskEXIT_CRITICAL();
 	}
 }
 
