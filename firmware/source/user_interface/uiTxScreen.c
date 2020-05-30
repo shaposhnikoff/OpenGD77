@@ -39,6 +39,7 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 
 	if (isFirstRun)
 	{
+		voicePromptsTerminate();
 		startBeepPlayed=false;
 		scanActive = false;
 		trxIsTransmittingTone = false;

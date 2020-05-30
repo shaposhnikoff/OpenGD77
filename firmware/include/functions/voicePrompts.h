@@ -41,5 +41,6 @@ void voicePromptsAppendPrompt(uint8_t prompt);// Append an individual prompt ite
 void voicePromptsAppendString(char *);// Append a text string e.g. "VK3KYY"
 void voicePromptsAppendLanguageString(const char * const *);//Append a text from the current language e.g. &currentLanguage->battery
 void voicePromptsPlay(void);// Starts prompt playback
+void voicePromptsTerminate(void);
 
 #endif
