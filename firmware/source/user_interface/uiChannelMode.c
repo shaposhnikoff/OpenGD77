@@ -1661,7 +1661,7 @@ static void announceChannelName(void)
 	}
 }
 #if ! defined(PLATFORM_GD77S)
-static void announceTG()
+static void announceTG(void)
 {
 	voicePromptsInit();
 	voicePromptsAppendString(currentContactData.name);

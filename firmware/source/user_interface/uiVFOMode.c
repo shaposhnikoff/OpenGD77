@@ -44,6 +44,8 @@ static void initScan(void);
 static void uiVFOUpdateTrxID(void );
 static void setCurrentFreqToScanLimits(void);
 static void handleUpKey(uiEvent_t *ev);
+static void announceVFOAndFrequency(void);
+static void announceTG(void);
 
 static bool isDisplayingQSOData=false;
 static int tmpQuickMenuDmrFilterLevel;
@@ -175,6 +177,9 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);
 
 		menuVFOExitStatus = MENU_STATUS_SUCCESS;
+
+		announceVFOAndFrequency();
+
 	}
 	else
 	{
@@ -272,6 +277,34 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		}
 	}
 	return menuVFOExitStatus;
+}
+
+static void announceTG(void)
+{
+	voicePromptsInit();
+	voicePromptsAppendString(currentContactData.name);
+}
+
+static void announceVFOAndFrequency(void)
+{
+	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	{
+		char buffer[17];
+
+		voicePromptsInit();
+		voicePromptsAppendPrompt(PROMPT_VFO);
+		voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");
+		voicePromptsAppendPrompt(PROMPT_RECEIVE);
+		int val_before_dp = currentChannelData->rxFreq / 100000;
+		int val_after_dp = currentChannelData->rxFreq - val_before_dp * 100000;
+		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
+		voicePromptsAppendString(buffer);
+		voicePromptsAppendPrompt(PROMPT_TRANSMIT);
+		val_before_dp = currentChannelData->txFreq / 100000;
+		val_after_dp = currentChannelData->txFreq - val_before_dp * 100000;
+		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
+		voicePromptsAppendString(buffer);
+	}
 }
 
 void uiVFOModeUpdateScreen(int txTimeSecs)
@@ -583,7 +616,6 @@ static void update_frequency(int frequency)
 		{
 			currentChannelData->txFreq = frequency;
 			trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
-
 			soundSetMelody(melody_ACK_beep);
 		}
 	}
@@ -611,6 +643,7 @@ static void update_frequency(int frequency)
 			soundSetMelody(melody_ERROR_beep);
 		}
 	}
+	announceVFOAndFrequency();
 	menuClearPrivateCall();
 	SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);// For Baofeng RD-5R
 }
@@ -691,6 +724,11 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
+		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+		{
+			voicePromptsPlay();
+		}
+
 #if ! defined(PLATFORM_RD5R)
 		// Stop the scan if any button is pressed.
 		if (scanActive && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE))
@@ -1063,6 +1101,7 @@ static void handleEvent(uiEvent_t *ev)
 						uiVFOUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
+						announceTG();
 					}
 					else
 					{
@@ -1082,6 +1121,7 @@ static void handleEvent(uiEvent_t *ev)
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						displaySquelch=true;
 						uiVFOModeUpdateScreen(0);
+						announceTG();
 					}
 				}
 			}
