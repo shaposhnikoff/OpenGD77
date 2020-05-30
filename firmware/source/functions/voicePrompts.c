@@ -115,19 +115,22 @@ void voicePromptsTick(void)
 
 void voicePromptsTerminate(void)
 {
-	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (voicePromptIsActive)
 	{
-		return;
-	}
-	disableAudioAmp(AUDIO_AMP_MODE_PROMPT);
-	if (trxGetMode() == RADIO_MODE_ANALOG)
-	{
-		GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1); // connect AT1846S audio to speaker
-	}
-	taskENTER_CRITICAL();
-	voicePromptIsActive = false;
-	voicePromptsCurrentSequence.Pos=0;
+		if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+		{
+			return;
+		}
+		disableAudioAmp(AUDIO_AMP_MODE_PROMPT);
+		if (trxGetMode() == RADIO_MODE_ANALOG)
+		{
+			GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1); // connect AT1846S audio to speaker
+		}
+		taskENTER_CRITICAL();
+		voicePromptIsActive = false;
+		voicePromptsCurrentSequence.Pos=0;
 	taskEXIT_CRITICAL();
+	}
 }
 
 void voicePromptsInit(void)
