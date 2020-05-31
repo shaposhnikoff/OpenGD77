@@ -126,10 +126,7 @@ void voicePromptsTerminate(void)
 		{
 			GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1); // connect AT1846S audio to speaker
 		}
-		taskENTER_CRITICAL();
-		voicePromptIsActive = false;
-		voicePromptsCurrentSequence.Pos=0;
-		taskEXIT_CRITICAL();
+		voicePromptsTerminateAndInit();
 	}
 }
 
