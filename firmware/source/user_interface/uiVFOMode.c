@@ -35,7 +35,7 @@ static int selectedFreq = VFO_SELECTED_FREQUENCY_INPUT_RX;
 static void handleEvent(uiEvent_t *ev);
 static void handleQuickMenuEvent(uiEvent_t *ev);
 static void updateQuickMenuScreen(void);
-static void update_frequency(int tmp_frequency);
+static void update_frequency(int frequency, bool announceImmediately);
 static void stepFrequency(int increment);
 static void loadContact(void);
 static void toneScan(void);
@@ -44,7 +44,7 @@ static void initScan(void);
 static void uiVFOUpdateTrxID(void );
 static void setCurrentFreqToScanLimits(void);
 static void handleUpKey(uiEvent_t *ev);
-static void announceVFOAndFrequency(void);
+static void announceVFOAndFrequency(bool announceImmediatly);
 static void announceTG(void);
 
 static bool isDisplayingQSOData=false;
@@ -178,7 +178,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 		menuVFOExitStatus = MENU_STATUS_SUCCESS;
 
-		announceVFOAndFrequency();
+		announceVFOAndFrequency(false);
 
 	}
 	else
@@ -285,7 +285,7 @@ static void announceTG(void)
 	voicePromptsAppendString(currentContactData.name);
 }
 
-static void announceVFOAndFrequency(void)
+static void announceVFOAndFrequency(bool announceImmediatly)
 {
 	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 	{
@@ -304,6 +304,10 @@ static void announceVFOAndFrequency(void)
 		val_after_dp = currentChannelData->txFreq - val_before_dp * 100000;
 		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
 		voicePromptsAppendString(buffer);
+		if (announceImmediatly)
+		{
+			voicePromptsPlay();
+		}
 	}
 }
 
@@ -608,7 +612,7 @@ void uiVFOModeStopScanning(void)
 	displayLightTrigger();
 }
 
-static void update_frequency(int frequency)
+static void update_frequency(int frequency, bool announceImmediately)
 {
 	if (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX)
 	{
@@ -643,7 +647,7 @@ static void update_frequency(int frequency)
 			soundSetMelody(melody_ERROR_beep);
 		}
 	}
-	announceVFOAndFrequency();
+	announceVFOAndFrequency(announceImmediately);
 	menuClearPrivateCall();
 	SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);// For Baofeng RD-5R
 }
@@ -1209,7 +1213,7 @@ static void handleEvent(uiEvent_t *ev)
 					int tmp_frequency=read_freq_enter_digits(0,8);
 					if (trxGetBandFromFrequency(tmp_frequency)!=-1)
 					{
-						update_frequency(tmp_frequency);
+						update_frequency(tmp_frequency,false);
 						reset_freq_enter_digits();
 					}
 					else
@@ -1234,6 +1238,17 @@ static void handleEvent(uiEvent_t *ev)
 			int keyval = menuGetKeypadKeyValue(ev, true);
 			if (keyval != 99)
 			{
+				if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+				{
+					voicePromptsInit();
+					voicePromptsAppendPrompt(PROMPT_0 +  keyval);
+					if (freq_enter_idx==2)
+					{
+						voicePromptsAppendPrompt(PROMPT_POINT);
+					}
+					voicePromptsPlay();
+				}
+
 				freq_enter_digits[freq_enter_idx] = (char) keyval+'0';
 				freq_enter_idx++;
 
@@ -1244,7 +1259,7 @@ static void handleEvent(uiEvent_t *ev)
 						int tmp_frequency=read_freq_enter_digits(0,8);
 						if (trxGetBandFromFrequency(tmp_frequency)!=-1)
 						{
-							update_frequency(tmp_frequency);
+							update_frequency(tmp_frequency,true);
 							reset_freq_enter_digits();
 							soundSetMelody(melody_ACK_beep);
 						}
