@@ -104,6 +104,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		displayChannelSettings = false;
 
 		trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+		announceVFOAndFrequency(false);
 
 		//Need to load the Rx group if specified even if TG is currently overridden as we may need it later when the left or right button is pressed
 		if (currentChannelData->rxGroupList != 0)
@@ -177,9 +178,6 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);
 
 		menuVFOExitStatus = MENU_STATUS_SUCCESS;
-
-		announceVFOAndFrequency(false);
-
 	}
 	else
 	{
@@ -1372,6 +1370,9 @@ static void stepFrequency(int increment)
 		{
 			trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
 		}
+
+		announceVFOAndFrequency(false);
+
 	}
 	else
 	{
@@ -1495,15 +1496,18 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 				currentChannelData->txFreq = currentChannelData->rxFreq;
 				currentChannelData->rxFreq =  tmpFreq;
 				trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+				announceVFOAndFrequency(false);
 			}
 			break;
 			case VFO_SCREEN_QUICK_MENU_BOTH_TO_RX:
 				currentChannelData->txFreq = currentChannelData->rxFreq;
 				trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+				announceVFOAndFrequency(false);
 				break;
 			case VFO_SCREEN_QUICK_MENU_BOTH_TO_TX:
 				currentChannelData->rxFreq = currentChannelData->txFreq;
 				trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+				announceVFOAndFrequency(false);
 				break;
 			case VFO_SCREEN_QUICK_MENU_FILTER:
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
@@ -1744,6 +1748,7 @@ static void setCurrentFreqToScanLimits(void)
 		currentChannelData->rxFreq=nonVolatileSettings.vfoScanLow[nonVolatileSettings.currentVFONumber];
 		currentChannelData->txFreq=currentChannelData->rxFreq+offset;
 		trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+		announceVFOAndFrequency(false);
 	}
 }
 
