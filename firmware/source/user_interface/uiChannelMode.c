@@ -1657,6 +1657,7 @@ static void announceChannelName(void)
 		char voiceBuf[17];
 		codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
 		voicePromptsInit();
+		voicePromptsAppendPrompt(PROMPT_CHANNEL);
 		voicePromptsAppendString(voiceBuf);
 	}
 }
