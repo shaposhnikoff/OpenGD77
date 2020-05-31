@@ -1123,7 +1123,6 @@ static void handleEvent(uiEvent_t *ev)
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						displaySquelch=true;
 						uiVFOModeUpdateScreen(0);
-						announceTG();
 					}
 				}
 			}
@@ -1169,6 +1168,7 @@ static void handleEvent(uiEvent_t *ev)
 						uiVFOUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
+						announceTG();
 					}
 					else
 					{
