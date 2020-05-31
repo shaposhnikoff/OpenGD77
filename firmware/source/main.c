@@ -707,6 +707,11 @@ void mainTask(void *data)
 			ev.hasEvent = keyOrButtonChanged || function_event;
 			ev.time = fw_millis();
 
+			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT || voicePromptIsActive)   && (ev.keys.event & KEY_MOD_DOWN))
+			{
+				voicePromptsTerminate();
+			}
+
 			menuSystemCallCurrentMenuTick(&ev);
 
 			// Beep sounds aren't allowed in these modes.
