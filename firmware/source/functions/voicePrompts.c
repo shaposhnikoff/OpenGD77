@@ -26,6 +26,7 @@ const uint32_t VOICE_PROMPTS_DATA_VERSION = 0x0001;
 #define VOICE_PROMPTS_TOC_SIZE 256
 
 static void getAmbeData(int offset,int length);
+static void voicePromptsTerminateAndInit(void);
 
 typedef struct
 {
@@ -117,19 +118,13 @@ void voicePromptsTerminate(void)
 {
 	if (voicePromptIsActive)
 	{
-		if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
-		{
-			return;
-		}
 		disableAudioAmp(AUDIO_AMP_MODE_PROMPT);
 		if (trxGetMode() == RADIO_MODE_ANALOG)
 		{
 			GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1); // connect AT1846S audio to speaker
 		}
-		taskENTER_CRITICAL();
 		voicePromptIsActive = false;
 		voicePromptsCurrentSequence.Pos=0;
-		taskEXIT_CRITICAL();
 	}
 }
 
@@ -139,19 +134,24 @@ void voicePromptsInit(void)
 	{
 		return;
 	}
-	voicePromptsCurrentSequence.Length = 0;
-	voicePromptsCurrentSequence.Pos = 0;
+
+	if (voicePromptIsActive)
+	{
+		voicePromptsTerminateAndInit();
+	}
+	else
+	{
+		voicePromptsCurrentSequence.Length = 0;
+		voicePromptsCurrentSequence.Pos = 0;
+	}
 }
 
-void voicePromptsTerminateAndInit()
+static void voicePromptsTerminateAndInit(void)
 {
-	taskENTER_CRITICAL();
-	voicePromptIsActive=false;
-	soundTerminateSound();// terminate current I2S transfers
-	soundInit();// reset buffer pointers etc
+	voicePromptsTerminate();
+	voicePromptsInit();
 	voicePromptsCurrentSequence.Length = 0;
 	voicePromptsCurrentSequence.Pos = 0;
-	taskEXIT_CRITICAL();
 }
 
 void voicePromptsAppendPrompt(uint8_t prompt)
@@ -244,5 +244,6 @@ void voicePromptsPlay(void)
 		codecInit();
 		promptDataPosition=0;
 		voicePromptIsActive=true;// Start the playback
+		voicePromptsTick();
 	}
 }

@@ -808,6 +808,11 @@ void mainTask(void *data)
 					displayEnableBacklight(false);
 				}
 			}
+
+			if (voicePromptIsActive)
+			{
+				voicePromptsTick();
+			}
 			soundTickMelody();
 			speechSynthesisTick();
 			voxTick();
