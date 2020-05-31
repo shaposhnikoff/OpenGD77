@@ -26,6 +26,7 @@ const uint32_t VOICE_PROMPTS_DATA_VERSION = 0x0001;
 #define VOICE_PROMPTS_TOC_SIZE 256
 
 static void getAmbeData(int offset,int length);
+static void voicePromptsTerminateAndInit(void);
 
 typedef struct
 {
