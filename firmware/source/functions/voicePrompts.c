@@ -26,7 +26,6 @@ const uint32_t VOICE_PROMPTS_DATA_VERSION = 0x0001;
 #define VOICE_PROMPTS_TOC_SIZE 256
 
 static void getAmbeData(int offset,int length);
-static void voicePromptsTerminateAndInit(void);
 
 typedef struct
 {
@@ -127,7 +126,10 @@ void voicePromptsTerminate(void)
 		{
 			GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1); // connect AT1846S audio to speaker
 		}
-		voicePromptsTerminateAndInit();
+		taskENTER_CRITICAL();
+		voicePromptIsActive = false;
+		voicePromptsCurrentSequence.Pos=0;
+		taskEXIT_CRITICAL();
 	}
 }
 
