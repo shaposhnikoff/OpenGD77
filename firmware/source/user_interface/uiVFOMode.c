@@ -45,7 +45,6 @@ static void uiVFOUpdateTrxID(void );
 static void setCurrentFreqToScanLimits(void);
 static void handleUpKey(uiEvent_t *ev);
 static void announceVFOAndFrequency(bool announceImmediatly);
-static void announceTG(void);
 
 static bool isDisplayingQSOData=false;
 static int tmpQuickMenuDmrFilterLevel;
@@ -275,12 +274,6 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		}
 	}
 	return menuVFOExitStatus;
-}
-
-static void announceTG(void)
-{
-	voicePromptsInit();
-	voicePromptsAppendString(currentContactData.name);
 }
 
 static void announceVFOAndFrequency(bool announceImmediatly)
@@ -1063,8 +1056,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					if (nonVolatileSettings.txPowerLevel == (MAX_POWER_SETTING_NUM - 1))
 					{
-						nonVolatileSettings.txPowerLevel++;
-						trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+						increasePowerLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
 						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1077,8 +1069,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					if (nonVolatileSettings.txPowerLevel < (MAX_POWER_SETTING_NUM - 1))
 					{
-						nonVolatileSettings.txPowerLevel++;
-						trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+						increasePowerLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
 						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1132,8 +1123,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					if (nonVolatileSettings.txPowerLevel > 0)
 					{
-						nonVolatileSettings.txPowerLevel--;
-						trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+						decreasePowerLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
 						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);

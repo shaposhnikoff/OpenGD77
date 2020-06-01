@@ -64,7 +64,6 @@ static uint16_t getCurrentChannelInCurrentZoneForGD77S(void);
 static void handleUpKey(uiEvent_t *ev);
 static void updateQuickMenuScreen(void);
 static void handleQuickMenuEvent(uiEvent_t *ev);
-static void announceTG(void);
 
 #endif // PLATFORM_GD77S
 
@@ -961,8 +960,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (nonVolatileSettings.txPowerLevel == (MAX_POWER_SETTING_NUM - 1))
 				{
-					nonVolatileSettings.txPowerLevel++;
-					trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+					increasePowerLevel();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
 					SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -975,8 +973,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (nonVolatileSettings.txPowerLevel < (MAX_POWER_SETTING_NUM - 1))
 				{
-					nonVolatileSettings.txPowerLevel++;
-					trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+					increasePowerLevel();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
 					SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1030,8 +1027,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (nonVolatileSettings.txPowerLevel > 0)
 				{
-					nonVolatileSettings.txPowerLevel--;
-					trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+					decreasePowerLevel();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
 					SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1661,13 +1657,7 @@ static void announceChannelName(void)
 		voicePromptsAppendString(voiceBuf);
 	}
 }
-#if ! defined(PLATFORM_GD77S)
-static void announceTG(void)
-{
-	voicePromptsInit();
-	voicePromptsAppendString(currentContactData.name);
-}
-#endif
+
 
 #if defined(PLATFORM_GD77S)
 void toggleTimeslotForGD77S(void)
