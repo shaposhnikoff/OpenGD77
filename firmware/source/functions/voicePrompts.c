@@ -125,6 +125,8 @@ void voicePromptsTerminate(void)
 		}
 		voicePromptIsActive = false;
 		voicePromptsCurrentSequence.Pos=0;
+		soundTerminateSound();
+		soundInit();
 	}
 }
 
