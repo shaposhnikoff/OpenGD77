@@ -707,10 +707,14 @@ void mainTask(void *data)
 			ev.hasEvent = keyOrButtonChanged || function_event;
 			ev.time = fw_millis();
 
+			/*
+			 * We probably can't terminate voice prompt playback in main, because some screens need to a follow-on playback if the prompt was playing when a button was pressed
+			 *
 			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT || voicePromptIsActive)   && (ev.keys.event & KEY_MOD_DOWN))
 			{
 				voicePromptsTerminate();
 			}
+			*/
 
 			menuSystemCallCurrentMenuTick(&ev);
 

@@ -1498,22 +1498,47 @@ int getBatteryPercentage(void)
 
 void increasePowerLevel(void)
 {
+	bool wasPlaying = voicePromptIsActive;
+
 	nonVolatileSettings.txPowerLevel++;
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+
 	announcePowerLevel();
+
+	if (wasPlaying)
+	{
+		voicePromptsPlay();
+	}
 }
 
 void decreasePowerLevel(void)
 {
+	bool wasPlaying = voicePromptIsActive;
+
 	nonVolatileSettings.txPowerLevel--;
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+
 	announcePowerLevel();
+
+	if (wasPlaying)
+	{
+		voicePromptsPlay();
+	}
 }
 
 void announceTG(void)
 {
+	bool wasPlaying = voicePromptIsActive;
+	if (!wasPlaying)
+	{
+		voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+	}
 	voicePromptsInit();
 	voicePromptsAppendString(currentContactData.name);
+	if (wasPlaying)
+	{
+		voicePromptsPlay();
+	}
 }
 void announcePowerLevel(void)
 {

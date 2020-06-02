@@ -111,6 +111,8 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 
 	if (isFirstRun)
 	{
+		voicePromptsTerminate();
+
 		nonVolatileSettings.initialMenuNumber = UI_CHANNEL_MODE;// This menu.
 		displayChannelSettings = false;
 		reverseRepeater = false;
@@ -1651,10 +1653,19 @@ static void announceChannelName(void)
 	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 	{
 		char voiceBuf[17];
+		bool wasPlaying = voicePromptIsActive;
 		codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
 		voicePromptsInit();
-		voicePromptsAppendPrompt(PROMPT_CHANNEL);
+		if (!wasPlaying)
+		{
+			voicePromptsAppendPrompt(PROMPT_CHANNEL);
+		}
+
 		voicePromptsAppendString(voiceBuf);
+		if (wasPlaying)
+		{
+			voicePromptsPlay();
+		}
 	}
 }
 
