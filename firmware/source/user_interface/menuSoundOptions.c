@@ -55,6 +55,10 @@ static void updateScreen(void)
 	int mNum = 0;
 	static const int bufferLen = 17;
 	char buf[bufferLen];
+	char * const *leftSide = NULL;// initialise to please the compiler
+	char * const *rightSideConst = NULL;// initialise to please the compiler
+	char rightSideVar[bufferLen];
+
 
 	ucClearBuf();
 	menuDisplayTitle(currentLanguage->sound_options);
@@ -65,78 +69,111 @@ static void updateScreen(void)
 		mNum = menuGetMenuOffset(NUM_SOUND_MENU_ITEMS, i);
 		buf[0] = 0;
 
+		rightSideVar[0] = 0;
+
 		switch(mNum)
 		{
-
 			case OPTIONS_MENU_TIMEOUT_BEEP:
+				leftSide = (char * const *)&currentLanguage->timeout_beep;
 				if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT)
 				{
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->timeout_beep, currentLanguage->n_a);
+					rightSideConst = (char * const *)&currentLanguage->n_a;
 				}
 				else
 				{
 					if (nonVolatileSettings.txTimeoutBeepX5Secs != 0)
 					{
-						snprintf(buf, bufferLen, "%s:%d", currentLanguage->timeout_beep, nonVolatileSettings.txTimeoutBeepX5Secs * 5);
+						snprintf(rightSideVar, bufferLen, "%d",nonVolatileSettings.txTimeoutBeepX5Secs * 5);
 					}
 					else
 					{
-						snprintf(buf, bufferLen, "%s:%s", currentLanguage->timeout_beep, currentLanguage->off);
+						rightSideConst = (char * const *)&currentLanguage->n_a;
 					}
 				}
 				break;
 			case OPTIONS_MENU_BEEP_VOLUME: // Beep volume reduction
+				leftSide = (char * const *)&currentLanguage->beep_volume;
 				if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT)
 				{
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->beep_volume, currentLanguage->n_a);
+					rightSideConst = (char * const *)&currentLanguage->n_a;
 				}
 				else
 				{
-					snprintf(buf, bufferLen, "%s:%ddB", currentLanguage->beep_volume, (2 - nonVolatileSettings.beepVolumeDivider) * 3);
+					snprintf(rightSideVar, bufferLen, "%ddB", (2 - nonVolatileSettings.beepVolumeDivider) * 3);
 					soundBeepVolumeDivider = nonVolatileSettings.beepVolumeDivider;
 				}
+
 				break;
 			case OPTIONS_MENU_DMR_BEEP:
+				leftSide = (char * const *)&currentLanguage->dmr_beep;
 				if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT)
 				{
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->dmr_beep, currentLanguage->n_a);
+					rightSideConst = (char * const *)&currentLanguage->n_a;
 				}
 				else
 				{
-					const char *beepTX[] = {currentLanguage->none, currentLanguage->start, currentLanguage->stop, currentLanguage->both};
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->dmr_beep, beepTX[nonVolatileSettings.beepOptions]);
+					const char * const *beepTX[] = {&currentLanguage->none, &currentLanguage->start, &currentLanguage->stop, &currentLanguage->both};
+					rightSideConst = (char * const *)beepTX[nonVolatileSettings.beepOptions];
 				}
 				break;
 			case OPTIONS_MIC_GAIN_DMR: // DMR Mic gain
-				snprintf(buf, bufferLen, "%s:%ddB", currentLanguage->dmr_mic_gain, (nonVolatileSettings.micGainDMR - 11) * 3);
+				leftSide = (char * const *)&currentLanguage->dmr_mic_gain;
+				snprintf(rightSideVar, bufferLen, "%ddB", (nonVolatileSettings.micGainDMR - 11) * 3);
 				break;
 			case OPTIONS_MIC_GAIN_FM: // FM Mic gain
-				snprintf(buf, bufferLen, "%s:%d", currentLanguage->fm_mic_gain, (nonVolatileSettings.micGainFM - 16));
+				leftSide = (char * const *)&currentLanguage->fm_mic_gain;
+				snprintf(rightSideVar, bufferLen, "%d", (nonVolatileSettings.micGainFM - 16));
 				break;
 			case OPTIONS_VOX_THRESHOLD:
-					snprintf(buf, bufferLen, "%s:%d", currentLanguage->vox_threshold, nonVolatileSettings.voxThreshold);
+				leftSide = (char * const *)&currentLanguage->vox_threshold;
+				snprintf(rightSideVar, bufferLen, "%d", nonVolatileSettings.voxThreshold);
 				break;
 			case OPTIONS_VOX_TAIL:
+				leftSide = (char * const *)&currentLanguage->vox_tail;
 				if (nonVolatileSettings.voxThreshold != 0)
 				{
 					float tail = (nonVolatileSettings.voxTailUnits * 0.5);
 					uint8_t secs = (uint8_t)tail;
 					uint8_t fracSec = (tail - secs) * 10;
 
-					snprintf(buf, bufferLen, "%s:%d.%ds", currentLanguage->vox_tail, secs, fracSec);
+					snprintf(rightSideVar, bufferLen, "%d.%ds",secs, fracSec);
 				}
 				else
 				{
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->vox_tail, currentLanguage->n_a);
+					rightSideConst = (char * const *)&currentLanguage->n_a;
 				}
 				break;
 			case OPTIONS_AUDIO_PROMPT_MODE:
 				{
-					const char *audioPromptOption[] = {currentLanguage->silent, currentLanguage->normal, currentLanguage->beep, currentLanguage->voice};
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->audio_prompt, audioPromptOption[nonVolatileSettings.audioPromptMode]);
+					leftSide = (char * const *)&currentLanguage->audio_prompt;
+					const char * const *audioPromptOption[] = {&currentLanguage->silent, &currentLanguage->normal, &currentLanguage->beep, &currentLanguage->voice};
+					rightSideConst = (char * const *)audioPromptOption[nonVolatileSettings.audioPromptMode];
 				}
 				break;
+		}
 
+		if (rightSideVar[0] !=0)
+		{
+			snprintf(buf, bufferLen, "%s:%s", *leftSide, rightSideVar);
+		}
+		else
+		{
+			snprintf(buf, bufferLen, "%s:%s", *leftSide, *rightSideConst);
+		}
+
+		if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			voicePromptsInit();
+			voicePromptsAppendLanguageString((const char * const *)leftSide);
+			if (rightSideVar[0] !=0)
+			{
+				voicePromptsAppendString(rightSideVar);
+			}
+			else
+			{
+				voicePromptsAppendLanguageString((const char * const *)rightSideConst);
+			}
+			voicePromptsPlay();
 		}
 
 		buf[bufferLen - 1] = 0;
