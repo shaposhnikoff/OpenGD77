@@ -152,14 +152,7 @@ static void updateScreen(void)
 				break;
 		}
 
-		if (rightSideVar[0] !=0)
-		{
-			snprintf(buf, bufferLen, "%s:%s", *leftSide, rightSideVar);
-		}
-		else
-		{
-			snprintf(buf, bufferLen, "%s:%s", *leftSide, *rightSideConst);
-		}
+		snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0]?rightSideVar:*rightSideConst));
 
 		if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 		{
