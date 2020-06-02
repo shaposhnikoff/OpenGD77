@@ -253,7 +253,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case OPTIONS_AUDIO_PROMPT_MODE:
-					if (nonVolatileSettings.audioPromptMode < (NUM_AUDIO_PROMPT_MODES - 1))
+					if (nonVolatileSettings.audioPromptMode < (NUM_AUDIO_PROMPT_MODES - 2 + (int)voicePromptDataIsLoaded ))
 					{
 						nonVolatileSettings.audioPromptMode++;
 					}

@@ -70,6 +70,12 @@ void voicePromptsCacheInit(void)
 	{
 		voicePromptDataIsLoaded = SPI_Flash_read(VOICE_PROMPTS_FLASH_HEADER_ADDRESS + sizeof(VoicePromptsDataHeader_t),(uint8_t *)&tableOfContents,sizeof(uint32_t) * VOICE_PROMPTS_TOC_SIZE);
 	}
+
+	// is data is not loaded change prompt mode back to beep.
+	if (!voicePromptDataIsLoaded  && nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	{
+		nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_BEEP;
+	}
 }
 
 static void getAmbeData(int offset,int length)
@@ -132,7 +138,7 @@ void voicePromptsTerminate(void)
 
 void voicePromptsInit(void)
 {
-	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
@@ -158,7 +164,7 @@ static void voicePromptsTerminateAndInit(void)
 
 void voicePromptsAppendPrompt(uint8_t prompt)
 {
-	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
@@ -176,7 +182,7 @@ void voicePromptsAppendPrompt(uint8_t prompt)
 
 void voicePromptsAppendString(char *promptString)
 {
-	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
@@ -228,7 +234,7 @@ void voicePromptsAppendString(char *promptString)
 
 void voicePromptsAppendLanguageString(const char * const *languageStringAdd)
 {
-	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
@@ -238,7 +244,7 @@ void voicePromptsAppendLanguageString(const char * const *languageStringAdd)
 
 void voicePromptsPlay(void)
 {
-	if (!voicePromptDataIsLoaded || nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
 	{
 		return;
 	}
