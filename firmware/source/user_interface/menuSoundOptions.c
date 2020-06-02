@@ -21,7 +21,7 @@
 #include <user_interface/uiLocalisation.h>
 #include <user_interface/uiUtilities.h>
 
-static void updateScreen(void);
+static void updateScreen(bool isFirstRun);
 static void handleEvent(uiEvent_t *ev);
 
 static menuStatus_t menuSoundExitCode = MENU_STATUS_SUCCESS;
@@ -37,7 +37,16 @@ menuStatus_t menuSoundOptions(uiEvent_t *ev, bool isFirstRun)
 	{
 		// Store original settings, used on cancel event.
 		memcpy(&originalNonVolatileSettings, &nonVolatileSettings, sizeof(settingsStruct_t));
-		updateScreen();
+
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			voicePromptsInit();
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendLanguageString(&currentLanguage->sound_options);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+		}
+
+		updateScreen(isFirstRun);
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
@@ -50,7 +59,7 @@ menuStatus_t menuSoundOptions(uiEvent_t *ev, bool isFirstRun)
 	return menuSoundExitCode;
 }
 
-static void updateScreen(void)
+static void updateScreen(bool isFirstRun)
 {
 	int mNum = 0;
 	static const int bufferLen = 17;
@@ -156,7 +165,10 @@ static void updateScreen(void)
 
 		if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 		{
-			voicePromptsInit();
+			if (!isFirstRun)
+			{
+				voicePromptsInit();
+			}
 			voicePromptsAppendLanguageString((const char * const *)leftSide);
 			if (rightSideVar[0] !=0)
 			{
@@ -349,5 +361,5 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 	}
-	updateScreen();
+	updateScreen(false);
 }
