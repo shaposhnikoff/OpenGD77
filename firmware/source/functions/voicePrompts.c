@@ -209,6 +209,16 @@ void voicePromptsAppendString(char *promptString)
 			continue;
 		}
 
+		if (*promptString == '+')
+		{
+			voicePromptsAppendPrompt(PROMPT_PLUS);
+			continue;
+		}
+		if (*promptString == '-')
+		{
+			voicePromptsAppendPrompt(PROMPT_MINUS);
+			continue;
+		}
 		// otherwise just add silence
 		voicePromptsAppendPrompt(PROMPT_SILENCE);
 	}
