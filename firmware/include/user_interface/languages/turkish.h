@@ -117,8 +117,8 @@ const stringsTable_t turkishLanguage =
 .brightness				= "Parlakl“k", // MaxLen: 16 (with ':' + 0..100 + '%')
 .brightness_off				= "Az parlak", // MaxLen: 16 (with ':' + 0..100 + '%')
 .contrast				= "Kontrast", // MaxLen: 16 (with ':' + 12..30)
-.colour_invert				= "Renk:Ters", // MaxLen: 16
-.colour_normal				= "Renk:Normal", // MaxLen: 16
+.colour_invert				= "Ters", // MaxLen: 16
+.colour_normal				= "Normal", // MaxLen: 16
 .backlight_timeout			= "Zamana–“m“", // MaxLen: 16 (with ':' + .no to 30s)
 .scan_delay				= "Tarama H“z“", // MaxLen: 16 (with ':' + 1..30 + 's')
 .yes___in_uppercase					= "EVET", // MaxLen: 8 (choice above green/red buttons)
@@ -161,7 +161,8 @@ const stringsTable_t turkishLanguage =
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "UHF Squelch" // Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Renk" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *

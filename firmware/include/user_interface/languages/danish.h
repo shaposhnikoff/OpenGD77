@@ -117,8 +117,8 @@ const stringsTable_t danishLanguage =
 .brightness				= "Lys styrke",
 .brightness_off				= "Min bright",
 .contrast				= "Kontrast",
-.colour_invert			= "Farve:Sort",
-.colour_normal			= "Farve:Normal",
+.colour_invert			= "Sort",
+.colour_normal			= "Normal",
 .backlight_timeout		= "Timeout",
 .scan_delay				= "Scan delay",
 .yes___in_uppercase					= "JA",
@@ -161,7 +161,8 @@ const stringsTable_t danishLanguage =
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "UHF Squelch" // Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Farve" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *

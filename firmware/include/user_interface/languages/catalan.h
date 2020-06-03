@@ -117,8 +117,8 @@ const stringsTable_t catalanLanguage=
 .brightness				= "Brillantor",
 .brightness_off			= "Brillan. min",
 .contrast				= "Contrast",
-.colour_invert			= "Color:Invers",
-.colour_normal			= "Color:Normal",
+.colour_invert			= "Invers",
+.colour_normal			= "Normal",
 .backlight_timeout		= "Temps llum",
 .scan_delay				= "Temps Scan",
 .yes___in_uppercase					= "Sí",
@@ -161,7 +161,8 @@ const stringsTable_t catalanLanguage=
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "UHF Squelch" // Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Color" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *

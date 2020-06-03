@@ -117,8 +117,8 @@ const stringsTable_t italianLanguage =
 .brightness				= "Luminosità", // MaxLen: 16 (with ':' + 0..100 + '%')
 .brightness_off			= "Min. Lum.", // MaxLen: 16 (with ':' + 0..100 + '%')
 .contrast				= "Contrasto", // MaxLen: 16 (with ':' + 12..30)
-.colour_invert			= "Colore:Invert.", // MaxLen: 16
-.colour_normal			= "Colore:Normale", // MaxLen: 16
+.colour_invert			= "Invert.", // MaxLen: 16
+.colour_normal			= "Normale", // MaxLen: 16
 .backlight_timeout		= "Timeout", // MaxLen: 16 (with ':' + .no to 30s)
 .scan_delay				= "Ritardo Scan", // MaxLen: 16 (with ':' + 1..30 + 's')
 .yes___in_uppercase					= "SÌ", // MaxLen: 8 (choice above green/red buttons)
@@ -161,7 +161,8 @@ const stringsTable_t italianLanguage =
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "UHF Squelch" // Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Colore" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *

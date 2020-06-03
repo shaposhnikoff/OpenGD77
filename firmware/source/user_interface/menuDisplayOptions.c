@@ -137,7 +137,8 @@ static void updateScreen(bool isFirstRun)
 				}
 				break;
 			case DISPLAY_MENU_COLOUR_INVERT:
-				leftSide = nonVolatileSettings.displayInverseVideo?(char * const *)&currentLanguage->colour_invert:(char * const *)&currentLanguage->colour_normal;
+				leftSide = (char * const *)&currentLanguage->display_background_colour;
+				rightSideConst = nonVolatileSettings.displayInverseVideo?(char * const *)&currentLanguage->colour_invert:(char * const *)&currentLanguage->colour_normal;
 				break;
 			case DISPLAY_MENU_CONTACT_DISPLAY_ORDER:
 				leftSide = (char * const *)&currentLanguage->priority_order;
@@ -153,12 +154,8 @@ static void updateScreen(bool isFirstRun)
 		}
 
 		// workaround for non stardard format of line for colour display
-		char separator[2]= {":"};
-		if ((rightSideVar[0] == 0) && (rightSideConst == NULL))
-		{
-			separator[0]=0;
-		}
-		snprintf(buf, bufferLen, "%s%s%s", *leftSide,separator,(rightSideVar[0]?rightSideVar:*rightSideConst));
+
+		snprintf(buf, bufferLen, "%s:%s", *leftSide,(rightSideVar[0]?rightSideVar:*rightSideConst));
 
 		if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 		{
@@ -167,16 +164,14 @@ static void updateScreen(bool isFirstRun)
 				voicePromptsInit();
 			}
 			voicePromptsAppendLanguageString((const char * const *)leftSide);
-			if (rightSideVar[0] != 0 || rightSideConst != NULL)
+
+			if (rightSideVar[0] != 0)
 			{
-				if (rightSideVar[0] != 0)
-				{
-					voicePromptsAppendString(rightSideVar);
-				}
-				else
-				{
-					voicePromptsAppendLanguageString((const char * const *)rightSideConst);
-				}
+				voicePromptsAppendString(rightSideVar);
+			}
+			else
+			{
+				voicePromptsAppendLanguageString((const char * const *)rightSideConst);
 			}
 			voicePromptsPlay();
 		}

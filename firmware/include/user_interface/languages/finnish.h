@@ -118,8 +118,8 @@ const stringsTable_t finnishLanguage =
 .brightness		= "Kirkkaus", 		// MaxLen: 16 (with ':' + 0..100 + '%')
 .brightness_off		= "Min kirkkaus", 	// MaxLen: 16 (with ':' + 0..100 + '%')
 .contrast		= "Kontrasti", 		// MaxLen: 16 (with ':' + 12..30)
-.colour_invert		= "Väri: Käänteinen",
-.colour_normal		= "Väri: Normaali",
+.colour_invert		= "Käänteinen",
+.colour_normal		= "Normaali",
 .backlight_timeout	= "TaustValoAika", 	// MaxLen: 16 (with ':' + .no to 30s)
 .scan_delay		= "Skann. viive", 	// MaxLen: 16 (with ':' + 1..30 + 's')
 .yes___in_uppercase			= "KYLLÄ", 		// MaxLen: 8 (choice above green/red buttons)
@@ -161,7 +161,8 @@ const stringsTable_t finnishLanguage =
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF K.Salpa",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 K.Salpa",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "VHF K.Salpa" // Maxlen 16 (with : + XX%)
+.squelch_UHF			= "VHF K.Salpa", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Väri" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *

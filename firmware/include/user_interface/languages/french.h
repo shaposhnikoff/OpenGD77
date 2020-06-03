@@ -117,8 +117,8 @@ const stringsTable_t frenchLanguage =
 .brightness				= "Rétro écl.",
 .brightness_off				= "Écl. min",
 .contrast				= "Contraste",
-.colour_invert			= "Couleur:Inverse",
-.colour_normal			= "Couleur:Normale",
+.colour_invert			= "Inverse",
+.colour_normal			= "Normale",
 .backlight_timeout		= "Timeout",
 .scan_delay				= "Délai scan",
 .yes___in_uppercase					= "OUI",
@@ -161,7 +161,8 @@ const stringsTable_t frenchLanguage =
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "UHF Squelch" // Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Couleur" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *

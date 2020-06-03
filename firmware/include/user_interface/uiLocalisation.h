@@ -121,8 +121,8 @@ typedef struct stringsTable
    const char *brightness;
    const char *brightness_off;
    const char *contrast;
-   const char *colour_invert;
-   const char *colour_normal;
+   const char *colour_invert;// for display background
+   const char *colour_normal;// for display background
    const char *backlight_timeout;
    const char *scan_delay;
    const char *yes___in_uppercase;
@@ -166,6 +166,7 @@ typedef struct stringsTable
    const char *squelch_VHF;
    const char *squelch_220;
    const char *squelch_UHF;
+   const char *display_background_colour;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

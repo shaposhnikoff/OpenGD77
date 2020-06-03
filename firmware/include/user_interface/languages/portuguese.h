@@ -117,8 +117,8 @@ const stringsTable_t portuguesLanguage =
 .brightness				= "Brilho",
 .brightness_off				= "Min bright",
 .contrast				= "Contraste",
-.colour_invert			= "Color:Invertido",
-.colour_normal			= "Color:Normal",
+.colour_invert			= "Invertido",
+.colour_normal			= "Normal",
 .backlight_timeout		= "Timeout",
 .scan_delay				= "Scan delay",
 .yes___in_uppercase					= "SIM",
@@ -161,7 +161,8 @@ const stringsTable_t portuguesLanguage =
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "UHF Squelch" // Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Color" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *

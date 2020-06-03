@@ -117,8 +117,8 @@ const stringsTable_t polishLanguage =
 .brightness				= "JasnoçÇ", // MaxLen: 16 (with ':' + 0..100 + '%')
 .brightness_off				= "Mini jasnoçÇ", // MaxLen: 16 (with ':' + 0..100 + '%')
 .contrast				= "Kontrast", // MaxLen: 16 (with ':' + 12..30)
-.colour_invert				= "Kolor:Inwersja", // MaxLen: 16
-.colour_normal				= "Kolor:Normalny", // MaxLen: 16
+.colour_invert				= "nwersja", // MaxLen: 16
+.colour_normal				= "Normalny", // MaxLen: 16
 .backlight_timeout			= "åwiecenie", // MaxLen: 16 (with ':' + .no to 30)
 .scan_delay				= "Czas skan.", // MaxLen: 16 (with ':' + 1..30 + 's')
 .yes___in_uppercase					= "TAK", // MaxLen: 8 (choice above green/red buttons)
@@ -161,7 +161,8 @@ const stringsTable_t polishLanguage =
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "UHF Squelch" // Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Kolor" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *
