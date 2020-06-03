@@ -35,23 +35,22 @@
 const stringsTable_t germanLanguage =
 {
 .LANGUAGE_NAME 			= "Deutsch", // MaxLen: 16
-.language				= "Sprache", // MaxLen: 16
 .menu					= "Menü", // MaxLen: 16
 .credits				= "Mitwirkende", // MaxLen: 16
 .zone					= "Zone", // MaxLen: 16
 .rssi					= "Feldstärke", // MaxLen: 16
 .battery				= "Akku", // MaxLen: 16
 .contacts				= "Kontakte", // MaxLen: 16
-.firmware_info			= "Firmware Info", // MaxLen: 16
 .last_heard				= "Zuletzt gehört", // MaxLen: 16
+.firmware_info			= "Firmware Info", // MaxLen: 16
 .options				= "Einstellungen", // MaxLen: 16
 .display_options		= "Display Optionen", // MaxLen: 16
 .sound_options				= "Audio Optionen", // MaxLen: 16
 .channel_details		= "Kanal Details", // MaxLen: 16
+.language				= "Sprache", // MaxLen: 16
 .new_contact			= "Neuer Kontakt", // MaxLen: 16
-.new_channel			= "Neuer Kanal", // MaxLen: 16, leave room for a space and four channel digits after
 .contact_list			= "Kontaktliste", // MaxLen: 16
-.hotspot_mode			= "Hotspot-Modus", // MaxLen: 16
+.hotspot_mode			= "Hotspot", // MaxLen: 16
 .contact_details		= "Kontakt Details", // MaxLen: 16
 .built					= "Erstellt", // MaxLen: 16
 .zones					= "Zonen", // MaxLen: 16
@@ -147,6 +146,7 @@ const stringsTable_t germanLanguage =
 .stop					= "Stop", // Maxlen 16 (with ':' + .scan_mode)
 .one_line				= "1 Zeile", // MaxLen 16 (with ':' + .contact)
 .two_lines				= "2 Zeilen", // MaxLen 16 (with ':' + .contact)
+.new_channel			= "Neuer Kanal", // MaxLen: 16, leave room for a space and four channel digits after
 .priority_order				= "ID-Prio", // MaxLen 16 (with ':' + 'Cc/DB/TA')
 .dmr_beep				= "DMR TX Ton", // MaxLen 16 (with ':' + .star/.stop/.both/.none)
 .start					= "Start", // MaxLen 16 (with ':' + .dmr_beep)
@@ -157,7 +157,11 @@ const stringsTable_t germanLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "Squelch VHF",// Maxlen 16 (with : + XX%)
+.squelch_220			= "Squelch 220",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "Squelch VHF" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *

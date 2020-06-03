@@ -35,19 +35,19 @@
 const stringsTable_t finnishLanguage =
 {
 .LANGUAGE_NAME 		= "Suomi",
-.language		= "Kieli",
 .menu			= "Menu",
 .credits		= "Kiitokset",
 .zone			= "Zone",
 .rssi			= "RSSI Signaali",
 .battery		= "Akun Tila",
 .contacts		= "Kontaktit",
-.firmware_info		= "Laiteohjelmisto",
 .last_heard		= "Viimeksi kuultu",
+.firmware_info		= "Laiteohjelmisto",
 .options		= "Yleis  Asetukset",
 .display_options	= "Näytön Asetukset",
 .sound_options		= "Ääni   Asetukset", 	// MaxLen: 16
 .channel_details	= "Kanava Asetukset",
+.language		= "Kieli",
 .new_contact		= "Uusi kontakti",
 .new_channel		= "Uusi kanava", 	// MaxLen: 16, leave room for a space and four channel digits after
 .contact_list		= "Kontakti lista",
@@ -157,8 +157,11 @@ const stringsTable_t finnishLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
-
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "K.Salpa VHF",// Maxlen 16 (with : + XX%)
+.squelch_220			= "K.Salpa 220",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "K.Salpa VHF" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *

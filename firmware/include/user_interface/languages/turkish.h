@@ -35,21 +35,20 @@
 const stringsTable_t turkishLanguage =
 {
 .LANGUAGE_NAME 			= "Turkish", // MaxLen: 16
-.language				= "Dil", // MaxLen: 16
 .menu					= "Menü", // MaxLen: 16
 .credits				= "Yap“mc“lar", // MaxLen: 16
 .zone					= "Bölge", // MaxLen: 16
 .rssi					= "RSSI", // MaxLen: 16
 .battery				= "Batarya", // MaxLen: 16
 .contacts				= "Ki–iler", // MaxLen: 16
-.firmware_info				= "YAZILIM Bilgisi", // MaxLen: 16
 .last_heard				= "Son Duyulanlar", // MaxLen: 16
+.firmware_info				= "YAZILIM Bilgisi", // MaxLen: 16
 .options				= "Opsiyonlar", // MaxLen: 16
 .display_options			= "Ekran Opsiyon", // MaxLen: 16
 .sound_options				= "Sound options", // MaxLen: 16
 .channel_details			= "Kanal Detay", // MaxLen: 16
+.language				= "Dil", // MaxLen: 16
 .new_contact				= "Yeni Ki–i", // MaxLen: 16
-.new_channel				= "Yeni Kanal", // MaxLen: 16, leave room for a space and four channel digits after
 .contact_list				= "Ki–i listesi", // MaxLen: 16
 .hotspot_mode				= "Eri–im Modu", // MaxLen: 16
 .contact_details			= "Ki–i Detaylar“", // MaxLen: 16
@@ -147,6 +146,7 @@ const stringsTable_t turkishLanguage =
 .stop					= "Stop", // Maxlen 16 (with ':' + .scan_mode)
 .one_line				= "1 sat“r", // MaxLen 16 (with ':' + .contact)
 .two_lines				= "2 sat“r", // MaxLen 16 (with ':' + .contact)
+.new_channel				= "Yeni Kanal", // MaxLen: 16, leave room for a space and four channel digits after
 .priority_order				= "Öncelik", // MaxLen 16 (with ':' + 'Cc/DB/TA')
 .dmr_beep				= "DMR beep", // MaxLen 16 (with ':' + .star/.stop/.both/.none)
 .start					= "Start", // MaxLen 16 (with ':' + .dmr_beep)
@@ -157,7 +157,11 @@ const stringsTable_t turkishLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "Squelch VHF",// Maxlen 16 (with : + XX%)
+.squelch_220			= "Squelch 220",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "Squelch VHF" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *

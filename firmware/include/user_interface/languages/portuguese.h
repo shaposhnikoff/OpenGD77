@@ -51,7 +51,7 @@ const stringsTable_t portuguesLanguage =
 .new_contact			= "Contacto Novo",
 .contact_list			= "Lista Contactos",
 .contact_details		= "Detalhes Contato",
-.hotspot_mode			= "Modo Hotspot",
+.hotspot_mode			= "Hotspot",
 .built					= "Built",
 .zones					= "Zonas",
 .keypad					= "Teclado",
@@ -157,7 +157,11 @@ const stringsTable_t portuguesLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "Squelch VHF",// Maxlen 16 (with : + XX%)
+.squelch_220			= "Squelch 220",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "Squelch VHF" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *

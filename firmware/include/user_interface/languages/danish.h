@@ -35,21 +35,20 @@
 const stringsTable_t danishLanguage =
 {
 .LANGUAGE_NAME 			= "Dansk",
-.language				= "Sprog",
 .menu					= "Menu",
 .credits				= "Credits",
 .zone					= "Zone",
 .rssi					= "RSSI",
 .battery				= "Batteri",
 .contacts				= "Kontakter",
-.firmware_info			= "Firmware info",
 .last_heard				= "Sidst Hørt",
+.firmware_info			= "Firmware info",
 .options				= "Valg",
 .display_options		= "Display Valg",
 .sound_options				= "Sound options", // MaxLen: 16
 .channel_details		= "Kanal detaljer",
+.language				= "Sprog",
 .new_contact			= "Ny Kontakt",
-.new_channel			= "Ny kanal", // MaxLen: 16, leave room for a space and four channel digits after
 .contact_list			= "Kontakt liste",
 .hotspot_mode			= "Hotspot mode",
 .contact_details		= "Kontakt Detaljer",
@@ -147,6 +146,7 @@ const stringsTable_t danishLanguage =
 .stop					= "Stop", // Maxlen 16 (with ':' + .scan_mode)
 .one_line				= "1 line", // MaxLen 16 (with ':' + .contact)
 .two_lines				= "2 lines", // MaxLen 16 (with ':' + .contact)
+.new_channel			= "Ny kanal", // MaxLen: 16, leave room for a space and four channel digits after
 .priority_order				= "Order", // MaxLen 16 (with ':' + 'Cc/DB/TA')
 .dmr_beep				= "DMR beep", // MaxLen 16 (with ':' + .star/.stop/.both/.none)
 .start					= "Start", // MaxLen 16 (with ':' + .dmr_beep)
@@ -157,7 +157,11 @@ const stringsTable_t danishLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "Squelch VHF",// Maxlen 16 (with : + XX%)
+.squelch_220			= "Squelch 220",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "Squelch VHF" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *

@@ -51,7 +51,7 @@ const stringsTable_t frenchLanguage =
 .new_contact			= "Nouv. contact",
 .contact_list			= "Liste contacts",
 .contact_details		= "Détails contact",
-.hotspot_mode			= "Mode hotspot",
+.hotspot_mode			= "Hotspot",
 .built					= "Créé",
 .zones					= "Zones",
 .keypad					= "Clavier",
@@ -157,7 +157,11 @@ const stringsTable_t frenchLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "Squelch VHF",// Maxlen 16 (with : + XX%)
+.squelch_220			= "Squelch 220",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "Squelch VHF" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *

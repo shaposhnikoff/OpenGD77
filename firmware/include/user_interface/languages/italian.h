@@ -51,7 +51,7 @@ const stringsTable_t italianLanguage =
 .new_contact			= "Nuovo Contatto", // MaxLen: 16
 .contact_list			= "Lista Contatti", // MaxLen: 16
 .contact_details		= "Det.li Contatto", // MaxLen: 16
-.hotspot_mode			= "Modo Hotspot", // MaxLen: 16
+.hotspot_mode			= "Hotspot", // MaxLen: 16
 .built					= "Versione", // MaxLen: 16
 .zones					= "Zone", // MaxLen: 16
 .keypad					= "Tastiera", // MaxLen: 12 (with .ptt)
@@ -157,7 +157,11 @@ const stringsTable_t italianLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "Squelch VHF",// Maxlen 16 (with : + XX%)
+.squelch_220			= "Squelch 220",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "Squelch VHF" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *

@@ -49,9 +49,8 @@ const stringsTable_t polishLanguage =
 .sound_options				= "Opcje dêwiÜku", // MaxLen: 16
 .channel_details			= "Detale kanaàu", // MaxLen: 16
 .new_contact				= "Nowy kontakt", // MaxLen: 16
-.new_channel				= "Nowy kanaà", // MaxLen: 16, leave room for a space and four channel digits after
 .contact_list				= "Lista kontaktÛw", // MaxLen: 16
-.hotspot_mode				= "Tryb HotSpot", // MaxLen: 16
+.hotspot_mode				= "HotSpot", // MaxLen: 16
 .contact_details			= "Detale kontaktu", // MaxLen: 16
 .built					= "Kompilacja", // MaxLen: 16
 .zones					= "Strefy", // MaxLen: 16
@@ -147,6 +146,7 @@ const stringsTable_t polishLanguage =
 .stop					= "Stop", // Maxlen 16 (with ':' + .scan_mode)
 .one_line				= "1 linia", // MaxLen 16 (with ':' + .contact)
 .two_lines				= "2 linie", // MaxLen 16 (with ':' + .contact)
+.new_channel				= "Nowy kanaà", // MaxLen: 16, leave room for a space and four channel digits after
 .priority_order				= "WybÛr", // MaxLen 16 (with ':' + 'Cc/DB/TA')
 .dmr_beep				= "WybÛr bipa", // MaxLen 16 (with ':' + .star/.stop/.both/.none)
 .start					= "Start", // MaxLen 16 (with ':' + .dmr_beep)
@@ -157,7 +157,11 @@ const stringsTable_t polishLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "Squelch VHF",// Maxlen 16 (with : + XX%)
+.squelch_220			= "Squelch 220",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "Squelch VHF" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *

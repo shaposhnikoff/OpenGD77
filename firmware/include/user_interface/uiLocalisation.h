@@ -162,6 +162,10 @@ typedef struct stringsTable
    const char *normal;
    const char *beep;
    const char *voice;
+   const char *transmitTalkerAlias;
+   const char *squelch_VHF;
+   const char *squelch_220;
+   const char *squelch_UHF;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];
