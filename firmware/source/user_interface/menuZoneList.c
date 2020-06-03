@@ -80,7 +80,16 @@ static void updateScreen(bool isFirstRun)
 			{
 				voicePromptsInit();
 			}
-			voicePromptsAppendString(nameBuf);
+
+			if (strcmp(nameBuf,currentLanguage->all_channels)==0)
+			{
+				voicePromptsAppendLanguageString(&currentLanguage->all_channels);
+			}
+			else
+			{
+				voicePromptsAppendString(nameBuf);
+			}
+
 			voicePromptsPlay();
 		}
 	}
