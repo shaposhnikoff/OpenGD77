@@ -159,9 +159,9 @@ const stringsTable_t finnishLanguage =
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
 .voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
-.squelch_VHF			= "K.Salpa VHF",// Maxlen 16 (with : + XX%)
-.squelch_220			= "K.Salpa 220",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "K.Salpa VHF" // Maxlen 16 (with : + XX%)
+.squelch_VHF			= "VHF K.Salpa",// Maxlen 16 (with : + XX%)
+.squelch_220			= "220 K.Salpa",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "VHF K.Salpa" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *

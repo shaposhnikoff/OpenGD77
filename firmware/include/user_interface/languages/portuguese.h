@@ -159,9 +159,9 @@ const stringsTable_t portuguesLanguage =
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
 .voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
-.squelch_VHF			= "Squelch VHF",// Maxlen 16 (with : + XX%)
-.squelch_220			= "Squelch 220",// Maxlen 16 (with : + XX%)
-.squelch_UHF			= "Squelch VHF" // Maxlen 16 (with : + XX%)
+.squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
+.squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch" // Maxlen 16 (with : + XX%)
 };
 /********************************************************************
  *
