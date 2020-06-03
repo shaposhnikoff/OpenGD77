@@ -42,7 +42,10 @@ menuStatus_t menuSoundOptions(uiEvent_t *ev, bool isFirstRun)
 		{
 			voicePromptsInit();
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
 			voicePromptsAppendLanguageString(&currentLanguage->sound_options);
+			voicePromptsAppendLanguageString(&currentLanguage->menu);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
 		}
 
