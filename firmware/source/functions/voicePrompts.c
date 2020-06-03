@@ -227,6 +227,11 @@ void voicePromptsAppendString(char *promptString)
 			voicePromptsAppendPrompt(PROMPT_MINUS);
 			continue;
 		}
+		if (*promptString == '%')
+		{
+			voicePromptsAppendPrompt(PROMPT_PERCENT);
+			continue;
+		}
 		// otherwise just add silence
 		voicePromptsAppendPrompt(PROMPT_SILENCE);
 	}
