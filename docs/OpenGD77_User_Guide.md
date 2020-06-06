@@ -473,6 +473,8 @@ If you want to transmit on the same TalkGroup as the currently received signal, 
 Press the **Hash (#)** key to enter an *ad hoc* TalkGroup number, followed by the **Green** key to confirm.
 If the entered TG is in the Digital Contacts the name of the TG Contact will be displayed, otherwise the number will be displayed e.g. TG 98977.
 
+To return to the previous TG prior to manually entering the TG, press either the **Left arrrow** or **Right arrow** keys. 
+
 ![](media/talkgroup-entry.png)
 
 When a TG has been manually entered, the display shows a 1 pixel box around the TG display area to indicate that this TG has been manually entered, even if the Contact / TG name is displayed rather than the TG nunber.

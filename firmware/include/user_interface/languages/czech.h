@@ -35,21 +35,20 @@
 const stringsTable_t czechLanguage =
 {
 .LANGUAGE_NAME 			= "estina", // MaxLen: 16
-.language				= "Jazyk", // MaxLen: 16
 .menu					= "Menu", // MaxLen: 16
 .credits				= "PõispùvatelÈ", // MaxLen: 16
 .zone					= "ZÛna", // MaxLen: 16
 .rssi					= "SÌla sign·lu", // MaxLen: 16
 .battery				= "Baterie", // MaxLen: 16
 .contacts				= "Kontakty", // MaxLen: 16
-.firmware_info			= "Firmware Info", // MaxLen: 16
 .last_heard				= "PoslednÌKdoVolal", // MaxLen: 16
+.firmware_info			= "Firmware Info", // MaxLen: 16
 .options				= "NastavenÌ", // MaxLen: 16
 .display_options		= "NastavenÌDisplay", // MaxLen: 16
 .sound_options				= "NastavenÌ zvuku", // MaxLen: 16
 .channel_details		= "Kan·l Detail", // MaxLen: 16
+.language				= "Jazyk", // MaxLen: 16
 .new_contact			= "Nov˝ Kontakt", // MaxLen: 16
-.new_channel			= "Nov˝ Kanal", // MaxLen: 16, leave room for a space and four channel digits after
 .contact_list			= "Kontakt list", // MaxLen: 16
 .hotspot_mode			= "Hotspot-MÛd", // MaxLen: 16
 .contact_details		= "Kontakt Detail", // MaxLen: 16
@@ -118,8 +117,8 @@ const stringsTable_t czechLanguage =
 .brightness				= "Jas", // MaxLen: 16 (with ':' + 0..100 + '%')
 .brightness_off			= "Min. Jas", // MaxLen: 16 (with ':' + 0..100 + '%')
 .contrast				= "Kontrast", // MaxLen: 16 (with ':' + 12..30)
-.colour_invert			= "Barva:ern·", // MaxLen: 16
-.colour_normal			= "Barva:BÌl·", // MaxLen: 16
+.colour_invert			= "ern·", // MaxLen: 16
+.colour_normal			= "BÌl·", // MaxLen: 16
 .backlight_timeout		= "as SvÌcenÌ", // MaxLen: 16 (with ':' + .no to 30s)
 .scan_delay				= "Sken pauza", // MaxLen: 16 (with ':' + 1..30 + 's')
 .yes___in_uppercase					= "ANO", // MaxLen: 8 (choice above green/red buttons)
@@ -147,6 +146,7 @@ const stringsTable_t czechLanguage =
 .stop					= "stop", // Maxlen 16 (with ':' + .scan_mode)
 .one_line				= "1 õ·dek", // MaxLen 16 (with ':' + .contact)
 .two_lines				= "2 õ·dky", // MaxLen 16 (with ':' + .contact)
+.new_channel			= "Nov˝ Kanal", // MaxLen: 16, leave room for a space and four channel digits after
 .priority_order				= "Ìst ID", // MaxLen 16 (with ':' + 'Cc/DB/TA')
 .dmr_beep				= "pÌpDMR", // MaxLen 16 (with ':' + .star/.stop/.both/.none)
 .start					= "start", // MaxLen 16 (with ':' + .dmr_beep)
@@ -157,7 +157,12 @@ const stringsTable_t czechLanguage =
 .silent                                 = "Tich˝", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Norm·l", // Maxlen 16 (with : + audio_prompt)
 .beep					= "PÌp·", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Hlas" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Hlas", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
+.squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Barva" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *

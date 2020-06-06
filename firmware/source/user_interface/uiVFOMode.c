@@ -35,7 +35,7 @@ static int selectedFreq = VFO_SELECTED_FREQUENCY_INPUT_RX;
 static void handleEvent(uiEvent_t *ev);
 static void handleQuickMenuEvent(uiEvent_t *ev);
 static void updateQuickMenuScreen(void);
-static void update_frequency(int tmp_frequency);
+static void update_frequency(int frequency, bool announceImmediately);
 static void stepFrequency(int increment);
 static void loadContact(void);
 static void toneScan(void);
@@ -44,6 +44,7 @@ static void initScan(void);
 static void uiVFOUpdateTrxID(void );
 static void setCurrentFreqToScanLimits(void);
 static void handleUpKey(uiEvent_t *ev);
+static void announceVFOAndFrequency(bool announceImmediatly);
 
 static bool isDisplayingQSOData=false;
 static int tmpQuickMenuDmrFilterLevel;
@@ -102,6 +103,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		displayChannelSettings = false;
 
 		trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+		announceVFOAndFrequency(false);
 
 		//Need to load the Rx group if specified even if TG is currently overridden as we may need it later when the left or right button is pressed
 		if (currentChannelData->rxGroupList != 0)
@@ -272,6 +274,32 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		}
 	}
 	return menuVFOExitStatus;
+}
+
+static void announceVFOAndFrequency(bool announceImmediatly)
+{
+	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	{
+		char buffer[17];
+
+		voicePromptsInit();
+		voicePromptsAppendPrompt(PROMPT_VFO);
+		voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");
+		voicePromptsAppendPrompt(PROMPT_RECEIVE);
+		int val_before_dp = currentChannelData->rxFreq / 100000;
+		int val_after_dp = currentChannelData->rxFreq - val_before_dp * 100000;
+		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
+		voicePromptsAppendString(buffer);
+		voicePromptsAppendPrompt(PROMPT_TRANSMIT);
+		val_before_dp = currentChannelData->txFreq / 100000;
+		val_after_dp = currentChannelData->txFreq - val_before_dp * 100000;
+		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
+		voicePromptsAppendString(buffer);
+		if (announceImmediatly)
+		{
+			voicePromptsPlay();
+		}
+	}
 }
 
 void uiVFOModeUpdateScreen(int txTimeSecs)
@@ -575,7 +603,7 @@ void uiVFOModeStopScanning(void)
 	displayLightTrigger();
 }
 
-static void update_frequency(int frequency)
+static void update_frequency(int frequency, bool announceImmediately)
 {
 	if (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX)
 	{
@@ -583,7 +611,6 @@ static void update_frequency(int frequency)
 		{
 			currentChannelData->txFreq = frequency;
 			trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
-
 			soundSetMelody(melody_ACK_beep);
 		}
 	}
@@ -611,6 +638,7 @@ static void update_frequency(int frequency)
 			soundSetMelody(melody_ERROR_beep);
 		}
 	}
+	announceVFOAndFrequency(announceImmediately);
 	menuClearPrivateCall();
 	SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);// For Baofeng RD-5R
 }
@@ -691,6 +719,11 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
+		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+		{
+			voicePromptsPlay();
+		}
+
 #if ! defined(PLATFORM_RD5R)
 		// Stop the scan if any button is pressed.
 		if (scanActive && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE))
@@ -1023,8 +1056,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					if (nonVolatileSettings.txPowerLevel == (MAX_POWER_SETTING_NUM - 1))
 					{
-						nonVolatileSettings.txPowerLevel++;
-						trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+						increasePowerLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
 						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1037,8 +1069,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					if (nonVolatileSettings.txPowerLevel < (MAX_POWER_SETTING_NUM - 1))
 					{
-						nonVolatileSettings.txPowerLevel++;
-						trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+						increasePowerLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
 						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1063,6 +1094,7 @@ static void handleEvent(uiEvent_t *ev)
 						uiVFOUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
+						announceTG();
 					}
 					else
 					{
@@ -1091,8 +1123,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					if (nonVolatileSettings.txPowerLevel > 0)
 					{
-						nonVolatileSettings.txPowerLevel--;
-						trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+						decreasePowerLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
 						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1127,6 +1158,7 @@ static void handleEvent(uiEvent_t *ev)
 						uiVFOUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
+						announceTG();
 					}
 					else
 					{
@@ -1169,7 +1201,7 @@ static void handleEvent(uiEvent_t *ev)
 					int tmp_frequency=read_freq_enter_digits(0,8);
 					if (trxGetBandFromFrequency(tmp_frequency)!=-1)
 					{
-						update_frequency(tmp_frequency);
+						update_frequency(tmp_frequency,false);
 						reset_freq_enter_digits();
 					}
 					else
@@ -1194,6 +1226,17 @@ static void handleEvent(uiEvent_t *ev)
 			int keyval = menuGetKeypadKeyValue(ev, true);
 			if (keyval != 99)
 			{
+				if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+				{
+					voicePromptsInit();
+					voicePromptsAppendPrompt(PROMPT_0 +  keyval);
+					if (freq_enter_idx==2)
+					{
+						voicePromptsAppendPrompt(PROMPT_POINT);
+					}
+					voicePromptsPlay();
+				}
+
 				freq_enter_digits[freq_enter_idx] = (char) keyval+'0';
 				freq_enter_idx++;
 
@@ -1204,7 +1247,7 @@ static void handleEvent(uiEvent_t *ev)
 						int tmp_frequency=read_freq_enter_digits(0,8);
 						if (trxGetBandFromFrequency(tmp_frequency)!=-1)
 						{
-							update_frequency(tmp_frequency);
+							update_frequency(tmp_frequency,true);
 							reset_freq_enter_digits();
 							soundSetMelody(melody_ACK_beep);
 						}
@@ -1317,6 +1360,9 @@ static void stepFrequency(int increment)
 		{
 			trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
 		}
+
+		announceVFOAndFrequency(false);
+
 	}
 	else
 	{
@@ -1440,15 +1486,18 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 				currentChannelData->txFreq = currentChannelData->rxFreq;
 				currentChannelData->rxFreq =  tmpFreq;
 				trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+				announceVFOAndFrequency(false);
 			}
 			break;
 			case VFO_SCREEN_QUICK_MENU_BOTH_TO_RX:
 				currentChannelData->txFreq = currentChannelData->rxFreq;
 				trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+				announceVFOAndFrequency(false);
 				break;
 			case VFO_SCREEN_QUICK_MENU_BOTH_TO_TX:
 				currentChannelData->rxFreq = currentChannelData->txFreq;
 				trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+				announceVFOAndFrequency(false);
 				break;
 			case VFO_SCREEN_QUICK_MENU_FILTER:
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
@@ -1689,6 +1738,7 @@ static void setCurrentFreqToScanLimits(void)
 		currentChannelData->rxFreq=nonVolatileSettings.vfoScanLow[nonVolatileSettings.currentVFONumber];
 		currentChannelData->txFreq=currentChannelData->rxFreq+offset;
 		trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
+		announceVFOAndFrequency(false);
 	}
 }
 

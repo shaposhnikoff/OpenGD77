@@ -131,10 +131,10 @@ static void updateScreen(bool inputModeHasChanged)
 			switch(gMenusCurrentItemIndex)
 			{
 				case ENTRY_TG:
-					voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+					voicePromptsAppendLanguageString(&currentLanguage->tg_entry);
 					break;
 				case ENTRY_PC:
-					voicePromptsAppendPrompt(PROMPT_PRIVATECALL);
+					voicePromptsAppendLanguageString(&currentLanguage->pc_entry);
 					break;
 				case ENTRY_SELECT_CONTACT:
 					voicePromptsAppendPrompt(PROMPT_CONTACT);

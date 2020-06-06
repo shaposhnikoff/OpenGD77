@@ -64,7 +64,6 @@ static uint16_t getCurrentChannelInCurrentZoneForGD77S(void);
 static void handleUpKey(uiEvent_t *ev);
 static void updateQuickMenuScreen(void);
 static void handleQuickMenuEvent(uiEvent_t *ev);
-static void announceTG(void);
 
 #endif // PLATFORM_GD77S
 
@@ -112,6 +111,8 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 
 	if (isFirstRun)
 	{
+		voicePromptsTerminate();
+
 		nonVolatileSettings.initialMenuNumber = UI_CHANNEL_MODE;// This menu.
 		displayChannelSettings = false;
 		reverseRepeater = false;
@@ -961,8 +962,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (nonVolatileSettings.txPowerLevel == (MAX_POWER_SETTING_NUM - 1))
 				{
-					nonVolatileSettings.txPowerLevel++;
-					trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+					increasePowerLevel();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
 					SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -975,8 +975,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (nonVolatileSettings.txPowerLevel < (MAX_POWER_SETTING_NUM - 1))
 				{
-					nonVolatileSettings.txPowerLevel++;
-					trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+					increasePowerLevel();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
 					SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1030,8 +1029,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (nonVolatileSettings.txPowerLevel > 0)
 				{
-					nonVolatileSettings.txPowerLevel--;
-					trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+					decreasePowerLevel();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
 					SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1655,18 +1653,22 @@ static void announceChannelName(void)
 	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 	{
 		char voiceBuf[17];
+		bool wasPlaying = voicePromptIsActive;
 		codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
 		voicePromptsInit();
+		if (!wasPlaying)
+		{
+			voicePromptsAppendPrompt(PROMPT_CHANNEL);
+		}
+
 		voicePromptsAppendString(voiceBuf);
+		if (wasPlaying)
+		{
+			voicePromptsPlay();
+		}
 	}
 }
-#if ! defined(PLATFORM_GD77S)
-static void announceTG()
-{
-	voicePromptsInit();
-	voicePromptsAppendString(currentContactData.name);
-}
-#endif
+
 
 #if defined(PLATFORM_GD77S)
 void toggleTimeslotForGD77S(void)

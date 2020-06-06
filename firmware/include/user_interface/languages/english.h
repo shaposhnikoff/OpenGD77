@@ -51,7 +51,7 @@ const stringsTable_t englishLanguage =
 .new_contact			= "New contact", // MaxLen: 16
 .contact_list			= "Contact list", // MaxLen: 16
 .contact_details		= "Contact Details", // MaxLen: 16
-.hotspot_mode			= "Hotspot mode", // MaxLen: 16
+.hotspot_mode			= "Hotspot", // MaxLen: 16
 .built					= "Built", // MaxLen: 16
 .zones					= "Zones", // MaxLen: 16
 .keypad					= "Keypad", // MaxLen: 12 (with .ptt)
@@ -117,8 +117,8 @@ const stringsTable_t englishLanguage =
 .brightness				= "Brightness", // MaxLen: 16 (with ':' + 0..100 + '%')
 .brightness_off				= "Min bright", // MaxLen: 16 (with ':' + 0..100 + '%')
 .contrast				= "Contrast", // MaxLen: 16 (with ':' + 12..30)
-.colour_invert				= "Color:Invert", // MaxLen: 16
-.colour_normal				= "Color:Normal", // MaxLen: 16
+.colour_invert				= "Invert", // MaxLen: 16
+.colour_normal				= "Normal", // MaxLen: 16
 .backlight_timeout			= "Timeout", // MaxLen: 16 (with ':' + .no to 30s)
 .scan_delay				= "Scan delay", // MaxLen: 16 (with ':' + 1..30 + 's')
 .yes___in_uppercase					= "YES", // MaxLen: 8 (choice above green/red buttons)
@@ -157,7 +157,12 @@ const stringsTable_t englishLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
+.squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Colour" // Maxlen 16 (with : + .colour_normal or .colour_invert)
 };
 /********************************************************************
  *
