@@ -378,8 +378,8 @@ const uint8_t MARKER_BYTES[] = {0xA0 ,0x0F};// DM-1801 only seems to consistentl
 #elif defined(PLATFORM_RD5R)
 
 const uint32_t VARIANT_CALIBRATION_BASE = 0x0008F000;	// Found by marker bytes matching
-const int MARKER_BYTES_LENGTH = 8;
-const uint8_t MARKER_BYTES[] = {0xA0 ,0x0F ,0x50 ,0x14 ,0xA0 ,0x0F ,0x50 ,0x14};
+const int MARKER_BYTES_LENGTH = 2;
+const uint8_t MARKER_BYTES[] = {0xA0 ,0x0F};// ,0x50 ,0x14 ,0xA0 ,0x0F ,0x50 ,0x14};
 
 #endif
 
