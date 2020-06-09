@@ -300,18 +300,25 @@ static void announceVFOAndFrequency(bool announceImmediatly)
 		voicePromptsInit();
 		voicePromptsAppendPrompt(PROMPT_VFO);
 		voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");
-		voicePromptsAppendPrompt(PROMPT_RECEIVE);
+		if (currentChannelData->txFreq!=currentChannelData->rxFreq)
+		{
+			voicePromptsAppendPrompt(PROMPT_RECEIVE);
+		}
 		int val_before_dp = currentChannelData->rxFreq / 100000;
 		int val_after_dp = currentChannelData->rxFreq - val_before_dp * 100000;
 		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
 		removeUnnecessaryZerosFromVoicePrompts(buffer);
 		voicePromptsAppendString(buffer);
-		voicePromptsAppendPrompt(PROMPT_TRANSMIT);
-		val_before_dp = currentChannelData->txFreq / 100000;
-		val_after_dp = currentChannelData->txFreq - val_before_dp * 100000;
-		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
-		removeUnnecessaryZerosFromVoicePrompts(buffer);
-		voicePromptsAppendString(buffer);
+
+		if (currentChannelData->txFreq!=currentChannelData->rxFreq)
+		{
+			voicePromptsAppendPrompt(PROMPT_TRANSMIT);
+			val_before_dp = currentChannelData->txFreq / 100000;
+			val_after_dp = currentChannelData->txFreq - val_before_dp * 100000;
+			snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
+			removeUnnecessaryZerosFromVoicePrompts(buffer);
+			voicePromptsAppendString(buffer);
+		}
 		if (announceImmediatly)
 		{
 			voicePromptsPlay();
