@@ -237,11 +237,18 @@ Its also recommended that you restructure your codeplug to remove any duplicate 
 
 Not all the supported radios have the same number of buttons, or the same size screen, hence there are some differences when operating radios other than the Radioddity GD-77
 
+All radios have the PTT and 2 other buttons on the left side. On the GD-77 and DM-1801 both other buttons are below the PTT, but the RD-5R has one button above the PTT and one button below the PTT.
+
+On all radios the button on the left nearest the top of the radio is technically known as SK1 and the button nearest the bottom of the radio is know as SK2
+SK2 on the GD-77 is Blue and is referred to in this guide as either the Blue button, Function button or occasionally as SK2.
+SK1 on the GD-77 is Black and is normally referred to as the Black button.
+
 * The Baofeng DM-1801 / DM-860 has a dedicated **MR/VFO** button, which is used to change between Channel and VFO mode, in place of pressing the **Red** menu key
 * The Baofeng DM-1801 / DM-860 has a dedicated **A/B** button, which is used to change between VFO A and B, in place of pressing the quick menu via the **Orange** button on the top of the radio
+* The Baofeng DM-1801 / DM-860 both buttons on the side of the radio are Black in colour. The upper button is SK1 and is referred to in this guide as the Black button, The lower button SK2 is referred to in this guide as the Blue or Function button.
 * The Baofeng RD-5R / DM-5R does not have left or right arrow buttons, so the **A/B** button is used to replace the left arrow and the "Band" button is used to replace the right arrow
 * The Baofeng RD-5R / DM-5R does not the **Orange** button, and its functionality has been similated by using a Long press on the orange coloured **MR/VFO** button
-* The Baofeng RD-5R / DM-5R has 2 buttons on the side, but their position is different from the GD-77 and DM-1801. The button above the PTT is used as the "Black" button on the side of the GD-77, also know as button SK1. The button below the PTT is used as the **Blue** button, also know as SK2.
+* The Baofeng RD-5R / DM-5R has 2 buttons on the side, but their position is different from the GD-77 and DM-1801. The button above the PTT is used as the "Black" button on the side of the GD-77, also know as button SK1. The button below the PTT is used as the **Blue** button, also know as Function button or SK2.
 
 
 ## Main screens (VFO and Channel screens)
