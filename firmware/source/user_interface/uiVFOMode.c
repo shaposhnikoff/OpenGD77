@@ -45,6 +45,7 @@ static void uiVFOUpdateTrxID(void );
 static void setCurrentFreqToScanLimits(void);
 static void handleUpKey(uiEvent_t *ev);
 static void announceVFOAndFrequency(bool announceImmediatly);
+static void removeUnnecessaryZerosFromVoicePrompts(char *str);
 
 static bool isDisplayingQSOData=false;
 static int tmpQuickMenuDmrFilterLevel;
@@ -276,6 +277,20 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 	return menuVFOExitStatus;
 }
 
+static void removeUnnecessaryZerosFromVoicePrompts(char *str)
+{
+	const int NUM_DECIMAL_PLACES = 1;
+	int len = strlen(str);
+	for(int i=len;i>2;i--)
+	{
+		if (str[i-1]!='0' || str[i-(NUM_DECIMAL_PLACES+1)]=='.')
+		{
+			str[i] = 0;
+			return;
+		}
+	}
+}
+
 static void announceVFOAndFrequency(bool announceImmediatly)
 {
 	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
@@ -289,11 +304,13 @@ static void announceVFOAndFrequency(bool announceImmediatly)
 		int val_before_dp = currentChannelData->rxFreq / 100000;
 		int val_after_dp = currentChannelData->rxFreq - val_before_dp * 100000;
 		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
+		removeUnnecessaryZerosFromVoicePrompts(buffer);
 		voicePromptsAppendString(buffer);
 		voicePromptsAppendPrompt(PROMPT_TRANSMIT);
 		val_before_dp = currentChannelData->txFreq / 100000;
 		val_after_dp = currentChannelData->txFreq - val_before_dp * 100000;
 		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
+		removeUnnecessaryZerosFromVoicePrompts(buffer);
 		voicePromptsAppendString(buffer);
 		if (announceImmediatly)
 		{
