@@ -62,7 +62,7 @@ static uint16_t getCurrentChannelInCurrentZoneForGD77S(void);
 #else // ! PLATFORM_GD77S
 
 static void handleUpKey(uiEvent_t *ev);
-static void updateQuickMenuScreen(void);
+static void updateQuickMenuScreen(bool isFirstRun);
 static void handleQuickMenuEvent(uiEvent_t *ev);
 
 #endif // PLATFORM_GD77S
@@ -1335,11 +1335,14 @@ enum CHANNEL_SCREEN_QUICK_MENU_ITEMS {  CH_SCREEN_QUICK_MENU_COPY2VFO = 0, CH_SC
 	CH_SCREEN_QUICK_MENU_FILTER,
 	NUM_CH_SCREEN_QUICK_MENU_ITEMS };// The last item in the list is used so that we automatically get a total number of items in the list
 
-static void updateQuickMenuScreen(void)
+static void updateQuickMenuScreen(bool isFirstRun)
 {
 	int mNum = 0;
 	static const int bufferLen = 17;
 	char buf[bufferLen];
+	char * const *leftSide;// initialise to please the compiler
+	char * const *rightSideConst;// initialise to please the compiler
+	char rightSideVar[bufferLen];
 
 	ucClearBuf();
 	menuDisplayTitle(currentLanguage->quick_menu);
@@ -1348,29 +1351,78 @@ static void updateQuickMenuScreen(void)
 	{
 		mNum = menuGetMenuOffset(NUM_CH_SCREEN_QUICK_MENU_ITEMS, i);
 		buf[0] = 0;
+		rightSideVar[0] = 0;
+		rightSideConst = NULL;
+		leftSide = NULL;
 
 		switch(mNum)
 		{
 			case CH_SCREEN_QUICK_MENU_COPY2VFO:
-				strncpy(buf, currentLanguage->channelToVfo, bufferLen);
+				rightSideConst = (char * const *)&currentLanguage->channelToVfo;
 				break;
 			case CH_SCREEN_QUICK_MENU_COPY_FROM_VFO:
-				strncpy(buf, currentLanguage->vfoToChannel, bufferLen);
+				rightSideConst = (char * const *)&currentLanguage->vfoToChannel;
 				break;
 			case CH_SCREEN_QUICK_MENU_FILTER:
+				leftSide = (char * const *)&currentLanguage->filter;
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->filter, (tmpQuickMenuDmrFilterLevel == 0) ? currentLanguage->none : DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel]);
+					if (tmpQuickMenuDmrFilterLevel == 0)
+					{
+						rightSideConst = (char * const *)&currentLanguage->none;
+					}
+					else
+					{
+						snprintf(rightSideVar, bufferLen, "%s", DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel]);
+					}
+
 				}
 				else
 				{
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->filter, (tmpQuickMenuAnalogFilterLevel == 0) ? currentLanguage->none : ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel]);
+					if (tmpQuickMenuDmrFilterLevel == 0)
+					{
+						rightSideConst = (char * const *)&currentLanguage->none;
+					}
+					else
+					{
+						snprintf(rightSideVar, bufferLen, "%s", ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel]);
+					}
 				}
 				break;
 			default:
 				strcpy(buf, "");
 		}
+		if (leftSide!=NULL)
+		{
+			snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0]?rightSideVar:*rightSideConst));
+		}
+		else
+		{
+			snprintf(buf, bufferLen, "%s", (rightSideVar[0]?rightSideVar:*rightSideConst));
+		}
 
+		if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			if (!isFirstRun)
+			{
+				voicePromptsInit();
+			}
+
+			if (leftSide != NULL)
+			{
+				voicePromptsAppendLanguageString((const char * const *)leftSide);
+			}
+
+			if (rightSideVar[0] !=0)
+			{
+				voicePromptsAppendString(rightSideVar);
+			}
+			else
+			{
+				voicePromptsAppendLanguageString((const char * const *)rightSideConst);
+			}
+			voicePromptsPlay();
+		}
 		buf[bufferLen - 1] = 0;
 		menuDisplayEntry(i, mNum, buf);
 	}
@@ -1381,6 +1433,7 @@ static void updateQuickMenuScreen(void)
 
 static void handleQuickMenuEvent(uiEvent_t *ev)
 {
+	bool isDirty = false;
 	if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
 	{
 		uiChannelModeStopScanning();
@@ -1418,6 +1471,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_RIGHT))
 	{
+		isDirty = true;
 		switch(gMenusCurrentItemIndex)
 		{
 			case CH_SCREEN_QUICK_MENU_FILTER:
@@ -1437,40 +1491,55 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 				break;
 		}
 	}
-	else if (KEYCHECK_PRESS(ev->keys, KEY_LEFT))
+	else
 	{
-		switch(gMenusCurrentItemIndex)
-		{
-			case CH_SCREEN_QUICK_MENU_FILTER:
-				if (trxGetMode() == RADIO_MODE_DIGITAL)
+		if (KEYCHECK_PRESS(ev->keys, KEY_LEFT))
+			{
+				isDirty = true;
+				switch(gMenusCurrentItemIndex)
 				{
-					if (tmpQuickMenuDmrFilterLevel > DMR_FILTER_NONE)
-					{
-						tmpQuickMenuDmrFilterLevel--;
-					}
+					case CH_SCREEN_QUICK_MENU_FILTER:
+						if (trxGetMode() == RADIO_MODE_DIGITAL)
+						{
+							if (tmpQuickMenuDmrFilterLevel > DMR_FILTER_NONE)
+							{
+								tmpQuickMenuDmrFilterLevel--;
+							}
+						}
+						else
+						{
+							if (tmpQuickMenuAnalogFilterLevel > ANALOG_FILTER_NONE)
+							{
+								tmpQuickMenuAnalogFilterLevel--;
+							}
+						}
+						break;
+				}
+			}
+			else
+			{
+				if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
+				{
+					isDirty = true;
+					menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
+					menuQuickChannelExitStatus |= MENU_STATUS_LIST_TYPE;
 				}
 				else
 				{
-					if (tmpQuickMenuAnalogFilterLevel > ANALOG_FILTER_NONE)
+					if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 					{
-						tmpQuickMenuAnalogFilterLevel--;
+						isDirty = true;
+						menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
+						menuQuickChannelExitStatus |= MENU_STATUS_LIST_TYPE;
 					}
 				}
-				break;
-		}
-	}
-	else if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
-	{
-		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
-		menuQuickChannelExitStatus |= MENU_STATUS_LIST_TYPE;
-	}
-	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
-	{
-		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CH_SCREEN_QUICK_MENU_ITEMS);
-		menuQuickChannelExitStatus |= MENU_STATUS_LIST_TYPE;
+			}
 	}
 
-	updateQuickMenuScreen();
+	if (isDirty)
+	{
+		updateQuickMenuScreen(false);
+	}
 }
 
 menuStatus_t uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
@@ -1480,7 +1549,18 @@ menuStatus_t uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 		uiChannelModeStopScanning();
 		tmpQuickMenuDmrFilterLevel = nonVolatileSettings.dmrFilterLevel;
 		tmpQuickMenuAnalogFilterLevel = nonVolatileSettings.analogFilterLevel;
-		updateQuickMenuScreen();
+
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			voicePromptsInit();
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendLanguageString(&currentLanguage->quick_menu);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+		}
+
+		updateQuickMenuScreen(true);
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
