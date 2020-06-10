@@ -34,7 +34,7 @@ static int selectedFreq = VFO_SELECTED_FREQUENCY_INPUT_RX;
 // internal prototypes
 static void handleEvent(uiEvent_t *ev);
 static void handleQuickMenuEvent(uiEvent_t *ev);
-static void updateQuickMenuScreen(void);
+static void updateQuickMenuScreen(bool isFirstRun);
 static void update_frequency(int frequency, bool announceImmediately);
 static void stepFrequency(int increment);
 static void loadContact(void);
@@ -1413,7 +1413,18 @@ menuStatus_t uiVFOModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 	{
 		tmpQuickMenuDmrFilterLevel = nonVolatileSettings.dmrFilterLevel;
 		tmpQuickMenuAnalogFilterLevel = nonVolatileSettings.analogFilterLevel;
-		updateQuickMenuScreen();
+
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			voicePromptsInit();
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendLanguageString(&currentLanguage->quick_menu);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+		}
+
+		updateQuickMenuScreen(true);
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
@@ -1426,11 +1437,15 @@ menuStatus_t uiVFOModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 	return menuQuickVFOExitStatus;
 }
 
-static void updateQuickMenuScreen(void)
+static void updateQuickMenuScreen(bool isFirstRun)
 {
 	int mNum = 0;
 	static const int bufferLen = 17;
 	char buf[bufferLen];
+	char * const *leftSide;// initialise to please the compiler
+	char * const *rightSideConst;// initialise to please the compiler
+	char rightSideVar[bufferLen];
+	int prompt;// For voice prompts
 
 	ucClearBuf();
 	menuDisplayTitle(currentLanguage->quick_menu);
@@ -1438,49 +1453,93 @@ static void updateQuickMenuScreen(void)
 	for(int i = -1; i <= 1; i++)
 	{
 		mNum = menuGetMenuOffset(NUM_VFO_SCREEN_QUICK_MENU_ITEMS, i);
+		prompt = -1;// Prompt not used
+		rightSideVar[0] = 0;
+		rightSideConst = NULL;
+		leftSide = NULL;
 
 		switch(mNum)
 		{
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
 			case VFO_SCREEN_QUICK_MENU_VFO_A_B:
-				sprintf(buf, "VFO:%c", ((nonVolatileSettings.currentVFONumber==0) ? 'A' : 'B'));
+				sprintf(rightSideVar, "VFO:%c", ((nonVolatileSettings.currentVFONumber==0) ? 'A' : 'B'));
 				break;
 #endif
 			case VFO_SCREEN_QUICK_MENU_TX_SWAP_RX:
-				strcpy(buf, "Tx <--> Rx");
+				prompt = PROMPT_VFO_EXCHANGE_TX_RX;
+				strcpy(rightSideVar, "Tx <--> Rx");
 				break;
 			case VFO_SCREEN_QUICK_MENU_BOTH_TO_RX:
-				strcpy(buf, "Rx --> Tx");
+				prompt = PROMPT_VFO_COPY_RX_TO_TX;
+				strcpy(rightSideVar, "Rx --> Tx");
 				break;
 			case VFO_SCREEN_QUICK_MENU_BOTH_TO_TX:
-				strcpy(buf, "Tx --> Rx");
+				prompt = PROMPT_VFO_COPY_TX_TO_RX;
+				strcpy(rightSideVar, "Tx --> Rx");
 				break;
 			case VFO_SCREEN_QUICK_MENU_FILTER:
+				leftSide = (char * const *)&currentLanguage->filter;
 				if(trxGetMode() == RADIO_MODE_ANALOG)
 				{
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->filter, ((tmpQuickMenuAnalogFilterLevel == 0) ? currentLanguage->none : ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel]));
+					snprintf(rightSideVar, bufferLen, "%s",  ((tmpQuickMenuAnalogFilterLevel == 0) ? currentLanguage->none : ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel]));
 				}
 				else
 				{
-					snprintf(buf, bufferLen, "%s:%s", currentLanguage->filter, ((tmpQuickMenuDmrFilterLevel == 0) ? currentLanguage->none : DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel]));
+					snprintf(rightSideVar, bufferLen, "%s", ((tmpQuickMenuDmrFilterLevel == 0) ? currentLanguage->none : DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel]));
 				}
 				break;
 		    case VFO_SCREEN_QUICK_MENU_VFO_TO_NEW:
-		    	strncpy(buf, currentLanguage->vfoToNewChannel, bufferLen);
+		    	rightSideConst = (char * const *)&currentLanguage->vfoToNewChannel;
 		    	break;
 			case VFO_SCREEN_CODE_SCAN:
-				if(trxGetMode() == RADIO_MODE_ANALOG)
+				leftSide = (char * const *)&currentLanguage->tone_scan;
+				if(trxGetMode() != RADIO_MODE_ANALOG)
 				{
-					strncpy(buf, currentLanguage->tone_scan, bufferLen);
-				}
-				else
-				{
-					sprintf(buf, "%s %s", currentLanguage->tone_scan, currentLanguage->n_a, bufferLen);
+					rightSideConst = (char * const *)&currentLanguage->n_a;
 				}
 				break;
 			default:
 				strcpy(buf, "");
 				break;
+		}
+
+		if (leftSide!=NULL)
+		{
+			snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0]?rightSideVar:*rightSideConst));
+		}
+		else
+		{
+			snprintf(buf, bufferLen, "%s", (rightSideVar[0]?rightSideVar:*rightSideConst));
+		}
+
+		if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			if (!isFirstRun)
+			{
+				voicePromptsInit();
+			}
+			if (prompt!=-1)
+			{
+				voicePromptsAppendPrompt(prompt);
+			}
+			else
+			{
+				if (leftSide != NULL)
+				{
+					voicePromptsAppendLanguageString((const char * const *)leftSide);
+				}
+
+				if (rightSideVar[0] !=0)
+				{
+					voicePromptsAppendString(rightSideVar);
+				}
+				else
+				{
+					voicePromptsAppendLanguageString((const char * const *)rightSideConst);
+				}
+			}
+
+			voicePromptsPlay();
 		}
 
 		buf[bufferLen - 1] = 0;
@@ -1491,6 +1550,7 @@ static void updateQuickMenuScreen(void)
 
 static void handleQuickMenuEvent(uiEvent_t *ev)
 {
+	bool isDrity = false;
 	displayLightTrigger();
 
 	if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
@@ -1618,6 +1678,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 #endif
 	else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 	{
+		isDrity = true;
 		switch(gMenusCurrentItemIndex)
 		{
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
@@ -1649,6 +1710,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
 	{
+		isDrity = true;
 		switch(gMenusCurrentItemIndex)
 		{
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
@@ -1681,16 +1743,21 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
+		isDrity = true;
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
 		menuQuickVFOExitStatus |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
+		isDrity = true;
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_VFO_SCREEN_QUICK_MENU_ITEMS);
 		menuQuickVFOExitStatus |= MENU_STATUS_LIST_TYPE;
 	}
 
-	updateQuickMenuScreen();
+	if (isDrity)
+	{
+		updateQuickMenuScreen(false);
+	}
 }
 
 bool uiVFOModeIsScanning(void)
