@@ -710,7 +710,14 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
 		{
-			voicePromptsPlay();
+			if (!voicePromptIsActive)
+			{
+				voicePromptsPlay();
+			}
+			else
+			{
+				voicePromptsTerminate();
+			}
 		}
 
 		uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
