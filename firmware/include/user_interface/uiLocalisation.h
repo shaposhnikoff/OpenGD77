@@ -167,6 +167,11 @@ typedef struct stringsTable
    const char *squelch_220;
    const char *squelch_UHF;
    const char *display_background_colour;
+   const char *openGD77;
+   const char *openGD77S;
+   const char *openDM1801;
+   const char *openRD5R;
+   const char *gitCommit;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

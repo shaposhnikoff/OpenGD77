@@ -162,7 +162,12 @@ const stringsTable_t finnishLanguage =
 .squelch_VHF			= "VHF K.Salpa",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 K.Salpa",// Maxlen 16 (with : + XX%)
 .squelch_UHF			= "VHF K.Salpa", // Maxlen 16 (with : + XX%)
-.display_background_colour = "Väri" // Maxlen 16 (with : + .colour_normal or .colour_invert)
+.display_background_colour = "Väri" , // Maxlen 16 (with : + .colour_normal or .colour_invert)
+.openGD77 				= "OpenGD77",// Do not translate
+.openGD77S 				= "OpenGD77S",// Do not translate
+.openDM1801 			= "OpenDM1801",// Do not translate
+.openRD5R 				= "OpenRD5R",// Do not translate
+.gitCommit				= "Git commit"
 };
 /********************************************************************
  *
