@@ -143,14 +143,20 @@ static void handleEvent(uiEvent_t *ev)
 {
 	displayLightTrigger();
 
-	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
+	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN) && gMenusEndIndex!=0)
 	{
-		menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
+//		menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
+		gMenusCurrentItemIndex++;
 		menuLastHeardExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
-		menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
+//		menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
+		gMenusCurrentItemIndex--;
+		if (gMenusCurrentItemIndex<0)
+		{
+			gMenusCurrentItemIndex=0;
+		}
 		menuLastHeardExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
