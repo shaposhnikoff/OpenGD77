@@ -718,15 +718,8 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			if (trxTalkGroupOrPcId != tg)
 			{
-				if ((tg>>24) & PC_CALL_FLAG)
-				{
-					menuAcceptPrivateCall(tg & 0xffffff);
-				}
-				else
-				{
-					trxTalkGroupOrPcId = tg;
-					nonVolatileSettings.overrideTG = trxTalkGroupOrPcId;
-				}
+				trxTalkGroupOrPcId = tg;
+				nonVolatileSettings.overrideTG = trxTalkGroupOrPcId;
 			}
 
 			currentChannelData->rxColor = trxGetDMRColourCode();// Set the CC to the current CC, which may have been determined by the CC finding algorithm in C6000.c
