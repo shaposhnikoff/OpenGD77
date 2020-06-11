@@ -135,6 +135,7 @@ void announcePowerLevel(void);
 void announceBatteryPercentage(void);
 void decreasePowerLevel(void);
 void increasePowerLevel(void);
+void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
 
 
 #endif

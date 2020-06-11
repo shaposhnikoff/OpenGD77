@@ -449,8 +449,6 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 	static const int bufferLen = 17;
 	char buffer[bufferLen];
 	int verticalPositionOffset = 0;
-	struct_codeplugContact_t contact;
-	int contactIndex;
 
 	// Only render the header, then wait for the next run
 	// Otherwise the screen could remain blank if TG and PC are == 0
@@ -562,26 +560,7 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 			{
 				if (nonVolatileSettings.overrideTG != 0)
 				{
-					if((trxTalkGroupOrPcId>>24) == TG_CALL_FLAG)
-					{
-						contactIndex = codeplugContactIndexByTGorPC((trxTalkGroupOrPcId & 0x00FFFFFF), CONTACT_CALLTYPE_TG, &contact);
-						if (contactIndex == 0) {
-							snprintf(nameBuf, bufferLen, "TG %d", (trxTalkGroupOrPcId & 0x00FFFFFF));
-						} else {
-							codeplugUtilConvertBufToString(contact.name, nameBuf, 16);
-						}
-					}
-					else
-					{
-						contactIndex = codeplugContactIndexByTGorPC((trxTalkGroupOrPcId & 0x00FFFFFF), CONTACT_CALLTYPE_PC, &contact);
-						if (contactIndex == 0) {
-							dmrIdDataStruct_t currentRec;
-							dmrIDLookup((trxTalkGroupOrPcId & 0x00FFFFFF), &currentRec);
-							strncpy(nameBuf, currentRec.text, bufferLen);
-						} else {
-							codeplugUtilConvertBufToString(contact.name, nameBuf, 16);
-						}
-					}
+					buildTgOrPCDisplayName(nameBuf,bufferLen);
 					nameBuf[bufferLen - 1] = 0;
 #if defined(PLATFORM_RD5R)
 					ucDrawRect(0, CONTACT_Y_POS + verticalPositionOffset, DISPLAY_SIZE_X, 11, true);

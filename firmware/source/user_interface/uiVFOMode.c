@@ -373,26 +373,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 			{
 				if (nonVolatileSettings.overrideTG != 0)
 				{
-					if((trxTalkGroupOrPcId >> 24) == TG_CALL_FLAG)
-					{
-						contactIndex = codeplugContactIndexByTGorPC((trxTalkGroupOrPcId & 0x00FFFFFF), CONTACT_CALLTYPE_TG, &contact);
-						if (contactIndex == 0) {
-							snprintf(buffer, bufferLen, "TG %d", (trxTalkGroupOrPcId & 0x00FFFFFF));
-						} else {
-							codeplugUtilConvertBufToString(contact.name, buffer, 16);
-						}
-					}
-					else
-					{
-						contactIndex = codeplugContactIndexByTGorPC((trxTalkGroupOrPcId & 0x00FFFFFF), CONTACT_CALLTYPE_PC, &contact);
-						if (contactIndex == 0) {
-							dmrIdDataStruct_t currentRec;
-							dmrIDLookup((trxTalkGroupOrPcId & 0x00FFFFFF),&currentRec);
-							strncpy(buffer, currentRec.text, bufferLen);
-						} else {
-							codeplugUtilConvertBufToString(contact.name, buffer, 16);
-						}
-					}
+					buildTgOrPCDisplayName(buffer,bufferLen);
 
 					if (trxTransmissionEnabled)
 					{

@@ -1579,3 +1579,52 @@ void announceBatteryPercentage(void)
 	voicePromptsAppendString(buf);
 	voicePromptsAppendPrompt(PROMPT_PERCENT);
 }
+
+void buildTgOrPCDisplayName(char *nameBuf, int bufferLen)
+{
+int contactIndex;
+struct_codeplugContact_t contact;
+uint32_t id = (trxTalkGroupOrPcId & 0x00FFFFFF);
+
+	if ((trxTalkGroupOrPcId >> 24) == TG_CALL_FLAG)
+	{
+		contactIndex = codeplugContactIndexByTGorPC(id, CONTACT_CALLTYPE_TG,	&contact);
+		if (contactIndex == 0)
+		{
+			snprintf(nameBuf, bufferLen, "TG %d",
+					(trxTalkGroupOrPcId & 0x00FFFFFF));
+		}
+		else
+		{
+			codeplugUtilConvertBufToString(contact.name, nameBuf, 16);
+		}
+	}
+	else
+	{
+		contactIndex = codeplugContactIndexByTGorPC(id, CONTACT_CALLTYPE_PC, &contact);
+		if (contactIndex == 0) {
+			dmrIdDataStruct_t currentRec;
+			if (dmrIDLookup(id, &currentRec))
+			{
+				strncpy(nameBuf, currentRec.text, bufferLen);
+			}
+			else
+			{
+				// check LastHeard for TA data.
+				LinkItem_t *item = lastheardFindInList(id);
+				if (item!=NULL && strlen(item->talkerAlias)!=0)
+				{
+					strncpy(nameBuf, item->talkerAlias, bufferLen);
+				}
+				else
+				{
+					snprintf(nameBuf, bufferLen, "ID:%d", id);
+				}
+			}
+		}
+		else
+		{
+			codeplugUtilConvertBufToString(contact.name, nameBuf, 16);
+		}
+	}
+}
