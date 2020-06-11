@@ -180,10 +180,12 @@ static void handleEvent(uiEvent_t *ev)
 	// Toggles LH simple/details view on SK2 press
 	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
-		displayLHDetails = true;//!displayLHDetails;
+		isDirty = true;
+		displayLHDetails = true;
 	}
-	else
+	if ((ev->events == BUTTON_EVENT) &&  !(ev->buttons&BUTTON_SK2))
 	{
+		isDirty = true;
 		displayLHDetails = false;
 	}
 
