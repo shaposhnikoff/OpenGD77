@@ -186,10 +186,12 @@ static void updateScreen(bool isFirstRun)
 
 static void handleEvent(uiEvent_t *ev)
 {
+	bool isDirty = false;
 	displayLightTrigger();
 
 	if (ev->events & FUNCTION_EVENT)
 	{
+		isDirty = true;
 		if (ev->function == DEC_BRIGHTNESS)
 		{
 			if (nonVolatileSettings.displayBacklightPercentage <= BACKLIGHT_PERCENTAGE_STEP)
@@ -236,16 +238,19 @@ static void handleEvent(uiEvent_t *ev)
 
 		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
 		{
+			isDirty = true;
 			menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
 			menuDisplayOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 		{
+			isDirty = true;
 			menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
 			menuDisplayOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 		{
+			isDirty = true;
 			switch(gMenusCurrentItemIndex)
 			{
 				case DISPLAY_MENU_BRIGHTNESS:
@@ -334,6 +339,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
 		{
+			isDirty = true;
 			switch(gMenusCurrentItemIndex)
 			{
 				case DISPLAY_MENU_BRIGHTNESS:
@@ -454,7 +460,10 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 	}
-	updateScreen(false);
+	if (isDirty)
+	{
+		updateScreen(false);
+	}
 }
 
 static void updateBacklightMode(uint8_t mode)

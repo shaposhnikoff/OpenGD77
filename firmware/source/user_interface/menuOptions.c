@@ -192,20 +192,24 @@ static void updateScreen(bool isFirstRun)
 
 static void handleEvent(uiEvent_t *ev)
 {
+	bool isDirty = false;
 	displayLightTrigger();
 
 	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
 	{
+		isDirty = true;
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_OPTIONS_MENU_ITEMS);
 		menuOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
+		isDirty = true;
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_OPTIONS_MENU_ITEMS);
 		menuOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
 	{
+		isDirty = true;
 		switch(gMenusCurrentItemIndex)
 		{
 			case OPTIONS_MENU_FACTORY_RESET:
@@ -284,7 +288,7 @@ static void handleEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
 	{
-
+		isDirty = true;
 		switch(gMenusCurrentItemIndex)
 		{
 			case OPTIONS_MENU_FACTORY_RESET:
@@ -379,5 +383,9 @@ static void handleEvent(uiEvent_t *ev)
 		menuSystemPopPreviousMenu();
 		return;
 	}
-	updateScreen(false);
+
+	if (isDirty)
+	{
+		updateScreen(false);
+	}
 }
