@@ -107,6 +107,7 @@ extern int nuisanceDelete[MAX_ZONE_SCAN_NUISANCE_CHANNELS];
 extern int nuisanceDeleteIndex;
 extern char freq_enter_digits[12];
 extern int freq_enter_idx;
+extern int numLastHeard;
 
 bool isQSODataAvailableForCurrentTalker(void);
 char *chomp(char *str);

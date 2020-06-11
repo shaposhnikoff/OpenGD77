@@ -570,6 +570,11 @@ bool lastHeardListUpdate(uint8_t *dmrDataBuffer, bool forceOnHotspot)
 					// Not in the list
 					item = LinkHead;// setup to traverse the list from the top.
 
+					if (numLastHeard<NUM_LASTHEARD_STORED)
+					{
+						numLastHeard++;
+					}
+
 					// need to use the last item in the list as the new item at the top of the list.
 					// find last item in the list
 					while(item->next != NULL)
