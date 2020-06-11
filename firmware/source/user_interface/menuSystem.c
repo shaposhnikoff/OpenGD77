@@ -221,7 +221,10 @@ void menuSystemCallCurrentMenuTick(uiEvent_t *ev)
 	menuStatus_t status;
 
 	status = menuFunctions[menuControlData.stack[menuControlData.stackPosition]](ev, false);
-	menuSystemCheckForFirstEntryAudible(status);
+	if (ev->hasEvent)
+	{
+		menuSystemCheckForFirstEntryAudible(status);
+	}
 }
 
 void displayLightTrigger(void)
