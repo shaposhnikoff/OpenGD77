@@ -80,6 +80,7 @@ typedef enum
 
 extern const int MAX_POWER_SETTING_NUM;
 extern const char *POWER_LEVELS[];
+extern const char *POWER_LEVEL_UNITS[];
 extern const char *DMR_FILTER_LEVELS[];
 extern const char *ANALOG_FILTER_LEVELS[];
 extern const int SCAN_SHORT_PAUSE_TIME;			//time to wait after carrier detected to allow time for full signal detection. (CTCSS or DMR)
@@ -106,6 +107,7 @@ extern int nuisanceDelete[MAX_ZONE_SCAN_NUISANCE_CHANNELS];
 extern int nuisanceDeleteIndex;
 extern char freq_enter_digits[12];
 extern int freq_enter_idx;
+extern int numLastHeard;
 
 bool isQSODataAvailableForCurrentTalker(void);
 char *chomp(char *str);
@@ -128,6 +130,12 @@ void printToneAndSquelch(void);
 void reset_freq_enter_digits(void);
 int read_freq_enter_digits(int startDigit, int endDigit);
 int getBatteryPercentage(void);
+void announceTG(void);
+void announcePowerLevel(void);
+void announceBatteryPercentage(void);
+void decreasePowerLevel(void);
+void increasePowerLevel(void);
+void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
 
 
 #endif

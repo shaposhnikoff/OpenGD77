@@ -23,6 +23,7 @@
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiUtilities.h>
 #include <user_interface/uiLocalisation.h>
+#include <functions/voicePrompts.h>
 
 
 #if defined(USE_SEGGER_RTT)
@@ -273,6 +274,7 @@ void mainTask(void *data)
 	lastheardInitList();
 	codeplugInitContactsCache();
 	dmrIDCacheInit();
+	voicePromptsCacheInit();
 
 	// Should be initialized before the splash screen, as we don't want melodies when VOX is enabled
 	voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);
@@ -705,10 +707,19 @@ void mainTask(void *data)
 			ev.hasEvent = keyOrButtonChanged || function_event;
 			ev.time = fw_millis();
 
+			/*
+			 * We probably can't terminate voice prompt playback in main, because some screens need to a follow-on playback if the prompt was playing when a button was pressed
+			 *
+			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT || voicePromptIsActive)   && (ev.keys.event & KEY_MOD_DOWN))
+			{
+				voicePromptsTerminate();
+			}
+			*/
+
 			menuSystemCallCurrentMenuTick(&ev);
 
 			// Beep sounds aren't allowed in these modes.
-			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
+			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT || voicePromptIsActive) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
 			{
 				if (melody_play != NULL)
 				{
@@ -800,6 +811,11 @@ void mainTask(void *data)
 				{
 					displayEnableBacklight(false);
 				}
+			}
+
+			if (voicePromptIsActive)
+			{
+				voicePromptsTick();
 			}
 			soundTickMelody();
 			speechSynthesisTick();

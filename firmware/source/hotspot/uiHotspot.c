@@ -669,7 +669,8 @@ static void updateScreen(uint8_t rxCommandState)
 
 			ucPrintCore(0, 32, buffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, false);
 
-			ucPrintCore(0, 32, (char *)POWER_LEVELS[hotspotPowerLevel], FONT_SIZE_3, TEXT_ALIGN_RIGHT, false);
+			sprintf(buffer,"%s%s",POWER_LEVELS[hotspotPowerLevel],POWER_LEVEL_UNITS[hotspotPowerLevel]);
+			ucPrintCore(0, 32, buffer, FONT_SIZE_3, TEXT_ALIGN_RIGHT, false);
 		}
 		val_before_dp = freq_rx / 100000;
 		val_after_dp = freq_rx - val_before_dp * 100000;

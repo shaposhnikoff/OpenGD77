@@ -35,23 +35,22 @@
 const stringsTable_t spanishLanguage =
 {
 .LANGUAGE_NAME 			= "Spanish", // MaxLen: 16 
-.language				= "Idioma", // MaxLen: 16
 .menu					= "Menú", // MaxLen: 16
 .credits				= "Créditos", // MaxLen: 16
 .zone					= "Zona", // MaxLen: 16
 .rssi					= "RSSI", // MaxLen: 16
 .battery				= "Batería", // MaxLen: 16
 .contacts				= "Contactos", // MaxLen: 16
-.firmware_info			= "Info Firmware", // MaxLen: 16
 .last_heard				= "Ult. escuchados", // MaxLen: 16
+.firmware_info			= "Info Firmware", // MaxLen: 16
 .options				= "Opciones", // MaxLen: 16
 .display_options		= "Opciones display", // MaxLen: 16
 .sound_options			= "Opciones sonido", // MaxLen: 16
 .channel_details		= "Detalles Canal", // MaxLen: 16
+.language				= "Idioma", // MaxLen: 16
 .new_contact			= "Nuevo contacto", // MaxLen: 16
-.new_channel			= "Nuevo canal", // MaxLen: 16, leave room for a space and four channel digits after
 .contact_list			= "Lista contactos", // MaxLen: 16
-.hotspot_mode			= "Modo Hotspot", // MaxLen: 16
+.hotspot_mode			= "Hotspot", // MaxLen: 16
 .contact_details		= "Detalles contacto", // MaxLen: 16
 .built					= "Compilado", // MaxLen: 16
 .zones					= "Zonas", // MaxLen: 16
@@ -147,6 +146,7 @@ const stringsTable_t spanishLanguage =
 .stop					= "Parar", // Maxlen 16 (with ':' + .scan_mode)
 .one_line				= "1 linea", // MaxLen 16 (with ':' + .contact)
 .two_lines				= "2 linea", // MaxLen 16 (with ':' + .contact)
+.new_channel			= "Nuevo canal", // MaxLen: 16, leave room for a space and four channel digits after
 .priority_order				= "Orden", // MaxLen 16 (with ':' + 'Cc/DB/TA')
 .dmr_beep				= "DMR beep", // MaxLen 16 (with ':' + .star/.stop/.both/.none)
 .start					= "Inicio", // MaxLen 16 (with ':' + .dmr_beep)
@@ -157,7 +157,17 @@ const stringsTable_t spanishLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
+.squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Color" , // Maxlen 16 (with : + .colour_normal or .colour_invert)
+.openGD77 				= "OpenGD77",// Do not translate
+.openGD77S 				= "OpenGD77S",// Do not translate
+.openDM1801 			= "OpenDM1801",// Do not translate
+.openRD5R 				= "OpenRD5R",// Do not translate
+.gitCommit				= "Git commit"
 };
 /********************************************************************
  *

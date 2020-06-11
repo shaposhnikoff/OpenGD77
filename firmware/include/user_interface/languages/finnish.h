@@ -35,19 +35,19 @@
 const stringsTable_t finnishLanguage =
 {
 .LANGUAGE_NAME 		= "Suomi",
-.language		= "Kieli",
 .menu			= "Menu",
 .credits		= "Kiitokset",
 .zone			= "Zone",
 .rssi			= "RSSI Signaali",
 .battery		= "Akun Tila",
 .contacts		= "Kontaktit",
-.firmware_info		= "Laiteohjelmisto",
 .last_heard		= "Viimeksi kuultu",
+.firmware_info		= "Laiteohjelmisto",
 .options		= "Yleis  Asetukset",
 .display_options	= "Näytön Asetukset",
 .sound_options		= "Ääni   Asetukset", 	// MaxLen: 16
 .channel_details	= "Kanava Asetukset",
+.language		= "Kieli",
 .new_contact		= "Uusi kontakti",
 .new_channel		= "Uusi kanava", 	// MaxLen: 16, leave room for a space and four channel digits after
 .contact_list		= "Kontakti lista",
@@ -118,8 +118,8 @@ const stringsTable_t finnishLanguage =
 .brightness		= "Kirkkaus", 		// MaxLen: 16 (with ':' + 0..100 + '%')
 .brightness_off		= "Min kirkkaus", 	// MaxLen: 16 (with ':' + 0..100 + '%')
 .contrast		= "Kontrasti", 		// MaxLen: 16 (with ':' + 12..30)
-.colour_invert		= "Väri: Käänteinen",
-.colour_normal		= "Väri: Normaali",
+.colour_invert		= "Käänteinen",
+.colour_normal		= "Normaali",
 .backlight_timeout	= "TaustValoAika", 	// MaxLen: 16 (with ':' + .no to 30s)
 .scan_delay		= "Skann. viive", 	// MaxLen: 16 (with ':' + 1..30 + 's')
 .yes___in_uppercase			= "KYLLÄ", 		// MaxLen: 8 (choice above green/red buttons)
@@ -157,8 +157,17 @@ const stringsTable_t finnishLanguage =
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Voice" // Maxlen 16 (with : + audio_prompt)
-
+.voice					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
+.squelch_VHF			= "VHF K.Salpa",// Maxlen 16 (with : + XX%)
+.squelch_220			= "220 K.Salpa",// Maxlen 16 (with : + XX%)
+.squelch_UHF			= "VHF K.Salpa", // Maxlen 16 (with : + XX%)
+.display_background_colour = "Väri" , // Maxlen 16 (with : + .colour_normal or .colour_invert)
+.openGD77 				= "OpenGD77",// Do not translate
+.openGD77S 				= "OpenGD77S",// Do not translate
+.openDM1801 			= "OpenDM1801",// Do not translate
+.openRD5R 				= "OpenRD5R",// Do not translate
+.gitCommit				= "Git commit"
 };
 /********************************************************************
  *

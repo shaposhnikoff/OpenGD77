@@ -19,7 +19,7 @@
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiLocalisation.h>
 
-static void updateScreen(void);
+static void updateScreen(bool isFirstRun);
 static void handleEvent(uiEvent_t *ev);
 
 static menuStatus_t menuDisplayListExitCode = MENU_STATUS_SUCCESS;
@@ -31,7 +31,14 @@ menuStatus_t menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
 		int currentMenuNumber = menuSystemGetCurrentMenuNumber();
 		gMenuCurrentMenuList = (menuItemNewData_t *)menusData[currentMenuNumber]->items;
 		gMenusEndIndex = menusData[currentMenuNumber]->numItems;
-		updateScreen();
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			voicePromptsInit();
+			voicePromptsAppendLanguageString(&currentLanguage->menu);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+		}
+		updateScreen(true);
+
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
 	else
@@ -46,7 +53,7 @@ menuStatus_t menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
 	return menuDisplayListExitCode;
 }
 
-static void updateScreen(void)
+static void updateScreen(bool isFirstRun)
 {
 	int mNum;
 
@@ -63,6 +70,15 @@ static void updateScreen(void)
 			{
 				char **menuName = (char **)((int)&currentLanguage->LANGUAGE_NAME + (gMenuCurrentMenuList[mNum].stringOffset * sizeof(char *)));
 				menuDisplayEntry(i, mNum, (const char *)*menuName);
+				if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE) && (i==0))
+				{
+					if (!isFirstRun)
+					{
+						voicePromptsInit();
+					}
+					voicePromptsAppendLanguageString((const char * const *)menuName);
+					voicePromptsPlay();
+				}
 			}
 		}
 	}
@@ -78,13 +94,13 @@ static void handleEvent(uiEvent_t *ev)
 	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 	{
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
-		updateScreen();
+		updateScreen(false);
 		menuDisplayListExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 	{
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
-		updateScreen();
+		updateScreen(false);
 		menuDisplayListExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))

@@ -1329,11 +1329,6 @@ void fw_hrc6000_task(void *data)
 			{
 				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
-					if (voicePromptIsActive)
-					{
-						voicePromptsTick();
-					}
-
 					if (melody_play==NULL)
 					{
 						taskENTER_CRITICAL();
@@ -1561,18 +1556,11 @@ void tick_HR_C6000(void)
 		else
 		{
 			// voice prompts take priority over incoming DMR audio
-			if (voicePromptIsActive)
+			if (!voicePromptIsActive && hasEncodedAudio)
 			{
-				voicePromptsTick();
-			}
-			else
-			{
-				if (hasEncodedAudio)
-				{
-					hasEncodedAudio=false;
-					codecDecode((uint8_t *)DMR_frame_buffer+0x0C,3);
-					soundTickRXBuffer();
-				}
+				hasEncodedAudio=false;
+				codecDecode((uint8_t *)DMR_frame_buffer+0x0C,3);
+				soundTickRXBuffer();
 			}
 		}
 

@@ -46,7 +46,7 @@ const int MAX_POWER_SETTING_NUM = 9;
 
 static const int DMRID_MEMORY_STORAGE_START = 0x30000;
 static const int DMRID_HEADER_LENGTH = 0x0C;
-__attribute__((section(".data.$RAM2"))) LinkItem_t callsList[NUM_LASTHEARD_STORED];
+__attribute__((section(".data.$RAM4"))) LinkItem_t callsList[NUM_LASTHEARD_STORED];
 LinkItem_t *LinkHead = callsList;
 int numLastHeard=0;
 int menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -56,7 +56,8 @@ const uint32_t RSSI_UPDATE_COUNTER_RELOAD = 100;
 uint32_t menuUtilityReceivedPcId 	= 0;// No current Private call awaiting acceptance
 uint32_t menuUtilityTgBeforePcMode 	= 0;// No TG saved, prior to a Private call being accepted.
 
-const char *POWER_LEVELS[]={ "50mW","250mW","500mW","750mW","1W","2W","3W","4W","5W","5W++"};
+const char *POWER_LEVELS[]={ "50","250","500","750","1","2","3","4","5","5"};
+const char *POWER_LEVEL_UNITS[]={ "mW","mW","mW","mW","W","W","W","W","W","W++"};
 const char *DMR_FILTER_LEVELS[]={"None","CC","CC,TS","CC,TS,TG","CC,TS,Ct","CC,TS,RxG"};
 const char *ANALOG_FILTER_LEVELS[]={"None","CTCSS|DCS"};
 
@@ -568,6 +569,11 @@ bool lastHeardListUpdate(uint8_t *dmrDataBuffer, bool forceOnHotspot)
 				{
 					// Not in the list
 					item = LinkHead;// setup to traverse the list from the top.
+
+					if (numLastHeard<NUM_LASTHEARD_STORED)
+					{
+						numLastHeard++;
+					}
 
 					// need to use the last item in the list as the new item at the top of the list.
 					// find last item in the list
@@ -1280,7 +1286,8 @@ void menuUtilityRenderHeader(void)
 		strcat(buffer," L");
 	}*/
 
-	ucPrintCentered(Y_OFFSET, (char *)POWER_LEVELS[nonVolatileSettings.txPowerLevel], FONT_SIZE_1);
+	sprintf(buffer,"%s%s",POWER_LEVELS[nonVolatileSettings.txPowerLevel],POWER_LEVEL_UNITS[nonVolatileSettings.txPowerLevel]);
+	ucPrintCentered(Y_OFFSET,buffer, FONT_SIZE_1);
 
 	if (settingsUsbMode == USB_MODE_HOTSPOT || trxGetMode() == RADIO_MODE_ANALOG)
 	{
@@ -1492,4 +1499,132 @@ int getBatteryPercentage(void)
 	}
 
 	return batteryPerentage;
+}
+
+void increasePowerLevel(void)
+{
+	bool wasPlaying = voicePromptIsActive;
+
+	nonVolatileSettings.txPowerLevel++;
+	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+
+	announcePowerLevel();
+
+	if (wasPlaying)
+	{
+		voicePromptsPlay();
+	}
+}
+
+void decreasePowerLevel(void)
+{
+	bool wasPlaying = voicePromptIsActive;
+
+	nonVolatileSettings.txPowerLevel--;
+	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+
+	announcePowerLevel();
+
+	if (wasPlaying)
+	{
+		voicePromptsPlay();
+	}
+}
+
+void announceTG(void)
+{
+	bool wasPlaying = voicePromptIsActive;
+	if (!wasPlaying)
+	{
+		voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+	}
+	voicePromptsInit();
+	voicePromptsAppendString(currentContactData.name);
+	if (wasPlaying)
+	{
+		voicePromptsPlay();
+	}
+}
+void announcePowerLevel(void)
+{
+	voicePromptsInit();
+	voicePromptsAppendString((char *)POWER_LEVELS[nonVolatileSettings.txPowerLevel]);
+	switch(nonVolatileSettings.txPowerLevel)
+	{
+		case 0://50mW
+		case 1://250mW
+		case 2://500mW
+		case 3://750mW
+			voicePromptsAppendPrompt(PROMPT_MILLIWATTS);
+			break;
+		case 4://1W
+			voicePromptsAppendPrompt(PROMPT_WATT);
+			break;
+		default:
+			voicePromptsAppendPrompt(PROMPT_WATTS);
+			break;
+	}
+	if (nonVolatileSettings.txPowerLevel == 9)
+	{
+		voicePromptsAppendPrompt(PROMPT_WATTS);// Hack to just saw and extra Watts when in 5W++ mode
+	}
+}
+
+void announceBatteryPercentage(void)
+{
+	char buf[8];
+	voicePromptsInit();
+	voicePromptsAppendLanguageString(&currentLanguage->battery);
+	itoa(getBatteryPercentage(),buf,10);
+	voicePromptsAppendString(buf);
+	voicePromptsAppendPrompt(PROMPT_PERCENT);
+}
+
+void buildTgOrPCDisplayName(char *nameBuf, int bufferLen)
+{
+int contactIndex;
+struct_codeplugContact_t contact;
+uint32_t id = (trxTalkGroupOrPcId & 0x00FFFFFF);
+
+	if ((trxTalkGroupOrPcId >> 24) == TG_CALL_FLAG)
+	{
+		contactIndex = codeplugContactIndexByTGorPC(id, CONTACT_CALLTYPE_TG,	&contact);
+		if (contactIndex == 0)
+		{
+			snprintf(nameBuf, bufferLen, "TG %d",
+					(trxTalkGroupOrPcId & 0x00FFFFFF));
+		}
+		else
+		{
+			codeplugUtilConvertBufToString(contact.name, nameBuf, 16);
+		}
+	}
+	else
+	{
+		contactIndex = codeplugContactIndexByTGorPC(id, CONTACT_CALLTYPE_PC, &contact);
+		if (contactIndex == 0) {
+			dmrIdDataStruct_t currentRec;
+			if (dmrIDLookup(id, &currentRec))
+			{
+				strncpy(nameBuf, currentRec.text, bufferLen);
+			}
+			else
+			{
+				// check LastHeard for TA data.
+				LinkItem_t *item = lastheardFindInList(id);
+				if (item!=NULL && strlen(item->talkerAlias)!=0)
+				{
+					strncpy(nameBuf, item->talkerAlias, bufferLen);
+				}
+				else
+				{
+					snprintf(nameBuf, bufferLen, "ID:%d", id);
+				}
+			}
+		}
+		else
+		{
+			codeplugUtilConvertBufToString(contact.name, nameBuf, 16);
+		}
+	}
 }

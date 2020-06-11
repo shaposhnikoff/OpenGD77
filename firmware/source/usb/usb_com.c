@@ -107,6 +107,7 @@ static void cpsHandleReadCommand(void)
 				memset(ambeBuf,0,32);// Clear the ambe output buffer
 				codecEncode((uint8_t *)ambeBuf,3);
 				memcpy(&usbComSendBuf[3],ambeBuf,length);// The ambe data is only 27 bytes long but the normal CPS request size is 32
+				memset((uint8_t *)&audioAndHotspotDataBuffer.rawBuffer[0],0x00,960);// clear the input wave buffer, in case the next transfer is not a complete AMBE frame. 960 bytes compresses to 27 bytes of AMBE
 				result = true;
 			}
 			break;
