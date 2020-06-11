@@ -39,6 +39,7 @@ menuStatus_t menuFirmwareInfoScreen(uiEvent_t *ev, bool isFirstRun)
 
 static void updateScreen(void)
 {
+#if !defined(PLATFORM_GD77S)
 	char buf[17];
 	char * const *radioModel;
 
@@ -91,6 +92,7 @@ static void updateScreen(void)
 
 	ucRender();
 	displayLightTrigger();
+#endif
 }
 
 
