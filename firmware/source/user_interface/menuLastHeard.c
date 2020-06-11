@@ -25,7 +25,7 @@ static bool displayLHDetails = false;
 static menuStatus_t menuLastHeardExitCode = MENU_STATUS_SUCCESS;
 
 static void handleEvent(uiEvent_t *ev);
-static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool invertColour);
+static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool itemIsSelected);
 
 menuStatus_t menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 {
@@ -186,15 +186,17 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (isDirty)
 	{
-		if (voicePromptIsActive)
+		bool voicePromptsWerePlaying = voicePromptIsActive;
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE && voicePromptIsActive)
 		{
 			voicePromptsTerminate();
 		}
-		menuLastHeardUpdateScreen(true, displayLHDetails);
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
-		{
 
-			voicePromptsPlay();
+		menuLastHeardUpdateScreen(true, displayLHDetails);// This will also setup the voice prompt
+
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE && voicePromptsWerePlaying)
+		{
+				voicePromptsPlay();
 		}
 	}
 	else
@@ -214,7 +216,7 @@ static void handleEvent(uiEvent_t *ev)
 	}
 }
 
-static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool invertColour)
+static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool itemIsSelected)
 {
 	char buffer[37]; // Max: TA 27 (in 7bit format) + ' [' + 6 (Maidenhead)  + ']' + NULL
 
@@ -225,19 +227,19 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 
 		// PC or TG
 		sprintf(buffer, "%s %u", (((TGorPC >> 24) == PC_CALL_FLAG) ? "PC" : "TG"), tg);
-		ucPrintCore(0, y, buffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, invertColour);
+		ucPrintCore(0, y, buffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, itemIsSelected);
 
 		// Time
 		snprintf(buffer, 5, "%d", diffTimeInMins);
 		buffer[5] = 0;
 
 #if defined(PLATFORM_RD5R)
-		ucPrintCore((DISPLAY_SIZE_X - (3 * 6)), y, "min", FONT_SIZE_1, TEXT_ALIGN_LEFT, invertColour);
+		ucPrintCore((DISPLAY_SIZE_X - (3 * 6)), y, "min", FONT_SIZE_1, TEXT_ALIGN_LEFT, itemIsSelected);
 #else
-		ucPrintCore((DISPLAY_SIZE_X - (3 * 6)), (y + 6), "min", FONT_SIZE_1, TEXT_ALIGN_LEFT, invertColour);
+		ucPrintCore((DISPLAY_SIZE_X - (3 * 6)), (y + 6), "min", FONT_SIZE_1, TEXT_ALIGN_LEFT, itemIsSelected);
 
 #endif
-		ucPrintCore((DISPLAY_SIZE_X - (strlen(buffer) * 8) - (3 * 6) - 1), y, buffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, invertColour);
+		ucPrintCore((DISPLAY_SIZE_X - (strlen(buffer) * 8) - (3 * 6) - 1), y, buffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, itemIsSelected);
 	}
 	else // search for callsign + first name
 	{
@@ -257,7 +259,7 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 					memcpy(buffer, text, cpos);
 					buffer[cpos] = 0;
 
-					ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, invertColour);
+					ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, itemIsSelected);
 				}
 				else // Nope, look for first name
 				{
@@ -281,7 +283,7 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 						snprintf(outputBuf, 16, "%s %s", chomp(buffer), chomp(nameBuf));
 						outputBuf[16] = 0;
 
-						ucPrintCore(0,y, chomp(outputBuf), FONT_SIZE_3,TEXT_ALIGN_CENTER, invertColour);
+						ucPrintCore(0,y, chomp(outputBuf), FONT_SIZE_3,TEXT_ALIGN_CENTER, itemIsSelected);
 					}
 					else
 					{
@@ -295,7 +297,7 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 						snprintf(outputBuf, 16, "%s %s", chomp(buffer), chomp(nameBuf));
 						outputBuf[16] = 0;
 
-						ucPrintCore(0,y, chomp(outputBuf), FONT_SIZE_3,TEXT_ALIGN_CENTER, invertColour);
+						ucPrintCore(0,y, chomp(outputBuf), FONT_SIZE_3,TEXT_ALIGN_CENTER, itemIsSelected);
 					}
 				}
 			}
@@ -305,7 +307,7 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 				memcpy(buffer, text, 16);
 				buffer[16] = 0;
 
-				ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, invertColour);
+				ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, itemIsSelected);
 			}
 		}
 		else // short callsign
@@ -313,11 +315,11 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 			memcpy(buffer, text, strlen(text));
 			buffer[strlen(text)] = 0;
 
-			ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, invertColour);
+			ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, itemIsSelected);
 		}
 
 
-		if (invertColour && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (itemIsSelected && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 		{
 			if (voicePromptIsActive)
 			{
@@ -325,6 +327,8 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 			}
 			voicePromptsInit();
 			voicePromptsAppendString(chomp(buffer));
+			voicePromptsAppendString("        ");// Add some blank sound at the end of the callsign, to allow time for follow-on scrolling
+
 		}
 
 	}
