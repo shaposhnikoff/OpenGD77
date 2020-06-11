@@ -36,6 +36,7 @@ menuStatus_t menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 		gMenusStartIndex = LinkHead->id;// reuse this global to store the ID of the first item in the list
 		displayLHDetails = false;
 		displayLightTrigger();
+		gMenusCurrentItemIndex = 0;
 		menuLastHeardUpdateScreen(true, displayLHDetails);
 		m = ev->time;
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
@@ -49,8 +50,10 @@ menuStatus_t menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 		{
 			displayLightTrigger();
 			gMenusStartIndex = LinkHead->id;
-			gMenusCurrentItemIndex = 0;
-			menuLastHeardUpdateScreen(true, displayLHDetails);
+			if (gMenusCurrentItemIndex == 0)
+			{
+				menuLastHeardUpdateScreen(true, displayLHDetails);
+			}
 		}
 
 		if (ev->hasEvent)
@@ -96,7 +99,7 @@ void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails)
 		item = item->next;
 	}
 
-	while((item != NULL) && (item->id != 0))
+	while((item != NULL) && (item->id != 0) && numDisplayed<4)
 	{
 		if (numDisplayed==0)
 		{
@@ -183,13 +186,14 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (isDirty)
 	{
+		if (voicePromptIsActive)
+		{
+			voicePromptsTerminate();
+		}
 		menuLastHeardUpdateScreen(true, displayLHDetails);
 		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 		{
-			if (voicePromptIsActive)
-			{
-				voicePromptsTerminate();
-			}
+
 			voicePromptsPlay();
 		}
 	}
@@ -312,11 +316,17 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 			ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, invertColour);
 		}
 
-		if (!voicePromptIsActive && invertColour && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+
+		if (invertColour && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 		{
+			if (voicePromptIsActive)
+			{
+				voicePromptsTerminate();
+			}
 			voicePromptsInit();
 			voicePromptsAppendString(chomp(buffer));
 		}
+
 	}
 }
 
