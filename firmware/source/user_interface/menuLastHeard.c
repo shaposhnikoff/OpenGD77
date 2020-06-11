@@ -23,6 +23,7 @@
 //static const int LAST_HEARD_NUM_LINES_ON_DISPLAY = 3;
 static bool displayLHDetails = false;
 static menuStatus_t menuLastHeardExitCode = MENU_STATUS_SUCCESS;
+uint32_t selectedID;
 
 static void handleEvent(uiEvent_t *ev);
 static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool itemIsSelected);
@@ -105,6 +106,7 @@ void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails)
 		{
 			invertColour = true;
 			ucFillRect(0, 16, 128, 16, false);
+			selectedID = item->id;
 		}
 		else
 		{
@@ -170,6 +172,7 @@ static void handleEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
+		setOverrideTGorPC(selectedID, true);
 		menuSystemPopAllAndDisplayRootMenu();
 		return;
 	}
