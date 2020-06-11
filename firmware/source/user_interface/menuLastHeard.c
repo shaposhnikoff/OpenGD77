@@ -138,12 +138,15 @@ void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails)
 
 static void handleEvent(uiEvent_t *ev)
 {
+	bool isDirty = false;
 	displayLightTrigger();
+
 
 	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{
 		if (gMenusCurrentItemIndex < (numLastHeard-1))
 		{
+			isDirty = true;
 			gMenusCurrentItemIndex++;
 			menuLastHeardExitCode |= MENU_STATUS_LIST_TYPE;
 		}
@@ -152,6 +155,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (gMenusCurrentItemIndex > 0)
 		{
+			isDirty = true;
 			gMenusCurrentItemIndex--;
 			menuLastHeardExitCode |= MENU_STATUS_LIST_TYPE;
 		}
@@ -177,7 +181,33 @@ static void handleEvent(uiEvent_t *ev)
 		displayLHDetails = false;
 	}
 
-	menuLastHeardUpdateScreen(true, displayLHDetails);
+	if (isDirty)
+	{
+		menuLastHeardUpdateScreen(true, displayLHDetails);
+		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			if (voicePromptIsActive)
+			{
+				voicePromptsTerminate();
+			}
+			voicePromptsPlay();
+		}
+	}
+	else
+	{
+		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+		{
+			if (!voicePromptIsActive)
+			{
+				voicePromptsPlay();
+			}
+			else
+			{
+				voicePromptsTerminate();
+			}
+			return;
+		}
+	}
 }
 
 static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool invertColour)
@@ -280,6 +310,12 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 			buffer[strlen(text)] = 0;
 
 			ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, invertColour);
+		}
+
+		if (!voicePromptIsActive && invertColour && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		{
+			voicePromptsInit();
+			voicePromptsAppendString(chomp(buffer));
 		}
 	}
 }
