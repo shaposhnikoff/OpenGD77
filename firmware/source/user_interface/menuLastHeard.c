@@ -183,7 +183,7 @@ static void handleEvent(uiEvent_t *ev)
 		isDirty = true;
 		displayLHDetails = true;
 	}
-	if ((ev->events == BUTTON_EVENT) &&  !(ev->buttons&BUTTON_SK2))
+	if (displayLHDetails && (ev->events == BUTTON_EVENT) &&  !(ev->buttons&BUTTON_SK2))
 	{
 		isDirty = true;
 		displayLHDetails = false;
