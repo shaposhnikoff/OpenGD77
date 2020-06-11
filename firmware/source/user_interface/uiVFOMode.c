@@ -332,8 +332,6 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 	static uint32_t blinkTime = 0;
 	static const int bufferLen = 17;
 	char buffer[bufferLen];
-	struct_codeplugContact_t contact;
-	int contactIndex;
 
 	// Only render the header, then wait for the next run
 	// Otherwise the screen could remain blank if TG and PC are == 0
