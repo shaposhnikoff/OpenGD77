@@ -178,7 +178,7 @@ static void handleEvent(uiEvent_t *ev)
 	}
 
 	// Toggles LH simple/details view on SK2 press
-	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
+	if (!displayLHDetails && BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		isDirty = true;
 		displayLHDetails = true;
@@ -224,29 +224,27 @@ static void handleEvent(uiEvent_t *ev)
 static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool itemIsSelected)
 {
 	char buffer[37]; // Max: TA 27 (in 7bit format) + ' [' + 6 (Maidenhead)  + ']' + NULL
+	char tg_Buffer[17];
+	char timeBuffer[17];
+	uint32_t tg = (TGorPC & 0xFFFFFF);
 
-	if (displayDetails)
+	// Do TG and Time stuff first as its always needed for the Voice prompts
+
+	snprintf(tg_Buffer, 17,"%s %u", (((TGorPC >> 24) == PC_CALL_FLAG) ? "PC" : "TG"), tg);// PC or TG
+	tg_Buffer[16] = 0;
+	snprintf(timeBuffer, 5, "%d", (((now - time) / 1000U) / 60U));// Time
+	timeBuffer[5] = 0;
+
+	if (itemIsSelected && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 	{
-		uint32_t diffTimeInMins = (((now - time) / 1000U) / 60U);
-		uint32_t tg = TGorPC & 0xFFFFFF;
-
-		// PC or TG
-		sprintf(buffer, "%s %u", (((TGorPC >> 24) == PC_CALL_FLAG) ? "PC" : "TG"), tg);
-		ucPrintCore(0, y, buffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, itemIsSelected);
-
-		// Time
-		snprintf(buffer, 5, "%d", diffTimeInMins);
-		buffer[5] = 0;
-
-#if defined(PLATFORM_RD5R)
-		ucPrintCore((DISPLAY_SIZE_X - (3 * 6)), y, "min", FONT_SIZE_1, TEXT_ALIGN_LEFT, itemIsSelected);
-#else
-		ucPrintCore((DISPLAY_SIZE_X - (3 * 6)), (y + 6), "min", FONT_SIZE_1, TEXT_ALIGN_LEFT, itemIsSelected);
-
-#endif
-		ucPrintCore((DISPLAY_SIZE_X - (strlen(buffer) * 8) - (3 * 6) - 1), y, buffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, itemIsSelected);
+		if (voicePromptIsActive)
+		{
+			voicePromptsTerminate();
+		}
+		voicePromptsInit();
 	}
-	else // search for callsign + first name
+
+	if (!displayDetails) // search for callsign + first name
 	{
 		if (strlen(text) >= 5)
 		{
@@ -323,19 +321,30 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 			ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, itemIsSelected);
 		}
 
-
 		if (itemIsSelected && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 		{
-			if (voicePromptIsActive)
-			{
-				voicePromptsTerminate();
-			}
-			voicePromptsInit();
 			voicePromptsAppendString(chomp(buffer));
-			voicePromptsAppendString("        ");// Add some blank sound at the end of the callsign, to allow time for follow-on scrolling
+			voicePromptsAppendString("  ");
 
+			snprintf(buffer,37,"%d ",tg);
+			voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+			voicePromptsAppendString(buffer);
+			voicePromptsAppendString(timeBuffer);
+			voicePromptsAppendPrompt(PROMPT_MINUTES);
+			voicePromptsAppendString("   ");// Add some blank sound at the end of the callsign, to allow time for follow-on scrolling
 		}
-
 	}
+	else
+	{
+		ucPrintCore(0, y, tg_Buffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, itemIsSelected);
+
+#if defined(PLATFORM_RD5R)
+		ucPrintCore((DISPLAY_SIZE_X - (3 * 6)), y, "min", FONT_SIZE_1, TEXT_ALIGN_LEFT, itemIsSelected);
+#else
+		ucPrintCore((DISPLAY_SIZE_X - (3 * 6)), (y + 6), "min", FONT_SIZE_1, TEXT_ALIGN_LEFT, itemIsSelected);
+#endif
+		ucPrintCore((DISPLAY_SIZE_X - (strlen(timeBuffer) * 8) - (3 * 6) - 1), y, timeBuffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, itemIsSelected);
+	}
+
 }
 
