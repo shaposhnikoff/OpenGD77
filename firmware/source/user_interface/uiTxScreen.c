@@ -314,7 +314,7 @@ static void handleEvent(uiEvent_t *ev)
 	if (trxGetMode() == RADIO_MODE_DIGITAL && BUTTONCHECK_DOWN(ev, BUTTON_SK1) && isShowingLastHeard==false && trxTransmissionEnabled==true)
 	{
 		isShowingLastHeard=true;
-		menuLastHeardUpdateScreen(false, false);
+		menuLastHeardUpdateScreen(false, false,false);
 	}
 	else
 	{

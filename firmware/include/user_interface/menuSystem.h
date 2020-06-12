@@ -129,7 +129,7 @@ void menuBatteryPushBackVoltage(int32_t voltage);
 
 void menuLockScreenPop(void);
 
-void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails);
+void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails, bool isFirstRun);
 
 void menuClearPrivateCall(void);
 void menuAcceptPrivateCall(int id);

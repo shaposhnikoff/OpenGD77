@@ -26,7 +26,7 @@ static menuStatus_t menuLastHeardExitCode = MENU_STATUS_SUCCESS;
 uint32_t selectedID;
 
 static void handleEvent(uiEvent_t *ev);
-static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool itemIsSelected);
+static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool itemIsSelected, bool isFirstRun);
 
 menuStatus_t menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 {
@@ -38,7 +38,8 @@ menuStatus_t menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 		displayLHDetails = false;
 		displayLightTrigger();
 		gMenusCurrentItemIndex = 0;
-		menuLastHeardUpdateScreen(true, displayLHDetails);
+
+		menuLastHeardUpdateScreen(true, displayLHDetails,true);
 		m = ev->time;
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
 	}
@@ -53,7 +54,7 @@ menuStatus_t menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 			gMenusStartIndex = LinkHead->id;
 			if (gMenusCurrentItemIndex == 0)
 			{
-				menuLastHeardUpdateScreen(true, displayLHDetails);
+				menuLastHeardUpdateScreen(true, displayLHDetails,false);
 			}
 		}
 
@@ -68,7 +69,7 @@ menuStatus_t menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 			if (displayLHDetails && ((ev->time - m) > (1000U * 60U)))
 			{
 				m = ev->time;
-				menuLastHeardUpdateScreen(true, true);
+				menuLastHeardUpdateScreen(true, true,false);
 			}
 		}
 
@@ -76,7 +77,7 @@ menuStatus_t menuLastHeard(uiEvent_t *ev, bool isFirstRun)
 	return menuLastHeardExitCode;
 }
 
-void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails)
+void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails, bool isFirstRun)
 {
 	dmrIdDataStruct_t foundRecord;
 	int numDisplayed = 0;
@@ -115,13 +116,13 @@ void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails)
 
 		if (dmrIDLookup(item->id, &foundRecord))
 		{
-			menuLastHeardDisplayTA(16 + (numDisplayed * MENU_ENTRY_HEIGHT), foundRecord.text, item->time, now, item->talkGroupOrPcId, 20, displayDetails,invertColour);
+			menuLastHeardDisplayTA(16 + (numDisplayed * MENU_ENTRY_HEIGHT), foundRecord.text, item->time, now, item->talkGroupOrPcId, 20, displayDetails,invertColour, isFirstRun);
 		}
 		else
 		{
 			if (item->talkerAlias[0] != 0x00)
 			{
-				menuLastHeardDisplayTA(16 + (numDisplayed * MENU_ENTRY_HEIGHT), item->talkerAlias, item->time, now, item->talkGroupOrPcId, 32, displayDetails,invertColour);
+				menuLastHeardDisplayTA(16 + (numDisplayed * MENU_ENTRY_HEIGHT), item->talkerAlias, item->time, now, item->talkGroupOrPcId, 32, displayDetails,invertColour, isFirstRun);
 			}
 			else
 			{
@@ -129,7 +130,7 @@ void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails)
 
 				snprintf(buffer, 17, "ID:%d", item->id);
 				buffer[16] = 0;
-				menuLastHeardDisplayTA(16 + (numDisplayed * MENU_ENTRY_HEIGHT), buffer, item->time, now, item->talkGroupOrPcId, 17, displayDetails,invertColour);
+				menuLastHeardDisplayTA(16 + (numDisplayed * MENU_ENTRY_HEIGHT), buffer, item->time, now, item->talkGroupOrPcId, 17, displayDetails,invertColour, isFirstRun);
 			}
 		}
 
@@ -197,7 +198,7 @@ static void handleEvent(uiEvent_t *ev)
 			voicePromptsTerminate();
 		}
 
-		menuLastHeardUpdateScreen(true, displayLHDetails);// This will also setup the voice prompt
+		menuLastHeardUpdateScreen(true, displayLHDetails,false);// This will also setup the voice prompt
 
 		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE && voicePromptsWerePlaying)
 		{
@@ -221,7 +222,7 @@ static void handleEvent(uiEvent_t *ev)
 	}
 }
 
-static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool itemIsSelected)
+static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_t now, uint32_t TGorPC, size_t maxLen, bool displayDetails,bool itemIsSelected, bool isFirstRun)
 {
 	char buffer[37]; // Max: TA 27 (in 7bit format) + ' [' + 6 (Maidenhead)  + ']' + NULL
 	char tg_Buffer[17];
@@ -238,11 +239,22 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 
 	if (itemIsSelected && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
 	{
+
 		if (voicePromptIsActive)
 		{
 			voicePromptsTerminate();
 		}
+
 		voicePromptsInit();
+		if (isFirstRun)
+		{
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendLanguageString(&currentLanguage->last_heard);
+			voicePromptsAppendLanguageString(&currentLanguage->menu);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+		}
 	}
 
 	if (!displayDetails) // search for callsign + first name
@@ -359,5 +371,9 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 		ucPrintCore((DISPLAY_SIZE_X - (strlen(timeBuffer) * 8) - (3 * 6) - 1), y, timeBuffer, FONT_SIZE_3, TEXT_ALIGN_LEFT, itemIsSelected);
 	}
 
+	if (isFirstRun)
+	{
+		voicePromptsPlay();
+	}
 }
 
