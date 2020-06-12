@@ -227,10 +227,11 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 	char tg_Buffer[17];
 	char timeBuffer[17];
 	uint32_t tg = (TGorPC & 0xFFFFFF);
+	bool isPC  = ((TGorPC >> 24) == PC_CALL_FLAG);
 
 	// Do TG and Time stuff first as its always needed for the Voice prompts
 
-	snprintf(tg_Buffer, 17,"%s %u", (((TGorPC >> 24) == PC_CALL_FLAG) ? "PC" : "TG"), tg);// PC or TG
+	snprintf(tg_Buffer, 17,"%s %u", (isPC ? "PC" : "TG"), tg);// PC or TG
 	tg_Buffer[16] = 0;
 	snprintf(timeBuffer, 5, "%d", (((now - time) / 1000U) / 60U));// Time
 	timeBuffer[5] = 0;
@@ -327,8 +328,20 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 			voicePromptsAppendString("  ");
 
 			snprintf(buffer,37,"%d ",tg);
-			voicePromptsAppendPrompt(PROMPT_TALKGROUP);
-			voicePromptsAppendString(buffer);
+			if (isPC)
+			{
+				voicePromptsAppendLanguageString(&currentLanguage->private_call);
+				if (tg != trxDMRID)
+				{
+					voicePromptsAppendString(buffer);
+				}
+			}
+			else
+			{
+				voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+				voicePromptsAppendString(buffer);
+			}
+
 			voicePromptsAppendString(timeBuffer);
 			voicePromptsAppendPrompt(PROMPT_MINUTES);
 			voicePromptsAppendString("   ");// Add some blank sound at the end of the callsign, to allow time for follow-on scrolling
