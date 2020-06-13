@@ -1352,19 +1352,19 @@ static void updateQuickMenuScreen(bool isFirstRun)
 					}
 					else
 					{
-						snprintf(rightSideVar, bufferLen, "%s", DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel]);
+						snprintf(rightSideVar, bufferLen, "%s", DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel-1]);
 					}
 
 				}
 				else
 				{
-					if (tmpQuickMenuDmrFilterLevel == 0)
+					if (tmpQuickMenuAnalogFilterLevel == 0)
 					{
 						rightSideConst = (char * const *)&currentLanguage->none;
 					}
 					else
 					{
-						snprintf(rightSideVar, bufferLen, "%s", ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel]);
+						snprintf(rightSideVar, bufferLen, "%s", ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel-1]);
 					}
 				}
 				break;

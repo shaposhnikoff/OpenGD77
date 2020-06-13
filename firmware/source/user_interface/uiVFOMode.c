@@ -1458,13 +1458,28 @@ static void updateQuickMenuScreen(bool isFirstRun)
 				break;
 			case VFO_SCREEN_QUICK_MENU_FILTER:
 				leftSide = (char * const *)&currentLanguage->filter;
-				if(trxGetMode() == RADIO_MODE_ANALOG)
+				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					snprintf(rightSideVar, bufferLen, "%s",  ((tmpQuickMenuAnalogFilterLevel == 0) ? currentLanguage->none : ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel]));
+					if (tmpQuickMenuDmrFilterLevel == 0)
+					{
+						rightSideConst = (char * const *)&currentLanguage->none;
+					}
+					else
+					{
+						snprintf(rightSideVar, bufferLen, "%s", DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel-1]);
+					}
+
 				}
 				else
 				{
-					snprintf(rightSideVar, bufferLen, "%s", ((tmpQuickMenuDmrFilterLevel == 0) ? currentLanguage->none : DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel]));
+					if (tmpQuickMenuAnalogFilterLevel == 0)
+					{
+						rightSideConst = (char * const *)&currentLanguage->none;
+					}
+					else
+					{
+						snprintf(rightSideVar, bufferLen, "%s", ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel-1]);
+					}
 				}
 				break;
 		    case VFO_SCREEN_QUICK_MENU_VFO_TO_NEW:

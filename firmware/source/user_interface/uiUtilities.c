@@ -58,8 +58,8 @@ uint32_t menuUtilityTgBeforePcMode 	= 0;// No TG saved, prior to a Private call 
 
 const char *POWER_LEVELS[]={ "50","250","500","750","1","2","3","4","5","5"};
 const char *POWER_LEVEL_UNITS[]={ "mW","mW","mW","mW","W","W","W","W","W","W++"};
-const char *DMR_FILTER_LEVELS[]={"None","CC","CC,TS","CC,TS,TG","CC,TS,Ct","CC,TS,RxG"};
-const char *ANALOG_FILTER_LEVELS[]={"None","CTCSS|DCS"};
+const char *DMR_FILTER_LEVELS[]={"CC","CC,TS","CC,TS,TG","CC,TS,Ct","CC,TS,RxG"};
+const char *ANALOG_FILTER_LEVELS[]={"CTCSS|DCS"};
 
 volatile uint32_t lastID=0;// This needs to be volatile as lastHeardClearLastID() is called from an ISR
 uint32_t lastTG=0;
