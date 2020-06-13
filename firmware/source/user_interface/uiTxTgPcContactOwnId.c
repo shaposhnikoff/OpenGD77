@@ -31,6 +31,7 @@ static struct_codeplugContact_t contact;
 static void updateCursor(void);
 static void updateScreen(bool inputModeHasChanged);
 static void handleEvent(uiEvent_t *ev);
+static void announceContactName(void);
 
 static const uint32_t CURSOR_UPDATE_TIMEOUT = 500;
 static const int NUM_PC_OR_TG_DIGITS = 8;
@@ -200,6 +201,18 @@ static int getNextContact(int curidx, int dir, struct_codeplugContact_t *contact
 	return idx;
 }
 
+static void announceContactName(void)
+{
+	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	{
+		char buf[17];
+		codeplugUtilConvertBufToString(contact.name, buf, 16);
+		voicePromptsInit();
+		voicePromptsAppendString(buf);
+		voicePromptsPlay();
+	}
+}
+
 static void handleEvent(uiEvent_t *ev)
 {
 	size_t sLen;
@@ -237,8 +250,6 @@ static void handleEvent(uiEvent_t *ev)
 						voicePromptsAppendString(digits);
 						break;
 				}
-
-
 				voicePromptsPlay();
 			}
 			else
@@ -339,26 +350,14 @@ static void handleEvent(uiEvent_t *ev)
 		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 		{
 			idx = getNextContact(pcIdx, 1, &contact);
-			{
-				char buf[17];
-				codeplugUtilConvertBufToString(contact.name, buf, 16);
-				voicePromptsInit();
-				voicePromptsAppendString(buf);
-				voicePromptsPlay();
-			}
+			announceContactName();
 		}
 		else
 		{
 			if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 			{
 				idx = getNextContact(pcIdx, -1, &contact);
-				{
-					char buf[17];
-					codeplugUtilConvertBufToString(contact.name, buf, 16);
-					voicePromptsInit();
-					voicePromptsAppendString(buf);
-					voicePromptsPlay();
-				}
+				announceContactName();
 			}
 		}
 		if (pcIdx != idx)
