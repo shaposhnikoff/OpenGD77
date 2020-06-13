@@ -138,6 +138,11 @@ static void updateScreen(bool inputModeHasChanged)
 					break;
 				case ENTRY_SELECT_CONTACT:
 					voicePromptsAppendPrompt(PROMPT_CONTACT);
+					{
+						char buf[17];
+						codeplugUtilConvertBufToString(contact.name, buf, 16);
+						voicePromptsAppendString(buf);
+					}
 					break;
 				case ENTRY_USER_DMR_ID:
 					voicePromptsAppendString("ID");
@@ -220,7 +225,12 @@ static void handleEvent(uiEvent_t *ev)
 						voicePromptsAppendString(digits);
 						break;
 					case ENTRY_SELECT_CONTACT:
-						//voicePromptsAppendPrompt(PROMPT_CONTACT);
+						voicePromptsAppendPrompt(PROMPT_CONTACT);
+						{
+							char buf[17];
+							codeplugUtilConvertBufToString(contact.name, buf, 16);
+							voicePromptsAppendString(buf);
+						}
 						break;
 					case ENTRY_USER_DMR_ID:
 						voicePromptsAppendString("ID");
@@ -329,12 +339,26 @@ static void handleEvent(uiEvent_t *ev)
 		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 		{
 			idx = getNextContact(pcIdx, 1, &contact);
+			{
+				char buf[17];
+				codeplugUtilConvertBufToString(contact.name, buf, 16);
+				voicePromptsInit();
+				voicePromptsAppendString(buf);
+				voicePromptsPlay();
+			}
 		}
 		else
 		{
 			if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 			{
 				idx = getNextContact(pcIdx, -1, &contact);
+				{
+					char buf[17];
+					codeplugUtilConvertBufToString(contact.name, buf, 16);
+					voicePromptsInit();
+					voicePromptsAppendString(buf);
+					voicePromptsPlay();
+				}
 			}
 		}
 		if (pcIdx != idx)
