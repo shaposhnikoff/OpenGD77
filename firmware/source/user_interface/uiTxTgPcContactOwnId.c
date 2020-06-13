@@ -202,6 +202,43 @@ static void handleEvent(uiEvent_t *ev)
 
 	displayLightTrigger();
 
+	if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE) && (ev->events & BUTTON_EVENT))
+	{
+		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+		{
+			if (!voicePromptIsActive)
+			{
+				voicePromptsInit();
+				switch(gMenusCurrentItemIndex)
+				{
+					case ENTRY_TG:
+						voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+						voicePromptsAppendString(digits);
+						break;
+					case ENTRY_PC:
+						voicePromptsAppendLanguageString(&currentLanguage->private_call);
+						voicePromptsAppendString(digits);
+						break;
+					case ENTRY_SELECT_CONTACT:
+						//voicePromptsAppendPrompt(PROMPT_CONTACT);
+						break;
+					case ENTRY_USER_DMR_ID:
+						voicePromptsAppendString("ID");
+						voicePromptsAppendString(digits);
+						break;
+				}
+
+
+				voicePromptsPlay();
+			}
+			else
+			{
+				voicePromptsTerminate();
+			}
+		}
+		return;
+	}
+
 	if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
 	{
 		menuSystemPopPreviousMenu();
