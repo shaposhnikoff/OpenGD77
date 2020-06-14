@@ -1637,7 +1637,7 @@ static void removeUnnecessaryZerosFromVoicePrompts(char *str)
 	}
 }
 
-static void announceVFOAndFrequency(bool announceImmediatly)
+static void announceVFOAndFrequency()
 {
 	char buffer[17];
 
@@ -1693,7 +1693,7 @@ void announceItem(voicePromptItem_t item, bool announceImmediatly)
 			}
 			else
 			{
-				announceVFOAndFrequency(false);
+				announceVFOAndFrequency();
 			}
 			break;
 		case PROMPT_SEQUENCE_ZONE:
