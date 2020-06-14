@@ -1721,7 +1721,7 @@ void announceItem(voicePromptItem_t item, bool announceImmediatly)
 		default:
 			break;
 	}
-	if (announceImmediatly || 	voicePromptWasPlaying)
+	if (announceImmediatly)// Disable follow-on as this will be implemented by having different voice prompt levels  || 	voicePromptWasPlaying)
 	{
 		voicePromptsPlay();
 	}
