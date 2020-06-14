@@ -161,7 +161,7 @@ typedef struct stringsTable
    const char *silent;
    const char *normal;
    const char *beep;
-   const char *voice;
+   const char *voice_prompt_level_1;
    const char *transmitTalkerAlias;
    const char *squelch_VHF;
    const char *squelch_220;
