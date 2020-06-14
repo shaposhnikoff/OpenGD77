@@ -32,7 +32,7 @@ menuStatus_t menuZoneList(uiEvent_t *ev, bool isFirstRun)
 	{
 		gMenusEndIndex = codeplugZonesGetCount();
 		gMenusCurrentItemIndex = nonVolatileSettings.currentZone;
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsInit();
 			voicePromptsAppendLanguageString(&currentLanguage->zone);
@@ -74,7 +74,7 @@ static void updateScreen(bool isFirstRun)
 
 		menuDisplayEntry(i, mNum, (char* )nameBuf);
 
-		if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE) && (i==0))
+		if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) && (i==0))
 		{
 			if (!isFirstRun)
 			{

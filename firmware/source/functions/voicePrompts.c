@@ -72,7 +72,7 @@ void voicePromptsCacheInit(void)
 	}
 
 	// is data is not loaded change prompt mode back to beep.
-	if (!voicePromptDataIsLoaded  && nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (!voicePromptDataIsLoaded  && nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_BEEP;
 	}
@@ -138,7 +138,7 @@ void voicePromptsTerminate(void)
 
 void voicePromptsInit(void)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		return;
 	}
@@ -164,7 +164,7 @@ static void voicePromptsTerminateAndInit(void)
 
 void voicePromptsAppendPrompt(uint8_t prompt)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		return;
 	}
@@ -182,7 +182,7 @@ void voicePromptsAppendPrompt(uint8_t prompt)
 
 void voicePromptsAppendString(char *promptString)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		return;
 	}
@@ -239,7 +239,7 @@ void voicePromptsAppendString(char *promptString)
 
 void voicePromptsAppendLanguageString(const char * const *languageStringAdd)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		return;
 	}
@@ -249,7 +249,7 @@ void voicePromptsAppendLanguageString(const char * const *languageStringAdd)
 
 void voicePromptsPlay(void)
 {
-	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		return;
 	}

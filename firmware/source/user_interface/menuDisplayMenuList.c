@@ -31,7 +31,7 @@ menuStatus_t menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
 		int currentMenuNumber = menuSystemGetCurrentMenuNumber();
 		gMenuCurrentMenuList = (menuItemNewData_t *)menusData[currentMenuNumber]->items;
 		gMenusEndIndex = menusData[currentMenuNumber]->numItems;
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsInit();
 			voicePromptsAppendLanguageString(&currentLanguage->menu);
@@ -70,7 +70,7 @@ static void updateScreen(bool isFirstRun)
 			{
 				char **menuName = (char **)((int)&currentLanguage->LANGUAGE_NAME + (gMenuCurrentMenuList[mNum].stringOffset * sizeof(char *)));
 				menuDisplayEntry(i, mNum, (const char *)*menuName);
-				if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE) && (i==0))
+				if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) && (i==0))
 				{
 					if (!isFirstRun)
 					{

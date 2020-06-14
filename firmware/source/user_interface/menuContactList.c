@@ -73,7 +73,7 @@ menuStatus_t menuContactList(uiEvent_t *ev, bool isFirstRun)
 			menuContactListOverrideState = 0;
 		}
 
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsInit();
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
@@ -122,7 +122,7 @@ static void updateScreen(bool isFirstRun)
 		{
 			ucPrintCentered((DISPLAY_SIZE_Y / 2), currentLanguage->empty_list, FONT_SIZE_3);
 
-			if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+			if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 			{
 				voicePromptsAppendLanguageString(&currentLanguage->empty_list);
 			}
@@ -140,7 +140,7 @@ static void updateScreen(bool isFirstRun)
 					menuDisplayEntry(i, mNum, (char*) nameBuf);
 				}
 
-				if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+				if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 				{
 					voicePromptsAppendString(nameBuf);
 				}
@@ -168,7 +168,7 @@ static void updateScreen(bool isFirstRun)
 		break;
 	}
 
-	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		voicePromptsPlay();
 	}
@@ -297,7 +297,7 @@ static void updateSubMenuScreen(void)
 	char * const *langTextConst = NULL;// initialise to please the compiler
 
 
-	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		voicePromptsInit();
 	}
@@ -332,7 +332,7 @@ static void updateSubMenuScreen(void)
 			strncpy(buf, " ", 17);
 		}
 
-		if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsAppendLanguageString((const char * const *)langTextConst);
 			voicePromptsPlay();

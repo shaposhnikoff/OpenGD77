@@ -157,7 +157,7 @@ const stringsTable_t catalanLanguage=
 .silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice_prompt_level_1					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_1	= "Voice L1", // Maxlen 16 (with : + audio_prompt)
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
@@ -167,7 +167,9 @@ const stringsTable_t catalanLanguage=
 .openGD77S 				= "OpenGD77S",// Do not translate
 .openDM1801 			= "OpenDM1801",// Do not translate
 .openRD5R 				= "OpenRD5R",// Do not translate
-.gitCommit				= "Git commit"
+.gitCommit				= "Git commit",
+.voice_prompt_level_2	= "Voice L2", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_3	= "Voice L3" // Maxlen 16 (with : + audio_prompt)
 };
 /********************************************************************
  *

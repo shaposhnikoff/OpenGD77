@@ -111,7 +111,7 @@ menuStatus_t menuBattery(uiEvent_t *ev, bool isFirstRun)
 		displayLightTrigger();
 		updateScreen(true);
 
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsInit();
 			voicePromptsAppendLanguageString(&currentLanguage->battery);

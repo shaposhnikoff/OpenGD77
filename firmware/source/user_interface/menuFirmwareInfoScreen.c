@@ -78,7 +78,7 @@ static void updateScreen(void)
 
 #endif
 
-	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		voicePromptsInit();
 		voicePromptsAppendLanguageString((const char * const *)radioModel);

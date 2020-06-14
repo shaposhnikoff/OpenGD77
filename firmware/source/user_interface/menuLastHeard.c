@@ -194,14 +194,14 @@ static void handleEvent(uiEvent_t *ev)
 	if (isDirty)
 	{
 		bool voicePromptsWerePlaying = voicePromptIsActive;
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE && voicePromptIsActive)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1 && voicePromptIsActive)
 		{
 			voicePromptsTerminate();
 		}
 
 		menuLastHeardUpdateScreen(true, displayLHDetails,false);// This will also setup the voice prompt
 
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE && voicePromptsWerePlaying)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1 && voicePromptsWerePlaying)
 		{
 				voicePromptsPlay();
 		}
@@ -238,7 +238,7 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 	snprintf(timeBuffer, 5, "%d", (((now - time) / 1000U) / 60U));// Time
 	timeBuffer[5] = 0;
 
-	if (itemIsSelected && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	if (itemIsSelected && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 
 		if (voicePromptIsActive)
@@ -335,7 +335,7 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 			ucPrintCore(0,y, chomp(buffer), FONT_SIZE_3,TEXT_ALIGN_CENTER, itemIsSelected);
 		}
 
-		if (itemIsSelected && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (itemIsSelected && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsAppendString(chomp(buffer));
 			voicePromptsAppendString("  ");

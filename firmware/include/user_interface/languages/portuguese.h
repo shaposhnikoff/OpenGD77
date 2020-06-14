@@ -167,7 +167,9 @@ const stringsTable_t portuguesLanguage =
 .openGD77S 				= "OpenGD77S",// Do not translate
 .openDM1801 			= "OpenDM1801",// Do not translate
 .openRD5R 				= "OpenRD5R",// Do not translate
-.gitCommit				= "Git commit"
+.gitCommit				= "Git commit",
+.voice_prompt_level_2	= "Voice L2", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_3	= "Voice L3" // Maxlen 16 (with : + audio_prompt)
 };
 /********************************************************************
  *

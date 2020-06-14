@@ -275,7 +275,7 @@ menuStatus_t menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 			namePos = 5;
 		}
 
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsInit();
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
@@ -503,7 +503,7 @@ static void updateScreen(bool isFirstRun)
 				strcpy(buf,rightSideVar);
 			}
 
-			if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+			if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 			{
 				if (!isFirstRun)
 				{

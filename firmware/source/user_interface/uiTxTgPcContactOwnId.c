@@ -126,7 +126,7 @@ static void updateScreen(bool inputModeHasChanged)
 
 	if (inputModeHasChanged)
 	{
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsInit();
 			switch(gMenusCurrentItemIndex)
@@ -203,7 +203,7 @@ static int getNextContact(int curidx, int dir, struct_codeplugContact_t *contact
 
 static void announceContactName(void)
 {
-	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
 		char buf[17];
 		codeplugUtilConvertBufToString(contact.name, buf, 16);
@@ -220,7 +220,7 @@ static void handleEvent(uiEvent_t *ev)
 
 	displayLightTrigger();
 
-	if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE) && (ev->events & BUTTON_EVENT))
+	if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) && (ev->events & BUTTON_EVENT))
 	{
 		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
 		{
@@ -432,7 +432,7 @@ static void handleEvent(uiEvent_t *ev)
 							char c[2] = {0, 0};
 							c[0] = keyval+'0';
 
-							if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+							if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 							{
 								voicePromptsInit();
 								voicePromptsAppendString(c);
