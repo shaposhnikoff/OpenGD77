@@ -24,7 +24,7 @@
 #include <functions/voicePrompts.h>
 
 static void handleEvent(uiEvent_t *ev);
-static void loadChannelData(bool useChannelDataInMemory);
+static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnnouncement);
 static void scanning(void);
 
 #if defined(PLATFORM_GD77S)
@@ -128,14 +128,14 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 
 		if (channelScreenChannelData.rxFreq != 0)
 		{
-			loadChannelData(true);
+			loadChannelData(true,false);
 		}
 		else
 		{
 			isTxRxFreqSwap = false;
 			codeplugZoneGetDataForNumber(nonVolatileSettings.currentZone, &currentZone);
 			codeplugUtilConvertBufToString(currentZone.name, currentZoneName, 16);// need to convert to zero terminated string
-			loadChannelData(false);
+			loadChannelData(false,false);
 		}
 
 #if defined(PLATFORM_GD77S)
@@ -158,6 +158,12 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 			scanState = SCAN_SCANNING;
 		}
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
+
+		// Need to do this last, as other things in the screen init, need to know whether the main screen has just changed
+		if (mainScreenChanged)
+		{
+			mainScreenChanged =false;
+		}
 
 		menuChannelExitStatus = MENU_STATUS_SUCCESS; // Due to Orange Quick Menu
 	}
@@ -354,7 +360,7 @@ static void setNextChannel(void)
 
 	lastHeardClearLastID();
 
-	loadChannelData(false);
+	loadChannelData(false,true);
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 	uiChannelModeUpdateScreen(0);
 
@@ -363,7 +369,7 @@ static void setNextChannel(void)
 	scanState = SCAN_SCANNING;
 }
 
-static void loadChannelData(bool useChannelDataInMemory)
+static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnnouncement)
 {
 	bool rxGroupValid;
 
@@ -437,10 +443,11 @@ static void loadChannelData(bool useChannelDataInMemory)
 			trxSetDMRTimeSlot ((nonVolatileSettings.tsManualOverride & 0x0F) -1);
 		}
 	}
-	if (!useChannelDataInMemory)
+	if (mainScreenChanged || loadVoicePromptAnnouncement)
 	{
 		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
 	}
+
 }
 
 void uiChannelModeUpdateScreen(int txTimeSecs)
@@ -827,7 +834,7 @@ static void handleEvent(uiEvent_t *ev)
 					if (codeplugChannelIndexIsValid(directChannelNumber))
 					{
 						nonVolatileSettings.currentChannelIndexInAllZone = directChannelNumber;
-						loadChannelData(false);
+						loadChannelData(false,true);
 
 					}
 					else
@@ -840,7 +847,7 @@ static void handleEvent(uiEvent_t *ev)
 					if (directChannelNumber-1<currentZone.NOT_IN_MEMORY_numChannelsInZone)
 					{
 						nonVolatileSettings.currentChannelIndexInZone = directChannelNumber-1;
-						loadChannelData(false);
+						loadChannelData(false,true);
 					}
 					else
 					{
@@ -898,6 +905,7 @@ static void handleEvent(uiEvent_t *ev)
 			else
 			{
 #if defined(PLATFORM_GD77)
+				mainScreenChanged = true;
 				menuSystemSetCurrentMenu(UI_VFO_MODE);
 #endif
 				return;
@@ -907,6 +915,7 @@ static void handleEvent(uiEvent_t *ev)
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_VFO_MR))
 		{
 			directChannelNumber = 0;
+			mainScreenChanged = true;
 			menuSystemSetCurrentMenu(UI_VFO_MODE);
 			return;
 		}
@@ -1198,7 +1207,7 @@ static void handleEvent(uiEvent_t *ev)
 
 				}
 			}
-			loadChannelData(false);
+			loadChannelData(false,true);
 			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 			uiChannelModeUpdateScreen(0);
 			SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1301,7 +1310,7 @@ static void handleUpKey(uiEvent_t *ev)
 		scanState = SCAN_SCANNING;
 	}
 
-	loadChannelData(false);
+	loadChannelData(false,true);
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 	uiChannelModeUpdateScreen(0);
 }

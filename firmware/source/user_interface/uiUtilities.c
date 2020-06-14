@@ -90,6 +90,7 @@ const int SCAN_SKIP_CHANNEL_INTERVAL = 1;		//This is actually just an implicit f
 voicePromptItem_t voicePromptSequenceState = PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ;
 struct_codeplugZone_t currentZone;
 static bool voicePromptWasPlaying;
+bool mainScreenChanged = true;//Used to indicate whether the voice prompts should be reloaded with the channel name or VFO freq
 
 
 bool isQSODataAvailableForCurrentTalker(void)
