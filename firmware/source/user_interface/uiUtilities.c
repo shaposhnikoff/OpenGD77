@@ -87,6 +87,10 @@ const int SCAN_DMR_SIMPLEX_MIN_INTERVAL=60;		//minimum time between steps when s
 const int SCAN_FREQ_CHANGE_SETTLING_INTERVAL = 1;//Time after frequency is changed before RSSI sampling starts
 const int SCAN_SKIP_CHANNEL_INTERVAL = 1;		//This is actually just an implicit flag value to indicate the channel should be skipped
 
+voicePromptItem_t voicePromptSequenceState = PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ;
+struct_codeplugZone_t currentZone;
+static bool voicePromptWasPlaying;
+
 
 bool isQSODataAvailableForCurrentTalker(void)
 {
@@ -1503,51 +1507,62 @@ int getBatteryPercentage(void)
 
 void increasePowerLevel(void)
 {
-	bool wasPlaying = voicePromptIsActive;
-
 	nonVolatileSettings.txPowerLevel++;
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
-
-	announcePowerLevel();
-
-	if (wasPlaying)
-	{
-		voicePromptsPlay();
-	}
+	announceItem(PROMPT_SEQUENCE_POWER,false);
 }
 
 void decreasePowerLevel(void)
 {
-	bool wasPlaying = voicePromptIsActive;
-
 	nonVolatileSettings.txPowerLevel--;
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
+	announceItem(PROMPT_SEQUENCE_POWER,false);
+}
 
-	announcePowerLevel();
-
-	if (wasPlaying)
+static void annouceRadioMode(void)
+{
+	if (!voicePromptWasPlaying)
 	{
-		voicePromptsPlay();
+		voicePromptsAppendLanguageString(&currentLanguage->mode);
+	}
+	voicePromptsAppendString( (trxGetMode() == RADIO_MODE_DIGITAL)?"DMR":"FM");
+}
+
+static void annouceZoneName(void)
+{
+	if (!voicePromptWasPlaying)
+	{
+		voicePromptsAppendLanguageString(&currentLanguage->zone);
+	}
+	voicePromptsAppendString(currentZone.name);
+}
+
+static void announceContactNameTgOrPc(void)
+{
+	if (nonVolatileSettings.overrideTG == 0)
+	{
+		voicePromptsAppendLanguageString(&currentLanguage->contact);
+		voicePromptsAppendString(currentContactData.name);
+	}
+	else
+	{
+		char buf[17];
+		itoa(nonVolatileSettings.overrideTG & 0xFFFFFF,buf, 10);
+		if ((nonVolatileSettings.overrideTG>>24)  == PC_CALL_FLAG)
+		{
+			voicePromptsAppendLanguageString(&currentLanguage->private_call);
+			voicePromptsAppendString("ID");
+		}
+		else
+		{
+			voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+		}
+		voicePromptsAppendString(buf);
 	}
 }
 
-void announceTG(void)
+static void announcePowerLevel(void)
 {
-	bool wasPlaying = voicePromptIsActive;
-	if (!wasPlaying)
-	{
-		voicePromptsAppendPrompt(PROMPT_TALKGROUP);
-	}
-	voicePromptsInit();
-	voicePromptsAppendString(currentContactData.name);
-	if (wasPlaying)
-	{
-		voicePromptsPlay();
-	}
-}
-void announcePowerLevel(void)
-{
-	voicePromptsInit();
 	voicePromptsAppendString((char *)POWER_LEVELS[nonVolatileSettings.txPowerLevel]);
 	switch(nonVolatileSettings.txPowerLevel)
 	{
@@ -1570,14 +1585,145 @@ void announcePowerLevel(void)
 	}
 }
 
-void announceBatteryPercentage(void)
+static void announceBatteryPercentage(void)
 {
 	char buf[8];
-	voicePromptsInit();
 	voicePromptsAppendLanguageString(&currentLanguage->battery);
 	itoa(getBatteryPercentage(),buf,10);
 	voicePromptsAppendString(buf);
 	voicePromptsAppendPrompt(PROMPT_PERCENT);
+}
+
+static void announceTS(void)
+{
+	char buf[8];
+	voicePromptsAppendPrompt(PROMPT_TIMESLOT);
+	itoa(trxGetDMRTimeSlot(),buf,10);
+	voicePromptsAppendString(buf);
+}
+
+static void announceCC(void)
+{
+	char buf[8];
+	voicePromptsAppendLanguageString(&currentLanguage->colour_code);
+	itoa(trxGetDMRColourCode(),buf,10);
+	voicePromptsAppendString(buf);
+}
+
+static void announceChannelName(void)
+{
+	char voiceBuf[17];
+	codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
+
+	if (!voicePromptWasPlaying)
+	{
+		voicePromptsAppendPrompt(PROMPT_CHANNEL);
+	}
+
+	voicePromptsAppendString(voiceBuf);
+}
+
+static void removeUnnecessaryZerosFromVoicePrompts(char *str)
+{
+	const int NUM_DECIMAL_PLACES = 1;
+	int len = strlen(str);
+	for(int i=len;i>2;i--)
+	{
+		if (str[i-1]!='0' || str[i-(NUM_DECIMAL_PLACES+1)]=='.')
+		{
+			str[i] = 0;
+			return;
+		}
+	}
+}
+
+static void announceVFOAndFrequency(bool announceImmediatly)
+{
+	char buffer[17];
+
+	voicePromptsAppendPrompt(PROMPT_VFO);
+	voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");
+	if (currentChannelData->txFreq!=currentChannelData->rxFreq)
+	{
+		voicePromptsAppendPrompt(PROMPT_RECEIVE);
+	}
+	int val_before_dp = currentChannelData->rxFreq / 100000;
+	int val_after_dp = currentChannelData->rxFreq - val_before_dp * 100000;
+	snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
+	removeUnnecessaryZerosFromVoicePrompts(buffer);
+	voicePromptsAppendString(buffer);
+
+	if (currentChannelData->txFreq!=currentChannelData->rxFreq)
+	{
+		voicePromptsAppendPrompt(PROMPT_TRANSMIT);
+		val_before_dp = currentChannelData->txFreq / 100000;
+		val_after_dp = currentChannelData->txFreq - val_before_dp * 100000;
+		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
+		removeUnnecessaryZerosFromVoicePrompts(buffer);
+		voicePromptsAppendString(buffer);
+	}
+}
+
+void playNextSettingSequence(void)
+{
+	voicePromptSequenceState++;
+
+	if (voicePromptSequenceState == NUM_PROMPT_SEQUENCES)
+	{
+		voicePromptSequenceState = 0;
+	}
+
+	announceItem(voicePromptSequenceState,false);
+}
+
+void announceItem(voicePromptItem_t item, bool announceImmediatly)
+{
+	voicePromptWasPlaying = voicePromptIsActive;
+
+	voicePromptSequenceState = item;
+
+	voicePromptsInit();
+
+	switch(voicePromptSequenceState)
+	{
+		case PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ:
+			if (menuSystemGetCurrentMenuNumber() == UI_CHANNEL_MODE)
+			{
+				announceChannelName();
+			}
+			else
+			{
+				announceVFOAndFrequency(false);
+			}
+			break;
+		case PROMPT_SEQUENCE_ZONE:
+			annouceZoneName();
+			break;
+		case PROMPT_SEQUENCE_MODE:
+			annouceRadioMode();
+			break;
+		case PROMPT_SEQUENCE_CONTACT_TG_OR_PC:
+			announceContactNameTgOrPc();
+			break;
+		case PROMPT_SEQUENCE_TS:
+			announceTS();
+			break;
+		case PROMPT_SEQUENCE_CC:
+			announceCC();
+			break;
+		case PROMPT_SEQUENCE_POWER:
+			announcePowerLevel();
+			break;
+		case PROMPT_SEQUENCE_BATTERY:
+			announceBatteryPercentage();
+			break;
+		default:
+			break;
+	}
+	if (announceImmediatly || 	voicePromptWasPlaying)
+	{
+		voicePromptsPlay();
+	}
 }
 
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen)
@@ -1591,8 +1737,7 @@ uint32_t id = (trxTalkGroupOrPcId & 0x00FFFFFF);
 		contactIndex = codeplugContactIndexByTGorPC(id, CONTACT_CALLTYPE_TG,	&contact);
 		if (contactIndex == 0)
 		{
-			snprintf(nameBuf, bufferLen, "TG %d",
-					(trxTalkGroupOrPcId & 0x00FFFFFF));
+			snprintf(nameBuf, bufferLen, "TG %d",(trxTalkGroupOrPcId & 0x00FFFFFF));
 		}
 		else
 		{

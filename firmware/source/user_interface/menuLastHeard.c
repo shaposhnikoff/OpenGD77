@@ -174,6 +174,7 @@ static void handleEvent(uiEvent_t *ev)
 	else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
 		setOverrideTGorPC(selectedID, true);
+		announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
 		menuSystemPopAllAndDisplayRootMenu();
 		return;
 	}

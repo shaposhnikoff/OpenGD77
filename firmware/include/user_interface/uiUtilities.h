@@ -29,8 +29,12 @@ extern const int CONTACT_Y_POS;
 extern const int FREQUENCY_X_POS;
 extern struct_codeplugRxGroup_t currentRxGroupData;
 extern struct_codeplugContact_t currentContactData;
+extern struct_codeplugZone_t currentZone;
 
 enum UI_CALL_STATE { NOT_IN_CALL=0, PRIVATE_CALL_ACCEPT, PRIVATE_CALL, PRIVATE_CALL_DECLINED };
+typedef enum { PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,  PROMPT_SEQUENCE_ZONE, PROMPT_SEQUENCE_MODE, PROMPT_SEQUENCE_CONTACT_TG_OR_PC, PROMPT_SEQUENCE_TS, PROMPT_SEQUENCE_CC, PROMPT_SEQUENCE_POWER,
+				PROMPT_SEQUENCE_BATTERY  , NUM_PROMPT_SEQUENCES} voicePromptItem_t;
+extern voicePromptItem_t voicePromptSequenceState;
 
 typedef struct dmrIdDataStruct
 {
@@ -130,12 +134,20 @@ void printToneAndSquelch(void);
 void reset_freq_enter_digits(void);
 int read_freq_enter_digits(int startDigit, int endDigit);
 int getBatteryPercentage(void);
+void decreasePowerLevel(void);
+void increasePowerLevel(void);
+/*
 void announceTG(void);
 void announcePowerLevel(void);
 void announceBatteryPercentage(void);
-void decreasePowerLevel(void);
-void increasePowerLevel(void);
-void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
 
+void announceVFOAndFrequency(bool announceImmediatly);
+void removeUnnecessaryZerosFromVoicePrompts(char *str);
+void announceChannelName(void);
+*/
+void announceItem(voicePromptItem_t item, bool announceImmediatly);
+void playNextSettingSequence(void);
+
+void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
 
 #endif

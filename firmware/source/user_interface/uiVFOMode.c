@@ -44,8 +44,6 @@ static void initScan(void);
 static void uiVFOUpdateTrxID(void );
 static void setCurrentFreqToScanLimits(void);
 static void handleUpKey(uiEvent_t *ev);
-static void announceVFOAndFrequency(bool announceImmediatly);
-static void removeUnnecessaryZerosFromVoicePrompts(char *str);
 
 static bool isDisplayingQSOData=false;
 static int tmpQuickMenuDmrFilterLevel;
@@ -104,7 +102,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		displayChannelSettings = false;
 
 		trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
-		announceVFOAndFrequency(false);
+		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
 
 		//Need to load the Rx group if specified even if TG is currently overridden as we may need it later when the left or right button is pressed
 		if (currentChannelData->rxGroupList != 0)
@@ -275,55 +273,6 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		}
 	}
 	return menuVFOExitStatus;
-}
-
-static void removeUnnecessaryZerosFromVoicePrompts(char *str)
-{
-	const int NUM_DECIMAL_PLACES = 1;
-	int len = strlen(str);
-	for(int i=len;i>2;i--)
-	{
-		if (str[i-1]!='0' || str[i-(NUM_DECIMAL_PLACES+1)]=='.')
-		{
-			str[i] = 0;
-			return;
-		}
-	}
-}
-
-static void announceVFOAndFrequency(bool announceImmediatly)
-{
-	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
-	{
-		char buffer[17];
-
-		voicePromptsInit();
-		voicePromptsAppendPrompt(PROMPT_VFO);
-		voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");
-		if (currentChannelData->txFreq!=currentChannelData->rxFreq)
-		{
-			voicePromptsAppendPrompt(PROMPT_RECEIVE);
-		}
-		int val_before_dp = currentChannelData->rxFreq / 100000;
-		int val_after_dp = currentChannelData->rxFreq - val_before_dp * 100000;
-		snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
-		removeUnnecessaryZerosFromVoicePrompts(buffer);
-		voicePromptsAppendString(buffer);
-
-		if (currentChannelData->txFreq!=currentChannelData->rxFreq)
-		{
-			voicePromptsAppendPrompt(PROMPT_TRANSMIT);
-			val_before_dp = currentChannelData->txFreq / 100000;
-			val_after_dp = currentChannelData->txFreq - val_before_dp * 100000;
-			snprintf(buffer, 17, "%d.%05d", val_before_dp, val_after_dp);
-			removeUnnecessaryZerosFromVoicePrompts(buffer);
-			voicePromptsAppendString(buffer);
-		}
-		if (announceImmediatly)
-		{
-			voicePromptsPlay();
-		}
-	}
 }
 
 void uiVFOModeUpdateScreen(int txTimeSecs)
@@ -641,7 +590,8 @@ static void update_frequency(int frequency, bool announceImmediately)
 			soundSetMelody(melody_ERROR_beep);
 		}
 	}
-	announceVFOAndFrequency(announceImmediately);
+	announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,announceImmediately);
+
 	menuClearPrivateCall();
 	SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);// For Baofeng RD-5R
 }
@@ -1097,7 +1047,7 @@ static void handleEvent(uiEvent_t *ev)
 						uiVFOUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
-						announceTG();
+						announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
 					}
 					else
 					{
@@ -1161,7 +1111,7 @@ static void handleEvent(uiEvent_t *ev)
 						uiVFOUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
-						announceTG();
+						announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
 					}
 					else
 					{
@@ -1364,7 +1314,7 @@ static void stepFrequency(int increment)
 			trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
 		}
 
-		announceVFOAndFrequency(false);
+		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
 
 	}
 	else
@@ -1564,18 +1514,18 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 				currentChannelData->txFreq = currentChannelData->rxFreq;
 				currentChannelData->rxFreq =  tmpFreq;
 				trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
-				announceVFOAndFrequency(false);
+				announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
 			}
 			break;
 			case VFO_SCREEN_QUICK_MENU_BOTH_TO_RX:
 				currentChannelData->txFreq = currentChannelData->rxFreq;
 				trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
-				announceVFOAndFrequency(false);
+				announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
 				break;
 			case VFO_SCREEN_QUICK_MENU_BOTH_TO_TX:
 				currentChannelData->rxFreq = currentChannelData->txFreq;
 				trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
-				announceVFOAndFrequency(false);
+				announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
 				break;
 			case VFO_SCREEN_QUICK_MENU_FILTER:
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
@@ -1823,7 +1773,7 @@ static void setCurrentFreqToScanLimits(void)
 		currentChannelData->rxFreq=nonVolatileSettings.vfoScanLow[nonVolatileSettings.currentVFONumber];
 		currentChannelData->txFreq=currentChannelData->rxFreq+offset;
 		trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
-		announceVFOAndFrequency(false);
+		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
 	}
 }
 

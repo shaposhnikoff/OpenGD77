@@ -292,6 +292,7 @@ static void handleEvent(uiEvent_t *ev)
 						codeplugSetUserDMRID(trxDMRID);
 					}
 				}
+				announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
 				menuSystemPopAllAndDisplayRootMenu();
 			}
 			else

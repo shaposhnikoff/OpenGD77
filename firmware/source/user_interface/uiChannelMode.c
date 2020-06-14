@@ -71,10 +71,9 @@ static void startScan(void);
 static void uiChannelUpdateTrxID(void);
 static void searchNextChannel(void);
 static void setNextChannel(void);
-static void announceChannelName(void);
 
 
-static struct_codeplugZone_t currentZone;
+
 static char currentZoneName[17];
 static int directChannelNumber=0;
 
@@ -438,7 +437,10 @@ static void loadChannelData(bool useChannelDataInMemory)
 			trxSetDMRTimeSlot ((nonVolatileSettings.tsManualOverride & 0x0F) -1);
 		}
 	}
-	announceChannelName();
+	if (!useChannelDataInMemory)
+	{
+		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
+	}
 }
 
 void uiChannelModeUpdateScreen(int txTimeSecs)
@@ -826,7 +828,6 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						nonVolatileSettings.currentChannelIndexInAllZone = directChannelNumber;
 						loadChannelData(false);
-						announceChannelName();
 
 					}
 					else
@@ -840,7 +841,6 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						nonVolatileSettings.currentChannelIndexInZone = directChannelNumber-1;
 						loadChannelData(false);
-						announceChannelName();
 					}
 					else
 					{
@@ -979,7 +979,7 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelUpdateTrxID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
-					announceTG();
+					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
 				}
 				else
 				{
@@ -1043,7 +1043,7 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelUpdateTrxID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
-					announceTG();
+					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
 				}
 				else
 				{
@@ -1707,26 +1707,7 @@ void uiChannelModeColdStart(void)
 {
 	channelScreenChannelData.rxFreq = 0;	// Force to re-read codeplug data (needed due to "All Channels" translation)
 }
-static void announceChannelName(void)
-{
-	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
-	{
-		char voiceBuf[17];
-		bool wasPlaying = voicePromptIsActive;
-		codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
-		voicePromptsInit();
-		if (!wasPlaying)
-		{
-			voicePromptsAppendPrompt(PROMPT_CHANNEL);
-		}
 
-		voicePromptsAppendString(voiceBuf);
-		if (wasPlaying)
-		{
-			voicePromptsPlay();
-		}
-	}
-}
 
 
 #if defined(PLATFORM_GD77S)
