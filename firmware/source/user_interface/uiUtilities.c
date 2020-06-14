@@ -1721,7 +1721,9 @@ void announceItem(voicePromptItem_t item, bool announceImmediatly)
 		default:
 			break;
 	}
-	if (announceImmediatly)// Disable follow-on as this will be implemented by having different voice prompt levels  || 	voicePromptWasPlaying)
+	// Follow-on when voicePromptWasPlaying is enabled on voice prompt level 2 and above
+	// Prompts are voiced immediately on voice prompt level 3
+	if (announceImmediatly || (voicePromptWasPlaying && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_2) || (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_3) )
 	{
 		voicePromptsPlay();
 	}
