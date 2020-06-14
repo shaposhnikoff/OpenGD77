@@ -46,8 +46,6 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 		settingsPrivateCallMuteMode = false;
 		isShowingLastHeard = false;
 
-		mainScreenChanged = true;// For voice prompts to force reload of VFO freq or channel name into the announcement buffer.
-
 		if ((currentChannelData->flag4 & 0x04) == 0x00 && (trxCheckFrequencyInAmateurBand(currentChannelData->txFreq) || nonVolatileSettings.txFreqLimited == false))
 		{
 			nextSecondPIT = PITCounter + PIT_COUNTS_PER_SECOND;

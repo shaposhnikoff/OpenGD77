@@ -361,6 +361,7 @@ static void handleSubMenuEvent(uiEvent_t *ev)
 			setOverrideTGorPC(contactListContactData.tgNumber, contactListContactData.callType == CONTACT_CALLTYPE_PC);
 			contactListContactIndex = 0;
 			announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
+			inhibitInitialVoicePrompt = true;
 			menuSystemPopAllAndDisplayRootMenu();
 			break;
 		case CONTACT_LIST_QUICK_MENU_EDIT:

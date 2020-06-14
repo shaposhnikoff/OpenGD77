@@ -160,9 +160,9 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
 
 		// Need to do this last, as other things in the screen init, need to know whether the main screen has just changed
-		if (mainScreenChanged)
+		if (inhibitInitialVoicePrompt)
 		{
-			mainScreenChanged =false;
+			inhibitInitialVoicePrompt = false;
 		}
 
 		menuChannelExitStatus = MENU_STATUS_SUCCESS; // Due to Orange Quick Menu
@@ -443,7 +443,7 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 			trxSetDMRTimeSlot ((nonVolatileSettings.tsManualOverride & 0x0F) -1);
 		}
 	}
-	if (mainScreenChanged || loadVoicePromptAnnouncement)
+	if (!inhibitInitialVoicePrompt || loadVoicePromptAnnouncement)
 	{
 		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
 	}
@@ -905,7 +905,6 @@ static void handleEvent(uiEvent_t *ev)
 			else
 			{
 #if defined(PLATFORM_GD77)
-				mainScreenChanged = true;
 				menuSystemSetCurrentMenu(UI_VFO_MODE);
 #endif
 				return;
@@ -915,7 +914,7 @@ static void handleEvent(uiEvent_t *ev)
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_VFO_MR))
 		{
 			directChannelNumber = 0;
-			mainScreenChanged = true;
+			inhibitInitialVoicePrompt = true;
 			menuSystemSetCurrentMenu(UI_VFO_MODE);
 			return;
 		}

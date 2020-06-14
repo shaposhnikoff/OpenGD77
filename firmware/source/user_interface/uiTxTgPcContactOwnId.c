@@ -293,6 +293,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 				}
 				announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
+				inhibitInitialVoicePrompt = true;
 				menuSystemPopAllAndDisplayRootMenu();
 			}
 			else

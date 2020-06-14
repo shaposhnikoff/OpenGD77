@@ -103,9 +103,9 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 		trxSetFrequency(currentChannelData->rxFreq,currentChannelData->txFreq,DMR_MODE_AUTO);
 
-		if (mainScreenChanged)
+		if (!inhibitInitialVoicePrompt)
 		{
-			mainScreenChanged = false;
+			inhibitInitialVoicePrompt = false;
 			announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
 		}
 
@@ -958,7 +958,6 @@ static void handleEvent(uiEvent_t *ev)
 					clearActiveDMRID();
 				}
 				menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;// Audible signal that the Channel screen has been selected
-				mainScreenChanged = true;
 				menuSystemSetCurrentMenu(UI_CHANNEL_MODE);
 #endif
 				return;
@@ -1581,7 +1580,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					nonVolatileSettings.tsManualOverride &= 0xF0;// Clear lower nibble value
 					nonVolatileSettings.tsManualOverride |= (trxGetDMRTimeSlot()+1);// Store manual TS override
 
-					mainScreenChanged = true;
+					inhibitInitialVoicePrompt = true;
 					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
 
 					soundSetMelody(melody_ACK_beep);
