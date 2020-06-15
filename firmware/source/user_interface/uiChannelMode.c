@@ -164,7 +164,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		{
 			inhibitInitialVoicePrompt = false;
 		}
-
+		menuControlData.stack[menuControlData.stackPosition+1]=0;// used to determine if this screen has just been loaded after Tx ended (in loadChannelData()))
 		menuChannelExitStatus = MENU_STATUS_SUCCESS; // Due to Orange Quick Menu
 	}
 	else
@@ -445,7 +445,7 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 	}
 	if (!inhibitInitialVoicePrompt || loadVoicePromptAnnouncement)
 	{
-		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,false);
+		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition+1]==UI_TX_SCREEN?(PROMPT_THRESHOLD_4):PROMPT_THRESHOLD_3);
 	}
 
 }
@@ -987,7 +987,7 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelUpdateTrxID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
-					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
+					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 				}
 				else
 				{
@@ -1051,7 +1051,7 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelUpdateTrxID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
-					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
+					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 				}
 				else
 				{

@@ -1510,14 +1510,14 @@ void increasePowerLevel(void)
 {
 	nonVolatileSettings.txPowerLevel++;
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
-	announceItem(PROMPT_SEQUENCE_POWER,false);
+	announceItem(PROMPT_SEQUENCE_POWER,PROMPT_THRESHOLD_3);
 }
 
 void decreasePowerLevel(void)
 {
 	nonVolatileSettings.txPowerLevel--;
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
-	announceItem(PROMPT_SEQUENCE_POWER,false);
+	announceItem(PROMPT_SEQUENCE_POWER,PROMPT_THRESHOLD_3);
 }
 
 static void annouceRadioMode(void)
@@ -1674,10 +1674,10 @@ void playNextSettingSequence(void)
 		voicePromptSequenceState = 0;
 	}
 
-	announceItem(voicePromptSequenceState,false);
+	announceItem(voicePromptSequenceState,PROMPT_THRESHOLD_3);
 }
 
-void announceItem(voicePromptItem_t item, bool announceImmediatly)
+void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouceThreshold)
 {
 	voicePromptWasPlaying = voicePromptIsActive;
 
@@ -1723,7 +1723,7 @@ void announceItem(voicePromptItem_t item, bool announceImmediatly)
 	}
 	// Follow-on when voicePromptWasPlaying is enabled on voice prompt level 2 and above
 	// Prompts are voiced immediately on voice prompt level 3
-	if (announceImmediatly || (voicePromptWasPlaying && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_2) || (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_3) )
+	if ((voicePromptWasPlaying && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_2) || (nonVolatileSettings.audioPromptMode >= immediateAnnouceThreshold) )
 	{
 		voicePromptsPlay();
 	}

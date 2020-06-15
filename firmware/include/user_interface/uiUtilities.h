@@ -146,7 +146,7 @@ void announceVFOAndFrequency(bool announceImmediatly);
 void removeUnnecessaryZerosFromVoicePrompts(char *str);
 void announceChannelName(void);
 */
-void announceItem(voicePromptItem_t item, bool announceImmediatly);
+void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouceThreshold);
 void playNextSettingSequence(void);
 
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);

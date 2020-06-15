@@ -292,7 +292,7 @@ static void handleEvent(uiEvent_t *ev)
 						codeplugSetUserDMRID(trxDMRID);
 					}
 				}
-				announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
+				announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 				inhibitInitialVoicePrompt = true;
 				menuSystemPopAllAndDisplayRootMenu();
 			}

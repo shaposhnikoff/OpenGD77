@@ -107,7 +107,7 @@ void menuAcceptPrivateCall(int id )
 	menuUtilityReceivedPcId = 0;
 
 	setOverrideTGorPC(uiPrivateCallLastID, true);
-	announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,false);
+	announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 
 }
 
