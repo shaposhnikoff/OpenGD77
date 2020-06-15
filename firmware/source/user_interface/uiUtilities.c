@@ -1679,6 +1679,10 @@ void playNextSettingSequence(void)
 
 void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouceThreshold)
 {
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+	{
+		return;
+	}
 	voicePromptWasPlaying = voicePromptIsActive;
 
 	voicePromptSequenceState = item;
