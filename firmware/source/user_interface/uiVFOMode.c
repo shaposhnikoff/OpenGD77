@@ -1152,6 +1152,7 @@ static void handleEvent(uiEvent_t *ev)
 				reset_freq_enter_digits();
 				soundSetMelody(melody_NACK_beep);
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+				announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,PROMPT_THRESHOLD_4);
 			}
 			else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 			{
