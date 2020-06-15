@@ -445,7 +445,7 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 	}
 	if (!inhibitInitialVoicePrompt || loadVoicePromptAnnouncement)
 	{
-		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition+1]==UI_TX_SCREEN?(PROMPT_THRESHOLD_4):PROMPT_THRESHOLD_3);
+		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition+1]==UI_TX_SCREEN?(PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY):PROMPT_THRESHOLD_3);
 	}
 
 }
@@ -898,6 +898,8 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			if(directChannelNumber > 0)
 			{
+				announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY);
+
 				directChannelNumber = 0;
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				uiChannelModeUpdateScreen(0);
@@ -1245,6 +1247,25 @@ static void handleEvent(uiEvent_t *ev)
 						}
 
 				}
+
+				if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+				{
+					if (directChannelNumber > 0)
+					{
+						voicePromptsInit();
+						if (directChannelNumber < 10)
+						{
+							voicePromptsAppendLanguageString(&currentLanguage->gotoChannel);
+						}
+						voicePromptsAppendPrompt(PROMPT_0 +  keyval);
+						voicePromptsPlay();
+					}
+					else
+					{
+						announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,PROMPT_THRESHOLD_3);
+					}
+				}
+
 
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				uiChannelModeUpdateScreen(0);

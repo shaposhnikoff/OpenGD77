@@ -106,7 +106,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		if (!inhibitInitialVoicePrompt)
 		{
 			inhibitInitialVoicePrompt = false;
-			announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition+1]==UI_TX_SCREEN?(PROMPT_THRESHOLD_4):PROMPT_THRESHOLD_3);
+			announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition+1]==UI_TX_SCREEN?(PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY):PROMPT_THRESHOLD_3);
 			menuControlData.stack[menuControlData.stackPosition+1]=0;
 		}
 
@@ -1152,7 +1152,7 @@ static void handleEvent(uiEvent_t *ev)
 				reset_freq_enter_digits();
 				soundSetMelody(melody_NACK_beep);
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-				announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,PROMPT_THRESHOLD_4);
+				announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY);
 			}
 			else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 			{
