@@ -1843,7 +1843,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 			if (chanNum != nonVolatileSettings.currentChannelIndexInAllZone)
 			{
 				nonVolatileSettings.currentChannelIndexInAllZone = chanNum;
-				loadChannelData(false);
+				loadChannelData(false,true);
 				updateDisplay = true;
 			}
 		}
@@ -1869,7 +1869,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 			if ((chanNum - 1) != nonVolatileSettings.currentChannelIndexInZone)
 			{
 				nonVolatileSettings.currentChannelIndexInZone = (chanNum - 1);
-				loadChannelData(false);
+				loadChannelData(false,true);
 				updateDisplay = true;
 			}
 		}
