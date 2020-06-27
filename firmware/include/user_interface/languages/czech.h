@@ -153,11 +153,11 @@ const stringsTable_t czechLanguage =
 .both					= "StartStop", // MaxLen 16 (with ':' + .dmr_beep)
 .vox_threshold                          = "VOX Práh", // MaxLen 16 (with ':' + .off or 1..30)
 .vox_tail                               = "VOX Dozvuk", // MaxLen 16 (with ':' + .n_a or '0.0s')
-.audio_prompt				= "VýzvaZvuk",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice)
+.audio_prompt				= "VýzvaZvuk",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice_prompt_level_1)
 .silent                                 = "Tichý", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normál", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Pípá", // Maxlen 16 (with : + audio_prompt)
-.voice					= "Hlas", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_1					= "Hlas", // Maxlen 16 (with : + audio_prompt)
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
@@ -167,7 +167,9 @@ const stringsTable_t czechLanguage =
 .openGD77S 				= "OpenGD77S",// Do not translate
 .openDM1801 			= "OpenDM1801",// Do not translate
 .openRD5R 				= "OpenRD5R",// Do not translate
-.gitCommit				= "Git commit"
+.gitCommit				= "Git commit",
+.voice_prompt_level_2	= "Voice L2", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_3	= "Voice L3" // Maxlen 16 (with : + audio_prompt)
 };
 /********************************************************************
  *

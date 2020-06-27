@@ -161,7 +161,7 @@ typedef struct stringsTable
    const char *silent;
    const char *normal;
    const char *beep;
-   const char *voice;
+   const char *voice_prompt_level_1;
    const char *transmitTalkerAlias;
    const char *squelch_VHF;
    const char *squelch_220;
@@ -172,6 +172,8 @@ typedef struct stringsTable
    const char *openDM1801;
    const char *openRD5R;
    const char *gitCommit;
+   const char *voice_prompt_level_2;
+   const char *voice_prompt_level_3;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

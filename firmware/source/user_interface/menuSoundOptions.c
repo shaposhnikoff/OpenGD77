@@ -38,7 +38,7 @@ menuStatus_t menuSoundOptions(uiEvent_t *ev, bool isFirstRun)
 		// Store original settings, used on cancel event.
 		memcpy(&originalNonVolatileSettings, &nonVolatileSettings, sizeof(settingsStruct_t));
 
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsInit();
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
@@ -158,7 +158,8 @@ static void updateScreen(bool isFirstRun)
 			case OPTIONS_AUDIO_PROMPT_MODE:
 				{
 					leftSide = (char * const *)&currentLanguage->audio_prompt;
-					const char * const *audioPromptOption[] = {&currentLanguage->silent, &currentLanguage->normal, &currentLanguage->beep, &currentLanguage->voice};
+					const char * const *audioPromptOption[] = {&currentLanguage->silent, &currentLanguage->normal, &currentLanguage->beep,
+							&currentLanguage->voice_prompt_level_1, &currentLanguage->voice_prompt_level_2, &currentLanguage->voice_prompt_level_3};
 					rightSideConst = (char * const *)audioPromptOption[nonVolatileSettings.audioPromptMode];
 				}
 				break;
@@ -166,7 +167,7 @@ static void updateScreen(bool isFirstRun)
 
 		snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0]?rightSideVar:*rightSideConst));
 
-		if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			if (!isFirstRun)
 			{

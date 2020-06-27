@@ -126,7 +126,7 @@ static void keyBeepHandler(uiEvent_t *ev, bool PTTToggledDown)
 	{
 		if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 		{
-			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_BEEP) || (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE))
+			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_BEEP) || (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
 			{
 				soundSetMelody(nextKeyBeepMelody);
 			}

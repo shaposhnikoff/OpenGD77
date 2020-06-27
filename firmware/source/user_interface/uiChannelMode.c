@@ -24,7 +24,7 @@
 #include <functions/voicePrompts.h>
 
 static void handleEvent(uiEvent_t *ev);
-static void loadChannelData(bool useChannelDataInMemory);
+static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnnouncement);
 static void scanning(void);
 
 #if defined(PLATFORM_GD77S)
@@ -71,10 +71,9 @@ static void startScan(void);
 static void uiChannelUpdateTrxID(void);
 static void searchNextChannel(void);
 static void setNextChannel(void);
-static void announceChannelName(void);
 
 
-static struct_codeplugZone_t currentZone;
+
 static char currentZoneName[17];
 static int directChannelNumber=0;
 
@@ -129,14 +128,14 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 
 		if (channelScreenChannelData.rxFreq != 0)
 		{
-			loadChannelData(true);
+			loadChannelData(true,false);
 		}
 		else
 		{
 			isTxRxFreqSwap = false;
 			codeplugZoneGetDataForNumber(nonVolatileSettings.currentZone, &currentZone);
 			codeplugUtilConvertBufToString(currentZone.name, currentZoneName, 16);// need to convert to zero terminated string
-			loadChannelData(false);
+			loadChannelData(false,false);
 		}
 
 #if defined(PLATFORM_GD77S)
@@ -160,6 +159,12 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		}
 		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
 
+		// Need to do this last, as other things in the screen init, need to know whether the main screen has just changed
+		if (inhibitInitialVoicePrompt)
+		{
+			inhibitInitialVoicePrompt = false;
+		}
+		menuControlData.stack[menuControlData.stackPosition+1]=0;// used to determine if this screen has just been loaded after Tx ended (in loadChannelData()))
 		menuChannelExitStatus = MENU_STATUS_SUCCESS; // Due to Orange Quick Menu
 	}
 	else
@@ -355,7 +360,7 @@ static void setNextChannel(void)
 
 	lastHeardClearLastID();
 
-	loadChannelData(false);
+	loadChannelData(false,true);
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 	uiChannelModeUpdateScreen(0);
 
@@ -364,7 +369,7 @@ static void setNextChannel(void)
 	scanState = SCAN_SCANNING;
 }
 
-static void loadChannelData(bool useChannelDataInMemory)
+static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnnouncement)
 {
 	bool rxGroupValid;
 
@@ -438,7 +443,11 @@ static void loadChannelData(bool useChannelDataInMemory)
 			trxSetDMRTimeSlot ((nonVolatileSettings.tsManualOverride & 0x0F) -1);
 		}
 	}
-	announceChannelName();
+	if (!inhibitInitialVoicePrompt || loadVoicePromptAnnouncement)
+	{
+		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition+1]==UI_TX_SCREEN?(PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY):PROMPT_THRESHOLD_3);
+	}
+
 }
 
 void uiChannelModeUpdateScreen(int txTimeSecs)
@@ -825,8 +834,7 @@ static void handleEvent(uiEvent_t *ev)
 					if (codeplugChannelIndexIsValid(directChannelNumber))
 					{
 						nonVolatileSettings.currentChannelIndexInAllZone = directChannelNumber;
-						loadChannelData(false);
-						announceChannelName();
+						loadChannelData(false,true);
 
 					}
 					else
@@ -839,8 +847,7 @@ static void handleEvent(uiEvent_t *ev)
 					if (directChannelNumber-1<currentZone.NOT_IN_MEMORY_numChannelsInZone)
 					{
 						nonVolatileSettings.currentChannelIndexInZone = directChannelNumber-1;
-						loadChannelData(false);
-						announceChannelName();
+						loadChannelData(false,true);
 					}
 					else
 					{
@@ -891,6 +898,8 @@ static void handleEvent(uiEvent_t *ev)
 			}
 			if(directChannelNumber > 0)
 			{
+				announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY);
+
 				directChannelNumber = 0;
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				uiChannelModeUpdateScreen(0);
@@ -907,6 +916,7 @@ static void handleEvent(uiEvent_t *ev)
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_VFO_MR))
 		{
 			directChannelNumber = 0;
+			inhibitInitialVoicePrompt = true;
 			menuSystemSetCurrentMenu(UI_VFO_MODE);
 			return;
 		}
@@ -979,7 +989,7 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelUpdateTrxID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
-					announceTG();
+					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 				}
 				else
 				{
@@ -1043,7 +1053,7 @@ static void handleEvent(uiEvent_t *ev)
 					uiChannelUpdateTrxID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					uiChannelModeUpdateScreen(0);
-					announceTG();
+					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 				}
 				else
 				{
@@ -1198,7 +1208,7 @@ static void handleEvent(uiEvent_t *ev)
 
 				}
 			}
-			loadChannelData(false);
+			loadChannelData(false,true);
 			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 			uiChannelModeUpdateScreen(0);
 			SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
@@ -1237,6 +1247,25 @@ static void handleEvent(uiEvent_t *ev)
 						}
 
 				}
+
+				if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+				{
+					if (directChannelNumber > 0)
+					{
+						voicePromptsInit();
+						if (directChannelNumber < 10)
+						{
+							voicePromptsAppendLanguageString(&currentLanguage->gotoChannel);
+						}
+						voicePromptsAppendPrompt(PROMPT_0 +  keyval);
+						voicePromptsPlay();
+					}
+					else
+					{
+						announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,PROMPT_THRESHOLD_3);
+					}
+				}
+
 
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				uiChannelModeUpdateScreen(0);
@@ -1301,7 +1330,7 @@ static void handleUpKey(uiEvent_t *ev)
 		scanState = SCAN_SCANNING;
 	}
 
-	loadChannelData(false);
+	loadChannelData(false,true);
 	menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 	uiChannelModeUpdateScreen(0);
 }
@@ -1352,19 +1381,19 @@ static void updateQuickMenuScreen(bool isFirstRun)
 					}
 					else
 					{
-						snprintf(rightSideVar, bufferLen, "%s", DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel]);
+						snprintf(rightSideVar, bufferLen, "%s", DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel-1]);
 					}
 
 				}
 				else
 				{
-					if (tmpQuickMenuDmrFilterLevel == 0)
+					if (tmpQuickMenuAnalogFilterLevel == 0)
 					{
 						rightSideConst = (char * const *)&currentLanguage->none;
 					}
 					else
 					{
-						snprintf(rightSideVar, bufferLen, "%s", ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel]);
+						snprintf(rightSideVar, bufferLen, "%s", ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel-1]);
 					}
 				}
 				break;
@@ -1380,7 +1409,7 @@ static void updateQuickMenuScreen(bool isFirstRun)
 			snprintf(buf, bufferLen, "%s", (rightSideVar[0]?rightSideVar:*rightSideConst));
 		}
 
-		if (i==0 && nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			if (!isFirstRun)
 			{
@@ -1529,7 +1558,7 @@ menuStatus_t uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 		tmpQuickMenuDmrFilterLevel = nonVolatileSettings.dmrFilterLevel;
 		tmpQuickMenuAnalogFilterLevel = nonVolatileSettings.analogFilterLevel;
 
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsInit();
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
@@ -1707,26 +1736,7 @@ void uiChannelModeColdStart(void)
 {
 	channelScreenChannelData.rxFreq = 0;	// Force to re-read codeplug data (needed due to "All Channels" translation)
 }
-static void announceChannelName(void)
-{
-	if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
-	{
-		char voiceBuf[17];
-		bool wasPlaying = voicePromptIsActive;
-		codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
-		voicePromptsInit();
-		if (!wasPlaying)
-		{
-			voicePromptsAppendPrompt(PROMPT_CHANNEL);
-		}
 
-		voicePromptsAppendString(voiceBuf);
-		if (wasPlaying)
-		{
-			voicePromptsPlay();
-		}
-	}
-}
 
 
 #if defined(PLATFORM_GD77S)
@@ -1833,7 +1843,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 			if (chanNum != nonVolatileSettings.currentChannelIndexInAllZone)
 			{
 				nonVolatileSettings.currentChannelIndexInAllZone = chanNum;
-				loadChannelData(false);
+				loadChannelData(false,true);
 				updateDisplay = true;
 			}
 		}
@@ -1859,7 +1869,7 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 			if ((chanNum - 1) != nonVolatileSettings.currentChannelIndexInZone)
 			{
 				nonVolatileSettings.currentChannelIndexInZone = (chanNum - 1);
-				loadChannelData(false);
+				loadChannelData(false,true);
 				updateDisplay = true;
 			}
 		}

@@ -31,6 +31,7 @@ static struct_codeplugContact_t contact;
 static void updateCursor(void);
 static void updateScreen(bool inputModeHasChanged);
 static void handleEvent(uiEvent_t *ev);
+static void announceContactName(void);
 
 static const uint32_t CURSOR_UPDATE_TIMEOUT = 500;
 static const int NUM_PC_OR_TG_DIGITS = 8;
@@ -125,7 +126,7 @@ static void updateScreen(bool inputModeHasChanged)
 
 	if (inputModeHasChanged)
 	{
-		if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 		{
 			voicePromptsInit();
 			switch(gMenusCurrentItemIndex)
@@ -138,6 +139,11 @@ static void updateScreen(bool inputModeHasChanged)
 					break;
 				case ENTRY_SELECT_CONTACT:
 					voicePromptsAppendPrompt(PROMPT_CONTACT);
+					{
+						char buf[17];
+						codeplugUtilConvertBufToString(contact.name, buf, 16);
+						voicePromptsAppendString(buf);
+					}
 					break;
 				case ENTRY_USER_DMR_ID:
 					voicePromptsAppendString("ID");
@@ -195,12 +201,64 @@ static int getNextContact(int curidx, int dir, struct_codeplugContact_t *contact
 	return idx;
 }
 
+static void announceContactName(void)
+{
+	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+	{
+		char buf[17];
+		codeplugUtilConvertBufToString(contact.name, buf, 16);
+		voicePromptsInit();
+		voicePromptsAppendString(buf);
+		voicePromptsPlay();
+	}
+}
+
 static void handleEvent(uiEvent_t *ev)
 {
 	size_t sLen;
 	uint32_t tmpID;
 
 	displayLightTrigger();
+
+	if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) && (ev->events & BUTTON_EVENT))
+	{
+		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+		{
+			if (!voicePromptIsActive)
+			{
+				voicePromptsInit();
+				switch(gMenusCurrentItemIndex)
+				{
+					case ENTRY_TG:
+						voicePromptsAppendPrompt(PROMPT_TALKGROUP);
+						voicePromptsAppendString(digits);
+						break;
+					case ENTRY_PC:
+						voicePromptsAppendLanguageString(&currentLanguage->private_call);
+						voicePromptsAppendString(digits);
+						break;
+					case ENTRY_SELECT_CONTACT:
+						voicePromptsAppendPrompt(PROMPT_CONTACT);
+						{
+							char buf[17];
+							codeplugUtilConvertBufToString(contact.name, buf, 16);
+							voicePromptsAppendString(buf);
+						}
+						break;
+					case ENTRY_USER_DMR_ID:
+						voicePromptsAppendString("ID");
+						voicePromptsAppendString(digits);
+						break;
+				}
+				voicePromptsPlay();
+			}
+			else
+			{
+				voicePromptsTerminate();
+			}
+		}
+		return;
+	}
 
 	if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
 	{
@@ -234,6 +292,8 @@ static void handleEvent(uiEvent_t *ev)
 						codeplugSetUserDMRID(trxDMRID);
 					}
 				}
+				announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
+				inhibitInitialVoicePrompt = true;
 				menuSystemPopAllAndDisplayRootMenu();
 			}
 			else
@@ -292,12 +352,14 @@ static void handleEvent(uiEvent_t *ev)
 		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
 		{
 			idx = getNextContact(pcIdx, 1, &contact);
+			announceContactName();
 		}
 		else
 		{
 			if (KEYCHECK_PRESS(ev->keys,KEY_UP))
 			{
 				idx = getNextContact(pcIdx, -1, &contact);
+				announceContactName();
 			}
 		}
 		if (pcIdx != idx)
@@ -371,7 +433,7 @@ static void handleEvent(uiEvent_t *ev)
 							char c[2] = {0, 0};
 							c[0] = keyval+'0';
 
-							if (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)
+							if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 							{
 								voicePromptsInit();
 								voicePromptsAppendString(c);
