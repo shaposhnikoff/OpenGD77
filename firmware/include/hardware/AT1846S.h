@@ -39,9 +39,6 @@ void AT1846SetBandwidth(void);
 void AT1846SetMode(void);
 void AT1846ReadVoxAndMicStrength(void);
 void AT1846ReadRSSIAndNoise(void);
-
-int AT1846WriteReg2byte(uint8_t addr, uint8_t reg, uint8_t val1, uint8_t val2);
-int AT1846ReadReg2byte(uint8_t addr, uint8_t reg, uint8_t* val1, uint8_t* val2);
 int AT1846SetClearReg2byteWithMask(uint8_t reg, uint8_t mask1, uint8_t mask2, uint8_t val1, uint8_t val2);
 
 

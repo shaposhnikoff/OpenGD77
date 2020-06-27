@@ -170,8 +170,7 @@ void mainTask(void *data)
 	USB_DeviceApplicationInit();
 
 	// Init I2C
-	init_I2C0a();
-	setup_I2C0();
+	I2C0aInit();
 	fw_init_common();
 	buttonsInit();
 	fw_init_LEDs();
