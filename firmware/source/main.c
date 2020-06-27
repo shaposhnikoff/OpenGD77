@@ -199,7 +199,7 @@ void mainTask(void *data)
 	setup_I2S();
 
 	// Init ADC
-	adc_init();
+	adcInit();
 
 	// Init DAC
 	dac_init();
@@ -240,7 +240,7 @@ void mainTask(void *data)
 
 	trx_measure_count = 0;
 
-	if (get_battery_voltage() < CUTOFF_VOLTAGE_UPPER_HYST)
+	if (adcGetBatteryVoltage() < CUTOFF_VOLTAGE_UPPER_HYST)
 	{
 		showLowBattery();
 #if !defined(PLATFORM_RD5R)
