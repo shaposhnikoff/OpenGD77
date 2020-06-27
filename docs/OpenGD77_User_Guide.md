@@ -107,6 +107,13 @@ For latest information and discussions, please refer to the development and comm
          - [FM mic](#fm-mic)   
          - [VOX threshold](#vox-threshold)   
          - [VOX Tail](#vox-tail)   
+         - [Prompt](#prompt)   
+            - [Silent](#silent)   
+            - [Normal](#normal)   
+            - [Beep](#beep)   
+            - [Voice](#voice)   
+            - [Voice L2](#voice-l2)   
+            - [Voice L2](#voice-l2)   
       - [Channel Details](#channel-details)   
          - [Mode](#mode)   
          - [Color Code](#color-code)   
@@ -136,6 +143,7 @@ For latest information and discussions, please refer to the development and comm
          - [Backup Before You Do Anything Else](#backup-before-you-do-anything-else)   
          - [Reading and Writing Your Codeplug](#reading-and-writing-your-codeplug)   
          - [Writing DMR IDs -- the User Database](#writing-dmr-ids-the-user-database)   
+         - [Loading Voice prompt files onto the radios](#loading-voice-prompt-files-onto-the-radios)   
 
 <!-- /MDTOC -->
 
@@ -473,7 +481,7 @@ If you want to transmit on the same TalkGroup as the currently received signal, 
 Press the **Hash (#)** key to enter an *ad hoc* TalkGroup number, followed by the **Green** key to confirm.
 If the entered TG is in the Digital Contacts the name of the TG Contact will be displayed, otherwise the number will be displayed e.g. TG 98977.
 
-To return to the previous TG prior to manually entering the TG, press either the **Left arrrow** or **Right arrow** keys. 
+To return to the previous TG prior to manually entering the TG, press either the **Left arrrow** or **Right arrow** keys.
 
 ![](media/talkgroup-entry.png)
 
@@ -975,6 +983,47 @@ Threshold value which controls the mic level which triggers the radio to transmi
 
 Controls the length of time after the operator stops speaking, before the transmission is ended.
 
+#### Prompt
+
+Controls the beep or voice prompt which is produced when keys are pressed.
+
+Options are
+
+##### Silent
+No beep or other sound is produced when keys or buttons are pressed.
+
+##### Normal
+A single pitch beep sound is played when any keys are pressed.
+
+##### Beep
+This option is the same as the "Normal" option with beeps played when keys are pressed, but the pitch of the beep changes, with the first item in any screen producing a higher pitch beep.
+For Example. The when changing channels, using the Up or Down arrow keys, when the first channel in the current zone is reached, the higher frequency beep pitch is played.
+Likewise when navigating the menus, when the first item in each menu is reached the higher pitch beep is played.
+
+##### Voice
+This mode can only be selected if voice prompt files have been installed into the radio using the OpenGD77CPS.
+
+When selected this option will immediately voice all menu items.
+Also if button SK1 is pressed details of the current Channel , Talkgroup or VFO frequency etc, are voiced.
+
+The prompt that is played in resonse to pressing button SK1, will depend on the last action peformed by the operator.
+For Example. If the last operation was selecting VFO mode, then presing SK1 will voice the current VFO name (A or B), and also the VFO frequency.
+If the last operation was to change the channel on the Channel screen, the channel name will be announced, letter my letter.
+If the last operation was to select a menu option, that menu option will be voiced.
+
+##### Voice L2
+This is voice prompt level 2, also known as (mode 2).
+The operation of this mode is currently almost identical to the normal voice mode, except if a button is pressed whilst the previous prompt is still playing, the effect of the button press will be immediatly voiced.
+
+For example, if button SK1 is pressed on the Channel screen to play the current channel name, and the Up or Down arrows are pressed to change channel, the newly selected channel name will immediately be played in response to the button press on Up or Down.
+
+##### Voice L2
+This is voice prompt level 3, also known as (mode 3).
+
+In this mode, the voice prompt is played immediately in response to any button press.
+
+
+
 ### Channel Details
 
 ![](media/channel-details.png)
@@ -1239,3 +1288,15 @@ Then, you can add in DMR IDs into the database by selecting an ID prefix. You ca
 *Note.* Because the memory size used for the DMR ID is limited, you can store more DMR IDs if you assign fewer characters per ID. Depending on actual information, the firmware can store approximately 13,000-26,000 IDs in its user database.
 
 As the firmware supports Talker Alias, you might find this sufficient -- the firmware will display callsign and name data retrieved from the DMR stream, for user IDs not stored in your radio's User Database.
+
+#### Loading Voice prompt files onto the radios
+On the OpenGD77 Support screen, press the Write Voice Prompts button and select the voice prompts file to be loaded into the radio
+
+Voice prompts for various languages, in various voices can be downloaded From
+https://github.com/LibreDMR/voice-prompts/releases/latest
+
+The file name of the prompt indicates the language e.g. "english", and sometimes the country or region e.g. UK or AU or USA followed by the name of the voice.
+Voice prompts are generated using the Amazon Polly speech synthesis system, where each voice is given an arbitary name.
+Some voices are male some are female.
+
+Once loaded into the radio, voice prompts need to be enabled in the Sound Options->Prompt->Voice option before they will be operational

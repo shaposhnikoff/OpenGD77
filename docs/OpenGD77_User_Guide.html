@@ -158,6 +158,15 @@
 <li><a href="#fm-mic">FM mic</a>   </li>
 <li><a href="#vox-threshold">VOX threshold</a>   </li>
 <li><a href="#vox-tail">VOX Tail</a>   </li>
+<li><a href="#prompt">Prompt</a>   <ul>
+<li><a href="#silent">Silent</a>   </li>
+<li><a href="#normal">Normal</a>   </li>
+<li><a href="#beep">Beep</a>   </li>
+<li><a href="#voice">Voice</a>   </li>
+<li><a href="#voice-l2">Voice L2</a>   </li>
+<li><a href="#voice-l2">Voice L2</a>   </li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#channel-details">Channel Details</a>   <ul>
@@ -195,6 +204,7 @@
 <li><a href="#backup-before-you-do-anything-else">Backup Before You Do Anything Else</a>   </li>
 <li><a href="#reading-and-writing-your-codeplug">Reading and Writing Your Codeplug</a>   </li>
 <li><a href="#writing-dmr-ids-the-user-database">Writing DMR IDs -- the User Database</a>   </li>
+<li><a href="#loading-voice-prompt-files-onto-the-radios">Loading Voice prompt files onto the radios</a>   </li>
 </ul>
 </li>
 </ul>
@@ -397,7 +407,7 @@ This TalkGroup will apply to both RX and TX.</p>
 <h4 id="manual-talkgroup-number-entry">Manual TalkGroup number entry</h4>
 <p>Press the <strong>Hash (#)</strong> key to enter an <em>ad hoc</em> TalkGroup number, followed by the <strong>Green</strong> key to confirm.
 If the entered TG is in the Digital Contacts the name of the TG Contact will be displayed, otherwise the number will be displayed e.g. TG 98977.</p>
-<p>To return to the previous TG prior to manually entering the TG, press either the <strong>Left arrrow</strong> or <strong>Right arrow</strong> keys. </p>
+<p>To return to the previous TG prior to manually entering the TG, press either the <strong>Left arrrow</strong> or <strong>Right arrow</strong> keys.</p>
 <p><img src="media/talkgroup-entry.png" alt></p>
 <p>When a TG has been manually entered, the display shows a 1 pixel box around the TG display area to indicate that this TG has been manually entered, even if the Contact / TG name is displayed rather than the TG nunber.</p>
 <p><img src="media/talkgroup-manually-entered.png" alt></p>
@@ -663,6 +673,32 @@ The units of this control in the baseband IC (AT1846S) are not known.</p>
 <p>Threshold value which controls the mic level which triggers the radio to transmit when VOX is enabled.</p>
 <h4 id="vox-tail">VOX Tail</h4>
 <p>Controls the length of time after the operator stops speaking, before the transmission is ended.</p>
+<h4 id="prompt">Prompt</h4>
+<p>Controls the beep or voice prompt which is produced when keys are pressed.</p>
+<p>Options are</p>
+<h5 id="silent">Silent</h5>
+<p>No beep or other sound is produced when keys or buttons are pressed.</p>
+<h5 id="normal">Normal</h5>
+<p>A single pitch beep sound is played when any keys are pressed.</p>
+<h5 id="beep">Beep</h5>
+<p>This option is the same as the &quot;Normal&quot; option with beeps played when keys are pressed, but the pitch of the beep changes, with the first item in any screen producing a higher pitch beep.
+For Example. The when changing channels, using the Up or Down arrow keys, when the first channel in the current zone is reached, the higher frequency beep pitch is played.
+Likewise when navigating the menus, when the first item in each menu is reached the higher pitch beep is played.</p>
+<h5 id="voice">Voice</h5>
+<p>This mode can only be selected if voice prompt files have been installed into the radio using the OpenGD77CPS.</p>
+<p>When selected this option will immediately voice all menu items.
+Also if button SK1 is pressed details of the current Channel , Talkgroup or VFO frequency etc, are voiced.</p>
+<p>The prompt that is played in resonse to pressing button SK1, will depend on the last action peformed by the operator.
+For Example. If the last operation was selecting VFO mode, then presing SK1 will voice the current VFO name (A or B), and also the VFO frequency.
+If the last operation was to change the channel on the Channel screen, the channel name will be announced, letter my letter.
+If the last operation was to select a menu option, that menu option will be voiced.</p>
+<h5 id="voice-l2">Voice L2</h5>
+<p>This is voice prompt level 2, also known as (mode 2).
+The operation of this mode is currently almost identical to the normal voice mode, except if a button is pressed whilst the previous prompt is still playing, the effect of the button press will be immediatly voiced.</p>
+<p>For example, if button SK1 is pressed on the Channel screen to play the current channel name, and the Up or Down arrows are pressed to change channel, the newly selected channel name will immediately be played in response to the button press on Up or Down.</p>
+<h5 id="voice-l2">Voice L2</h5>
+<p>This is voice prompt level 3, also known as (mode 3).</p>
+<p>In this mode, the voice prompt is played immediately in response to any button press.</p>
 <h3 id="channel-details">Channel Details</h3>
 <p><img src="media/channel-details.png" alt></p>
 <h4 id="mode">Mode</h4>
@@ -814,6 +850,14 @@ The calibration data store in the Flash chip (At address 0x8f000) can be backed 
 <p><img src="media/cps-dmr-ids.png" alt></p>
 <p><em>Note.</em> Because the memory size used for the DMR ID is limited, you can store more DMR IDs if you assign fewer characters per ID. Depending on actual information, the firmware can store approximately 13,000-26,000 IDs in its user database.</p>
 <p>As the firmware supports Talker Alias, you might find this sufficient -- the firmware will display callsign and name data retrieved from the DMR stream, for user IDs not stored in your radio&apos;s User Database.</p>
+<h4 id="loading-voice-prompt-files-onto-the-radios">Loading Voice prompt files onto the radios</h4>
+<p>On the OpenGD77 Support screen, press the Write Voice Prompts button and select the voice prompts file to be loaded into the radio</p>
+<p>Voice prompts for various languages, in various voices can be downloaded From
+<a href="https://github.com/LibreDMR/voice-prompts/releases/latest">https://github.com/LibreDMR/voice-prompts/releases/latest</a></p>
+<p>The file name of the prompt indicates the language e.g. &quot;english&quot;, and sometimes the country or region e.g. UK or AU or USA followed by the name of the voice.
+Voice prompts are generated using the Amazon Polly speech synthesis system, where each voice is given an arbitary name.
+Some voices are male some are female.</p>
+<p>Once loaded into the radio, voice prompts need to be enabled in the Sound Options-&gt;Prompt-&gt;Voice option before they will be operational</p>
 </article></div><div style="background-color: #b4b2b2;width: 50px;height:50px;line-height: 50px;text-align: center;position: fixed;bottom: 10px;right: 10px;padding-top:5px;" onclick="document.documentElement.scrollTop = document.body.scrollTop =0;">
   <svg t="1533629773982" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1035" xlink="http://www.w3.org/1999/xlink" width="40" height="40"><defs><style type="text/css">@font-face { font-family: uc-nexus-iconfont; src: url("chrome-extension://pogijhnlcfmcppgimcaccdkmbedjkmhi/res/font_9qmmi8b8jsxxbt9.woff") format("woff"), url("chrome-extension://pogijhnlcfmcppgimcaccdkmbedjkmhi/res/font_9qmmi8b8jsxxbt9.ttf") format("truetype"); }
   </style></defs><path d="M536.255427 195.182354c-7.804756-7.804756-17.966187-11.615549-28.311813-11.615549-9.43693 0-18.874883 3.449565-26.496467 10.163477-2.360767 1.452071-4.356214 3.267417-6.352685 5.262864L218.47792 455.611735c-15.607466 15.60542-15.607466 40.834011 0 56.43943 15.607466 15.607466 41.558511 15.607466 57.167001 0l193.46013-192.733583 0 600.526219c0 22.1423 17.787108 39.927361 39.927361 39.927361 22.140253 0 39.927361-17.785062 39.927361-39.927361L548.959773 319.317583 737.15704 508.422522c15.607466 15.607466 40.469714 15.607466 56.078203 0 15.607466-15.607466 15.425318-40.834011-0.182149-56.441477L536.255427 195.182354 536.255427 195.182354z" p-id="1036" fill="#333"/><path d="M101.784174 143.097092l816.674071 0c22.140253 0 39.925315-17.785062 39.925315-39.927361 0-22.140253-17.784038-39.925315-39.925315-39.925315L101.784174 63.244416c-22.140253 0-39.927361 17.785062-39.927361 39.925315C61.856813 125.31203 79.643921 143.097092 101.784174 143.097092L101.784174 143.097092z" p-id="1037" fill="#333"/></svg>
