@@ -67,6 +67,8 @@ For latest information and discussions, please refer to the development and comm
       - [Lock screen](#lock-screen)   
       - [Text entry](#text-entry)   
    - [The control keys and buttons](#the-control-keys-and-buttons)   
+      - [GD-77](#gd-77)   
+      - [Baofeng RD-5R](#baofeng-rd-5r)   
    - [The Menu System](#the-menu-system)   
    - [Main Menu](#main-menu)   
       - [Zone](#zone)   
@@ -702,7 +704,12 @@ Press **Left** and **Right** to move the cursor. Press **Function-Left** as back
 
 ## The control keys and buttons
 
+### GD-77
 ![](media/RadioButtonsHSs.jpg)
+
+### Baofeng RD-5R
+
+![](media/OpenRD5R_controlkeys.jpg)
 
 ## The Menu System
 
