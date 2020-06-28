@@ -361,10 +361,11 @@ int read_SPI_page_reg_bytearray_SPI1(uint8_t page, uint8_t reg, volatile uint8_t
 	//SPI1ClearBuffers();
 	SPI_masterSendBuffer_SPI1[0]=page | 0x80;
 	SPI_masterSendBuffer_SPI1[1]=reg;
+	/*
 	for (int i=0; i<length; i++)
 	{
 		SPI_masterSendBuffer_SPI1[i+2]=0xFF;
-	}
+	}*/
 
     /*Start master transfer*/
     masterXfer.txData = SPI_masterSendBuffer_SPI1;
