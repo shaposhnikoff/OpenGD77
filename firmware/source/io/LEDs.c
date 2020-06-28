@@ -15,11 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
 #include <LEDs.h>
 
-
-void fw_init_LEDs(void)
+void LEDsInit(void)
 {
     PORT_SetPinMux(Port_LEDgreen, Pin_LEDgreen, kPORT_MuxAsGpio);
     PORT_SetPinMux(Port_LEDred, Pin_LEDred, kPORT_MuxAsGpio);

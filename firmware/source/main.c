@@ -173,7 +173,7 @@ void mainTask(void *data)
 	I2C0aInit();
 	fw_init_common();
 	buttonsInit();
-	fw_init_LEDs();
+	LEDsInit();
 	keyboardInit();
 	rotarySwitchInit();
 
