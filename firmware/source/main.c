@@ -189,9 +189,7 @@ void mainTask(void *data)
 	displayInit(nonVolatileSettings.displayInverseVideo);
 
 	// Init SPI
-	init_SPI();
-	setup_SPI0();
-	setup_SPI1();
+	SPIInit();
 
 	// Init I2S
 	init_I2S();

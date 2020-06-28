@@ -154,83 +154,83 @@ void SPI_HR_C6000_init(void)
 	vTaskDelay(portTICK_PERIOD_MS * 10);
 
 	// --- start spi_init_daten_senden()
-	write_SPI_page_reg_byte_SPI0(0x04, 0x0b, 0x40);    //Set PLL M Register
-	write_SPI_page_reg_byte_SPI0(0x04, 0x0c, 0x32);    //Set PLL Dividers
-	write_SPI_page_reg_byte_SPI0(0x04, 0xb9, 0x05);
-	write_SPI_page_reg_byte_SPI0(0x04, 0x0a, 0x01);    //Set Clock Source Enable CLKOUT Pin
+	SPI0WritePageRegByte(0x04, 0x0b, 0x40);    //Set PLL M Register
+	SPI0WritePageRegByte(0x04, 0x0c, 0x32);    //Set PLL Dividers
+	SPI0WritePageRegByte(0x04, 0xb9, 0x05);
+	SPI0WritePageRegByte(0x04, 0x0a, 0x01);    //Set Clock Source Enable CLKOUT Pin
 
-	write_SPI_page_reg_bytearray_SPI0(0x01, 0x04, spi_init_values_1, 0x06);
-	write_SPI_page_reg_bytearray_SPI0(0x01, 0x10, spi_init_values_2, 0x20);
-	write_SPI_page_reg_bytearray_SPI0(0x01, 0x30, spi_init_values_3, 0x10);
-	write_SPI_page_reg_bytearray_SPI0(0x01, 0x40, spi_init_values_4, 0x07);
-	write_SPI_page_reg_bytearray_SPI0(0x01, 0x51, spi_init_values_5, 0x05);
-	write_SPI_page_reg_bytearray_SPI0(0x01, 0x60, spi_init_values_6, 0x60);
+	SPI0WritePageRegByteArray(0x01, 0x04, spi_init_values_1, 0x06);
+	SPI0WritePageRegByteArray(0x01, 0x10, spi_init_values_2, 0x20);
+	SPI0WritePageRegByteArray(0x01, 0x30, spi_init_values_3, 0x10);
+	SPI0WritePageRegByteArray(0x01, 0x40, spi_init_values_4, 0x07);
+	SPI0WritePageRegByteArray(0x01, 0x51, spi_init_values_5, 0x05);
+	SPI0WritePageRegByteArray(0x01, 0x60, spi_init_values_6, 0x60);
 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x00, 0x00);   //Clear all Reset Bits which forces a reset of all internal systems
-	write_SPI_page_reg_byte_SPI0(0x04, 0x10, 0x6E);   //Set DMR,Tier2,Timeslot Mode, Layer 2, Repeater, Aligned, Slot1
-	write_SPI_page_reg_byte_SPI0(0x04, 0x11, 0x80);   //Set LocalChanMode to Default Value 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x13, 0x00);   //Zero Cend_Band Timing advance
-	write_SPI_page_reg_byte_SPI0(0x04, 0x1F, 0x10);   //Set LocalEMB  DMR Colour code in upper 4 bits - defaulted to 1, and is updated elsewhere in the code
-	write_SPI_page_reg_byte_SPI0(0x04, 0x20, 0x00);   //Set LocalAccessPolicy to Impolite
-	write_SPI_page_reg_byte_SPI0(0x04, 0x21, 0xA0);   //Set LocalAccessPolicy1 to Polite to Color Code  (unsure why there are two registers for this)   
-	write_SPI_page_reg_byte_SPI0(0x04, 0x22, 0x26);   //Start Vocoder Decode, I2S mode
-	write_SPI_page_reg_byte_SPI0(0x04, 0x22, 0x86);   //Start Vocoder Encode, I2S mode
-	write_SPI_page_reg_byte_SPI0(0x04, 0x25, 0x0E);   //Undocumented Register 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x26, 0x7D);   //Undocumented Register 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x27, 0x40);   //Undocumented Register 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x28, 0x7D);   //Undocumented Register
-	write_SPI_page_reg_byte_SPI0(0x04, 0x29, 0x40);   //Undocumented Register
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2A, 0x0B);   //Set spi_clk_cnt to default value
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2B, 0x0B);   //According to Datasheet this is a Read only register For FM Squelch
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2C, 0x17);   //According to Datasheet this is a Read only register For FM Squelch
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2D, 0x05);   //Set FM Compression and Decompression points (?)
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2E, 0x04);   //Set tx_pre_on (DMR Transmission advance) to 400us
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2F, 0x0B);   //Set I2S Clock Frequency
-	write_SPI_page_reg_byte_SPI0(0x04, 0x32, 0x02);   //Set LRCK_CNT_H CODEC Operating Frequency to default value
-	write_SPI_page_reg_byte_SPI0(0x04, 0x33, 0xFF);   //Set LRCK_CNT_L CODEC Operating Frequency to default value
-	write_SPI_page_reg_byte_SPI0(0x04, 0x34, 0xF0);   //Set FM Filters on and bandwidth to 12.5Khz 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x35, 0x28);   //Set FM Modulation Coefficient
-	write_SPI_page_reg_byte_SPI0(0x04, 0x3E, 0x28);   //Set FM Modulation Offset
-	write_SPI_page_reg_byte_SPI0(0x04, 0x3F, 0x10);   //Set FM Modulation Limiter
-	write_SPI_page_reg_byte_SPI0(0x04, 0x36, 0x00);   //Enable all clocks
-	write_SPI_page_reg_byte_SPI0(0x04, 0x37, 0x00);   //Set mcu_control_shift to default. (codec under HRC-6000 control)
-	write_SPI_page_reg_byte_SPI0(0x04, 0x4B, 0x1B);   //Set Data packet types to defaults
-	write_SPI_page_reg_byte_SPI0(0x04, 0x4C, 0x00);   //Set Data packet types to defaults
-	write_SPI_page_reg_byte_SPI0(0x04, 0x56, 0x00); 	//Undocumented Register
-	write_SPI_page_reg_byte_SPI0(0x04, 0x5F, 0xC0); 	//Enable Sync detection for MS or BS orignated signals
-	write_SPI_page_reg_byte_SPI0(0x04, 0x81, 0xFF); 	//Enable all Interrupts
-	write_SPI_page_reg_byte_SPI0(0x04, 0xD1, 0xC4);   //According to Datasheet this register is for FM DTMF (?)
+	SPI0WritePageRegByte(0x04, 0x00, 0x00);   //Clear all Reset Bits which forces a reset of all internal systems
+	SPI0WritePageRegByte(0x04, 0x10, 0x6E);   //Set DMR,Tier2,Timeslot Mode, Layer 2, Repeater, Aligned, Slot1
+	SPI0WritePageRegByte(0x04, 0x11, 0x80);   //Set LocalChanMode to Default Value 
+	SPI0WritePageRegByte(0x04, 0x13, 0x00);   //Zero Cend_Band Timing advance
+	SPI0WritePageRegByte(0x04, 0x1F, 0x10);   //Set LocalEMB  DMR Colour code in upper 4 bits - defaulted to 1, and is updated elsewhere in the code
+	SPI0WritePageRegByte(0x04, 0x20, 0x00);   //Set LocalAccessPolicy to Impolite
+	SPI0WritePageRegByte(0x04, 0x21, 0xA0);   //Set LocalAccessPolicy1 to Polite to Color Code  (unsure why there are two registers for this)   
+	SPI0WritePageRegByte(0x04, 0x22, 0x26);   //Start Vocoder Decode, I2S mode
+	SPI0WritePageRegByte(0x04, 0x22, 0x86);   //Start Vocoder Encode, I2S mode
+	SPI0WritePageRegByte(0x04, 0x25, 0x0E);   //Undocumented Register 
+	SPI0WritePageRegByte(0x04, 0x26, 0x7D);   //Undocumented Register 
+	SPI0WritePageRegByte(0x04, 0x27, 0x40);   //Undocumented Register 
+	SPI0WritePageRegByte(0x04, 0x28, 0x7D);   //Undocumented Register
+	SPI0WritePageRegByte(0x04, 0x29, 0x40);   //Undocumented Register
+	SPI0WritePageRegByte(0x04, 0x2A, 0x0B);   //Set spi_clk_cnt to default value
+	SPI0WritePageRegByte(0x04, 0x2B, 0x0B);   //According to Datasheet this is a Read only register For FM Squelch
+	SPI0WritePageRegByte(0x04, 0x2C, 0x17);   //According to Datasheet this is a Read only register For FM Squelch
+	SPI0WritePageRegByte(0x04, 0x2D, 0x05);   //Set FM Compression and Decompression points (?)
+	SPI0WritePageRegByte(0x04, 0x2E, 0x04);   //Set tx_pre_on (DMR Transmission advance) to 400us
+	SPI0WritePageRegByte(0x04, 0x2F, 0x0B);   //Set I2S Clock Frequency
+	SPI0WritePageRegByte(0x04, 0x32, 0x02);   //Set LRCK_CNT_H CODEC Operating Frequency to default value
+	SPI0WritePageRegByte(0x04, 0x33, 0xFF);   //Set LRCK_CNT_L CODEC Operating Frequency to default value
+	SPI0WritePageRegByte(0x04, 0x34, 0xF0);   //Set FM Filters on and bandwidth to 12.5Khz 
+	SPI0WritePageRegByte(0x04, 0x35, 0x28);   //Set FM Modulation Coefficient
+	SPI0WritePageRegByte(0x04, 0x3E, 0x28);   //Set FM Modulation Offset
+	SPI0WritePageRegByte(0x04, 0x3F, 0x10);   //Set FM Modulation Limiter
+	SPI0WritePageRegByte(0x04, 0x36, 0x00);   //Enable all clocks
+	SPI0WritePageRegByte(0x04, 0x37, 0x00);   //Set mcu_control_shift to default. (codec under HRC-6000 control)
+	SPI0WritePageRegByte(0x04, 0x4B, 0x1B);   //Set Data packet types to defaults
+	SPI0WritePageRegByte(0x04, 0x4C, 0x00);   //Set Data packet types to defaults
+	SPI0WritePageRegByte(0x04, 0x56, 0x00); 	//Undocumented Register
+	SPI0WritePageRegByte(0x04, 0x5F, 0xC0); 	//Enable Sync detection for MS or BS orignated signals
+	SPI0WritePageRegByte(0x04, 0x81, 0xFF); 	//Enable all Interrupts
+	SPI0WritePageRegByte(0x04, 0xD1, 0xC4);   //According to Datasheet this register is for FM DTMF (?)
 
 	// --- start subroutine spi_init_daten_senden_sub()
-	write_SPI_page_reg_byte_SPI0(0x04, 0x01, 0x70); 	//set 2 point Mod, swap receive I and Q, receive mode IF (?)    (Presumably changed elsewhere)
-	write_SPI_page_reg_byte_SPI0(0x04, 0x03, 0x00);   //zero Receive I Offset
-	write_SPI_page_reg_byte_SPI0(0x04, 0x05, 0x00);   //Zero Receive Q Offset
-	write_SPI_page_reg_byte_SPI0(0x04, 0x12, 0x15); 	//Set rf_pre_on Receive to transmit switching advance 
-	write_SPI_page_reg_byte_SPI0(0x04, 0xA1, 0x80); 	//According to Datasheet this register is for FM Modulation Setting (?)
-	write_SPI_page_reg_byte_SPI0(0x04, 0xC0, 0x0A);   //Set RF Signal Advance to 1ms (10x100us)
-	write_SPI_page_reg_byte_SPI0(0x04, 0x06, 0x21);   //Use SPI vocoder under MCU control
-	write_SPI_page_reg_byte_SPI0(0x04, 0x07, 0x0B);   //Set IF Frequency H to default 450KHz
-	write_SPI_page_reg_byte_SPI0(0x04, 0x08, 0xB8);   //Set IF Frequency M to default 450KHz
-	write_SPI_page_reg_byte_SPI0(0x04, 0x09, 0x00);   //Set IF Frequency L to default 450KHz
-	write_SPI_page_reg_byte_SPI0(0x04, 0x0D, 0x10);   //Set Voice Superframe timeout value
-	write_SPI_page_reg_byte_SPI0(0x04, 0x0E, 0x8E);   //Register Documented as Reserved 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x0F, 0xB8);   //FSK Error Count
-	write_SPI_page_reg_byte_SPI0(0x04, 0xC2, 0x00);   //Disable Mic Gain AGC
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE0, 0x8B);   //CODEC under MCU Control, LineOut2 Enabled, Mic_p Enabled, I2S Slave Mode
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE1, 0x0F);   //Undocumented Register (Probably associated with CODEC)
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE2, 0x06);   //CODEC  Anti Pop Enabled, DAC Output Enabled
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE3, 0x52);   //CODEC Default Settings 
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE4, 0x4A);   //CODEC   LineOut Gain 2dB, Mic Stage 1 Gain 0dB, Mic Stage 2 Gain 30dB
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE5, 0x1A);   //CODEC Default Setting
+	SPI0WritePageRegByte(0x04, 0x01, 0x70); 	//set 2 point Mod, swap receive I and Q, receive mode IF (?)    (Presumably changed elsewhere)
+	SPI0WritePageRegByte(0x04, 0x03, 0x00);   //zero Receive I Offset
+	SPI0WritePageRegByte(0x04, 0x05, 0x00);   //Zero Receive Q Offset
+	SPI0WritePageRegByte(0x04, 0x12, 0x15); 	//Set rf_pre_on Receive to transmit switching advance 
+	SPI0WritePageRegByte(0x04, 0xA1, 0x80); 	//According to Datasheet this register is for FM Modulation Setting (?)
+	SPI0WritePageRegByte(0x04, 0xC0, 0x0A);   //Set RF Signal Advance to 1ms (10x100us)
+	SPI0WritePageRegByte(0x04, 0x06, 0x21);   //Use SPI vocoder under MCU control
+	SPI0WritePageRegByte(0x04, 0x07, 0x0B);   //Set IF Frequency H to default 450KHz
+	SPI0WritePageRegByte(0x04, 0x08, 0xB8);   //Set IF Frequency M to default 450KHz
+	SPI0WritePageRegByte(0x04, 0x09, 0x00);   //Set IF Frequency L to default 450KHz
+	SPI0WritePageRegByte(0x04, 0x0D, 0x10);   //Set Voice Superframe timeout value
+	SPI0WritePageRegByte(0x04, 0x0E, 0x8E);   //Register Documented as Reserved 
+	SPI0WritePageRegByte(0x04, 0x0F, 0xB8);   //FSK Error Count
+	SPI0WritePageRegByte(0x04, 0xC2, 0x00);   //Disable Mic Gain AGC
+	SPI0WritePageRegByte(0x04, 0xE0, 0x8B);   //CODEC under MCU Control, LineOut2 Enabled, Mic_p Enabled, I2S Slave Mode
+	SPI0WritePageRegByte(0x04, 0xE1, 0x0F);   //Undocumented Register (Probably associated with CODEC)
+	SPI0WritePageRegByte(0x04, 0xE2, 0x06);   //CODEC  Anti Pop Enabled, DAC Output Enabled
+	SPI0WritePageRegByte(0x04, 0xE3, 0x52);   //CODEC Default Settings 
+	SPI0WritePageRegByte(0x04, 0xE4, 0x4A);   //CODEC   LineOut Gain 2dB, Mic Stage 1 Gain 0dB, Mic Stage 2 Gain 30dB
+	SPI0WritePageRegByte(0x04, 0xE5, 0x1A);   //CODEC Default Setting
 	// --- end subroutine spi_init_daten_senden_sub()
 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x40, 0xC3);  	//Enable DMR Tx, DMR Rx, Passive Timing, Normal mode
-	write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x40);   //Receive during next timeslot
+	SPI0WritePageRegByte(0x04, 0x40, 0xC3);  	//Enable DMR Tx, DMR Rx, Passive Timing, Normal mode
+	SPI0WritePageRegByte(0x04, 0x41, 0x40);   //Receive during next timeslot
 	// --- end spi_init_daten_senden()
 
 	// ------ start spi_more_init
 	// --- start sub_1B5A4
-	set_clear_SPI_page_reg_byte_with_mask_SPI0(0x04, 0x06, 0xFD, 0x02); // SET OpenMusic bit (play Boot sound and Call Prompts)
+	SPI0SeClearPageRegByteWithMask(0x04, 0x06, 0xFD, 0x02); // SET OpenMusic bit (play Boot sound and Call Prompts)
 	// --- end sub_1B5A4
 
 	// --- start sub_1B5DC
@@ -239,15 +239,15 @@ void SPI_HR_C6000_init(void)
 	{
 		spi_values[i]=0xaa;
 	}
-	write_SPI_page_reg_bytearray_SPI0(0x03, 0x00, spi_values, 0x80);
+	SPI0WritePageRegByteArray(0x03, 0x00, spi_values, 0x80);
 	// --- end sub_1B5DC
 
 	// --- start sub_1B5A4
-	set_clear_SPI_page_reg_byte_with_mask_SPI0(0x04, 0x06, 0xFD, 0x00); // CLEAR OpenMusic bit (play Boot sound and Call Prompts)
+	SPI0SeClearPageRegByteWithMask(0x04, 0x06, 0xFD, 0x00); // CLEAR OpenMusic bit (play Boot sound and Call Prompts)
 	// --- end sub_1B5A4
 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x37, 0x9E); // MCU take control of CODEC
-	set_clear_SPI_page_reg_byte_with_mask_SPI0(0x04, 0xE4, 0x3F, 0x00); // Set CODEC LineOut Gain to 0dB
+	SPI0WritePageRegByte(0x04, 0x37, 0x9E); // MCU take control of CODEC
+	SPI0SeClearPageRegByteWithMask(0x04, 0xE4, 0x3F, 0x00); // Set CODEC LineOut Gain to 0dB
 	// ------ end spi_more_init
 
 	dmrMonitorCapturedTimeout = nonVolatileSettings.dmrCaptureTimeout*1000;
@@ -255,65 +255,65 @@ void SPI_HR_C6000_init(void)
 
 void SPI_C6000_postinit(void)
 {
-	write_SPI_page_reg_byte_SPI0(0x04, 0x04, 0xE8);  //Set Mod2 output offset
-	write_SPI_page_reg_byte_SPI0(0x04, 0x46, 0x37);  //Set Mod1 Amplitude
-	write_SPI_page_reg_byte_SPI0(0x04, 0x48, 0x03);  //Set 2 Point Mod Bias
-	write_SPI_page_reg_byte_SPI0(0x04, 0x47, 0xE8);  //Set 2 Point Mod Bias
+	SPI0WritePageRegByte(0x04, 0x04, 0xE8);  //Set Mod2 output offset
+	SPI0WritePageRegByte(0x04, 0x46, 0x37);  //Set Mod1 Amplitude
+	SPI0WritePageRegByte(0x04, 0x48, 0x03);  //Set 2 Point Mod Bias
+	SPI0WritePageRegByte(0x04, 0x47, 0xE8);  //Set 2 Point Mod Bias
 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x20);  //set sync fail bit (reset?)
-	write_SPI_page_reg_byte_SPI0(0x04, 0x40, 0x03);  //Disable DMR Tx and Rx
-	write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x00);  //Reset all bits.
-	write_SPI_page_reg_byte_SPI0(0x04, 0x00, 0x3F);  //Reset DMR Protocol and Physical layer modules.
-	write_SPI_page_reg_bytearray_SPI0(0x01, 0x04, spi_init_values_1, 0x06);
-	write_SPI_page_reg_byte_SPI0(0x04, 0x10, 0x6E);  //Set DMR, Tier2, Timeslot mode, Layer2, Repeater, Aligned, Slot 1
-	write_SPI_page_reg_byte_SPI0(0x04, 0x1F, 0x10);  // Set Local EMB. DMR Colour code in upper 4 bits - defaulted to 1, and is updated elsewhere in the code
-	write_SPI_page_reg_byte_SPI0(0x04, 0x26, 0x7D);  //Undocumented Register 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x27, 0x40);  //Undocumented Register 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x28, 0x7D);  //Undocumented Register 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x29, 0x40);  //Undocumented Register 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2A, 0x0B);  //Set SPI Clock to default value
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2B, 0x0B);  //According to Datasheet this is a Read only register For FM Squelch
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2C, 0x17);  //According to Datasheet this is a Read only register For FM Squelch
-	write_SPI_page_reg_byte_SPI0(0x04, 0x2D, 0x05);  //Set FM Compression and Decompression points (?)
-	write_SPI_page_reg_byte_SPI0(0x04, 0x56, 0x00);  //Undocumented Register
-	write_SPI_page_reg_byte_SPI0(0x04, 0x5F, 0xC0);  //Enable Sync detection for MS or BS orignated signals
-	write_SPI_page_reg_byte_SPI0(0x04, 0x81, 0xFF);  //Enable all Interrupts
-	write_SPI_page_reg_byte_SPI0(0x04, 0x01, 0x70);  //Set 2 Point Mod, Swap Rx I and Q, Rx Mode IF
-	write_SPI_page_reg_byte_SPI0(0x04, 0x03, 0x00);  //Zero Receive I Offset
-	write_SPI_page_reg_byte_SPI0(0x04, 0x05, 0x00);  //Zero Receive Q Offset
-	write_SPI_page_reg_byte_SPI0(0x04, 0x12, 0x15);  //Set RF Switching Receive to Transmit Advance
-	write_SPI_page_reg_byte_SPI0(0x04, 0xA1, 0x80);  //According to Datasheet this register is for FM Modulation Setting (?)
-	write_SPI_page_reg_byte_SPI0(0x04, 0xC0, 0x0A);  //Set RF Signal Advance to 1ms (10x100us)
-	write_SPI_page_reg_byte_SPI0(0x04, 0x06, 0x21);  //Use SPI vocoder under MCU control
-	write_SPI_page_reg_byte_SPI0(0x04, 0x07, 0x0B);  //Set IF Frequency H to default 450KHz
-	write_SPI_page_reg_byte_SPI0(0x04, 0x08, 0xB8);  //Set IF Frequency M to default 450KHz
-	write_SPI_page_reg_byte_SPI0(0x04, 0x09, 0x00);  //Set IF Frequency l to default 450KHz
-	write_SPI_page_reg_byte_SPI0(0x04, 0x0D, 0x10);  //Set Voice Superframe timeout value
-	write_SPI_page_reg_byte_SPI0(0x04, 0x0E, 0x8E);  //Register Documented as Reserved 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x0F, 0xB8);  //FSK Error Count
-	write_SPI_page_reg_byte_SPI0(0x04, 0xC2, 0x00);  //Disable Mic Gain AGC
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE0, 0x8B);  //CODEC under MCU Control, LineOut2 Enabled, Mic_p Enabled, I2S Slave Mode
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE1, 0x0F);  //Undocumented Register (Probably associated with CODEC)
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE2, 0x06);  //CODEC  Anti Pop Enabled, DAC Output Enabled
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE3, 0x52);  //CODEC Default Settings
+	SPI0WritePageRegByte(0x04, 0x41, 0x20);  //set sync fail bit (reset?)
+	SPI0WritePageRegByte(0x04, 0x40, 0x03);  //Disable DMR Tx and Rx
+	SPI0WritePageRegByte(0x04, 0x41, 0x00);  //Reset all bits.
+	SPI0WritePageRegByte(0x04, 0x00, 0x3F);  //Reset DMR Protocol and Physical layer modules.
+	SPI0WritePageRegByteArray(0x01, 0x04, spi_init_values_1, 0x06);
+	SPI0WritePageRegByte(0x04, 0x10, 0x6E);  //Set DMR, Tier2, Timeslot mode, Layer2, Repeater, Aligned, Slot 1
+	SPI0WritePageRegByte(0x04, 0x1F, 0x10);  // Set Local EMB. DMR Colour code in upper 4 bits - defaulted to 1, and is updated elsewhere in the code
+	SPI0WritePageRegByte(0x04, 0x26, 0x7D);  //Undocumented Register 
+	SPI0WritePageRegByte(0x04, 0x27, 0x40);  //Undocumented Register 
+	SPI0WritePageRegByte(0x04, 0x28, 0x7D);  //Undocumented Register 
+	SPI0WritePageRegByte(0x04, 0x29, 0x40);  //Undocumented Register 
+	SPI0WritePageRegByte(0x04, 0x2A, 0x0B);  //Set SPI Clock to default value
+	SPI0WritePageRegByte(0x04, 0x2B, 0x0B);  //According to Datasheet this is a Read only register For FM Squelch
+	SPI0WritePageRegByte(0x04, 0x2C, 0x17);  //According to Datasheet this is a Read only register For FM Squelch
+	SPI0WritePageRegByte(0x04, 0x2D, 0x05);  //Set FM Compression and Decompression points (?)
+	SPI0WritePageRegByte(0x04, 0x56, 0x00);  //Undocumented Register
+	SPI0WritePageRegByte(0x04, 0x5F, 0xC0);  //Enable Sync detection for MS or BS orignated signals
+	SPI0WritePageRegByte(0x04, 0x81, 0xFF);  //Enable all Interrupts
+	SPI0WritePageRegByte(0x04, 0x01, 0x70);  //Set 2 Point Mod, Swap Rx I and Q, Rx Mode IF
+	SPI0WritePageRegByte(0x04, 0x03, 0x00);  //Zero Receive I Offset
+	SPI0WritePageRegByte(0x04, 0x05, 0x00);  //Zero Receive Q Offset
+	SPI0WritePageRegByte(0x04, 0x12, 0x15);  //Set RF Switching Receive to Transmit Advance
+	SPI0WritePageRegByte(0x04, 0xA1, 0x80);  //According to Datasheet this register is for FM Modulation Setting (?)
+	SPI0WritePageRegByte(0x04, 0xC0, 0x0A);  //Set RF Signal Advance to 1ms (10x100us)
+	SPI0WritePageRegByte(0x04, 0x06, 0x21);  //Use SPI vocoder under MCU control
+	SPI0WritePageRegByte(0x04, 0x07, 0x0B);  //Set IF Frequency H to default 450KHz
+	SPI0WritePageRegByte(0x04, 0x08, 0xB8);  //Set IF Frequency M to default 450KHz
+	SPI0WritePageRegByte(0x04, 0x09, 0x00);  //Set IF Frequency l to default 450KHz
+	SPI0WritePageRegByte(0x04, 0x0D, 0x10);  //Set Voice Superframe timeout value
+	SPI0WritePageRegByte(0x04, 0x0E, 0x8E);  //Register Documented as Reserved 
+	SPI0WritePageRegByte(0x04, 0x0F, 0xB8);  //FSK Error Count
+	SPI0WritePageRegByte(0x04, 0xC2, 0x00);  //Disable Mic Gain AGC
+	SPI0WritePageRegByte(0x04, 0xE0, 0x8B);  //CODEC under MCU Control, LineOut2 Enabled, Mic_p Enabled, I2S Slave Mode
+	SPI0WritePageRegByte(0x04, 0xE1, 0x0F);  //Undocumented Register (Probably associated with CODEC)
+	SPI0WritePageRegByte(0x04, 0xE2, 0x06);  //CODEC  Anti Pop Enabled, DAC Output Enabled
+	SPI0WritePageRegByte(0x04, 0xE3, 0x52);  //CODEC Default Settings
 
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE5, 0x1A);  //CODEC Default Setting
-	write_SPI_page_reg_byte_SPI0(0x04, 0x26, 0x7D);  //Undocumented Register
-	write_SPI_page_reg_byte_SPI0(0x04, 0x27, 0x40);  //Undocumented Register
-	write_SPI_page_reg_byte_SPI0(0x04, 0x28, 0x7D);  //Undocumented Register
-	write_SPI_page_reg_byte_SPI0(0x04, 0x29, 0x40);  //Undocumented Register
-	write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x20);  //Set Sync Fail Bit  (Reset?)
-	write_SPI_page_reg_byte_SPI0(0x04, 0x40, 0xC3);  //Enable DMR Tx and Rx, Passive Timing
-	write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x40);  //Set Receive During Next Slot Bit
-	write_SPI_page_reg_byte_SPI0(0x04, 0x01, 0x70);  //Set 2 Point Mod, Swap Rx I and Q, Rx Mode IF
-	write_SPI_page_reg_byte_SPI0(0x04, 0x10, 0x6E);  //Set DMR, Tier2, Timeslot mode, Layer2, Repeater, Aligned, Slot 1
-	write_SPI_page_reg_byte_SPI0(0x04, 0x00, 0x3F);  //Reset DMR Protocol and Physical layer modules.
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE4, 0xC0 + nonVolatileSettings.micGainDMR);  //CODEC   LineOut Gain 6dB, Mic Stage 1 Gain 0dB, Mic Stage 2 Gain default is 11 =  33dB
+	SPI0WritePageRegByte(0x04, 0xE5, 0x1A);  //CODEC Default Setting
+	SPI0WritePageRegByte(0x04, 0x26, 0x7D);  //Undocumented Register
+	SPI0WritePageRegByte(0x04, 0x27, 0x40);  //Undocumented Register
+	SPI0WritePageRegByte(0x04, 0x28, 0x7D);  //Undocumented Register
+	SPI0WritePageRegByte(0x04, 0x29, 0x40);  //Undocumented Register
+	SPI0WritePageRegByte(0x04, 0x41, 0x20);  //Set Sync Fail Bit  (Reset?)
+	SPI0WritePageRegByte(0x04, 0x40, 0xC3);  //Enable DMR Tx and Rx, Passive Timing
+	SPI0WritePageRegByte(0x04, 0x41, 0x40);  //Set Receive During Next Slot Bit
+	SPI0WritePageRegByte(0x04, 0x01, 0x70);  //Set 2 Point Mod, Swap Rx I and Q, Rx Mode IF
+	SPI0WritePageRegByte(0x04, 0x10, 0x6E);  //Set DMR, Tier2, Timeslot mode, Layer2, Repeater, Aligned, Slot 1
+	SPI0WritePageRegByte(0x04, 0x00, 0x3F);  //Reset DMR Protocol and Physical layer modules.
+	SPI0WritePageRegByte(0x04, 0xE4, 0xC0 + nonVolatileSettings.micGainDMR);  //CODEC   LineOut Gain 6dB, Mic Stage 1 Gain 0dB, Mic Stage 2 Gain default is 11 =  33dB
 }
 
 void setMicGainDMR(uint8_t gain)
 {
-	write_SPI_page_reg_byte_SPI0(0x04, 0xE4, 0x40 + gain);  //CODEC   LineOut Gain 2dB, Mic Stage 1 Gain 0dB, Mic Stage 2 Gain default is 11 =  33dB
+	SPI0WritePageRegByte(0x04, 0xE4, 0x40 + gain);  //CODEC   LineOut Gain 2dB, Mic Stage 1 Gain 0dB, Mic Stage 2 Gain default is 11 =  33dB
 }
 
 static inline bool checkTimeSlotFilter(void)
@@ -423,7 +423,7 @@ void transmitTalkerAlias(void)
 		TA_LCBuf[0]= (TAPhase/2) + 0x04;
 		memcpy(&TA_LCBuf[taPosition],&talkAliasText[taOffset],taLength);
 
-		write_SPI_page_reg_bytearray_SPI0(0x02, 0x00, (uint8_t*)TA_LCBuf, taPosition+taLength);// put LC into hardware
+		SPI0WritePageRegByteArray(0x02, 0x00, (uint8_t*)TA_LCBuf, taPosition+taLength);// put LC into hardware
 	}
 	TAPhase++;
 	if (TAPhase>8)
@@ -479,7 +479,7 @@ inline static void HRC6000SysSendStartInt(void)
 		In DMR mode, the sub-status register 0x84 is transmitted at the beginning, and the corresponding interrupt can be masked by 0x85.
 	 */
 
-	read_SPI_page_reg_byte_SPI0(0x04, 0x84, &reg_0x84);  //Read sub status register
+	SPI0ReadPageRegByte(0x04, 0x84, &reg_0x84);  //Read sub status register
 
 	/*
 		The sub-status registers indicate
@@ -568,7 +568,7 @@ inline static void HRC6000SysPostAccessInt(void)
 		codecInit();
 		GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 1);
 
-		write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50);     //Receive only in next timeslot
+		SPI0WritePageRegByte(0x04, 0x41, 0x50);     //Receive only in next timeslot
 		slot_state = DMR_STATE_RX_1;
 		lastHeardClearLastID();// Tell the LastHeard system that this is a new start
 
@@ -605,7 +605,7 @@ inline static void HRC6000SysReceivedDataInt(void)
 	int rpi;
 
 
-	read_SPI_page_reg_byte_SPI0(0x04, 0x51, &reg_0x51);
+	SPI0ReadPageRegByte(0x04, 0x51, &reg_0x51);
 
 	//read_SPI_page_reg_byte_SPI0(0x04, 0x57, &reg_0x57);// Kai said that the official firmware uses this register instead of 0x52 for the timecode
 
@@ -677,7 +677,7 @@ inline static void HRC6000SysReceivedDataInt(void)
 				codecInit();
 				GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 1);
 
-				write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50);     //Receive only in next timeslot
+				SPI0WritePageRegByte(0x04, 0x41, 0x50);     //Receive only in next timeslot
 				slot_state = DMR_STATE_RX_1;
 
 				skip_count = 0;
@@ -710,7 +710,7 @@ inline static void HRC6000SysReceivedDataInt(void)
 				{
 					triggerQSOdataDisplay();
 				}
-				read_SPI_page_reg_bytearray_SPI1(0x03, 0x00, DMR_frame_buffer+0x0C, 27);
+				SPI1ReadPageRegByteArray(0x03, 0x00, DMR_frame_buffer+0x0C, 27);
 				if (settingsUsbMode == USB_MODE_HOTSPOT)
 				{
 					DMR_frame_buffer[27 + 0x0c] = HOTSPOT_RX_AUDIO_FRAME;
@@ -736,7 +736,7 @@ inline static void HRC6000SysReceivedInformationInt(void)
 
 inline static void HRC6000SysAbnormalExitInt(void)
 {
-	read_SPI_page_reg_byte_SPI0(0x04, 0x98, &reg_0x98);
+	SPI0ReadPageRegByte(0x04, 0x98, &reg_0x98);
 	/*
 		Bit1: In DMR mode: indicates that the voice is abnormally exited;
 		In DMR mode, the cause of the abnormality in DMR mode is the unexpected abnormal voice
@@ -761,8 +761,8 @@ inline static void HRC6000SysPhysicalLayerInt(void)
 inline static void HRC6000SysInterruptHandler(void)
 {
 	uint8_t reg0x52;
-	read_SPI_page_reg_byte_SPI0(0x04, 0x82, &reg_0x82);  //Read Interrupt Flag Register1
-	read_SPI_page_reg_byte_SPI0(0x04, 0x52, &reg0x52);  //Read Received CC and CACH
+	SPI0ReadPageRegByte(0x04, 0x82, &reg_0x82);  //Read Interrupt Flag Register1
+	SPI0ReadPageRegByte(0x04, 0x52, &reg0x52);  //Read Received CC and CACH
 	rxColorCode 	= (reg0x52 >> 4) & 0x0f;
 
 
@@ -778,8 +778,8 @@ inline static void HRC6000SysInterruptHandler(void)
 		}
 
 		uint8_t LCBuf[12];
-		read_SPI_page_reg_bytearray_SPI0(0x02, 0x00, LCBuf, 12);// read the LC from the C6000
-		read_SPI_page_reg_byte_SPI0(0x04, 0x51, &reg_0x51);
+		SPI0ReadPageRegBytAarray(0x02, 0x00, LCBuf, 12);// read the LC from the C6000
+		SPI0ReadPageRegByte(0x04, 0x51, &reg_0x51);
 		bool rxCRCStatus = (((reg_0x51 >> 2) & 0x01)==0);// CRC is OK if its 0
 
 		if (rxCRCStatus && (LCBuf[0]==TG_CALL_FLAG || LCBuf[0]==PC_CALL_FLAG  || (LCBuf[0]>=FLCO_TALKER_ALIAS_HEADER && LCBuf[0]<=FLCO_GPS_INFO)) &&
@@ -877,7 +877,7 @@ inline static void HRC6000SysInterruptHandler(void)
 		HRC6000SysPhysicalLayerInt();
 	}
 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x83, reg_0x82);  //Clear remaining Interrupt Flags
+	SPI0WritePageRegByte(0x04, 0x83, reg_0x82);  //Clear remaining Interrupt Flags
 	timer_hrc6000task=0;
 }
 
@@ -887,15 +887,15 @@ static void HRC6000TransitionToTx(void)
 	GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
 	codecInit();
 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x21, 0xA2); // Set Polite to Color Code and Reset vocoder encodingbuffer
-	write_SPI_page_reg_byte_SPI0(0x04, 0x22, 0x86); // Start Vocoder Encode, I2S mode
+	SPI0WritePageRegByte(0x04, 0x21, 0xA2); // Set Polite to Color Code and Reset vocoder encodingbuffer
+	SPI0WritePageRegByte(0x04, 0x22, 0x86); // Start Vocoder Encode, I2S mode
 	slot_state = DMR_STATE_TX_START_1;
 }
 
 inline static void HRC6000TimeslotInterruptHandler(void)
 {
 	uint8_t reg0x52;
-	read_SPI_page_reg_byte_SPI0(0x04, 0x52, &reg0x52);  	//Read CACH Register to get the timecode (TS number)
+	SPI0ReadPageRegByte(0x04, 0x52, &reg0x52);  	//Read CACH Register to get the timecode (TS number)
     receivedTimeCode = ((reg0x52 & 0x04) >> 2);				// extract the timecode from the CACH register
 
 	if (slot_state == DMR_STATE_REPEATER_WAKE_4 || timeCode == -1)			//if we are waking up the repeater, or we don't currently have a valid value for the timecode
@@ -951,14 +951,14 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			{
 				// When in Active (simplex) mode. We need to only receive on one of the 2 timeslots, otherwise we get random data for the other slot
 				// and this can sometimes be interpreted as valid data, which then screws things up.
-				write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x00);     //No Transmit or receive in next timeslot
+				SPI0WritePageRegByte(0x04, 0x41, 0x00);     //No Transmit or receive in next timeslot
 				readDMRRSSI = 15;// wait 15 ticks (of approximately 1mS) before reading the RSSI
 				slot_state = DMR_STATE_RX_2;
 			}
 
 			break;
 		case DMR_STATE_RX_2: // Start RX (second step)
-			write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50);     //Receive only in next timeslot
+			SPI0WritePageRegByte(0x04, 0x41, 0x50);     //Receive only in next timeslot
 			slot_state = DMR_STATE_RX_1;
 			break;
 		case DMR_STATE_RX_END: // Stop RX
@@ -973,24 +973,24 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 		case DMR_STATE_TX_START_1: // Start TX (second step)
 			GPIO_PinWrite(GPIO_LEDred, Pin_LEDred, 1);// for repeater wakeup
 			setupPcOrTGHeader();
-			write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x80);    //Transmit during next Timeslot
-			write_SPI_page_reg_byte_SPI0(0x04, 0x50, 0x10);    //Set Data Type to 0001 (Voice LC Header), Data, LCSS=00
+			SPI0WritePageRegByte(0x04, 0x41, 0x80);    //Transmit during next Timeslot
+			SPI0WritePageRegByte(0x04, 0x50, 0x10);    //Set Data Type to 0001 (Voice LC Header), Data, LCSS=00
 			trxIsTransmitting = true;
 			slot_state = DMR_STATE_TX_START_2;
 			break;
 		case DMR_STATE_TX_START_2: // Start TX (third step)
 			//write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50); 	//Receive during next Timeslot (no Layer 2 Access)
-			write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x00); 	//Do nothing on the next TS
+			SPI0WritePageRegByte(0x04, 0x41, 0x00); 	//Do nothing on the next TS
 			slot_state = DMR_STATE_TX_START_3;
 			break;
 		case DMR_STATE_TX_START_3: // Start TX (fourth step)
-			write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x80);     //Transmit during Next Timeslot
-			write_SPI_page_reg_byte_SPI0(0x04, 0x50, 0x10);     //Set Data Type to 0001 (Voice LC Header), Data, LCSS=00
+			SPI0WritePageRegByte(0x04, 0x41, 0x80);     //Transmit during Next Timeslot
+			SPI0WritePageRegByte(0x04, 0x50, 0x10);     //Set Data Type to 0001 (Voice LC Header), Data, LCSS=00
 			slot_state = DMR_STATE_TX_START_4;
 			break;
 		case DMR_STATE_TX_START_4: // Start TX (fifth step)
 			//write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50); 	//Receive during Next Timeslot (no Layer 2 Access)
-			write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x00); 	//Do nothing on the next TS
+			SPI0WritePageRegByte(0x04, 0x41, 0x00); 	//Do nothing on the next TS
             if (settingsUsbMode != USB_MODE_HOTSPOT)
             {
             	/*
@@ -1013,8 +1013,8 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			slot_state = DMR_STATE_TX_START_5;
 			break;
 		case DMR_STATE_TX_START_5: // Start TX (sixth step)
-			write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x80);   //Transmit during next Timeslot
-			write_SPI_page_reg_byte_SPI0(0x04, 0x50, 0x10);   //Set Data Type to 0001 (Voice LC Header), Data, LCSS=00
+			SPI0WritePageRegByte(0x04, 0x41, 0x80);   //Transmit during next Timeslot
+			SPI0WritePageRegByte(0x04, 0x50, 0x10);   //Set Data Type to 0001 (Voice LC Header), Data, LCSS=00
 			tx_sequence=0;
 
 			TAPhase=0;
@@ -1027,13 +1027,13 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			if ((trxTransmissionEnabled==false) && (tx_sequence==0))
 			{
 				//write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50); // Receive during next Timeslot (no Layer 2 Access)
-				write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x00); 	//Do nothing on the next TS
+				SPI0WritePageRegByte(0x04, 0x41, 0x00); 	//Do nothing on the next TS
 				slot_state = DMR_STATE_TX_END_1; // only exit here to ensure staying in the correct timeslot
 			}
 			else
 			{
 				//write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50); // Receive during next Timeslot (no Layer 2 Access)
-				write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x00); 	//Do nothing on the next TS
+				SPI0WritePageRegByte(0x04, 0x41, 0x00); 	//Do nothing on the next TS
 				slot_state = DMR_STATE_TX_2;
 			}
 			break;
@@ -1058,15 +1058,15 @@ inline static void HRC6000TimeslotInterruptHandler(void)
                 		}
                 	}
 
-					write_SPI_page_reg_bytearray_SPI1(0x03, 0x00, (uint8_t*)deferredUpdateBuffer, 27);// send the audio bytes to the hardware
+					SPI1WritePageRegByteArray(0x03, 0x00, (uint8_t*)deferredUpdateBuffer, 27);// send the audio bytes to the hardware
                 }
                 else
                 {
 					if(tx_sequence==0)
 					{
-						write_SPI_page_reg_bytearray_SPI0(0x02, 0x00, (uint8_t*)deferredUpdateBuffer, 0x0c);// put LC into hardware
+						SPI0WritePageRegByteArray(0x02, 0x00, (uint8_t*)deferredUpdateBuffer, 0x0c);// put LC into hardware
 					}
-        			write_SPI_page_reg_bytearray_SPI1(0x03, 0x00, (uint8_t*)(deferredUpdateBuffer+0x0C), 27);// send the audio bytes to the hardware
+        			SPI1WritePageRegByteArray(0x03, 0x00, (uint8_t*)(deferredUpdateBuffer+0x0C), 27);// send the audio bytes to the hardware
 
         			hotspotDMRTxFrameBufferEmpty=true;// we have finished with the current frame data from the hotspot
 
@@ -1074,12 +1074,12 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			}
 			else
 			{
-				write_SPI_page_reg_bytearray_SPI1(0x03, 0x00, (uint8_t*)SILENCE_AUDIO, 27);// send the audio bytes to the hardware
+				SPI1WritePageRegByteArray(0x03, 0x00, (uint8_t*)SILENCE_AUDIO, 27);// send the audio bytes to the hardware
 			}
 
 			//write_SPI_page_reg_bytearray_SPI1(0x03, 0x00, (uint8_t*)(DMR_frame_buffer+0x0C), 27);// send the audio bytes to the hardware
-			write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x80); // Transmit during next Timeslot
-			write_SPI_page_reg_byte_SPI0(0x04, 0x50, 0x08 + (tx_sequence<<4)); // Data Type= sequence number 0 - 5 (Voice Frame A) , Voice, LCSS = 0
+			SPI0WritePageRegByte(0x04, 0x41, 0x80); // Transmit during next Timeslot
+			SPI0WritePageRegByte(0x04, 0x50, 0x08 + (tx_sequence<<4)); // Data Type= sequence number 0 - 5 (Voice Frame A) , Voice, LCSS = 0
 
 			tx_sequence++;
 			if (tx_sequence>5)
@@ -1094,9 +1094,9 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			{
 				setupPcOrTGHeader();
 			}
-			write_SPI_page_reg_bytearray_SPI1(0x03, 0x00, SILENCE_AUDIO, 27);// send silence audio bytes
-			write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x80);  //Transmit during Next Timeslot
-			write_SPI_page_reg_byte_SPI0(0x04, 0x50, 0x20);  // Data Type =0010 (Terminator with LC), Data, LCSS=0
+			SPI1WritePageRegByteArray(0x03, 0x00, SILENCE_AUDIO, 27);// send silence audio bytes
+			SPI0WritePageRegByte(0x04, 0x41, 0x80);  //Transmit during Next Timeslot
+			SPI0WritePageRegByte(0x04, 0x50, 0x20);  // Data Type =0010 (Terminator with LC), Data, LCSS=0
 			slot_state = DMR_STATE_TX_END_2;
 			break;
 		case DMR_STATE_TX_END_2: // Stop TX (second step)
@@ -1110,8 +1110,8 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 
 			if (trxDMRMode == DMR_MODE_PASSIVE)
 			{
-				write_SPI_page_reg_byte_SPI0(0x04, 0x40, 0xC3);  //Enable DMR Tx and Rx, Passive Timing
-				write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50);   //  Receive during Next Timeslot And Layer2 Access success Bit
+				SPI0WritePageRegByte(0x04, 0x40, 0xC3);  //Enable DMR Tx and Rx, Passive Timing
+				SPI0WritePageRegByte(0x04, 0x41, 0x50);   //  Receive during Next Timeslot And Layer2 Access success Bit
 				slot_state = DMR_STATE_TX_END_3;
 			}
 			else
@@ -1128,7 +1128,7 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 			if (trxDMRMode == DMR_MODE_PASSIVE)
 			{
 				GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 1);
-				write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50);   //  Receive during Next Timeslot And Layer2 Access success Bit
+				SPI0WritePageRegByte(0x04, 0x41, 0x50);   //  Receive during Next Timeslot And Layer2 Access success Bit
 				slot_state = DMR_STATE_RX_1;
 			}
 			else
@@ -1145,9 +1145,9 @@ inline static void HRC6000TimeslotInterruptHandler(void)
 				spi_tx1[7] = (trxDMRID >> 16) & 0xFF;
 				spi_tx1[8] = (trxDMRID >> 8) & 0xFF;
 				spi_tx1[9] = (trxDMRID >> 0) & 0xFF;
-				write_SPI_page_reg_bytearray_SPI0(0x02, 0x00, spi_tx1, 0x0c);
-				write_SPI_page_reg_byte_SPI0(0x04, 0x50, 0x30);
-				write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x80);
+				SPI0WritePageRegByteArray(0x02, 0x00, spi_tx1, 0x0c);
+				SPI0WritePageRegByte(0x04, 0x50, 0x30);
+				SPI0WritePageRegByte(0x04, 0x41, 0x80);
 			}
 			repeaterWakeupResponseTimeout=WAKEUP_RETRY_PERIOD;
 			slot_state = DMR_STATE_REPEATER_WAKE_3;
@@ -1249,11 +1249,11 @@ void init_digital_state(void)
 
 void init_digital_DMR_RX(void)
 {
-	write_SPI_page_reg_byte_SPI0(0x04, 0x40, 0xC3);  //Enable DMR Tx, DMR Rx, Passive Timing, Normal mode
-	write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x20);  //Set Sync Fail Bit (Reset?))
-	write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x00);  //Reset
-	write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x20);  //Set Sync Fail Bit (Reset?)
-	write_SPI_page_reg_byte_SPI0(0x04, 0x41, 0x50);  //Receive during next Timeslot
+	SPI0WritePageRegByte(0x04, 0x40, 0xC3);  //Enable DMR Tx, DMR Rx, Passive Timing, Normal mode
+	SPI0WritePageRegByte(0x04, 0x41, 0x20);  //Set Sync Fail Bit (Reset?))
+	SPI0WritePageRegByte(0x04, 0x41, 0x00);  //Reset
+	SPI0WritePageRegByte(0x04, 0x41, 0x20);  //Set Sync Fail Bit (Reset?)
+	SPI0WritePageRegByte(0x04, 0x41, 0x50);  //Receive during next Timeslot
 }
 
 void init_digital(void)
@@ -1362,7 +1362,7 @@ void setupPcOrTGHeader(void)
 	spi_tx[9] = 0x00;
 	spi_tx[10] = 0x00;
 	spi_tx[11] = 0x00;
-	write_SPI_page_reg_bytearray_SPI0(0x02, 0x00, spi_tx, 0x0c);
+	SPI0WritePageRegByteArray(0x02, 0x00, spi_tx, 0x0c);
 }
 
 bool callAcceptFilter(void)
@@ -1419,9 +1419,9 @@ void tick_HR_C6000(void)
 			// This is possibly not the ideal solution, and a better solution may be found at a later date
 			// But at least it should prevent things going too badly wrong
 			NVIC_DisableIRQ(PORTC_IRQn);
-			write_SPI_page_reg_byte_SPI0(0x04, 0x40, 0xE3); // TX and RX enable, Active Timing.
-			write_SPI_page_reg_byte_SPI0(0x04, 0x21, 0xA2); // Set Polite to Color Code and Reset vocoder encodingbuffer
-			write_SPI_page_reg_byte_SPI0(0x04, 0x22, 0x86); // Start Vocoder Encode, I2S mode
+			SPI0WritePageRegByte(0x04, 0x40, 0xE3); // TX and RX enable, Active Timing.
+			SPI0WritePageRegByte(0x04, 0x21, 0xA2); // Set Polite to Color Code and Reset vocoder encodingbuffer
+			SPI0WritePageRegByte(0x04, 0x22, 0x86); // Start Vocoder Encode, I2S mode
 			NVIC_EnableIRQ(PORTC_IRQn);
 
 			if (trxDMRMode == DMR_MODE_ACTIVE)
@@ -1434,7 +1434,7 @@ void tick_HR_C6000(void)
 				{
 					// Note. We don't increment the buffer indexes, becuase this is also the first frame of audio and we need it later
 					NVIC_DisableIRQ(PORTC_IRQn);
-					write_SPI_page_reg_bytearray_SPI0(0x02, 0x00, (uint8_t *)&audioAndHotspotDataBuffer.hotspotBuffer[wavbuffer_read_idx], 0x0c);// put LC into hardware
+					SPI0WritePageRegByteArray(0x02, 0x00, (uint8_t *)&audioAndHotspotDataBuffer.hotspotBuffer[wavbuffer_read_idx], 0x0c);// put LC into hardware
 					NVIC_EnableIRQ(PORTC_IRQn);
 					memcpy((uint8_t *)deferredUpdateBuffer,(uint8_t *)&audioAndHotspotDataBuffer.hotspotBuffer[wavbuffer_read_idx],27+0x0C);
 					hotspotDMRTxFrameBufferEmpty=false;
@@ -1495,9 +1495,9 @@ void tick_HR_C6000(void)
 			else
 			{
 				NVIC_DisableIRQ(PORTC_IRQn);
-				write_SPI_page_reg_byte_SPI0(0x04, 0x40, 0xE3); // TX and RX enable, Active Timing.
-				write_SPI_page_reg_byte_SPI0(0x04, 0x21, 0xA2); // Set Polite to Color Code and Reset vocoder encodingbuffer
-				write_SPI_page_reg_byte_SPI0(0x04, 0x22, 0x86); // Start Vocoder Encode, I2S mode
+				SPI0WritePageRegByte(0x04, 0x40, 0xE3); // TX and RX enable, Active Timing.
+				SPI0WritePageRegByte(0x04, 0x21, 0xA2); // Set Polite to Color Code and Reset vocoder encodingbuffer
+				SPI0WritePageRegByte(0x04, 0x22, 0x86); // Start Vocoder Encode, I2S mode
 				NVIC_EnableIRQ(PORTC_IRQn);
 				repeaterWakeupResponseTimeout=WAKEUP_RETRY_PERIOD;
 				slot_state = DMR_STATE_REPEATER_WAKE_1;

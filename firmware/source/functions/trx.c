@@ -802,17 +802,17 @@ void trxUpdateC6000Calibration(void)
 
 	trxCalcBandAndFrequencyOffset(&calBand, &freq_offset);
 
-	write_SPI_page_reg_byte_SPI0(0x04, 0x00, 0x3F); // Reset HR-C6000 state
+	SPI0WritePageRegByte(0x04, 0x00, 0x3F); // Reset HR-C6000 state
 
 	calibrationGetSectionData(calBand, CalibrationSection_DACDATA_SHIFT, &calRes);
-	write_SPI_page_reg_byte_SPI0(0x04, 0x37, calRes.value); // DACDATA shift (LIN_VOL)
+	SPI0WritePageRegByte(0x04, 0x37, calRes.value); // DACDATA shift (LIN_VOL)
 
 	calibrationGetSectionData(calBand, CalibrationSection_Q_MOD2_OFFSET, &calRes);
-	write_SPI_page_reg_byte_SPI0(0x04, 0x04, calRes.value); // MOD2 offset
+	SPI0WritePageRegByte(0x04, 0x04, calRes.value); // MOD2 offset
 
 	calRes.offset = freq_offset;
 	calibrationGetSectionData(calBand, CalibrationSection_PHASE_REDUCE, &calRes);
-	write_SPI_page_reg_byte_SPI0(0x04, 0x46, calRes.value); // phase reduce
+	SPI0WritePageRegByte(0x04, 0x46, calRes.value); // phase reduce
 
 	calibrationGetSectionData(calBand, CalibrationSection_TWOPOINT_MOD, &calRes);
 	uint16_t refOscOffset = calRes.value; //(highByte<<8)+lowByte;
@@ -832,8 +832,8 @@ void trxUpdateC6000Calibration(void)
 	{
 		refOscOffset = 1023;
 	}
-	write_SPI_page_reg_byte_SPI0(0x04, 0x48, (refOscOffset >> 8) & 0x03); // bit 0 to 1 = upper 2 bits of 10-bit twopoint mod
-	write_SPI_page_reg_byte_SPI0(0x04, 0x47, (refOscOffset & 0xFF)); // bit 0 to 7 = lower 8 bits of 10-bit twopoint mod
+	SPI0WritePageRegByte(0x04, 0x48, (refOscOffset >> 8) & 0x03); // bit 0 to 1 = upper 2 bits of 10-bit twopoint mod
+	SPI0WritePageRegByte(0x04, 0x47, (refOscOffset & 0xFF)); // bit 0 to 7 = lower 8 bits of 10-bit twopoint mod
 }
 
 void I2C_AT1846_set_register_with_mask(uint8_t reg, uint16_t mask, uint16_t value, uint8_t shift)
@@ -936,7 +936,7 @@ void trxUpdateAT1846SCalibration(void)
 
 void trxSetDMRColourCode(int colourCode)
 {
-	write_SPI_page_reg_byte_SPI0(0x04, 0x1F, (colourCode << 4)); // DMR Colour code in upper 4 bits.
+	SPI0WritePageRegByte(0x04, 0x1F, (colourCode << 4)); // DMR Colour code in upper 4 bits.
 	currentCC = colourCode;
 }
 
