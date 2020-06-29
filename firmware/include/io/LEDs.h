@@ -53,7 +53,10 @@
 
 #endif
 
+void LEDsInit(void);
+
+#if defined(PLATFORM_RD5R)
 void toggle_torch(void);
-void fw_init_LEDs(void);
+#endif
 
 #endif /* _FW_LEDS_H_ */

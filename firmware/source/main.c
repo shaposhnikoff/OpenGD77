@@ -170,11 +170,10 @@ void mainTask(void *data)
 	USB_DeviceApplicationInit();
 
 	// Init I2C
-	init_I2C0a();
-	setup_I2C0();
+	I2C0aInit();
 	fw_init_common();
 	buttonsInit();
-	fw_init_LEDs();
+	LEDsInit();
 	keyboardInit();
 	rotarySwitchInit();
 
@@ -190,16 +189,14 @@ void mainTask(void *data)
 	displayInit(nonVolatileSettings.displayInverseVideo);
 
 	// Init SPI
-	init_SPI();
-	setup_SPI0();
-	setup_SPI1();
+	SPIInit();
 
 	// Init I2S
 	init_I2S();
 	setup_I2S();
 
 	// Init ADC
-	adc_init();
+	adcInit();
 
 	// Init DAC
 	dac_init();
@@ -237,7 +234,7 @@ void mainTask(void *data)
 
 	trx_measure_count = 0;
 
-	if (get_battery_voltage() < CUTOFF_VOLTAGE_UPPER_HYST)
+	if (adcGetBatteryVoltage() < CUTOFF_VOLTAGE_UPPER_HYST)
 	{
 		showLowBattery();
 #if !defined(PLATFORM_RD5R)

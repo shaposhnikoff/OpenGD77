@@ -34,8 +34,6 @@ static void handleEvent(uiEvent_t *ev);
 static void announceContactName(void);
 
 static const uint32_t CURSOR_UPDATE_TIMEOUT = 500;
-static const int NUM_PC_OR_TG_DIGITS = 8;
-static const int MAX_TG_OR_PC_VALUE = 16777215;
 
 static const char *menuName[4];
 enum DISPLAY_MENU_LIST { ENTRY_TG = 0, ENTRY_PC, ENTRY_SELECT_CONTACT, ENTRY_USER_DMR_ID, NUM_ENTRY_ITEMS};
