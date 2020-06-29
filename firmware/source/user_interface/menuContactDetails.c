@@ -299,7 +299,7 @@ static void handleEvent(uiEvent_t *ev)
 									tmpContact.tgNumber = atoi(digits);
 								}
 
-								if (tmpContact.tgNumber > 0 && tmpContact.tgNumber <= 9999999)
+								if (tmpContact.tgNumber > 0 && tmpContact.tgNumber <= MAX_TG_OR_PC_VALUE)// 9999999)
 								{
 									codeplugUtilConvertStringToBuf(contactName, tmpContact.name, 16);
 									if (contactDetailsIndex > 0 && contactDetailsIndex <= 1024)
@@ -344,7 +344,7 @@ static void handleEvent(uiEvent_t *ev)
 									if (gMenusCurrentItemIndex == CONTACT_DETAILS_TG)
 									{
 										// Add a digit
-										if (sLen < 7)
+										if (sLen < NUM_PC_OR_TG_DIGITS)
 										{
 											int keyval = menuGetKeypadKeyValue(ev, true);
 

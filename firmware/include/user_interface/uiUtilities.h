@@ -27,6 +27,9 @@ extern const int QSO_TIMER_TIMEOUT;
 extern const int TX_TIMER_Y_OFFSET;
 extern const int CONTACT_Y_POS;
 extern const int FREQUENCY_X_POS;
+extern const int NUM_PC_OR_TG_DIGITS;
+extern const int MAX_TG_OR_PC_VALUE;
+
 extern struct_codeplugRxGroup_t currentRxGroupData;
 extern struct_codeplugContact_t currentContactData;
 extern struct_codeplugZone_t currentZone;

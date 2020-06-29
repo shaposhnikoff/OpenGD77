@@ -443,11 +443,11 @@ static void soundBeepTask(void *data)
     		{
     			if (!beep)
     			{
-    				set_clear_SPI_page_reg_byte_with_mask_SPI0(0x04, 0x06, 0xFD, 0x02); // SET
+    				SPI0SeClearPageRegByteWithMask(0x04, 0x06, 0xFD, 0x02); // SET
     				beep = true;
     			}
 
-    			read_SPI_page_reg_byte_SPI0(0x04, 0x88, &tmp_val);
+    			SPI0ReadPageRegByte(0x04, 0x88, &tmp_val);
     			if ( !(tmp_val & 1) )
     			{
     				for (int i=0; i<16 ;i++)
@@ -464,7 +464,7 @@ static void soundBeepTask(void *data)
     						}
     					}
     				}
-    				write_SPI_page_reg_bytearray_SPI0(0x03, 0x00, spi_sound, 0x20);
+    				SPI0WritePageRegByteArray(0x03, 0x00, spi_sound, 0x20);
     			}
 
     			sine_beep_duration--;
@@ -473,7 +473,7 @@ static void soundBeepTask(void *data)
     		{
     			if (beep)
     			{
-    				set_clear_SPI_page_reg_byte_with_mask_SPI0(0x04, 0x06, 0xFD, 0x00); // CLEAR
+    				SPI0SeClearPageRegByteWithMask(0x04, 0x06, 0xFD, 0x00); // CLEAR
     				beep = false;
     			}
     		}

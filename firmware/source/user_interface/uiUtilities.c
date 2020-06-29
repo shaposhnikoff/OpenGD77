@@ -44,6 +44,9 @@ static const int BAR_Y_POS = 10;
 const int FREQUENCY_X_POS = /* '>Ta'*/ (3 * 8) + 4;
 const int MAX_POWER_SETTING_NUM = 9;
 
+const int NUM_PC_OR_TG_DIGITS = 8;
+const int MAX_TG_OR_PC_VALUE = 16777215;
+
 static const int DMRID_MEMORY_STORAGE_START = 0x30000;
 static const int DMRID_HEADER_LENGTH = 0x0C;
 __attribute__((section(".data.$RAM4"))) LinkItem_t callsList[NUM_LASTHEARD_STORED];
