@@ -33,7 +33,8 @@ typedef enum
 	GD77S_UIMODE_CHANNEL,
 	GD77S_UIMODE_SCAN,
 	GD77S_UIMODE_TS,
-	GD77S_UIMODE_DMR_FILTER,
+	GD77S_UIMODE_CC,
+	GD77S_UIMODE_FILTER,
 	GD77S_UIMODE_ZONE,
 	GD77S_UIMODE_POWER,
 	GD77S_UIMODE_MAX
@@ -53,7 +54,7 @@ static GD77SParameters_t GD77SParameters =
 		.channelOutOfBounds = false
 };
 
-static uint8_t buildSpeechUiModeForGD77S(uint8_t *buf, uint8_t offset, GD77S_UIMODES_t uiMode);
+static void buildSpeechUiModeForGD77S(GD77S_UIMODES_t uiMode);
 
 static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSpeech);
 static void handleEventForGD77S(uiEvent_t *ev);
@@ -110,7 +111,9 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 
 	if (isFirstRun)
 	{
+#if ! defined(PLATFORM_GD77S) // GD77S speech can be triggered in main(), so let it ends.
 		voicePromptsTerminate();
+#endif
 
 		nonVolatileSettings.initialMenuNumber = UI_CHANNEL_MODE;// This menu.
 		displayChannelSettings = false;
@@ -142,7 +145,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		// Ensure the correct channel is loaded, on the very first run
 		if (GD77SParameters.firstRun)
 		{
-			if (speechSynthesisIsSpeaking() == false)
+			if (voicePromptsIsPlaying() == false)
 			{
 				GD77SParameters.firstRun = false;
 				checkAndUpdateSelectedChannelForGD77S(rotarySwitchGetPosition(), true);
@@ -182,7 +185,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 			// as rotary selector could be turned while the GD is OFF, or in hotspot mode.
 			if ((scanActive == false) && ((rotarySwitchGetPosition() != getCurrentChannelInCurrentZoneForGD77S()) || (GD77SParameters.firstRun == true)))
 			{
-				if (speechSynthesisIsSpeaking() == false)
+				if (voicePromptsIsPlaying() == false)
 				{
 					checkAndUpdateSelectedChannelForGD77S(rotarySwitchGetPosition(), GD77SParameters.firstRun);
 
@@ -443,10 +446,13 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 			trxSetDMRTimeSlot ((nonVolatileSettings.tsManualOverride & 0x0F) -1);
 		}
 	}
+
+#if ! defined(PLATFORM_GD77S) // GD77S handle voice prompts on its own
 	if (!inhibitInitialVoicePrompt || loadVoicePromptAnnouncement)
 	{
-		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition+1]==UI_TX_SCREEN?(PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY):PROMPT_THRESHOLD_3);
+		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition+1] == UI_TX_SCREEN ? PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY : PROMPT_THRESHOLD_3);
 	}
+#endif
 
 }
 
@@ -1832,7 +1838,6 @@ static uint16_t getCurrentChannelInCurrentZoneForGD77S(void)
 
 static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSpeech)
 {
-	uint8_t buf[5U] = { 0 };
 	bool updateDisplay = false;
 
 	if(currentZone.NOT_IN_MEMORY_isAllChannelsZone)
@@ -1843,21 +1848,19 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 			if (chanNum != nonVolatileSettings.currentChannelIndexInAllZone)
 			{
 				nonVolatileSettings.currentChannelIndexInAllZone = chanNum;
-				loadChannelData(false,true);
+				loadChannelData(false, false);
 				updateDisplay = true;
 			}
 		}
 		else
 		{
 			GD77SParameters.channelOutOfBounds = true;
-			if (speechSynthesisIsSpeaking() == false)
+			if (voicePromptsIsPlaying() == false)
 			{
-				buf[0U] = 4U;
-				buf[1U] = SPEECH_SYNTHESIS_CHANNEL;
-				buf[2U] = SPEECH_SYNTHESIS_ERROR;
-				buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-				buf[4U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-				speechSynthesisSpeak(buf);
+				voicePromptsInit();
+				voicePromptsAppendPrompt(PROMPT_CHANNEL);
+				voicePromptsAppendLanguageString(&currentLanguage->error);
+				voicePromptsPlay();
 			}
 		}
 	}
@@ -1869,21 +1872,19 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 			if ((chanNum - 1) != nonVolatileSettings.currentChannelIndexInZone)
 			{
 				nonVolatileSettings.currentChannelIndexInZone = (chanNum - 1);
-				loadChannelData(false,true);
+				loadChannelData(false, false);
 				updateDisplay = true;
 			}
 		}
 		else
 		{
 			GD77SParameters.channelOutOfBounds = true;
-			if (speechSynthesisIsSpeaking() == false)
+			if (voicePromptsIsPlaying() == false)
 			{
-				buf[0U] = 4U;
-				buf[1U] = SPEECH_SYNTHESIS_CHANNEL;
-				buf[2U] = SPEECH_SYNTHESIS_ERROR;
-				buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-				buf[4U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-				speechSynthesisSpeak(buf);
+				voicePromptsInit();
+				voicePromptsAppendPrompt(PROMPT_CHANNEL);
+				voicePromptsAppendLanguageString(&currentLanguage->error);
+				voicePromptsPlay();
 			}
 		}
 	}
@@ -1906,11 +1907,15 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 	{
 		if (GD77SParameters.channelOutOfBounds == false)
 		{
-			buf[0U] = 2U;
-			buf[1U] = SPEECH_SYNTHESIS_CHANNEL;
-			buf[2U] = chanNum;
+			char buf[17];
 
-			speechSynthesisSpeak(buf);
+			voicePromptsInit();
+			voicePromptsAppendPrompt(PROMPT_CHANNEL);
+			voicePromptsAppendInteger(chanNum);
+			voicePromptsAppendPrompt(PROMPT_SILENCE);
+			codeplugUtilConvertBufToString(channelScreenChannelData.name, buf, 16);
+			voicePromptsAppendString(buf);
+			voicePromptsPlay();
 		}
 
 		if (!forceSpeech)
@@ -1921,144 +1926,103 @@ static void checkAndUpdateSelectedChannelForGD77S(uint16_t chanNum, bool forceSp
 	}
 }
 
-static void buildSpeechChannelDetailsForGD77S(uint8_t *buf, uint8_t offset)
+static void buildSpeechChannelDetailsForGD77S()
 {
-	bool duplex = (currentChannelData->rxFreq != currentChannelData->txFreq);
-	uint8_t len;
-	int val_before_dp, val_after_dp;
-	bool is125;
-	char buffer[16];
+	char buf[17];
 
-	buf[0U] += 1U;
-	buf[++offset] = SPEECH_SYNTHESIS_FREQUENCY;
+	announceFrequency();
 
-	if (duplex)
-	{
-		val_before_dp = currentChannelData->rxFreq / 100000;
-		val_after_dp = (currentChannelData->rxFreq - val_before_dp * 100000) / 100;
-		is125 = (currentChannelData->rxFreq % 2500);
-		sprintf(buffer, "%03d.%03d", val_before_dp, val_after_dp);
+	codeplugUtilConvertBufToString(channelScreenChannelData.name, buf, 16);
+	voicePromptsAppendString(buf);
 
-		if (is125)
-		{
-			strcat(buffer, "5");
-		}
-
-		buf[0U] += 2; // for RX and TX
-		buf[++offset] = SPEECH_SYNTHESIS_RECEIVE;
-		len = speechSynthesisBuildFromNumberInString(&buf[offset + 1U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset + 1U), buffer, true);
-		buf[0U] += len;
-		offset += len;
-
-		buf[++offset] = SPEECH_SYNTHESIS_TRANSMIT;
-	}
-
-	val_before_dp = currentChannelData->txFreq / 100000;
-	val_after_dp = (currentChannelData->txFreq - val_before_dp * 100000) / 100;
-	is125 = (currentChannelData->txFreq % 2500);
-	sprintf(buffer, "%03d.%03d", val_before_dp, val_after_dp);
-
-	if (is125)
-	{
-		strcat(buffer, "5");
-	}
-
-	len = speechSynthesisBuildFromNumberInString(&buf[offset + 1U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset + 1U), buffer, true);
-	buf[0U] += len;
-	offset += len;
+	announceContactNameTgOrPc();
 
 	if (trxGetMode() == RADIO_MODE_DIGITAL)
 	{
-		// For TG/PC
-		offset = buildSpeechUiModeForGD77S(buf, offset, GD77S_UIMODE_CHANNEL);
-
-		buf[0U]++;
-		buf[++offset] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-
-		// TS
-		buildSpeechUiModeForGD77S(buf, offset, GD77S_UIMODE_TS);
+		announceTS();
+		announceCC();
 	}
 }
 
-static uint8_t buildSpeechUiModeForGD77S(uint8_t *buf, uint8_t offset, GD77S_UIMODES_t uiMode)
+static void buildSpeechUiModeForGD77S(GD77S_UIMODES_t uiMode)
 {
-	const float powerLevels[] = { 0.050, 0.250, 0.500, 0.750, 1, 2, 3, 4, 5 };
-	uint8_t len;
+	char buf[17];
 
 	switch (uiMode)
 	{
-		case GD77S_UIMODE_CHANNEL:
+		case GD77S_UIMODE_CHANNEL: // Channel
+			codeplugUtilConvertBufToString(channelScreenChannelData.name, buf, 16);
+			voicePromptsAppendString(buf);
+
 			if (trxGetMode() == RADIO_MODE_DIGITAL)
 			{
-				// PC/TG
-				buf[0U]++;
-				buf[++offset] = SPEECH_SYNTHESIS_ID_CODE;
-				len = speechSynthesisBuildNumerical(&buf[offset + 1U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset - 1U), (trxTalkGroupOrPcId & 0x00FFFFFF), 1, true);
-				buf[0U] += len;
-				offset += len;
+				announceTS();
 			}
 			break;
 
-		case GD77S_UIMODE_SCAN:
-			buf[0U] += 2;
-			buf[++offset] = SPEECH_SYNTHESIS_SCAN;
-			buf[++offset] = (scanActive ? SPEECH_SYNTHESIS_ON : SPEECH_SYNTHESIS_OFF);
+		case GD77S_UIMODE_SCAN: // Scan
+			voicePromptsAppendLanguageString(&currentLanguage->scan);
+			voicePromptsAppendLanguageString(scanActive ? &currentLanguage->on : &currentLanguage->off);
 			break;
 
-		case GD77S_UIMODE_TS:
+		case GD77S_UIMODE_TS: // Timeslot
 			if (trxGetMode() == RADIO_MODE_DIGITAL)
 			{
-				// TS
-				buf[0U]++;
-				buf[++offset] = SPEECH_SYNTHESIS_KEY;
-				len = speechSynthesisBuildNumerical(&buf[offset + 1U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset - 1U), (trxGetDMRTimeSlot() + 1), 1, true);
-				buf[0U] += len;
-				offset += len;
+				announceTS();
 			}
 			break;
 
-		case GD77S_UIMODE_DMR_FILTER:
+		case GD77S_UIMODE_CC: // Color code
 			if (trxGetMode() == RADIO_MODE_DIGITAL)
 			{
-				// DMR Filter
-				buf[0U] += 2U;
-				buf[++offset] = SPEECH_SYNTHESIS_LEVEL;
-				buf[++offset] = ((nonVolatileSettings.dmrFilterLevel == DMR_FILTER_CC_TS_TG) ? SPEECH_SYNTHESIS_ON : SPEECH_SYNTHESIS_OFF);
+				announceCC();
+			}
+			break;
+
+		case GD77S_UIMODE_FILTER: // DMR/Analog filter
+			voicePromptsAppendLanguageString(&currentLanguage->filter);
+			if (trxGetMode() == RADIO_MODE_DIGITAL)
+			{
+				if (nonVolatileSettings.dmrFilterLevel == DMR_FILTER_NONE)
+				{
+					voicePromptsAppendLanguageString(&currentLanguage->none);
+				}
+				else
+				{
+					voicePromptsAppendString((char *)DMR_FILTER_LEVELS[nonVolatileSettings.dmrFilterLevel - 1]);
+				}
+
+			}
+			else
+			{
+				if (nonVolatileSettings.analogFilterLevel == ANALOG_FILTER_NONE)
+				{
+					voicePromptsAppendLanguageString(&currentLanguage->none);
+				}
+				else
+				{
+					voicePromptsAppendString((char *)ANALOG_FILTER_LEVELS[nonVolatileSettings.analogFilterLevel - 1]);
+				}
 			}
 			break;
 
 		case GD77S_UIMODE_ZONE: // Zone
-			buf[0U] += 1U;
-			buf[offset + 1U] = SPEECH_SYNTHESIS_STORE;
-			buf[0U] += speechSynthesisBuildNumerical(&buf[offset + 2U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset + 2U), (nonVolatileSettings.currentZone + 1), 3, false);
+			announceZoneName();
 			break;
 
 
-		case GD77S_UIMODE_POWER: // POWER
-			buf[0U] += 2U;
-			buf[offset + 1U] = SPEECH_SYNTHESIS_POWER;
-			buf[offset + 2U] = SPEECH_SYNTHESIS_LEVEL;
-			if (nonVolatileSettings.txPowerLevel < MAX_POWER_SETTING_NUM)
-			{
-				buf[0U] += speechSynthesisBuildNumerical(&buf[offset + 3U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset + 3U), powerLevels[nonVolatileSettings.txPowerLevel], 3, true);
-			}
-			else // 5W+
-			{
-				buf[0U] += speechSynthesisBuildFromNumberInString(&buf[offset + 3U], SPEECH_SYNTHESIS_BUFFER_SIZE - (offset + 3U), "5++", true);
-			}
+		case GD77S_UIMODE_POWER: // Power
+			voicePromptsAppendPrompt(PROMPT_POWER);
+			announcePowerLevel();
 			break;
 
 		case GD77S_UIMODE_MAX:
 			break;
 	}
-
-	return offset;
 }
 
 static void handleEventForGD77S(uiEvent_t *ev)
 {
-	uint8_t buf[SPEECH_SYNTHESIS_BUFFER_SIZE] = { 0 };
-
 	if (ev->events & ROTARY_EVENT)
 	{
 		if (!trxTransmissionEnabled && (ev->rotary > 0))
@@ -2084,16 +2048,21 @@ static void handleEventForGD77S(uiEvent_t *ev)
 			uiChannelModeStopScanning();
 			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 			uiChannelModeUpdateScreen(0);
-			buildSpeechUiModeForGD77S(buf, 0U, GD77S_UIMODE_SCAN);
-			speechSynthesisSpeak(buf);
+
+			if (voicePromptsIsPlaying())
+			{
+				voicePromptsTerminate();
+			}
+
+			voicePromptsInit();
+			buildSpeechUiModeForGD77S(GD77S_UIMODE_SCAN);
+			voicePromptsPlay();
 			return;
 		}
 
 		if (BUTTONCHECK_LONGDOWN(ev, BUTTON_ORANGE))
 		{
-			buf[0U] = 1U;
-			buf[1U] = SPEECH_SYNTHESIS_BATTERY;
-			buf[0U] += speechSynthesisBuildNumerical(&buf[2U], SPEECH_SYNTHESIS_BUFFER_SIZE - 2U, getBatteryPercentage(), 1, false);
+			announceItem(PROMPT_SEQUENCE_BATTERY, PROMPT_THRESHOLD_3);
 		}
 		else if (BUTTONCHECK_SHORTUP(ev, BUTTON_ORANGE))
 		{
@@ -2102,49 +2071,60 @@ static void handleEventForGD77S(uiEvent_t *ev)
 			switch (GD77SParameters.uiMode)
 			{
 				case GD77S_UIMODE_CHANNEL: // Channel Mode
-					buf[0U] = 3U;
-					buf[1U] = SPEECH_SYNTHESIS_CHANNEL;
-					buf[2U] = SPEECH_SYNTHESIS_MODE;
-					buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-					buildSpeechUiModeForGD77S(buf, buf[0U], GD77SParameters.uiMode);
+					voicePromptsInit();
+					voicePromptsAppendPrompt(PROMPT_CHANNEL_MODE);
+					voicePromptsAppendPrompt(PROMPT_SILENCE);
+					buildSpeechUiModeForGD77S(GD77SParameters.uiMode);
+					voicePromptsPlay();
 					break;
 
 				case GD77S_UIMODE_SCAN:
-					buf[0U] = 2U;
-					buf[1U] = SPEECH_SYNTHESIS_SCAN;
-					buf[2U] = SPEECH_SYNTHESIS_MODE;
+					voicePromptsInit();
+					voicePromptsAppendPrompt(PROMPT_SCAN_MODE);
+					voicePromptsAppendPrompt(PROMPT_SILENCE);
+					buildSpeechUiModeForGD77S(GD77SParameters.uiMode);
+					voicePromptsPlay();
 					break;
 
 				case GD77S_UIMODE_TS: // Timeslot Mode
-					buf[0U] = 3U;
-					buf[1U] = SPEECH_SYNTHESIS_KEY;
-					buf[2U] = SPEECH_SYNTHESIS_MODE;
-					buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-					buildSpeechUiModeForGD77S(buf, buf[0U], GD77SParameters.uiMode);
+					voicePromptsInit();
+					voicePromptsAppendPrompt(PROMPT_TIMESLOT_MODE);
+					voicePromptsAppendPrompt(PROMPT_SILENCE);
+					//voicePromptsAppendLanguageString(&currentLanguage->timeSlot);
+					buildSpeechUiModeForGD77S(GD77SParameters.uiMode);
+					voicePromptsPlay();
 					break;
 
-				case GD77S_UIMODE_DMR_FILTER: // DMR Filter (DMR_FILTER_CC_TS or DMR_FILTER_CC_TS_TG)
-					buf[0U] = 3U;
-					buf[1U] = SPEECH_SYNTHESIS_LEVEL;
-					buf[2U] = SPEECH_SYNTHESIS_MODE;
-					buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-					buildSpeechUiModeForGD77S(buf, buf[0U], GD77SParameters.uiMode);
+				case GD77S_UIMODE_CC: // ColorCode Mode
+					voicePromptsInit();
+					voicePromptsAppendPrompt(PROMPT_COLORCODE_MODE);
+					voicePromptsAppendPrompt(PROMPT_SILENCE);
+					buildSpeechUiModeForGD77S(GD77SParameters.uiMode);
+					voicePromptsPlay();
+					break;
+
+				case GD77S_UIMODE_FILTER: // DMR/Analog Filter
+					voicePromptsInit();
+					voicePromptsAppendPrompt(PROMPT_FILTER_MODE);
+					voicePromptsAppendPrompt(PROMPT_SILENCE);
+					buildSpeechUiModeForGD77S(GD77SParameters.uiMode);
+					voicePromptsPlay();
 					break;
 
 				case GD77S_UIMODE_ZONE: // Zone Mode
-					buf[0U] = 3U;
-					buf[1U] = SPEECH_SYNTHESIS_STORE;
-					buf[2U] = SPEECH_SYNTHESIS_MODE;
-					buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-					buildSpeechUiModeForGD77S(buf, buf[0U], GD77SParameters.uiMode);
+					voicePromptsInit();
+					voicePromptsAppendPrompt(PROMPT_ZONE_MODE);
+					voicePromptsAppendPrompt(PROMPT_SILENCE);
+					buildSpeechUiModeForGD77S(GD77SParameters.uiMode);
+					voicePromptsPlay();
 					break;
 
 				case GD77S_UIMODE_POWER: // Power Mode
-					buf[0U] = 3U;
-					buf[1U] = SPEECH_SYNTHESIS_POWER;
-					buf[2U] = SPEECH_SYNTHESIS_MODE;
-					buf[3U] = SPEECH_SYNTHESIS_SEQUENCE_SEPARATOR;
-					buildSpeechUiModeForGD77S(buf, buf[0U], GD77SParameters.uiMode);
+					voicePromptsInit();
+					voicePromptsAppendPrompt(PROMPT_POWER_MODE);
+					voicePromptsAppendPrompt(PROMPT_SILENCE);
+					buildSpeechUiModeForGD77S(GD77SParameters.uiMode);
+					voicePromptsPlay();
 					break;
 
 				case GD77S_UIMODE_MAX:
@@ -2155,7 +2135,9 @@ static void handleEventForGD77S(uiEvent_t *ev)
 		{
 			if (GD77SParameters.channelOutOfBounds == false)
 			{
-				buildSpeechChannelDetailsForGD77S(buf, 0U);
+				voicePromptsInit();
+				buildSpeechChannelDetailsForGD77S();
+				voicePromptsPlay();
 			}
 		}
 		else if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
@@ -2178,7 +2160,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						uiChannelUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiChannelModeUpdateScreen(0);
-						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, PROMPT_THRESHOLD_3);
 					}
 					break;
 
@@ -2193,25 +2175,57 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					{
 						startScan();
 					}
-					buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+
+					voicePromptsInit();
+					voicePromptsAppendLanguageString(&currentLanguage->scan);
+					voicePromptsAppendLanguageString(scanActive ? &currentLanguage->on : &currentLanguage->off);
+					voicePromptsPlay();
 					break;
 
 				case GD77S_UIMODE_TS:
 					if (trxGetMode() == RADIO_MODE_DIGITAL)
 					{
 						toggleTimeslotForGD77S();
-						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						announceItem(PROMPT_SEQUENCE_TS, PROMPT_THRESHOLD_3);
 					}
 					break;
 
-				case GD77S_UIMODE_DMR_FILTER:
+				case GD77S_UIMODE_CC:
 					if (trxGetMode() == RADIO_MODE_DIGITAL)
 					{
-						nonVolatileSettings.dmrFilterLevel = DMR_FILTER_CC_TS_TG;
-						init_digital_DMR_RX();
-						disableAudioAmp(AUDIO_AMP_MODE_RF);
-						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						if (currentChannelData->rxColor < 15)
+						{
+							currentChannelData->rxColor++;
+							trxSetDMRColourCode(currentChannelData->rxColor);
+						}
+
+						voicePromptsInit();
+						announceCC();
+						voicePromptsPlay();
 					}
+					break;
+
+				case GD77S_UIMODE_FILTER:
+					if (trxGetMode() == RADIO_MODE_DIGITAL)
+					{
+						if (nonVolatileSettings.dmrFilterLevel < NUM_DMR_FILTER_LEVELS - 1)
+						{
+							nonVolatileSettings.dmrFilterLevel++;
+							init_digital_DMR_RX();
+							disableAudioAmp(AUDIO_AMP_MODE_RF);
+						}
+					}
+					else
+					{
+						if (nonVolatileSettings.analogFilterLevel < NUM_ANALOG_FILTER_LEVELS - 1)
+						{
+							nonVolatileSettings.analogFilterLevel++;
+						}
+					}
+
+					voicePromptsInit();
+					buildSpeechUiModeForGD77S(GD77SParameters.uiMode);
+					voicePromptsPlay();
 					break;
 
 				case GD77S_UIMODE_ZONE: // Zones
@@ -2226,7 +2240,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
 					GD77SParameters.uiMode = GD77S_UIMODE_ZONE;
 
-					buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+					announceItem(PROMPT_SEQUENCE_ZONE, PROMPT_THRESHOLD_3);
 					break;
 
 				case GD77S_UIMODE_POWER: // Power
@@ -2234,7 +2248,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					{
 						nonVolatileSettings.txPowerLevel++;
 					}
-					buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+					announceItem(PROMPT_SEQUENCE_POWER, PROMPT_THRESHOLD_3);
 					break;
 
 				case GD77S_UIMODE_MAX:
@@ -2245,16 +2259,15 @@ static void handleEventForGD77S(uiEvent_t *ev)
 		{
 			uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
-			// If Blue button is pressed during reception it sets the Tx TG to the incoming TG
+			// If Blue button is long pressed during reception it sets the Tx TG to the incoming TG
 			if (isDisplayingQSOData && BUTTONCHECK_DOWN(ev, BUTTON_SK2) && (trxGetMode() == RADIO_MODE_DIGITAL) &&
 					((trxTalkGroupOrPcId != tg) ||
 							((dmrMonitorCapturedTS != -1) && (dmrMonitorCapturedTS != trxGetDMRTimeSlot())) ||
 							(trxGetDMRColourCode() != currentChannelData->rxColor)))
 			{
-				buf[0U] = 2;
-				buf[1U] = SPEECH_SYNTHESIS_CHANNEL;
-				buf[2U] = SPEECH_SYNTHESIS_SET;
-				speechSynthesisSpeak(buf);
+				voicePromptsInit();
+				voicePromptsAppendLanguageString(&currentLanguage->select_tx);
+				voicePromptsPlay();
 
 				lastHeardClearLastID();
 
@@ -2306,7 +2319,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						uiChannelUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiChannelModeUpdateScreen(0);
-						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, PROMPT_THRESHOLD_3);
 					}
 					break;
 
@@ -2326,7 +2339,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 							}
 
 							nuisanceDelete[nuisanceDeleteIndex++] = settingsCurrentChannelNumber;
-							if(nuisanceDeleteIndex > (MAX_ZONE_SCAN_NUISANCE_CHANNELS - 1))
+							if (nuisanceDeleteIndex > (MAX_ZONE_SCAN_NUISANCE_CHANNELS - 1))
 							{
 								nuisanceDeleteIndex = 0; //rolling list of last MAX_NUISANCE_CHANNELS deletes.
 							}
@@ -2348,18 +2361,46 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					if (trxGetMode() == RADIO_MODE_DIGITAL)
 					{
 						toggleTimeslotForGD77S();
-						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						announceItem(PROMPT_SEQUENCE_TS, PROMPT_THRESHOLD_3);
 					}
 					break;
 
-				case GD77S_UIMODE_DMR_FILTER:
+				case GD77S_UIMODE_CC:
 					if (trxGetMode() == RADIO_MODE_DIGITAL)
 					{
-						nonVolatileSettings.dmrFilterLevel = DMR_FILTER_CC_TS;
-						init_digital_DMR_RX();
-						disableAudioAmp(AUDIO_AMP_MODE_RF);
-						buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+						if (currentChannelData->rxColor > 0)
+						{
+							currentChannelData->rxColor--;
+							trxSetDMRColourCode(currentChannelData->rxColor);
+						}
+
+						voicePromptsInit();
+						announceCC();
+						voicePromptsPlay();
 					}
+					break;
+
+				case GD77S_UIMODE_FILTER:
+					if (trxGetMode() == RADIO_MODE_DIGITAL)
+					{
+						if (nonVolatileSettings.dmrFilterLevel > DMR_FILTER_NONE)
+						{
+							nonVolatileSettings.dmrFilterLevel--;
+							init_digital_DMR_RX();
+							disableAudioAmp(AUDIO_AMP_MODE_RF);
+						}
+					}
+					else
+					{
+						if (nonVolatileSettings.analogFilterLevel > ANALOG_FILTER_NONE)
+						{
+							nonVolatileSettings.analogFilterLevel--;
+						}
+					}
+
+					voicePromptsInit();
+					buildSpeechUiModeForGD77S(GD77SParameters.uiMode);
+					voicePromptsPlay();
 					break;
 
 				case GD77S_UIMODE_ZONE: // Zones
@@ -2374,7 +2415,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
 					GD77SParameters.uiMode = GD77S_UIMODE_ZONE;
 
-					buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+					announceItem(PROMPT_SEQUENCE_ZONE, PROMPT_THRESHOLD_3);
 					break;
 
 				case GD77S_UIMODE_POWER: // Power
@@ -2382,17 +2423,12 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					{
 						nonVolatileSettings.txPowerLevel--;
 					}
-					buildSpeechUiModeForGD77S(buf, 0U, GD77SParameters.uiMode);
+					announceItem(PROMPT_SEQUENCE_POWER, PROMPT_THRESHOLD_3);
 					break;
 
 				case GD77S_UIMODE_MAX:
 					break;
 			}
-		}
-
-		if (buf[0U] != 0U)
-		{
-			speechSynthesisSpeak(buf);
 		}
 	}
 }

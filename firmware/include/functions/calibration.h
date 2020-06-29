@@ -88,7 +88,7 @@ typedef struct deviationToneStruct
 } deviationToneStruct_t;
 
 
-bool calibrationInit();
+bool calibrationInit(void);
 bool calibrationGetSectionData(CalibrationBand_t band, CalibrationSection_t section, CalibrationDataResult_t *o);
 bool calibrationGetPowerForFrequency(int freq, calibrationPowerValues_t *powerSettings);
 bool calibrationGetRSSIMeterParams(calibrationRSSIMeter_t *rssiMeterValues);

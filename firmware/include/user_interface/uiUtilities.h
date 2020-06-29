@@ -146,6 +146,18 @@ void announceVFOAndFrequency(bool announceImmediatly);
 void removeUnnecessaryZerosFromVoicePrompts(char *str);
 void announceChannelName(void);
 */
+
+void announceRadioMode(void);
+void announceZoneName(void);
+void announceContactNameTgOrPc(void);
+void announcePowerLevel(void);
+void announceBatteryPercentage(void);
+void announceTS(void);
+void announceCC(void);
+void announceChannelName(void);
+void announceFrequency(void);
+void announceVFOAndFrequency(void);
+
 void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouceThreshold);
 void playNextSettingSequence(void);
 

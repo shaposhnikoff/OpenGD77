@@ -227,9 +227,6 @@ void mainTask(void *data)
 	// Init HR-C6000 interrupts
 	init_HR_C6000_interrupts();
 
-	// Speech Synthesis (GD77S Only)
-	speechSynthesisInit();
-
 	// VOX init
 	voxInit();
 
@@ -280,17 +277,27 @@ void mainTask(void *data)
 	voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);
 
 #if defined(PLATFORM_GD77S)
-	// Change hotspot modem type setting
-	if (buttons & BUTTON_SK1)
+	// Those act as a toggles
+
+	// Band limits
+	if ((buttons & (BUTTON_SK1 | BUTTON_PTT)) == (BUTTON_SK1 | BUTTON_PTT))
 	{
-		uint8_t buf[3U] = { 0 };
+		nonVolatileSettings.txFreqLimited = !nonVolatileSettings.txFreqLimited;
 
-		nonVolatileSettings.hotspotType = (buttons & BUTTON_PTT) ? HOTSPOT_TYPE_BLUEDV : HOTSPOT_TYPE_MMDVM;
+		voicePromptsInit();
+		voicePromptsAppendLanguageString(&currentLanguage->band_limits);
+		voicePromptsAppendLanguageString(nonVolatileSettings.txFreqLimited ? &currentLanguage->on : &currentLanguage->off);
+		voicePromptsPlay();
+	}
+	// Hotspot mode
+	else if ((buttons & BUTTON_SK1) == BUTTON_SK1)
+	{
+		nonVolatileSettings.hotspotType = (nonVolatileSettings.hotspotType == HOTSPOT_TYPE_MMDVM) ? HOTSPOT_TYPE_BLUEDV : HOTSPOT_TYPE_MMDVM;
 
-		buf[0U] = 2U;
-		buf[1U] = SPEECH_SYNTHESIS_MODE;
-		buf[2U] = (nonVolatileSettings.hotspotType == HOTSPOT_TYPE_BLUEDV) ? SPEECH_SYNTHESIS_BLUE : SPEECH_SYNTHESIS_RED;
-		speechSynthesisSpeak(buf);
+		voicePromptsInit();
+		voicePromptsAppendLanguageString(&currentLanguage->hotspot_mode);
+		voicePromptsAppendString((nonVolatileSettings.hotspotType == HOTSPOT_TYPE_MMDVM) ? "MMDVM" : "BlueDV");
+		voicePromptsPlay();
 	}
 #endif
 
@@ -758,13 +765,12 @@ void mainTask(void *data)
 			if ((battery_voltage < (CUTOFF_VOLTAGE_LOWER_HYST + 6))
 					&& ((lowbatteryTimerForGD77S == 0) || ((fw_millis() - lowbatteryTimerForGD77S) > LOW_BATTERY_INTERVAL_GD77S)))
 			{
-				uint8_t buf[2];
+				//uint8_t buf[2];
 
 				lowbatteryTimerForGD77S = fw_millis();
 
-				buf[0U] = 1;
-				buf[1U] = SPEECH_SYNTHESIS_PLEASE_CHARGE_THE_BATTERY;
-				speechSynthesisSpeak(buf);
+				voicePromptsAppendLanguageString(&currentLanguage->low_battery);
+				voicePromptsPlay();
 			}
 #endif
 
@@ -813,12 +819,11 @@ void mainTask(void *data)
 				}
 			}
 
-			if (voicePromptIsActive)
+			if (voicePromptsIsPlaying())
 			{
 				voicePromptsTick();
 			}
 			soundTickMelody();
-			speechSynthesisTick();
 			voxTick();
 		}
 		vTaskDelay(0);

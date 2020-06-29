@@ -53,7 +53,7 @@
 
 #endif
 
-void toggle_torch();
+void toggle_torch(void);
 void fw_init_LEDs(void);
 
 #endif /* _FW_LEDS_H_ */

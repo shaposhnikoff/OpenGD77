@@ -29,7 +29,7 @@ menuStatus_t uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
 	{
 #if defined(PLATFORM_GD77S)
 			// Don't play boot melody when the 77S is already speaking, otherwise if will mute the speech halfway
-			if (speechSynthesisIsSpeaking() == false)
+			if (voicePromptsIsPlaying() == false)
 #endif
 			{
 				if (codeplugGetOpenGD77CustomData(CODEPLUG_CUSTOM_DATA_TYPE_BEEP, melodyBuf))
