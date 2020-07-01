@@ -72,7 +72,7 @@ void voicePromptsCacheInit(void)
 	}
 
 	// is data is not loaded change prompt mode back to beep.
-	if (!voicePromptDataIsLoaded && (nonVolatileSettings.audioPromptMode > AUDIO_PROMPT_MODE_BEEP))
+	if ((nonVolatileSettings.audioPromptMode > AUDIO_PROMPT_MODE_BEEP) && (voicePromptDataIsLoaded == false))
 
 	{
 		nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_BEEP;
