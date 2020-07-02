@@ -22,7 +22,8 @@
 #include "user_interface/uiLocalisation.h"
 
 const uint32_t VOICE_PROMPTS_DATA_MAGIC = 0x5056;//'VP'
-const uint32_t VOICE_PROMPTS_DATA_VERSION = 0x0001;
+const uint32_t VOICE_PROMPTS_DATA_VERSION_V2 = 0x0002;
+const uint32_t VOICE_PROMPTS_DATA_VERSION_V1 = 0x0001;
 #define VOICE_PROMPTS_TOC_SIZE 256
 
 static void getAmbeData(int offset,int length);
@@ -39,10 +40,10 @@ const uint32_t VOICE_PROMPTS_FLASH_DATA_ADDRESS = VOICE_PROMPTS_FLASH_HEADER_ADD
 // 76 x 27 byte ambe frames
 #define AMBE_DATA_BUFFER_SIZE  2052
 bool voicePromptDataIsLoaded = false;
-bool voicePromptIsActive=false;
-static int promptDataPosition=-1;
+bool voicePromptIsActive = false;
+static int promptDataPosition = -1;
+static int currentPromptLength = -1;
 
-static int currentPromptLength;
 __attribute__((section(".data.$RAM4")))static uint8_t ambeData[AMBE_DATA_BUFFER_SIZE];
 
 #define VOICE_PROMPTS_SEQUENCE_BUFFER_SIZE 128
@@ -66,9 +67,23 @@ void voicePromptsCacheInit(void)
 {
 	VoicePromptsDataHeader_t header;
 	SPI_Flash_read(VOICE_PROMPTS_FLASH_HEADER_ADDRESS,(uint8_t *)&header,sizeof(VoicePromptsDataHeader_t));
-	if ((header.magic == VOICE_PROMPTS_DATA_MAGIC) && (header.version == 0x0001))
+
+	if ((header.magic == VOICE_PROMPTS_DATA_MAGIC) && (header.version == VOICE_PROMPTS_DATA_VERSION_V2 || header.version == VOICE_PROMPTS_DATA_VERSION_V1 ))
 	{
 		voicePromptDataIsLoaded = SPI_Flash_read(VOICE_PROMPTS_FLASH_HEADER_ADDRESS + sizeof(VoicePromptsDataHeader_t),(uint8_t *)&tableOfContents,sizeof(uint32_t) * VOICE_PROMPTS_TOC_SIZE);
+	}
+
+	if (voicePromptDataIsLoaded && (header.version == VOICE_PROMPTS_DATA_VERSION_V1))
+	{
+		// Need to upgrade the version 1 voice prompt data to V2 format
+
+		const int NUM_EXTRA_PROMPTS_IN_V2  = 23;
+
+		// New items were added after PROMPT_VFO_COPY_TX_TO_RX
+		for(int i = 255; i  > PROMPT_VFO_COPY_TX_TO_RX; i-- )
+		{
+			tableOfContents[i] = tableOfContents[i-NUM_EXTRA_PROMPTS_IN_V2];
+		}
 	}
 
 	// is data is not loaded change prompt mode back to beep.
@@ -238,6 +253,13 @@ void voicePromptsAppendString(char *promptString)
 	}
 }
 
+void voicePromptsAppendInteger(int32_t value)
+{
+	char buf[12] = {0}; // min: -2147483648, max: 2147483647
+	itoa(value, buf, 10);
+	voicePromptsAppendString(buf);
+}
+
 void voicePromptsAppendLanguageString(const char * const *languageStringAdd)
 {
 	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
@@ -271,3 +293,14 @@ void voicePromptsPlay(void)
 		voicePromptsTick();
 	}
 }
+
+bool voicePromptsIsPlaying(void)
+{
+	return (voicePromptIsActive);// && (getAudioAmpStatus() & AUDIO_AMP_MODE_PROMPT));
+}
+
+bool voicePromptsHasDataToPlay(void)
+{
+	return (voicePromptsCurrentSequence.Length > 0);
+}
+
