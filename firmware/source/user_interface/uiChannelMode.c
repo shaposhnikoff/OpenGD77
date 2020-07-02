@@ -2160,7 +2160,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						uiChannelUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiChannelModeUpdateScreen(0);
-						announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, PROMPT_THRESHOLD_3);
+						announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC, PROMPT_THRESHOLD_3);
 					}
 					break;
 
@@ -2319,7 +2319,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 						uiChannelUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiChannelModeUpdateScreen(0);
-						announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, PROMPT_THRESHOLD_3);
+						announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC, PROMPT_THRESHOLD_3);
 					}
 					break;
 
