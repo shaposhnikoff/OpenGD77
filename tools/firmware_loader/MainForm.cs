@@ -415,7 +415,6 @@ namespace GD77_FirmwareLoader
 				MessageBox.Show("Download has been canceled.", "Timeout", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				enableUI(true);
-				this.progressBar.Visible = false;
 				return;
 			}
 			else if (ev.Error != null)
@@ -423,7 +422,6 @@ namespace GD77_FirmwareLoader
 				MessageBox.Show(ev.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				enableUI(true);
-				this.progressBar.Visible = false;
 				return;
 			}
 
