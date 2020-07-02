@@ -97,7 +97,7 @@ typedef struct
 static __attribute__((section(".data.$RAM4"))) CalibrationData_t calibrationData;
 
 
-bool calibrationInit()
+bool calibrationInit(void)
 {
 	return (SPI_Flash_read(CALIBRATION_BASE, (uint8_t *)&calibrationData, CALIBRATION_TABLE_LENGTH));
 }

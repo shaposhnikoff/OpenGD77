@@ -94,7 +94,7 @@ void menuDisplayEntry(int loopOffset, int focusedItem,const char *entryText);
 int menuGetMenuOffset(int maxMenuEntries, int loopOffset);
 
 void uiChannelModeUpdateScreen(int txTimeSecs);
-void uiChannelModeColdStart();
+void uiChannelModeColdStart(void);
 void uiVFOModeUpdateScreen(int txTimeSecs);
 void uiVFOModeStopScanning(void);
 bool uiVFOModeIsScanning(void);

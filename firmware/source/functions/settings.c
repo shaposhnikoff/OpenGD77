@@ -54,6 +54,12 @@ bool settingsSaveSettings(bool includeVFOs)
 		codeplugSetVFO_ChannelData(&settingsVFOChannel[0],0);
 		codeplugSetVFO_ChannelData(&settingsVFOChannel[1],1);
 	}
+
+	// Never reset this setting (as voicePromptsCacheInit() can change it if voice data are missing)
+#if defined(PLATFORM_GD77S)
+	nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_VOICE_LEVEL_3;
+#endif
+
 	return EEPROM_Write(STORAGE_BASE_ADDRESS, (uint8_t*)&nonVolatileSettings, sizeof(settingsStruct_t));
 }
 
@@ -199,7 +205,7 @@ void settingsRestoreDefaultSettings(void)
 	nonVolatileSettings.voxTailUnits = 4; // 2 seconds tail
 	nonVolatileSettings.audioPromptMode =
 #if defined(PLATFORM_GD77S)
-			AUDIO_PROMPT_MODE_SILENT;
+			AUDIO_PROMPT_MODE_VOICE_LEVEL_3;
 #else
 			AUDIO_PROMPT_MODE_NORMAL;
 #endif

@@ -357,12 +357,6 @@
 							<inputType id="com.crt.advproject.compiler.input.318169612" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
-					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.212336542" name="speech_synthesis.c" rcbsApplicability="disable" resourcePath="source/functions/speech_synthesis.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.475830819.1892005287">
-						<tool id="com.crt.advproject.gcc.exe.debug.475830819.1892005287" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.475830819">
-							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.1221363968" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" value="gnu.c.optimization.level.size" valueType="enumerated"/>
-							<inputType id="com.crt.advproject.compiler.input.924955457" superClass="com.crt.advproject.compiler.input"/>
-						</tool>
-					</fileInfo>
 					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.1679550635" name="fw_codeplug.c" rcbsApplicability="disable" resourcePath="source/functions/codeplug.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.475830819.953729492">
 						<tool id="com.crt.advproject.gcc.exe.debug.475830819.953729492" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.475830819">
 							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.885880514" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
@@ -1532,12 +1526,6 @@
 							<inputType id="com.crt.advproject.compiler.input.1243527564" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
-					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.630033272.744476866" name="speech_synthesis.c" rcbsApplicability="disable" resourcePath="source/functions/speech_synthesis.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.1505907422.1818745521">
-						<tool id="com.crt.advproject.gcc.exe.debug.1505907422.1818745521" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.1505907422">
-							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.557250213" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" value="gnu.c.optimization.level.size" valueType="enumerated"/>
-							<inputType id="com.crt.advproject.compiler.input.1482106996" superClass="com.crt.advproject.compiler.input"/>
-						</tool>
-					</fileInfo>
 					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.630033272.source/functions/fw_codeplug.c" name="fw_codeplug.c" rcbsApplicability="disable" resourcePath="source/functions/codeplug.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.2055655097">
 						<tool id="com.crt.advproject.gcc.exe.debug.2055655097" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.1505907422">
 							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.615695830" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
@@ -2412,12 +2400,6 @@
 						<tool id="com.crt.advproject.gcc.exe.debug.76313457" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.599786990">
 							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.744037276" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
 							<inputType id="com.crt.advproject.compiler.input.782059515" superClass="com.crt.advproject.compiler.input"/>
-						</tool>
-					</fileInfo>
-					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.227813548.source/functions/speech_synthesis.c" name="speech_synthesis.c" rcbsApplicability="disable" resourcePath="source/functions/speech_synthesis.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.306730578">
-						<tool id="com.crt.advproject.gcc.exe.debug.306730578" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.599786990">
-							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.1105355966" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
-							<inputType id="com.crt.advproject.compiler.input.2144477099" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
 					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.227813548.source/functions/fw_codeplug.c" name="fw_codeplug.c" rcbsApplicability="disable" resourcePath="source/functions/codeplug.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.728095168">
@@ -3300,12 +3282,6 @@
 						<tool id="com.crt.advproject.gcc.exe.debug.107204025" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.634760593">
 							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.385556499" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
 							<inputType id="com.crt.advproject.compiler.input.316648989" superClass="com.crt.advproject.compiler.input"/>
-						</tool>
-					</fileInfo>
-					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.1513330968.783106934" name="speech_synthesis.c" rcbsApplicability="disable" resourcePath="source/functions/speech_synthesis.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.634760593.420635836">
-						<tool id="com.crt.advproject.gcc.exe.debug.634760593.420635836" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.634760593">
-							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.1588618622" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="true" value="gnu.c.optimization.level.size" valueType="enumerated"/>
-							<inputType id="com.crt.advproject.compiler.input.1600335661" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
 					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.1513330968.source/functions/codeplug.c" name="fw_codeplug.c" rcbsApplicability="disable" resourcePath="source/functions/codeplug.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.818515259">

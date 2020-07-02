@@ -28,6 +28,7 @@ enum voicePrompts { PROMPT_SILENCE = 0,PROMPT_POINT,PROMPT_0,PROMPT_1,PROMPT_2,P
 	PROMPT_PLUS,PROMPT_MINUS,
 	PROMPT_VFO_EXCHANGE_TX_RX,PROMPT_VFO_COPY_RX_TO_TX,PROMPT_VFO_COPY_TX_TO_RX,
 	PROMPT_TBD1,PROMPT_TBD2,PROMPT_TBD3,PROMPT_TBD4,PROMPT_TBD5,
+	PROMPT_POWER, PROMPT_CHANNEL_MODE, PROMPT_SCAN_MODE, PROMPT_TIMESLOT_MODE, PROMPT_FILTER_MODE, PROMPT_ZONE_MODE, PROMPT_POWER_MODE, PROMPT_COLORCODE_MODE,
 	NUM_VOICE_PROMPTS
 };
 
@@ -41,8 +42,11 @@ void voicePromptsTick(void);// Called from HR-C6000.c
 void voicePromptsInit(void);// Call before building the prompt sequence
 void voicePromptsAppendPrompt(uint8_t prompt);// Append an individual prompt item. This can be a single letter number or a phrase
 void voicePromptsAppendString(char *);// Append a text string e.g. "VK3KYY"
+void voicePromptsAppendInteger(int32_t value); // Append a signed integer
 void voicePromptsAppendLanguageString(const char * const *);//Append a text from the current language e.g. &currentLanguage->battery
 void voicePromptsPlay(void);// Starts prompt playback
+bool voicePromptsIsPlaying(void);
+bool voicePromptsHasDataToPlay(void);
 void voicePromptsTerminate(void);
 
 #endif
