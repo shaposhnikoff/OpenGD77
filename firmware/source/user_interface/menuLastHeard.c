@@ -297,7 +297,7 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 						memcpy(nameBuf, (text + cpos + 1), npos);
 						nameBuf[npos] = 0;
 
-						snprintf(outputBuf, 16, "%s %s", chomp(buffer), chomp(nameBuf));
+						snprintf(outputBuf, 17, "%s %s", chomp(buffer), chomp(nameBuf));
 						outputBuf[16] = 0;
 
 						ucPrintCore(0,y, chomp(outputBuf), FONT_SIZE_3,TEXT_ALIGN_CENTER, itemIsSelected);
@@ -311,7 +311,7 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 						memcpy(nameBuf, (text + cpos + 1), strlen(text) - cpos - 1);
 						nameBuf[16] = 0;
 
-						snprintf(outputBuf, 16, "%s %s", chomp(buffer), chomp(nameBuf));
+						snprintf(outputBuf, 17, "%s %s", chomp(buffer), chomp(nameBuf));
 						outputBuf[16] = 0;
 
 						ucPrintCore(0,y, chomp(outputBuf), FONT_SIZE_3,TEXT_ALIGN_CENTER, itemIsSelected);
