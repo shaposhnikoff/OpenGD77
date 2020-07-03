@@ -20,6 +20,7 @@
 #include <pit.h>
 #include <settings.h>
 #include <usb_com.h>
+#include <gpio.h>
 
 
 static uint32_t prevButtonState;
@@ -40,20 +41,7 @@ static uint8_t mbuttons;
 
 void buttonsInit(void)
 {
-    PORT_SetPinMux(Port_PTT, Pin_PTT, kPORT_MuxAsGpio);
-    PORT_SetPinMux(Port_SK1, Pin_SK1, kPORT_MuxAsGpio);
-    PORT_SetPinMux(Port_SK2, Pin_SK2, kPORT_MuxAsGpio);
-#if ! defined(PLATFORM_RD5R)
-    PORT_SetPinMux(Port_Orange, Pin_Orange, kPORT_MuxAsGpio);
-#endif
-
-    GPIO_PinInit(GPIO_PTT, Pin_PTT, &pin_config_input);
-    GPIO_PinInit(GPIO_SK1, Pin_SK1, &pin_config_input);
-    GPIO_PinInit(GPIO_SK2, Pin_SK2, &pin_config_input);
-#if ! defined(PLATFORM_RD5R)
-    GPIO_PinInit(GPIO_Orange, Pin_Orange, &pin_config_input);
-#endif
-
+	gpioInitButtons();
     mbuttons = 0x00;
     prevButtonState = 0;
 }

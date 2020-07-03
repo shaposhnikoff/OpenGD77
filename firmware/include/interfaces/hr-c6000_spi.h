@@ -24,7 +24,6 @@
 
 #include "fsl_dspi.h"
 
-#include "common.h"
 
 #define SPI_0_BAUDRATE (1500000U) /*! Transfer baudrate - 1500k */
 #define SPI_1_BAUDRATE (500000U) /*! Transfer baudrate - 500k */

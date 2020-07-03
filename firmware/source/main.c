@@ -171,7 +171,7 @@ void mainTask(void *data)
 
 	// Init I2C
 	I2C0aInit();
-	fw_init_common();
+	gpioInitCommon();
 	buttonsInit();
 	LEDsInit();
 	keyboardInit();

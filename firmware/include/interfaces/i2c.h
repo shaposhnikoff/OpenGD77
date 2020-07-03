@@ -21,10 +21,8 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-
 #include "fsl_i2c.h"
 
-#include "common.h"
 
 #define I2C_BAUDRATE (100000) /* 100K */
 #define AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT (0x71U)

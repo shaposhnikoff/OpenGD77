@@ -19,51 +19,8 @@
 #ifndef _FW_BUTTONS_H_
 #define _FW_BUTTONS_H_
 
-#include "common.h"
+#include <gpio.h>
 
-#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
-
-#define Port_PTT		PORTA
-#define GPIO_PTT		GPIOA
-#define Pin_PTT			1
-#define Port_SK1		PORTB
-#define GPIO_SK1		GPIOB
-#define Pin_SK1			1
-#define Port_SK2		PORTB
-#define GPIO_SK2		GPIOB
-#define Pin_SK2			9
-#define Port_Orange		PORTA
-#define GPIO_Orange		GPIOA
-#define Pin_Orange		2
-
-#elif defined(PLATFORM_DM1801)
-
-#define Port_PTT		PORTA
-#define GPIO_PTT		GPIOA
-#define Pin_PTT			1
-#define Port_SK1		PORTB
-#define GPIO_SK1		GPIOB
-#define Pin_SK1			1
-#define Port_SK2		PORTB
-#define GPIO_SK2		GPIOB
-#define Pin_SK2			9
-#define Port_Orange		PORTA
-#define GPIO_Orange		GPIOA
-#define Pin_Orange		2
-
-#elif defined(PLATFORM_RD5R)
-
-#define Port_PTT		PORTA
-#define GPIO_PTT		GPIOA
-#define Pin_PTT			1
-#define Port_SK1		PORTB	// 'CALL' side button
-#define GPIO_SK1		GPIOB
-#define Pin_SK1			1
-#define Port_SK2		PORTB	// 'MONI' side button
-#define GPIO_SK2		GPIOB
-#define Pin_SK2			9
-
-#endif
 
 #define BUTTON_NONE             0x00000000
 #define BUTTON_PTT              0x00000001

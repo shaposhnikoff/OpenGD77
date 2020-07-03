@@ -530,12 +530,6 @@
 							<inputType id="com.crt.advproject.compiler.input.136363473" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
-					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.159688762" name="fw_common.c" rcbsApplicability="disable" resourcePath="source/io/common.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.475830819.638534046">
-						<tool id="com.crt.advproject.gcc.exe.debug.475830819.638534046" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.475830819">
-							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.481826109" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
-							<inputType id="com.crt.advproject.compiler.input.154121916" superClass="com.crt.advproject.compiler.input"/>
-						</tool>
-					</fileInfo>
 					<folderInfo id="com.crt.advproject.config.exe.debug.1021312312.121979421" name="/" resourcePath="source/user_interface">
 						<toolChain id="com.crt.advproject.toolchain.exe.debug.1223915190" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug" unusedChildren="">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.GNU_ELF" id="com.crt.advproject.platform.exe.debug" name="ARM-based MCU (Debug)" superClass="com.crt.advproject.platform.exe.debug"/>
@@ -1699,12 +1693,6 @@
 							<inputType id="com.crt.advproject.compiler.input.1126307679" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
-					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.630033272.source/io/fw_common.c" name="fw_common.c" rcbsApplicability="disable" resourcePath="source/io/common.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.1661796233">
-						<tool id="com.crt.advproject.gcc.exe.debug.1661796233" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.1505907422">
-							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.2010604547" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
-							<inputType id="com.crt.advproject.compiler.input.482861796" superClass="com.crt.advproject.compiler.input"/>
-						</tool>
-					</fileInfo>
 					<folderInfo id="com.crt.advproject.config.exe.debug.1021312312.630033272.source/user_interface" name="/" resourcePath="source/user_interface">
 						<toolChain id="com.crt.advproject.toolchain.exe.debug.74934878" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug" unusedChildren="">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.GNU_ELF" id="com.crt.advproject.platform.exe.debug.1899116093" name="ARM-based MCU (Debug)" superClass="com.crt.advproject.platform.exe.debug"/>
@@ -2581,12 +2569,6 @@
 							<inputType id="com.crt.advproject.compiler.input.2144477099" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
-					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.227813548.source/io/fw_common.c" name="fw_common.c" rcbsApplicability="disable" resourcePath="source/io/common.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.2133419866">
-						<tool id="com.crt.advproject.gcc.exe.debug.2133419866" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.599786990">
-							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.291804196" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
-							<inputType id="com.crt.advproject.compiler.input.706332964" superClass="com.crt.advproject.compiler.input"/>
-						</tool>
-					</fileInfo>
 					<folderInfo id="com.crt.advproject.config.exe.debug.1021312312.227813548.source/user_interface" name="/" resourcePath="source/user_interface">
 						<toolChain id="com.crt.advproject.toolchain.exe.debug.1419926540" name="NXP MCU Tools" superClass="com.crt.advproject.toolchain.exe.debug" unusedChildren="">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.GNU_ELF" id="com.crt.advproject.platform.exe.debug.1973597488" name="ARM-based MCU (Debug)" superClass="com.crt.advproject.platform.exe.debug"/>
@@ -3455,12 +3437,6 @@
 						<tool id="com.crt.advproject.gcc.exe.debug.841764712" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.634760593">
 							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.2071345677" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
 							<inputType id="com.crt.advproject.compiler.input.170688527" superClass="com.crt.advproject.compiler.input"/>
-						</tool>
-					</fileInfo>
-					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.1513330968.source/io/common.c" name="fw_common.c" rcbsApplicability="disable" resourcePath="source/io/common.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.1616866605">
-						<tool id="com.crt.advproject.gcc.exe.debug.1616866605" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.634760593">
-							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.143252486" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
-							<inputType id="com.crt.advproject.compiler.input.1248414225" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
 					<folderInfo id="com.crt.advproject.config.exe.debug.1021312312.1513330968.source/user_interface" name="/" resourcePath="source/user_interface">

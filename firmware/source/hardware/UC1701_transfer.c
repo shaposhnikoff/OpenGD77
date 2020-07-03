@@ -22,6 +22,7 @@
 #include <display.h>
 #include <hardware/UC1701.h>
 #include <settings.h>
+#include <gpio.h>
 
 /*
  * IMPORTANT

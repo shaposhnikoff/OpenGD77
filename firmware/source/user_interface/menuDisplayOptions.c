@@ -292,7 +292,7 @@ static void handleEvent(uiEvent_t *ev)
 
 						if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_MANUAL) && (!displayIsLit))
 						{
-							displaySetBacklightIntensityPercentage(nonVolatileSettings.displayBacklightPercentageOff);
+							gpioSetDisplayBacklightIntensityPercentage(nonVolatileSettings.displayBacklightPercentageOff);
 						}
 					}
 					break;
@@ -379,7 +379,7 @@ static void handleEvent(uiEvent_t *ev)
 
 					if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_MANUAL) && (!displayIsLit))
 					{
-						displaySetBacklightIntensityPercentage(nonVolatileSettings.displayBacklightPercentageOff);
+						gpioSetDisplayBacklightIntensityPercentage(nonVolatileSettings.displayBacklightPercentageOff);
 					}
 					break;
 				case DISPLAY_MENU_CONTRAST:
@@ -453,7 +453,7 @@ static void handleEvent(uiEvent_t *ev)
 
 			if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_MANUAL) && (!displayIsLit))
 			{
-				displaySetBacklightIntensityPercentage(nonVolatileSettings.displayBacklightPercentageOff);
+				gpioSetDisplayBacklightIntensityPercentage(nonVolatileSettings.displayBacklightPercentageOff);
 			}
 
 			menuSystemPopPreviousMenu();

@@ -19,40 +19,6 @@
 #ifndef _FW_LEDS_H_
 #define _FW_LEDS_H_
 
-#include "common.h"
-
-#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
-
-#define Port_LEDgreen	PORTB
-#define GPIO_LEDgreen	GPIOB
-#define Pin_LEDgreen	18
-
-#define Port_LEDred		PORTC
-#define GPIO_LEDred		GPIOC
-#define Pin_LEDred		14
-
-#elif defined(PLATFORM_DM1801)
-
-#define Port_LEDgreen	PORTA
-#define GPIO_LEDgreen	GPIOA
-#define Pin_LEDgreen	17
-
-#define Port_LEDred		PORTC
-#define GPIO_LEDred		GPIOC
-#define Pin_LEDred		14
-
-#elif defined(PLATFORM_RD5R)
-
-#define Port_LEDgreen	PORTB
-#define GPIO_LEDgreen	GPIOB
-#define Pin_LEDgreen	18
-
-#define Port_LEDred		PORTB
-#define GPIO_LEDred		GPIOB
-#define Pin_LEDred		0
-
-#endif
-
 void LEDsInit(void);
 
 #if defined(PLATFORM_RD5R)

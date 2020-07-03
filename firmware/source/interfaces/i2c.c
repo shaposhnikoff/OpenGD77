@@ -17,6 +17,7 @@
  */
 
 #include <i2c.h>
+#include "fsl_port.h"
 
 #if defined(USE_SEGGER_RTT)
 #include <SeggerRTT/RTT/SEGGER_RTT.h>

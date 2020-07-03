@@ -28,6 +28,8 @@
 #include <hotspot/uiHotspot.h>
 #include <user_interface/uiUtilities.h>
 #include <functions/voicePrompts.h>
+#include <gpio.h>
+#include <interrupts.h>
 
 
 static const int SYS_INT_SEND_REQUEST_REJECTED  = 0x80;
@@ -130,21 +132,8 @@ static const int CCHOLDVALUE =1000;			//1 second
 
 void SPI_HR_C6000_init(void)
 {
-    // C6000 interrupts
-    PORT_SetPinMux(Port_INT_C6000_RF_RX, Pin_INT_C6000_RF_RX, kPORT_MuxAsGpio);
-    PORT_SetPinMux(Port_INT_C6000_RF_TX, Pin_INT_C6000_RF_TX, kPORT_MuxAsGpio);
-    PORT_SetPinMux(Port_INT_C6000_SYS, Pin_INT_C6000_SYS, kPORT_MuxAsGpio);
-    PORT_SetPinMux(Port_INT_C6000_TS, Pin_INT_C6000_TS, kPORT_MuxAsGpio);
-    GPIO_PinInit(GPIO_INT_C6000_RF_RX, Pin_INT_C6000_RF_RX, &pin_config_input);
-    GPIO_PinInit(GPIO_INT_C6000_RF_TX, Pin_INT_C6000_RF_TX, &pin_config_input);
-    GPIO_PinInit(GPIO_INT_C6000_SYS, Pin_INT_C6000_SYS, &pin_config_input);
-    GPIO_PinInit(GPIO_INT_C6000_TS, Pin_INT_C6000_TS, &pin_config_input);
+	gpioInitC6000Interface();
 
-    // Connections with C6000
-    PORT_SetPinMux(Port_INT_C6000_RESET, Pin_INT_C6000_RESET, kPORT_MuxAsGpio);
-    PORT_SetPinMux(Port_INT_C6000_PWD, Pin_INT_C6000_PWD, kPORT_MuxAsGpio);
-    GPIO_PinInit(GPIO_INT_C6000_RESET, Pin_INT_C6000_RESET, &pin_config_output);
-    GPIO_PinInit(GPIO_INT_C6000_PWD, Pin_INT_C6000_PWD, &pin_config_output);
     GPIO_PinWrite(GPIO_INT_C6000_RESET, Pin_INT_C6000_RESET, 1);
     GPIO_PinWrite(GPIO_INT_C6000_PWD, Pin_INT_C6000_PWD, 1);
 
@@ -434,6 +423,32 @@ void transmitTalkerAlias(void)
 
 void PORTC_IRQHandler(void)
 {
+
+	if (interruptsWasPinTriggered(Port_INT_C6000_SYS,Pin_INT_C6000_SYS))
+	{
+		HRC6000SysInterruptHandler();
+		interruptsClearPinFlags(Port_INT_C6000_SYS,Pin_INT_C6000_SYS);
+	}
+
+	if (interruptsWasPinTriggered(Port_INT_C6000_RF_RX,Pin_INT_C6000_TS))
+	{
+		HRC6000TimeslotInterruptHandler();
+		interruptsClearPinFlags(Port_INT_C6000_RF_RX,Pin_INT_C6000_TS);
+	}
+
+	if (interruptsWasPinTriggered(Port_INT_C6000_RF_RX,Pin_INT_C6000_RF_RX))
+	{
+		HRC6000RxInterruptHandler();
+		interruptsClearPinFlags(Port_INT_C6000_RF_RX,Pin_INT_C6000_RF_RX);
+	}
+
+	if (interruptsWasPinTriggered(Port_INT_C6000_RF_TX,Pin_INT_C6000_RF_TX))
+	{
+		HRC6000TxInterruptHandler();
+		interruptsClearPinFlags(Port_INT_C6000_RF_TX,Pin_INT_C6000_RF_TX);
+	}
+/*
+
     if ((1U << Pin_INT_C6000_SYS) & PORT_GetPinsInterruptFlags(Port_INT_C6000_SYS))
     {
     	HRC6000SysInterruptHandler();
@@ -455,7 +470,7 @@ void PORTC_IRQHandler(void)
 
         PORT_ClearPinsInterruptFlags(Port_INT_C6000_RF_TX, (1U << Pin_INT_C6000_RF_TX));
     }
-
+*/
     int_timeout=0;
 
     /* Add for ARM errata 838869, affects Cortex-M4, Cortex-M4F Store immediate overlapping
@@ -1229,12 +1244,7 @@ void init_HR_C6000_interrupts(void)
 {
 	init_digital_state();
 
-    PORT_SetPinInterruptConfig(Port_INT_C6000_SYS, Pin_INT_C6000_SYS, kPORT_InterruptFallingEdge);
-    PORT_SetPinInterruptConfig(Port_INT_C6000_TS, Pin_INT_C6000_TS, kPORT_InterruptFallingEdge);
-    PORT_SetPinInterruptConfig(Port_INT_C6000_RF_RX, Pin_INT_C6000_RF_RX, kPORT_InterruptFallingEdge);
-    PORT_SetPinInterruptConfig(Port_INT_C6000_RF_TX, Pin_INT_C6000_RF_TX, kPORT_InterruptFallingEdge);
-
-    NVIC_SetPriority(PORTC_IRQn, 3);
+	interruptsInitC6000Interface();
 }
 
 void init_digital_state(void)
