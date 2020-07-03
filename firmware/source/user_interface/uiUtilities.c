@@ -1404,32 +1404,35 @@ void setOverrideTGorPC(int tgOrPc, bool privateCall)
 void printToneAndSquelch(void)
 {
 	char buf[24];
+	int pos = 0;
 	if (trxGetMode() == RADIO_MODE_ANALOG)
 	{
+		pos += snprintf(buf+pos, 24-pos, "Rx:");
 		if (codeplugChannelToneIsCTCSS(currentChannelData->rxTone))
 		{
-			snprintf(buf, 24, "Rx:%d.%dHz|", currentChannelData->rxTone / 10 , currentChannelData->rxTone % 10);
+			pos += snprintf(buf+pos, 24-pos, "%d.%dHz", currentChannelData->rxTone / 10 , currentChannelData->rxTone % 10);
 		}
 		else if (codeplugChannelToneIsDCS(currentChannelData->rxTone))
 		{
-			snprintf(buf, 24, "Rx:D%03oN|", currentChannelData->rxTone & 0777);
+			pos += snprintDCS(buf+pos, 24-pos, currentChannelData->rxTone & 0777, (currentChannelData->rxTone & CODEPLUG_DCS_INVERTED_MASK));
 		}
 		else
 		{
-			snprintf(buf, 24, "Rx:%s|", currentLanguage->none);
+			pos += snprintf(buf+pos, 24-pos, "%s", currentLanguage->none);
 		}
+		pos += snprintf(buf+pos, 24-pos, "|Tx:");
 
 		if (codeplugChannelToneIsCTCSS(currentChannelData->txTone))
 		{
-			snprintf(buf, 24, "%sTx:%d.%dHz", buf, currentChannelData->txTone / 10 , currentChannelData->txTone % 10);
+			pos += snprintf(buf+pos, 24-pos, "%d.%dHz", currentChannelData->txTone / 10 , currentChannelData->txTone % 10);
 		}
 		else if (codeplugChannelToneIsDCS(currentChannelData->txTone))
 		{
-			snprintf(buf, 24, "%sTx:D%03oN", buf, currentChannelData->txTone & 0777);
+			pos += snprintDCS(buf+pos, 24-pos, currentChannelData->txTone & 0777, (currentChannelData->txTone & CODEPLUG_DCS_INVERTED_MASK));
 		}
 		else
 		{
-			snprintf(buf, 24, "%sTx:%s", buf, currentLanguage->none);
+			pos += snprintf(buf+pos, 24-pos, "%s", currentLanguage->none);
 		}
 
 #if defined(PLATFORM_RD5R)
@@ -1472,6 +1475,11 @@ const int VFO_LETTER_Y_OFFSET = 8;// This is the different in height of the SIZE
 	buffer[bufferLen - 1] = 0;
 	ucPrintAt(FREQUENCY_X_POS, y, buffer, FONT_SIZE_3);
 	ucPrintAt(DISPLAY_SIZE_X - (3 * 8), y, "MHz", FONT_SIZE_3);
+}
+
+size_t snprintDCS(char *s, size_t n, uint16_t code, bool inverted)
+{
+	return snprintf(s, n, "D%03o%c", code, (inverted ? 'I' : 'N'));
 }
 
 void reset_freq_enter_digits(void)
