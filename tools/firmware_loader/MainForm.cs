@@ -43,10 +43,50 @@ using UsbLibrary;
 
 namespace GD77_FirmwareLoader
 {
+	public class WebClientAsync : WebClient
+	{
+		private int timeoutMS;
+		private System.Timers.Timer timer;
+
+		public WebClientAsync(int timeoutSeconds)
+		{
+			timeoutMS = timeoutSeconds * 1000;
+
+			timer = new System.Timers.Timer(timeoutMS);
+			System.Timers.ElapsedEventHandler handler = null;
+
+			handler = ((sender, args) =>
+			{
+				this.CancelAsync();
+				timer.Stop();
+				timer.Elapsed -= handler;
+			});
+
+			timer.Elapsed += handler;
+			timer.Enabled = true;
+		}
+
+		protected override WebRequest GetWebRequest(Uri address)
+		{
+			WebRequest request = base.GetWebRequest(address);
+			request.Timeout = timeoutMS;
+			((HttpWebRequest)request).ReadWriteTimeout = timeoutMS;
+
+			return request;
+		}
+
+		protected override void OnDownloadProgressChanged(DownloadProgressChangedEventArgs e)
+		{
+			base.OnDownloadProgressChanged(e);
+			timer.Stop();
+			timer.Start();
+		}
+	}
+
 	public partial class MainForm : Form
 	{
 		private static String tempFile = "";
-		private WebClient wc = null;
+		private WebClientAsync wc = null;
 
 		private void PostActivated(object sender, EventArgs e)
 		{
@@ -242,6 +282,23 @@ namespace GD77_FirmwareLoader
 
 		private void downloadStringCompletedCallback(object sender, DownloadStringCompletedEventArgs ev)
 		{
+			if (ev.Cancelled)
+			{
+				MessageBox.Show("Download has been canceled.", "Timeout", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+				enableUI(true);
+				this.progressBar.Visible = false;
+				return;
+			}
+			else if (ev.Error != null)
+			{
+				MessageBox.Show(ev.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+				enableUI(true);
+				this.progressBar.Visible = false;
+				return;
+			}
+
 			String result = ev.Result;
 			String urlBase = "http://github.com";
 			String urlFW = "";
@@ -353,6 +410,21 @@ namespace GD77_FirmwareLoader
 			this.progressBar.Visible = false;
 			this.progressBar.Value = 0;
 
+			if (ev.Cancelled)
+			{
+				MessageBox.Show("Download has been canceled.", "Timeout", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+				enableUI(true);
+				return;
+			}
+			else if (ev.Error != null)
+			{
+				MessageBox.Show(ev.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+				enableUI(true);
+				return;
+			}
+
 			// Now flash the downloaded firmware
 			try
 			{
@@ -402,7 +474,7 @@ namespace GD77_FirmwareLoader
 		{
 			Uri uri = new Uri("https://github.com/rogerclarkmelbourne/OpenGD77/releases");
 
-			wc = new WebClient();
+			wc = new WebClientAsync(40);
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
 			this.progressBar.Value = 0;
