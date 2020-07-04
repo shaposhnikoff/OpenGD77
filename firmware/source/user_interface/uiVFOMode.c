@@ -45,7 +45,7 @@ static void uiVFOUpdateTrxID(void );
 static void setCurrentFreqToScanLimits(void);
 static void handleUpKey(uiEvent_t *ev);
 
-static bool isDisplayingQSOData=false;
+static bool isDisplayingQSOData = false;
 static int tmpQuickMenuDmrFilterLevel;
 static int tmpQuickMenuAnalogFilterLevel;
 static int16_t newChannelIndex = 0;
@@ -56,6 +56,7 @@ static int scanToneIndex = 0;
 static CSSTypes_t scanToneType = CSS_CTCSS;
 
 static bool displayChannelSettings;
+static bool reverseRepeater;
 static int prevDisplayQSODataState;
 static vfoScreenOperationMode_t screenOperationMode[2] = {VFO_SCREEN_OPERATION_NORMAL,VFO_SCREEN_OPERATION_NORMAL};// For VFO A and B
 
@@ -93,7 +94,8 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 	{
 		freq_enter_idx = 0;
 
-		isDisplayingQSOData=false;
+		isDisplayingQSOData = false;
+		reverseRepeater = false;
 		nonVolatileSettings.initialMenuNumber=UI_VFO_MODE;
 		prevDisplayQSODataState = QSO_DISPLAY_IDLE;
 		currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
@@ -409,7 +411,8 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 				{
 					// if CC scan is active, Rx freq is moved down to the Tx location,
 					// as Contact Info will be displayed here
-					printFrequency(false, (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_RX), RX_FREQ_Y_POS, currentChannelData->rxFreq, true, screenOperationMode[nonVolatileSettings.currentVFONumber] == VFO_SCREEN_OPERATION_SCAN);
+					printFrequency(false, (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_RX), RX_FREQ_Y_POS,
+							(reverseRepeater ? currentChannelData->txFreq : currentChannelData->rxFreq), true, screenOperationMode[nonVolatileSettings.currentVFONumber] == VFO_SCREEN_OPERATION_SCAN);
 				}
 				else
 				{
@@ -426,7 +429,8 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 
 				if (screenOperationMode[nonVolatileSettings.currentVFONumber] == VFO_SCREEN_OPERATION_NORMAL || trxTransmissionEnabled)
 				{
-					printFrequency(true, (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX || trxTransmissionEnabled), TX_FREQ_Y_POS, currentChannelData->txFreq, true, false);
+					printFrequency(true, (selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX || trxTransmissionEnabled), TX_FREQ_Y_POS,
+							(reverseRepeater ? currentChannelData->rxFreq : currentChannelData->txFreq), true, false);
 				}
 				else
 				{
@@ -729,8 +733,30 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 
+		if ((reverseRepeater == false) && (BUTTONCHECK_DOWN(ev, BUTTON_SK1) && BUTTONCHECK_DOWN(ev, BUTTON_SK2)))
+		{
+			trxSetFrequency(currentChannelData->txFreq, currentChannelData->rxFreq, DMR_MODE_ACTIVE);// Swap Tx and Rx freqs but force DMR Active
+			reverseRepeater = true;
+			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+			uiVFOModeUpdateScreen(0);
+			return;
+		}
+		else if ((reverseRepeater == true) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
+		{
+			trxSetFrequency(currentChannelData->rxFreq, currentChannelData->txFreq, DMR_MODE_AUTO);
+			reverseRepeater = false;
+
+			// We are still displaying channel details (SK1 has been released), force to update the screen
+			if (displayChannelSettings)
+			{
+				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+				uiVFOModeUpdateScreen(0);
+			}
+
+			return;
+		}
 		// Display channel settings (CTCSS, Squelch) while SK1 is pressed
-		if ((displayChannelSettings == false) && BUTTONCHECK_DOWN(ev, BUTTON_SK1))
+		else if ((displayChannelSettings == false) && BUTTONCHECK_DOWN(ev, BUTTON_SK1))
 		{
 			int prevQSODisp = prevDisplayQSODataState;
 
@@ -753,6 +779,13 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					menuDisplayQSODataState = QSO_DISPLAY_CALLER_DATA;
 				}
+			}
+
+			// Leaving Channel Details disable reverse repeater feature
+			if (reverseRepeater)
+			{
+				trxSetFrequency(currentChannelData->rxFreq, currentChannelData->txFreq, DMR_MODE_AUTO);
+				reverseRepeater = false;
 			}
 
 			uiVFOModeUpdateScreen(0);
