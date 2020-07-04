@@ -21,14 +21,8 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-
-#include "hr-c6000_spi.h"
-#include "trx.h"
-#include "fsl_sai.h"
-#include "fsl_sai_edma.h"
 #include "i2s.h"
-#include "pit.h"
-#include "wdog.h"
+
 
 extern int melody_generic[512];
 extern const int melody_poweron[];
