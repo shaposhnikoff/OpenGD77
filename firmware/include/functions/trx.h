@@ -28,7 +28,8 @@ typedef enum
 {
 	CSS_NONE = 0,
 	CSS_CTCSS,
-	CSS_DCS
+	CSS_DCS,
+	CSS_DCS_INVERTED
 } CSSTypes_t;
 
 typedef struct frequencyBand

@@ -28,6 +28,7 @@ extern const int VFO_FREQ_STEP_TABLE[8];
 
 extern const uint16_t CODEPLUG_CSS_NONE;
 extern const uint16_t CODEPLUG_DCS_FLAGS_MASK;
+extern const uint16_t CODEPLUG_DCS_INVERTED_MASK;
 
 extern int codeplugChannelsPerZone;
 
