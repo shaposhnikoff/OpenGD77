@@ -52,26 +52,30 @@ enum CHANNEL_DETAILS_DISPLAY_LIST { CH_DETAILS_NAME = 0,
 // Returns the index in either the CTCSS or DCS list of the tone (or closest match)
 static int cssIndex(uint16_t tone, CSSTypes_t type)
 {
-	if (type == CSS_DCS)
+	switch (type)
 	{
-		tone &= 0777;
-		for (int i = 0; i < TRX_NUM_DCS; i++)
-		{
-			if (TRX_DCSCodes[i] >= tone)
+		case CSS_CTCSS:
+			for (int i = 0; i < TRX_NUM_CTCSS; i++)
 			{
-				return i;
+				if (TRX_CTCSSTones[i] >= tone)
+				{
+					return i;
+				}
 			}
-		}
-	}
-	else if (type == CSS_CTCSS)
-	{
-		for (int i = 0; i < TRX_NUM_CTCSS; i++)
-		{
-			if (TRX_CTCSSTones[i] >= tone)
+			break;
+		case CSS_DCS:
+		case CSS_DCS_INVERTED:
+			tone &= 0777;
+			for (int i = 0; i < TRX_NUM_DCS; i++)
 			{
-				return i;
+				if (TRX_DCSCodes[i] >= tone)
+				{
+					return i;
+				}
 			}
-		}
+			break;
+		case CSS_NONE:
+			break;
 	}
 	return 0;
 }
@@ -79,38 +83,47 @@ static int cssIndex(uint16_t tone, CSSTypes_t type)
 void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type, bool loop)
 {
 	(*index)++;
-	if (*type == CSS_CTCSS)
+	switch (*type)
 	{
-		if (*index >= TRX_NUM_CTCSS)
-		{
-			*type = CSS_DCS;
-			*index = 0;
-			*tone = TRX_DCSCodes[*index] | 0x8000;
-			return;
-		}
-		*tone = TRX_CTCSSTones[*index];
-	}
-	else if (*type == CSS_DCS)
-	{
-		if (*index >= TRX_NUM_DCS)
-		{
-			if (loop)
+		case CSS_CTCSS:
+			if (*index >= TRX_NUM_CTCSS)
 			{
-				*type = CSS_CTCSS;
+				*type = CSS_DCS;
 				*index = 0;
-				*tone = TRX_CTCSSTones[*index];
+				*tone = TRX_DCSCodes[*index] | 0x8000;
 				return;
 			}
-
-			*index = TRX_NUM_DCS - 1;
-		}
-		*tone = TRX_DCSCodes[*index] | 0x8000;
-	}
-	else
-	{
-		*type = CSS_CTCSS;
-		*index = 0;
-		*tone = TRX_CTCSSTones[*index];
+			*tone = TRX_CTCSSTones[*index];
+			break;
+		case CSS_DCS:
+			if (*index >= TRX_NUM_DCS)
+			{
+				*type = CSS_DCS_INVERTED;
+				*index = 0;
+				*tone = TRX_DCSCodes[*index] | 0xC000;
+				return;
+			}
+			*tone = TRX_DCSCodes[*index] | 0x8000;
+			break;
+		case CSS_DCS_INVERTED:
+			if (*index >= TRX_NUM_DCS)
+			{
+				if (loop)
+				{
+					*type = CSS_CTCSS;
+					*index = 0;
+					*tone = TRX_CTCSSTones[*index];
+					return;
+				}
+				*index = TRX_NUM_DCS - 1;
+			}
+			*tone = TRX_DCSCodes[*index] | 0xC000;
+			break;
+		case CSS_NONE:
+			*type = CSS_CTCSS;
+			*index = 0;
+			*tone = TRX_CTCSSTones[*index];
+			break;
 	}
 	return;
 }
@@ -140,6 +153,19 @@ static void cssIncrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index,
 					*index = (TRX_NUM_DCS - 1);
 					*tone = TRX_DCSCodes[*index] | 0x8000;
 				}
+				else
+				{
+					*type = CSS_DCS_INVERTED;
+					*index = 0;
+					*tone = TRX_DCSCodes[*index] | 0xC000;
+				}
+				break;
+			case CSS_DCS_INVERTED:
+				if (*index < (TRX_NUM_DCS - 1))
+				{
+					*index = (TRX_NUM_DCS - 1);
+					*tone = TRX_DCSCodes[*index] | 0xC000;
+				}
 				break;
 			case CSS_NONE:
 				*type = CSS_CTCSS;
@@ -162,32 +188,42 @@ static void cssIncrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index,
 static void cssDecrement(uint16_t *tone, int32_t *index, CSSTypes_t *type)
 {
 	(*index)--;
-	if (*type == CSS_CTCSS)
+	switch (*type)
 	{
-		if (*index < 0)
-		{
-			*type = CSS_NONE;
+		case CSS_CTCSS:
+			if (*index < 0)
+			{
+				*type = CSS_NONE;
+				*index = 0;
+				*tone = CODEPLUG_CSS_NONE;
+				return;
+			}
+			*tone = TRX_CTCSSTones[*index];
+			break;
+		case CSS_DCS:
+			if (*index < 0)
+			{
+				*type = CSS_CTCSS;
+				*index = TRX_NUM_CTCSS - 1;
+				*tone = TRX_CTCSSTones[*index];
+				return;
+			}
+			*tone = TRX_DCSCodes[*index] | 0x8000;
+			break;
+		case CSS_DCS_INVERTED:
+			if (*index < 0)
+			{
+				*type = CSS_DCS;
+				*index = (TRX_NUM_DCS - 1);
+				*tone = TRX_DCSCodes[*index] | 0x8000;
+				return;
+			}
+			*tone = TRX_DCSCodes[*index] | 0xC000;
+			break;
+		case CSS_NONE:
 			*index = 0;
 			*tone = CODEPLUG_CSS_NONE;
-			return;
-		}
-		*tone = TRX_CTCSSTones[*index];
-	}
-	else if (*type == CSS_DCS)
-	{
-		if (*index < 0)
-		{
-			*type = CSS_CTCSS;
-			*index = TRX_NUM_CTCSS - 1;
-			*tone = TRX_CTCSSTones[*index];
-			return;
-		}
-		*tone = TRX_DCSCodes[*index] | 0x8000;
-	}
-	else
-	{
-		*index = 0;
-		*tone = CODEPLUG_CSS_NONE;
+			break;
 	}
 }
 
@@ -223,6 +259,19 @@ static void cssDecrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index,
 					*tone = TRX_CTCSSTones[*index];
 				}
 				break;
+			case CSS_DCS_INVERTED:
+				if (*index > 0)
+				{
+					*index = 0;
+					*tone = TRX_DCSCodes[*index] | 0xC000;
+				}
+				else
+				{
+					*type = CSS_DCS;
+					*index = (TRX_NUM_DCS - 1);
+					*tone = TRX_DCSCodes[*index] | 0x8000;
+				}
+				break;
 			case CSS_NONE:
 				break;
 		}
@@ -247,7 +296,14 @@ menuStatus_t menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 
 		if (codeplugChannelToneIsDCS(tmpChannel.txTone))
 		{
-			TxCSSType = CSS_DCS;
+			if (tmpChannel.txTone & CODEPLUG_DCS_INVERTED_MASK)
+			{
+				TxCSSType = CSS_DCS_INVERTED;
+			}
+			else
+			{
+				TxCSSType = CSS_DCS;
+			}
 		}
 		else if (codeplugChannelToneIsCTCSS(tmpChannel.txTone))
 		{
@@ -257,7 +313,14 @@ menuStatus_t menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 
 		if (codeplugChannelToneIsDCS(tmpChannel.rxTone))
 		{
-			RxCSSType = CSS_DCS;
+			if (tmpChannel.rxTone & CODEPLUG_DCS_INVERTED_MASK)
+			{
+				RxCSSType = CSS_DCS_INVERTED;
+			}
+			else
+			{
+				RxCSSType = CSS_DCS;
+			}
 		}
 		else if (codeplugChannelToneIsCTCSS(tmpChannel.rxTone))
 		{
@@ -392,7 +455,7 @@ static void updateScreen(bool isFirstRun)
 						}
 						else if (codeplugChannelToneIsDCS(tmpChannel.rxTone))
 						{
-							snprintf(rightSideVar, bufferLen, "Rx DCS:D%03oN", tmpChannel.rxTone & 0777);
+							snprintf(rightSideVar, bufferLen, "Rx DCS:D%03o%c", tmpChannel.rxTone & 0777, (tmpChannel.rxTone & CODEPLUG_DCS_INVERTED_MASK) ? 'I' : 'N');
 						}
 						else
 						{
@@ -414,7 +477,7 @@ static void updateScreen(bool isFirstRun)
 						}
 						else if (codeplugChannelToneIsDCS(tmpChannel.txTone))
 						{
-							snprintf(rightSideVar, bufferLen, "Tx DCS:D%03oN", tmpChannel.txTone & 0777);
+							snprintf(rightSideVar, bufferLen, "Tx DCS:D%03o%c", tmpChannel.txTone & 0777, (tmpChannel.txTone & CODEPLUG_DCS_INVERTED_MASK) ? 'I' : 'N');
 						}
 						else
 						{

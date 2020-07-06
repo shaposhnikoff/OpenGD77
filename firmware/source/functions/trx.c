@@ -1028,11 +1028,15 @@ void trxSetTxCSS(uint16_t tone)
 		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x4d, 0x00, 0x00);
 		// The AT1846S wants the Golay{23,12} encoding of the DCS code, rather than just the code itself.
 		uint32_t encoded = trxDCSEncode(tone & ~CODEPLUG_DCS_FLAGS_MASK);
+		uint8_t tx_flags_high = 0x04;
+		if (tone & CODEPLUG_DCS_INVERTED_MASK)
+		{
+			tx_flags_high |= 0x01;
+		}
 		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4b, 0x00, (encoded >> 16) & 0xff);           // init cdcss_code
 		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4c, (encoded >> 8) & 0xff, encoded & 0xff);  // init cdcss_code
 		AT1846SetClearReg2byteWithMask(0x3a, 0xFF, 0xE0, 0x00, 0x06); // enable receive DCS
-		AT1846SetClearReg2byteWithMask(0x4e, 0x38, 0x3F, 0x04, 0x00); // enable transmit DCS
-		//set_clear_I2C_reg_2byte_with_mask(0x4e, 0xF9, 0xFF, 0x04, 0x00); // enable transmit DCS
+		AT1846SetClearReg2byteWithMask(0x4e, 0x38, 0x3F, tx_flags_high, 0x00); // enable transmit DCS
 	}
 	taskEXIT_CRITICAL();
 }

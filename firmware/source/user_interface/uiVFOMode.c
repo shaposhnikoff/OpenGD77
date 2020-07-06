@@ -387,17 +387,20 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 
 				if(scanToneActive)
 				{
-					if (scanToneType == CSS_CTCSS)
+					switch (scanToneType)
 					{
-						sprintf(buffer, "%CTCSS %3d.%dHz", currentChannelData->rxTone / 10, currentChannelData->rxTone % 10);
-					}
-					else if (scanToneType == CSS_DCS)
-					{
-						sprintf(buffer, "DCS D%03oN", currentChannelData->rxTone & 0777);
-					}
-					else
-					{
-						sprintf(buffer, "%s", "TONE ERROR");
+						case CSS_CTCSS:
+							sprintf(buffer, "CTCSS %3d.%dHz", currentChannelData->rxTone / 10, currentChannelData->rxTone % 10);
+							break;
+						case CSS_DCS:
+							sprintf(buffer, "DCS D%03oN", currentChannelData->rxTone & 0777);
+							break;
+						case CSS_DCS_INVERTED:
+							sprintf(buffer, "DCS D%03oI", currentChannelData->rxTone & 0777);
+							break;
+						default:
+							sprintf(buffer, "%s", "TONE ERROR");
+							break;
 					}
 
 					ucPrintCentered(16, buffer, FONT_SIZE_3);
