@@ -1,8 +1,8 @@
 # OpenGD77
-Open source firmware for the Radioddity GD-77 (aka TYT MD-760), GD-77S, Baofeng DM-1801 (aka DM-860) and Baofeng RD-5R (DM-5R mk2), dual band DMR / FM handheld transceievers, for Amateur Radio use.
+Open source firmware for the Radioddity GD-77 (aka TYT MD-760), GD-77S, Baofeng DM-1801 (aka DM-860) and Baofeng RD-5R (DM-5R mk2), dual band DMR / FM handheld transceivers, for Amateur Radio use.
 
 Note.
-The AMBE codec is not open source because of potential copyright problems, and instead uses binary sections from original manufacturers firmware.
+The AMBE codec is not open source because of potential copyright problems, and instead uses binary sections from original manufacturer’s firmware.
 
 # Project status
 
@@ -11,17 +11,16 @@ However it does currently support some core functionality that the official firm
 
 Not all functionality provided in the official firmware is likely ever to be part of this firmware, because some features like encryption are explicitly prohibited for Amateur Radio operators.
 
-Some functionality like Dual Watch may also not ever be implemented, because its equivalent to the Channel / Zone scan function.
+Some functionality like Dual Watch may also not ever be implemented, because it is equivalent to the Channel / Zone scan function.
 
 The project is under active development by several developers.
-New developers are welcome to participate, but currently the focus is still on getting the core functionality working and existing bugs fixed.
-This does not mean that new non-core functionality changes will be rejected, but bug fixes and core functionality PR's  will take priority
+This does not mean that new non-core functionality changes will be rejected, but bug fixes and core functionality PR’s will take priority
 
 **All PR's should be submitted to the 'development' branch**
 
 
 # User guide
-There is an extensive User Guide https://github.com/rogerclarkmelbourne/OpenGD77/blob/master/docs/OpenGD77_User_Guide.md  however becuase the firmware is evolving very rapidly, sometimes the User Guide does show the latest features or functions.
+There is an extensive User Guide https://github.com/rogerclarkmelbourne/OpenGD77/blob/master/docs/OpenGD77_User_Guide.md  however because the firmware is evolving very rapidly, sometimes the User Guide does show the latest features or functions.
 
 # Credits
 Originally conceived by Kai DG4KLU.
@@ -31,7 +30,7 @@ Current lead developer and source code gatekeeper is Roger VK3KYY
 
 
 # License
-This software is licenced under the GPL v2 and is intended for Amateur Radio and educational use only.
+This software is licensed under the GPL v2 and is intended for Amateur Radio and educational use only.
 
 Use of this software for commercial purposes is strictly forbidden.
 
