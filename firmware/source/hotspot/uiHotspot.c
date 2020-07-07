@@ -826,7 +826,7 @@ static void enableTransmission(void)
 	GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
 	GPIO_PinWrite(GPIO_LEDred, Pin_LEDred, 1);
 
-	txstopdelay=0;
+	txstopdelay = 0;
 	trx_setTX();
 }
 
@@ -1953,7 +1953,9 @@ static void getVersion(void)
 			,(nonVolatileSettings.hotspotType == HOTSPOT_TYPE_MMDVM ? "MMDVM" : "BlueDV"));
 
 	for (uint8_t i = 0U; buffer[i] != 0x00U; i++, count++)
+	{
 		buf[count] = buffer[i];
+	}
 
 	buf[1U] = count;
 
@@ -2110,7 +2112,9 @@ static uint8_t setQSOInfo(volatile const uint8_t *data, uint8_t length)
 static void cwProcess(void)
 {
 	if (cwpoLen == 0U)
+	{
 		return;
+	}
 
 	if (PITCounter > cwNextPeriod)
 	{

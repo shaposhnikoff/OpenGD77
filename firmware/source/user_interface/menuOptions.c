@@ -39,7 +39,7 @@ menuStatus_t menuOptions(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
-		doFactoryReset=false;
+		doFactoryReset = false;
 		// Store original settings, used on cancel event.
 		memcpy(&originalNonVolatileSettings, &nonVolatileSettings, sizeof(settingsStruct_t));
 
@@ -62,7 +62,9 @@ menuStatus_t menuOptions(uiEvent_t *ev, bool isFirstRun)
 		menuOptionsExitCode = MENU_STATUS_SUCCESS;
 
 		if (ev->hasEvent)
+		{
 			handleEvent(ev);
+		}
 	}
 	return menuOptionsExitCode;
 }
@@ -143,13 +145,13 @@ static void updateScreen(bool isFirstRun)
 				leftSide = (char * const *)&currentLanguage->hotspot_mode;
 				{
 					const char *hsTypes[] = {"MMDVM", "BlueDV" };
-					if (nonVolatileSettings.hotspotType==0)
+					if (nonVolatileSettings.hotspotType == 0)
 					{
 						rightSideConst = (char * const *)&currentLanguage->off;
 					}
 					else
 					{
-						snprintf(rightSideVar, bufferLen, "%s", hsTypes[nonVolatileSettings.hotspotType-1]);
+						snprintf(rightSideVar, bufferLen, "%s", hsTypes[nonVolatileSettings.hotspotType - 1]);
 					}
 				}
 				break;
@@ -163,16 +165,16 @@ static void updateScreen(bool isFirstRun)
 				break;
 		}
 
-		snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0]?rightSideVar:*rightSideConst));
+		snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0] ? rightSideVar : *rightSideConst));
 
-		if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+		if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
 		{
 			if (!isFirstRun)
 			{
 				voicePromptsInit();
 			}
 			voicePromptsAppendLanguageString((const char * const *)leftSide);
-			if (rightSideVar[0] !=0)
+			if (rightSideVar[0] != 0)
 			{
 				voicePromptsAppendString(rightSideVar);
 			}
@@ -195,19 +197,19 @@ static void handleEvent(uiEvent_t *ev)
 	bool isDirty = false;
 	displayLightTrigger();
 
-	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
+	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN) && (gMenusEndIndex != 0))
 	{
 		isDirty = true;
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_OPTIONS_MENU_ITEMS);
 		menuOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
-	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
+	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
 		isDirty = true;
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_OPTIONS_MENU_ITEMS);
 		menuOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
-	else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
+	else if (KEYCHECK_PRESS(ev->keys, KEY_RIGHT))
 	{
 		isDirty = true;
 		switch(gMenusCurrentItemIndex)
@@ -286,7 +288,7 @@ static void handleEvent(uiEvent_t *ev)
 				break;
 		}
 	}
-	else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
+	else if (KEYCHECK_PRESS(ev->keys, KEY_LEFT))
 	{
 		isDirty = true;
 		switch(gMenusCurrentItemIndex)
@@ -365,9 +367,9 @@ static void handleEvent(uiEvent_t *ev)
 				break;
 		}
 	}
-	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+	else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
-		if (doFactoryReset==true)
+		if (doFactoryReset == true)
 		{
 			settingsRestoreDefaultSettings();
 			watchdogReboot();
@@ -376,7 +378,7 @@ static void handleEvent(uiEvent_t *ev)
 		menuSystemPopAllAndDisplayRootMenu();
 		return;
 	}
-	else if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
+	else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
 		// Restore original settings.
 		memcpy(&nonVolatileSettings, &originalNonVolatileSettings, sizeof(settingsStruct_t));

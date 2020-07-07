@@ -38,12 +38,12 @@ const uint8_t BEEP_TX_STOP  = 0x02;
 
 settingsStruct_t nonVolatileSettings;
 struct_codeplugChannel_t *currentChannelData;
-struct_codeplugChannel_t channelScreenChannelData={.rxFreq=0};
+struct_codeplugChannel_t channelScreenChannelData = { .rxFreq = 0 };
 struct_codeplugContact_t contactListContactData;
 struct_codeplugChannel_t settingsVFOChannel[2];// VFO A and VFO B from the codeplug.
 int contactListContactIndex;
 int settingsUsbMode = USB_MODE_CPS;
-int settingsCurrentChannelNumber=0;
+int settingsCurrentChannelNumber = 0;
 bool settingsPrivateCallMuteMode = false;
 int *nextKeyBeepMelody = (int *)melody_key_beep;
 
@@ -51,8 +51,8 @@ bool settingsSaveSettings(bool includeVFOs)
 {
 	if (includeVFOs)
 	{
-		codeplugSetVFO_ChannelData(&settingsVFOChannel[0],0);
-		codeplugSetVFO_ChannelData(&settingsVFOChannel[1],1);
+		codeplugSetVFO_ChannelData(&settingsVFOChannel[0], 0);
+		codeplugSetVFO_ChannelData(&settingsVFOChannel[1], 1);
 	}
 
 	// Never reset this setting (as voicePromptsCacheInit() can change it if voice data are missing)
@@ -66,13 +66,13 @@ bool settingsSaveSettings(bool includeVFOs)
 bool settingsLoadSettings(void)
 {
 	bool readOK = EEPROM_Read(STORAGE_BASE_ADDRESS, (uint8_t*)&nonVolatileSettings, sizeof(settingsStruct_t));
-	if (nonVolatileSettings.magicNumber != STORAGE_MAGIC_NUMBER || readOK != true)
+	if ((nonVolatileSettings.magicNumber != STORAGE_MAGIC_NUMBER) || (readOK != true))
 	{
 		settingsRestoreDefaultSettings();
 	}
 
-	codeplugGetVFO_ChannelData(&settingsVFOChannel[0],0);
-	codeplugGetVFO_ChannelData(&settingsVFOChannel[1],1);
+	codeplugGetVFO_ChannelData(&settingsVFOChannel[0], 0);
+	codeplugGetVFO_ChannelData(&settingsVFOChannel[1], 1);
 	settingsInitVFOChannel(0);// clean up any problems with VFO data
 	settingsInitVFOChannel(1);
 
@@ -94,23 +94,23 @@ void settingsInitVFOChannel(int vfoNumber)
 	// The TG needs to come from the RxGroupList
 	if (settingsVFOChannel[vfoNumber].rxGroupList == 0)
 	{
-		settingsVFOChannel[vfoNumber].rxGroupList=1;
+		settingsVFOChannel[vfoNumber].rxGroupList = 1;
 	}
 
 	if (settingsVFOChannel[vfoNumber].contact == 0)
 	{
-		settingsVFOChannel[vfoNumber].contact=1;
+		settingsVFOChannel[vfoNumber].contact = 1;
 	}
 }
 
 void settingsRestoreDefaultSettings(void)
 {
-	nonVolatileSettings.magicNumber=STORAGE_MAGIC_NUMBER;
+	nonVolatileSettings.magicNumber = STORAGE_MAGIC_NUMBER;
 	nonVolatileSettings.currentChannelIndexInZone = 0;
 	nonVolatileSettings.currentChannelIndexInAllZone = 1;
-	nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE]=0;
-	nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE]=0;
-	nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_B_MODE]=0;
+	nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] = 0;
+	nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE] = 0;
+	nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_B_MODE] = 0;
 	nonVolatileSettings.currentZone = 0;
 	nonVolatileSettings.backlightMode =
 #if defined(PLATFORM_GD77S)
@@ -133,18 +133,18 @@ void settingsRestoreDefaultSettings(void)
 #else
 			UI_VFO_MODE;
 #endif
-	nonVolatileSettings.displayBacklightPercentage=100U;// 100% brightness
-	nonVolatileSettings.displayBacklightPercentageOff=0U;// 0% brightness
-	nonVolatileSettings.displayInverseVideo=false;// Not inverse video
+	nonVolatileSettings.displayBacklightPercentage = 100U;// 100% brightness
+	nonVolatileSettings.displayBacklightPercentageOff = 0U;// 0% brightness
+	nonVolatileSettings.displayInverseVideo = false;// Not inverse video
 	nonVolatileSettings.useCalibration = true;// enable the new calibration system
 	nonVolatileSettings.txFreqLimited = true;// Limit Tx frequency to US Amateur bands
-	nonVolatileSettings.txPowerLevel=
+	nonVolatileSettings.txPowerLevel =
 #if defined(PLATFORM_GD77S)
 			3; // 750mW
 #else
 			4; // 1 W   3:750  2:500  1:250
 #endif
-	nonVolatileSettings.overrideTG=0;// 0 = No override
+	nonVolatileSettings.overrideTG = 0;// 0 = No override
 	nonVolatileSettings.txTimeoutBeepX5Secs = 0;
 	nonVolatileSettings.beepVolumeDivider =
 #if defined(PLATFORM_GD77S)
@@ -164,10 +164,10 @@ void settingsRestoreDefaultSettings(void)
 #else
 			DMR_FILTER_CC_TS;
 #endif
-	nonVolatileSettings.dmrCaptureTimeout=10;// Default to holding 10 seconds after a call ends
+	nonVolatileSettings.dmrCaptureTimeout = 10;// Default to holding 10 seconds after a call ends
 	nonVolatileSettings.analogFilterLevel = ANALOG_FILTER_CTCSS;
-	nonVolatileSettings.languageIndex=0;
-	nonVolatileSettings.scanDelay=5;// 5 seconds
+	nonVolatileSettings.languageIndex = 0;
+	nonVolatileSettings.scanDelay = 5;// 5 seconds
 	nonVolatileSettings.scanModePause = SCAN_MODE_HOLD;
 	nonVolatileSettings.squelchDefaults[RADIO_BAND_VHF]		= 10;// 1 - 21 = 0 - 100% , same as from the CPS variable squelch
 	nonVolatileSettings.squelchDefaults[RADIO_BAND_220MHz]	= 10;// 1 - 21 = 0 - 100% , same as from the CPS variable squelch
@@ -187,10 +187,10 @@ void settingsRestoreDefaultSettings(void)
     		true;
 #endif
     // Set all these value to zero to force the operator to set their own limits.
-	nonVolatileSettings.vfoScanLow[0]=0;
-	nonVolatileSettings.vfoScanLow[1]=0;
-	nonVolatileSettings.vfoScanHigh[0]=0;
-	nonVolatileSettings.vfoScanHigh[1]=0;
+	nonVolatileSettings.vfoScanLow[0] = 0;
+	nonVolatileSettings.vfoScanLow[1] = 0;
+	nonVolatileSettings.vfoScanHigh[0] = 0;
+	nonVolatileSettings.vfoScanHigh[1] = 0;
 
 
 	nonVolatileSettings.contactDisplayPriority = CONTACT_DISPLAY_PRIO_CC_DB_TA;

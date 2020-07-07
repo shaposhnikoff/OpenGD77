@@ -42,12 +42,17 @@ enum MENU_CONTACT_LIST_STATE
 static void reloadContactList(void)
 {
 	gMenusEndIndex = codeplugContactsGetCount(contactCallType);
-	if (gMenusEndIndex > 0) {
-		if (gMenusCurrentItemIndex >= gMenusEndIndex) {
+
+	if (gMenusEndIndex > 0)
+	{
+		if (gMenusCurrentItemIndex >= gMenusEndIndex)
+		{
 			gMenusCurrentItemIndex = 0;
 		}
-		contactListContactIndex = codeplugContactGetDataForNumber(gMenusCurrentItemIndex+1, contactCallType, &contactListContactData);
-	} else {
+		contactListContactIndex = codeplugContactGetDataForNumber(gMenusCurrentItemIndex + 1, contactCallType, &contactListContactData);
+	}
+	else
+	{
 		contactListContactIndex = 0;
 	}
 }
@@ -56,10 +61,14 @@ menuStatus_t menuContactList(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
-		if (menuContactListOverrideState == 0) {
-			if (contactListContactIndex == 0) {
+		if (menuContactListOverrideState == 0)
+		{
+			if (contactListContactIndex == 0)
+			{
 				contactCallType = CONTACT_CALLTYPE_TG;
-			} else {
+			}
+			else
+			{
 				codeplugContactGetDataForIndex(contactListContactIndex, &contactListContactData);
 				contactCallType = contactListContactData.callType;
 			}
@@ -323,7 +332,8 @@ static void updateSubMenuScreen(void)
 				langTextConst = (char * const *)&currentLanguage->delete_contact;
 				break;
 		}
-		if (langTextConst!=NULL)
+
+		if (langTextConst != NULL)
 		{
 			strncpy(buf, *langTextConst, 17);
 		}
@@ -332,7 +342,7 @@ static void updateSubMenuScreen(void)
 			strncpy(buf, " ", 17);
 		}
 
-		if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+		if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
 		{
 			voicePromptsAppendLanguageString((const char * const *)langTextConst);
 			voicePromptsPlay();
@@ -358,7 +368,7 @@ static void handleSubMenuEvent(uiEvent_t *ev)
 		switch (gMenusCurrentItemIndex)
 		{
 		case CONTACT_LIST_QUICK_MENU_SELECT:
-			setOverrideTGorPC(contactListContactData.tgNumber, contactListContactData.callType == CONTACT_CALLTYPE_PC);
+			setOverrideTGorPC(contactListContactData.tgNumber, (contactListContactData.callType == CONTACT_CALLTYPE_PC));
 			contactListContactIndex = 0;
 			announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 			inhibitInitialVoicePrompt = true;
@@ -370,7 +380,8 @@ static void handleSubMenuEvent(uiEvent_t *ev)
 		case CONTACT_LIST_QUICK_MENU_DELETE:
  			if (contactListContactIndex > 0)
 			{
-				if (contactListContactData.callType == CONTACT_CALLTYPE_TG && codeplugContactGetRXGroup(contactListContactData.NOT_IN_CODEPLUGDATA_indexNumber))
+				if ((contactListContactData.callType == CONTACT_CALLTYPE_TG) &&
+						codeplugContactGetRXGroup(contactListContactData.NOT_IN_CODEPLUGDATA_indexNumber))
 				{
 					menuContactListTimeout = 2000;
 					menuContactListOverrideState = MENU_CONTACT_LIST_TG_IN_RXGROUP;

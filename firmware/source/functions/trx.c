@@ -73,7 +73,7 @@ const frequencyBand_t RADIO_FREQUENCY_BANDS[RADIO_BANDS_TOTAL_NUM] =  {
 #endif
 
 static const int TRX_SQUELCH_MAX = 70;
-const uint8_t TRX_NUM_CTCSS=50;
+const uint8_t TRX_NUM_CTCSS = 50;
 const uint16_t TRX_CTCSSTones[] = {
 	 670,  693,  719,  744,  770,  797,  825,  854,  885,  915,
 	 948,  974, 1000, 1035, 1072, 1109, 1148, 1188, 1230, 1273,
@@ -202,7 +202,7 @@ static uint16_t trxSaveDeviation = 0xff;
 static uint8_t voice_gain_tx = 0x31; // default voice_gain_tx fro calibration, needs to be declared here in case calibration:OFF
 
 int trxDMRMode = DMR_MODE_ACTIVE;// Active is for simplex
-static volatile bool txPAEnabled=false;
+static volatile bool txPAEnabled = false;
 
 static int trxCurrentDMRTimeSlot;
 
@@ -225,9 +225,9 @@ void trxSetModeAndBandwidth(int mode, bool bandwidthIs25kHz)
 {
 	if ((mode != currentMode) || (bandwidthIs25kHz != currentBandWidthIs25kHz))
 	{
-		currentMode=mode;
+		currentMode = mode;
 
-		currentBandWidthIs25kHz=bandwidthIs25kHz;
+		currentBandWidthIs25kHz = bandwidthIs25kHz;
 
 		taskENTER_CRITICAL();
 		switch(mode)
@@ -344,11 +344,11 @@ bool trxCarrierDetected(void)
 		case RADIO_MODE_ANALOG:
 			if (currentChannelData->sql != 0)
 			{
-				squelch =  TRX_SQUELCH_MAX - (((currentChannelData->sql-1)*11)>>2);
+				squelch = TRX_SQUELCH_MAX - (((currentChannelData->sql - 1) * 11) >> 2);
 			}
 			else
 			{
-				squelch =  TRX_SQUELCH_MAX - (((nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]])*11)>>2);
+				squelch = TRX_SQUELCH_MAX - (((nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]]) * 11) >> 2);
 			}
 			break;
 
@@ -361,7 +361,7 @@ bool trxCarrierDetected(void)
 			}
 			else*/
 			{
-				squelch =  TRX_SQUELCH_MAX - (((nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]])*11)>>2);
+				squelch = TRX_SQUELCH_MAX - (((nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]]) * 11) >> 2);
 			}
 			break;
 	}
@@ -372,7 +372,7 @@ bool trxCarrierDetected(void)
 void trxCheckDigitalSquelch(void)
 {
 	trx_measure_count++;
-	if (trx_measure_count==25)
+	if (trx_measure_count == 25)
 	{
 		uint8_t squelch;
 
@@ -387,7 +387,7 @@ void trxCheckDigitalSquelch(void)
 		}
 		else*/
 		{
-			squelch =  TRX_SQUELCH_MAX - (((nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]])*11)>>2);
+			squelch = TRX_SQUELCH_MAX - (((nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]]) * 11) >> 2);
 		}
 
 		if (trxRxNoise < squelch)
@@ -407,27 +407,27 @@ void trxCheckDigitalSquelch(void)
 			}
 		}
 
-		trx_measure_count=0;
+		trx_measure_count = 0;
 	}
 }
 
 void trxCheckAnalogSquelch(void)
 {
 	trx_measure_count++;
-	if (trx_measure_count==25)
+	if (trx_measure_count == 25)
 	{
 		uint8_t squelch;//=45;
 
 		trxReadRSSIAndNoise();
 
 		// check for variable squelch control
-		if (currentChannelData->sql!=0)
+		if (currentChannelData->sql != 0)
 		{
-			squelch =  TRX_SQUELCH_MAX - (((currentChannelData->sql-1)*11)>>2);
+			squelch = TRX_SQUELCH_MAX - (((currentChannelData->sql - 1) * 11) >> 2);
 		}
 		else
 		{
-			squelch =  TRX_SQUELCH_MAX - (((nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]])*11)>>2);
+			squelch = TRX_SQUELCH_MAX - (((nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]]) * 11) >> 2);
 		}
 
 		if (trxRxNoise < squelch)
@@ -481,10 +481,10 @@ void trxSetFrequency(int fRx,int fTx, int dmrMode)
 		calibrationGetPowerForFrequency(fTx, &trxPowerSettings);
 		trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
 
-		currentRxFrequency=fRx;
-		currentTxFrequency=fTx;
+		currentRxFrequency = fRx;
+		currentTxFrequency = fTx;
 
-		if (dmrMode==DMR_MODE_AUTO)
+		if (dmrMode == DMR_MODE_AUTO)
 		{
 			// Most DMR radios determine whether to use Active or Passive DMR depending on whether the Tx and Rx freq are the same
 			// This prevents split simplex operation, but since no other radio appears to support split freq simplex
@@ -515,7 +515,7 @@ void trxSetFrequency(int fRx,int fTx, int dmrMode)
 		tx_fh_l = (f & 0x00ff0000) >> 16;
 		tx_fh_h = (f & 0xff000000) >> 24;
 
-		if (currentMode==RADIO_MODE_DIGITAL)
+		if (currentMode == RADIO_MODE_DIGITAL)
 		{
 			terminate_digital();
 		}
@@ -670,7 +670,7 @@ void trxActivateRx(void)
 
 void trxActivateTx(void)
 {
-	txPAEnabled=true;
+	txPAEnabled = true;
 	I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x29, tx_fh_h, tx_fh_l);
 	I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x2a, tx_fl_h, tx_fl_l);
 
@@ -755,9 +755,9 @@ static const float fractionalPowers[3][7] = {	{0.37,0.54,0.73,0.87,0.49,0.64,0.7
 			break;
 	}
 
-	if (txPower>4095)
+	if (txPower > 4095)
 	{
-		txPower=4095;
+		txPower = 4095;
 	}
 }
 
@@ -795,7 +795,7 @@ void trxUpdateC6000Calibration(void)
 	CalibrationBand_t calBand;
 	CalibrationDataResult_t calRes;
 
-	if (nonVolatileSettings.useCalibration==false)
+	if (nonVolatileSettings.useCalibration == false)
 	{
 		return;
 	}
@@ -1057,7 +1057,7 @@ void trxSetRxCSS(uint16_t tone)
 		if (tone > 2400) threshold=1;
 		// value that is stored is 100 time the tone freq but its stored in the codeplug as freq times 10
 		tone = tone * 10;
-		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4d, (tone >> 8) & 0xff, (tone & 0xff));
+		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x4d, (tone >> 8) & 0xff, (tone & 0xff));
 		//set the detection thresholds
 		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x5b, (threshold & 0xFF), (threshold & 0xFF));
 		//set detection to CTCSS2
@@ -1072,8 +1072,8 @@ void trxSetRxCSS(uint16_t tone)
 		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x4d, 0x00, 0x00);
 		// The AT1846S wants the Golay{23,12} encoding of the DCS code, rather than just the code itself.
 		uint32_t encoded = trxDCSEncode(tone & ~CODEPLUG_DCS_FLAGS_MASK);
-		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4b, 0x00, (encoded >> 16) & 0xff);           // init cdcss_code
-		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	0x4c, (encoded >> 8) & 0xff, encoded & 0xff);  // init cdcss_code
+		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x4b, 0x00, (encoded >> 16) & 0xff);           // init cdcss_code
+		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x4c, (encoded >> 8) & 0xff, encoded & 0xff);  // init cdcss_code
 		AT1846SetClearReg2byteWithMask(0x3a, 0xFF, 0xE0, 0x00, 0x06); // enable receive DCS
 		// The cdcss_sel bits have to be set for DCS receive to work
 		AT1846SetClearReg2byteWithMask(0x4e, 0x38, 0x3F, 0x04, 0x00); // enable transmit DCS
@@ -1188,7 +1188,7 @@ void trxSetTone1(int toneFreq)
 
 	toneFreq = toneFreq * 10;
 	taskENTER_CRITICAL();
-	I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x35, (toneFreq >> 8) & 0xff,	(toneFreq & 0xff));   // tone1_freq
+	I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x35, (toneFreq >> 8) & 0xff, (toneFreq & 0xff));   // tone1_freq
 	taskEXIT_CRITICAL();
 }
 
@@ -1196,7 +1196,7 @@ void trxSetTone2(int toneFreq)
 {
 	toneFreq = toneFreq * 10;
 	taskENTER_CRITICAL();
-	I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x36, (toneFreq >> 8) & 0xff,	(toneFreq & 0xff));   // tone2_freq
+	I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x36, (toneFreq >> 8) & 0xff, (toneFreq & 0xff));   // tone2_freq
 	taskEXIT_CRITICAL();
 }
 

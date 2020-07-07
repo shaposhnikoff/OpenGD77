@@ -287,7 +287,7 @@ static void updateScreen(bool forceRedraw)
 			}
 
 			// Upwards blinking arrow
-			ucFillTriangle(63,(DISPLAY_SIZE_Y - 5), 59,(DISPLAY_SIZE_Y - 1), 67,(DISPLAY_SIZE_Y - 1), blink);
+			ucFillTriangle(63, (DISPLAY_SIZE_Y - 5), 59, (DISPLAY_SIZE_Y - 1), 67, (DISPLAY_SIZE_Y - 1), blink);
 		}
 		break;
 	}

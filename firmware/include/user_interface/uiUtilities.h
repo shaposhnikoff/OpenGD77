@@ -35,8 +35,20 @@ extern struct_codeplugContact_t currentContactData;
 extern struct_codeplugZone_t currentZone;
 
 enum UI_CALL_STATE { NOT_IN_CALL=0, PRIVATE_CALL_ACCEPT, PRIVATE_CALL, PRIVATE_CALL_DECLINED };
-typedef enum { PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,  PROMPT_SEQUENCE_ZONE, PROMPT_SEQUENCE_MODE, PROMPT_SEQUENCE_CONTACT_TG_OR_PC, PROMPT_SEQUENCE_TS, PROMPT_SEQUENCE_CC, PROMPT_SEQUENCE_POWER,
-				PROMPT_SEQUENCE_BATTERY  , NUM_PROMPT_SEQUENCES} voicePromptItem_t;
+
+typedef enum
+{
+	PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ,
+	PROMPT_SEQUENCE_ZONE,
+	PROMPT_SEQUENCE_MODE,
+	PROMPT_SEQUENCE_CONTACT_TG_OR_PC,
+	PROMPT_SEQUENCE_TS,
+	PROMPT_SEQUENCE_CC,
+	PROMPT_SEQUENCE_POWER,
+	PROMPT_SEQUENCE_BATTERY,
+	NUM_PROMPT_SEQUENCES
+} voicePromptItem_t;
+
 extern voicePromptItem_t voicePromptSequenceState;
 
 typedef struct dmrIdDataStruct
@@ -70,13 +82,7 @@ typedef struct LinkItem
     struct LinkItem *next;
 } LinkItem_t;
 
-enum QSO_DISPLAY_STATE
-{
-	QSO_DISPLAY_IDLE,
-	QSO_DISPLAY_DEFAULT_SCREEN,
-	QSO_DISPLAY_CALLER_DATA,
-	QSO_DISPLAY_CALLER_DATA_UPDATE
-};
+enum QSO_DISPLAY_STATE { QSO_DISPLAY_IDLE, QSO_DISPLAY_DEFAULT_SCREEN, QSO_DISPLAY_CALLER_DATA, QSO_DISPLAY_CALLER_DATA_UPDATE };
 
 typedef enum
 {
@@ -133,7 +139,7 @@ void drawRSSIBarGraph(void);
 void drawFMMicLevelBarGraph(void);
 void drawDMRMicLevelBarGraph(void);
 void setOverrideTGorPC(int tgOrPc, bool privateCall);
-void printFrequency(bool isTX, bool hasFocus, uint8_t y, uint32_t frequency, bool displayVFOChannel,bool isScanMode);
+void printFrequency(bool isTX, bool hasFocus, uint8_t y, uint32_t frequency, bool displayVFOChannel, bool isScanMode);
 void printToneAndSquelch(void);
 size_t snprintDCS(char *s, size_t n, uint16_t code, bool inverted);
 void reset_freq_enter_digits(void);

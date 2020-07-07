@@ -197,15 +197,15 @@ int ucPrintCore(int16_t x, int16_t y, const char *szMsg, ucFont_t fontSize, ucTe
 
 		currentCharData = (uint8_t *)&currentFont[8 + (charOffset * bytesPerChar)];
 
-		for(int16_t row=0;row < charHeightPixels / 8 ;row++)
+		for(int16_t row = 0; row < charHeightPixels / 8 ; row++)
 		{
-			readPos = (currentCharData + row*charWidthPixels);
-			writePos = (screenBuf + x + (i*charWidthPixels) + ((y>>3) + row) * DISPLAY_SIZE_X) ;
+			readPos = (currentCharData + row * charWidthPixels);
+			writePos = (screenBuf + x + (i * charWidthPixels) + ((y >> 3) + row) * DISPLAY_SIZE_X) ;
 
-			if ((y&0x07)==0)
+			if ((y & 0x07) == 0)
 			{
 				// y position is aligned to a row
-				for(int16_t p=0;p<charWidthPixels;p++)
+				for(int16_t p = 0; p < charWidthPixels; p++)
 				{
 					if (isInverted)
 					{
@@ -229,7 +229,7 @@ int ucPrintCore(int16_t x, int16_t y, const char *szMsg, ucFont_t fontSize, ucTe
 				int16_t shiftNum = y & 0x07;
 				// y position is NOT aligned to a row
 
-				for(int16_t p=0;p<charWidthPixels;p++)
+				for(int16_t p = 0; p < charWidthPixels; p++)
 				{
 					if (isInverted)
 					{
@@ -247,10 +247,10 @@ int ucPrintCore(int16_t x, int16_t y, const char *szMsg, ucFont_t fontSize, ucTe
 					}
 				}
 
-				readPos = (currentCharData + row*charWidthPixels);
-				writePos = (screenBuf + x + (i*charWidthPixels) + ((y>>3) + row + 1) * DISPLAY_SIZE_X) ;
+				readPos = (currentCharData + row * charWidthPixels);
+				writePos = (screenBuf + x + (i * charWidthPixels) + ((y >> 3) + row + 1) * DISPLAY_SIZE_X) ;
 
-				for(int16_t p=0;p<charWidthPixels;p++)
+				for(int16_t p = 0; p < charWidthPixels; p++)
 				{
 					if (isInverted)
 					{
@@ -276,7 +276,7 @@ int ucPrintCore(int16_t x, int16_t y, const char *szMsg, ucFont_t fontSize, ucTe
 
 void ucClearBuf(void)
 {
-	memset(screenBuf,0x00,1024);
+	memset(screenBuf, 0x00, 1024);
 }
 
 void ucClearRows(int16_t startRow, int16_t endRow, bool isInverted)
@@ -880,18 +880,18 @@ void ucDrawRect(int16_t x, int16_t y, int16_t w, int16_t h, bool color)
 void ucFillRect(int16_t x, int16_t y, int16_t width, int16_t height, bool isInverted)
 {
 	uint8_t *addPtr;
-	int16_t endStripe 	= x+width;
-	int16_t startRow 	= y>>3;
-	int16_t endRow 		= ((y+height)>>3);
+	int16_t endStripe 	= x + width;
+	int16_t startRow 	= y >> 3;
+	int16_t endRow 		= ((y + height) >> 3);
 	uint8_t bitPatten;
 	int16_t shiftNum;
 
 	if (startRow==endRow)
 	{
 		addPtr = screenBuf + (startRow << 7);
-		bitPatten = (0xff >> (8-(height&0x07))) << (y&0x07);
+		bitPatten = (0xff >> (8-(height & 0x07))) << (y & 0x07);
 		//bitPatten = bitPatten ;
-		for(int16_t stripe=x;stripe < endStripe;stripe++)
+		for(int16_t stripe = x; stripe < endStripe; stripe++)
 		{
 			if (isInverted)
 			{
@@ -905,9 +905,9 @@ void ucFillRect(int16_t x, int16_t y, int16_t width, int16_t height, bool isInve
 	}
 	else
 	{
-		for(int16_t row=startRow;row<=endRow;row++)
+		for(int16_t row = startRow; row <= endRow; row++)
 		{
-			if (row==startRow)
+			if (row == startRow)
 			{
 				shiftNum = y & 0x07;
 				bitPatten = (0xff << shiftNum);
@@ -916,7 +916,7 @@ void ucFillRect(int16_t x, int16_t y, int16_t width, int16_t height, bool isInve
 			{
 				if (row == endRow)
 				{
-					shiftNum = (y+height) & 0x07;
+					shiftNum = (y + height) & 0x07;
 					bitPatten = (0xff >> (8 - shiftNum));
 				}
 				else
@@ -926,7 +926,7 @@ void ucFillRect(int16_t x, int16_t y, int16_t width, int16_t height, bool isInve
 				}
 			}
 			addPtr = screenBuf + (row << 7);
-			for(int16_t stripe=x;stripe < endStripe;stripe++)
+			for(int16_t stripe = x; stripe < endStripe; stripe++)
 			{
 				if (isInverted)
 				{
@@ -1016,9 +1016,9 @@ void ucDrawChoice(ucChoice_t choice, bool clearRegion)
 		char *rText;
 	} choices[] =
 	{
-			{ "OK" 							 , NULL                              }, // UC1701_CHOICE_OK
-			{ (char *)currentLanguage->yes___in_uppercase   , (char *)currentLanguage->no___in_uppercase       }, // UC1701_CHOICE_YESNO
-			{ NULL						     , (char *)currentLanguage->DISMISS  }  // UC1701_CHOICE_DISMISS
+			{ "OK" 							             , NULL                                        }, // UC1701_CHOICE_OK
+			{ (char *)currentLanguage->yes___in_uppercase, (char *)currentLanguage->no___in_uppercase  }, // UC1701_CHOICE_YESNO
+			{ NULL						                 , (char *)currentLanguage->DISMISS            }  // UC1701_CHOICE_DISMISS
 	};
 	char *lText = NULL;
 	char *rText = NULL;
@@ -1029,7 +1029,8 @@ void ucDrawChoice(ucChoice_t choice, bool clearRegion)
 		ucFillRect(0, FILLRECT_Y, DISPLAY_SIZE_X, 16, true);
 	}
 
-	if (choice >= CHOICES_NUM) {
+	if (choice >= CHOICES_NUM)
+	{
 		return;
 	}
 

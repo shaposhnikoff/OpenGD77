@@ -72,7 +72,9 @@ menuStatus_t menuDisplayOptions(uiEvent_t *ev, bool isFirstRun)
 		menuDisplayOptionsExitCode = MENU_STATUS_SUCCESS;
 
 		if (ev->hasEvent)
+		{
 			handleEvent(ev);
+		}
 	}
 	return menuDisplayOptionsExitCode;
 }
@@ -109,7 +111,7 @@ static void updateScreen(bool isFirstRun)
 				break;
 			case DISPLAY_MENU_CONTRAST:
 				leftSide = (char * const *)&currentLanguage->contrast;
-				snprintf(rightSideVar, bufferLen, "%d",nonVolatileSettings.displayContrast);
+				snprintf(rightSideVar, bufferLen, "%d", nonVolatileSettings.displayContrast);
 				break;
 			case DISPLAY_MENU_BACKLIGHT_MODE:
 				leftSide = (char * const *)&currentLanguage->mode;
@@ -138,7 +140,7 @@ static void updateScreen(bool isFirstRun)
 				break;
 			case DISPLAY_MENU_COLOUR_INVERT:
 				leftSide = (char * const *)&currentLanguage->display_background_colour;
-				rightSideConst = nonVolatileSettings.displayInverseVideo?(char * const *)&currentLanguage->colour_invert:(char * const *)&currentLanguage->colour_normal;
+				rightSideConst = nonVolatileSettings.displayInverseVideo ? (char * const *)&currentLanguage->colour_invert : (char * const *)&currentLanguage->colour_normal;
 				break;
 			case DISPLAY_MENU_CONTACT_DISPLAY_ORDER:
 				leftSide = (char * const *)&currentLanguage->priority_order;
@@ -155,9 +157,9 @@ static void updateScreen(bool isFirstRun)
 
 		// workaround for non stardard format of line for colour display
 
-		snprintf(buf, bufferLen, "%s:%s", *leftSide,(rightSideVar[0]?rightSideVar:*rightSideConst));
+		snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0] ? rightSideVar : *rightSideConst));
 
-		if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+		if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
 		{
 			if (!isFirstRun)
 			{
@@ -203,9 +205,9 @@ static void handleEvent(uiEvent_t *ev)
 				nonVolatileSettings.displayBacklightPercentage -= BACKLIGHT_PERCENTAGE_STEP;
 			}
 
-			if (nonVolatileSettings.displayBacklightPercentage<0)
+			if (nonVolatileSettings.displayBacklightPercentage < 0)
 			{
-				nonVolatileSettings.displayBacklightPercentage=0;
+				nonVolatileSettings.displayBacklightPercentage = 0;
 			}
 			displayLightTrigger();
 			menuSystemPopPreviousMenu();
@@ -223,9 +225,9 @@ static void handleEvent(uiEvent_t *ev)
 				nonVolatileSettings.displayBacklightPercentage += BACKLIGHT_PERCENTAGE_STEP;
 			}
 
-			if (nonVolatileSettings.displayBacklightPercentage>BACKLIGHT_MAX_PERCENTAGE)
+			if (nonVolatileSettings.displayBacklightPercentage > BACKLIGHT_MAX_PERCENTAGE)
 			{
-				nonVolatileSettings.displayBacklightPercentage=BACKLIGHT_MAX_PERCENTAGE;
+				nonVolatileSettings.displayBacklightPercentage = BACKLIGHT_MAX_PERCENTAGE;
 			}
 			displayLightTrigger();
 			menuSystemPopPreviousMenu();
@@ -236,19 +238,19 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		bool displayIsLit = displayIsBacklightLit();
 
-		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
+		if (KEYCHECK_PRESS(ev->keys, KEY_DOWN) && (gMenusEndIndex != 0))
 		{
 			isDirty = true;
 			menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
 			menuDisplayOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 		}
-		else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
+		else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 		{
 			isDirty = true;
 			menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_DISPLAY_MENU_ITEMS);
 			menuDisplayOptionsExitCode |= MENU_STATUS_LIST_TYPE;
 		}
-		else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
+		else if (KEYCHECK_PRESS(ev->keys, KEY_RIGHT))
 		{
 			isDirty = true;
 			switch(gMenusCurrentItemIndex)
@@ -318,7 +320,6 @@ static void handleEvent(uiEvent_t *ev)
 							nonVolatileSettings.backLightTimeout = BACKLIGHT_MAX_TIMEOUT;
 						}
 					}
-
 					break;
 				case DISPLAY_MENU_COLOUR_INVERT:
 					setDisplayInvert(true);
@@ -337,7 +338,7 @@ static void handleEvent(uiEvent_t *ev)
 					break;
 			}
 		}
-		else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
+		else if (KEYCHECK_PRESS(ev->keys, KEY_LEFT))
 		{
 			isDirty = true;
 			switch(gMenusCurrentItemIndex)
@@ -419,14 +420,14 @@ static void handleEvent(uiEvent_t *ev)
 					break;
 			}
 		}
-		else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+		else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 		{
 			// All parameters has already been applied
 			SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// Some platform require the settings to be saved immediately
 			menuSystemPopAllAndDisplayRootMenu();
 			return;
 		}
-		else if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
+		else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 		{
 			bool displayIsLit = displayIsBacklightLit();
 
@@ -460,6 +461,7 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 	}
+
 	if (isDirty)
 	{
 		updateScreen(false);
@@ -489,10 +491,11 @@ static void updateBacklightMode(uint8_t mode)
 
 static void setDisplayInvert(bool invert)
 {
-	if (invert==nonVolatileSettings.displayInverseVideo)
+	if (invert == nonVolatileSettings.displayInverseVideo)
 	{
 		return;// Don't update unless the setting is actually changing
 	}
+
 	bool isLit = displayIsBacklightLit();
 
 	nonVolatileSettings.displayInverseVideo = invert;//!nonVolatileSettings.displayInverseVideo;
@@ -500,7 +503,7 @@ static void setDisplayInvert(bool invert)
 	// Need to cycle the backlight
 	if (nonVolatileSettings.backlightMode != BACKLIGHT_MODE_NONE)
 	{
-		displayEnableBacklight(! isLit);
+		displayEnableBacklight(!isLit);
 		displayEnableBacklight(isLit);
 	}
 }
