@@ -44,9 +44,9 @@ static const int BACKLIGHT_PERCENTAGE_STEP_SMALL = 1;
 
 static const char *contactOrders[] = { "Ct/DB/TA", "DB/Ct/TA", "TA/Ct/DB", "TA/DB/Ct" };
 
-enum DISPLAY_MENU_LIST { 	DISPLAY_MENU_BRIGHTNESS = 0, DISPLAY_MENU_BRIGHTNESS_OFF, DISPLAY_MENU_CONTRAST, DISPLAY_MENU_BACKLIGHT_MODE, DISPLAY_MENU_TIMEOUT, DISPLAY_MENU_COLOUR_INVERT,
-							DISPLAY_MENU_CONTACT_DISPLAY_ORDER, DISPLAY_MENU_CONTACT_DISPLAY_SPLIT_CONTACT,
-							NUM_DISPLAY_MENU_ITEMS};
+enum DISPLAY_MENU_LIST { DISPLAY_MENU_BRIGHTNESS = 0, DISPLAY_MENU_BRIGHTNESS_OFF, DISPLAY_MENU_CONTRAST, DISPLAY_MENU_BACKLIGHT_MODE,
+	DISPLAY_MENU_TIMEOUT, DISPLAY_MENU_COLOUR_INVERT, DISPLAY_MENU_CONTACT_DISPLAY_ORDER, DISPLAY_MENU_CONTACT_DISPLAY_SPLIT_CONTACT,
+	NUM_DISPLAY_MENU_ITEMS };
 
 menuStatus_t menuDisplayOptions(uiEvent_t *ev, bool isFirstRun)
 {
@@ -84,8 +84,8 @@ static void updateScreen(bool isFirstRun)
 	int mNum = 0;
 	static const int bufferLen = 17;
 	char buf[bufferLen];
-	char * const *leftSide = NULL;// initialise to please the compiler
-	char * const *rightSideConst = NULL;// initialise to please the compiler
+	char * const *leftSide = NULL;// initialize to please the compiler
+	char * const *rightSideConst = NULL;// initialize to please the compiler
 	char rightSideVar[bufferLen];
 
 	ucClearBuf();
@@ -114,9 +114,9 @@ static void updateScreen(bool isFirstRun)
 				snprintf(rightSideVar, bufferLen, "%d", nonVolatileSettings.displayContrast);
 				break;
 			case DISPLAY_MENU_BACKLIGHT_MODE:
-				leftSide = (char * const *)&currentLanguage->mode;
 				{
 					const char * const *backlightModes[] = { &currentLanguage->Auto, &currentLanguage->squelch, &currentLanguage->manual, &currentLanguage->none };
+					leftSide = (char * const *)&currentLanguage->mode;
 					rightSideConst = (char * const *)backlightModes[nonVolatileSettings.backlightMode];
 				}
 				break;
@@ -147,9 +147,9 @@ static void updateScreen(bool isFirstRun)
 				snprintf(rightSideVar, bufferLen, "%s",contactOrders[nonVolatileSettings.contactDisplayPriority]);
 				break;
 			case DISPLAY_MENU_CONTACT_DISPLAY_SPLIT_CONTACT:
-				leftSide = (char * const *)&currentLanguage->contact;
 				{
 					const char * const *splitContact[] = { &currentLanguage->one_line, &currentLanguage->two_lines, &currentLanguage->Auto };
+					leftSide = (char * const *)&currentLanguage->contact;
 					rightSideConst = (char * const *)splitContact[nonVolatileSettings.splitContact];
 				}
 				break;
@@ -234,6 +234,7 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 	}
+
 	if (ev->events & KEY_EVENT)
 	{
 		bool displayIsLit = displayIsBacklightLit();

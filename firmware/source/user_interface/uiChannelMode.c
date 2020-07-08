@@ -131,7 +131,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 
 		if (channelScreenChannelData.rxFreq != 0)
 		{
-			loadChannelData(true,false);
+			loadChannelData(true, false);
 		}
 		else
 		{

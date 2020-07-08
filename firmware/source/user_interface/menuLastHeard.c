@@ -101,7 +101,7 @@ void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails, bool
 		item = item->next;
 	}
 
-	while((item != NULL) && (item->id != 0) && numDisplayed<4)
+	while((item != NULL) && (item->id != 0) && (numDisplayed < 4))
 	{
 		if (numDisplayed == 0)
 		{
