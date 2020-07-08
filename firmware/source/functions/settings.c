@@ -24,6 +24,7 @@
 #include <trx.h>
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiLocalisation.h>
+#include <ticks.h>
 
 static const int STORAGE_BASE_ADDRESS 		= 0x6000;
 
@@ -34,8 +35,12 @@ const uint8_t BEEP_TX_NONE  = 0x00;
 const uint8_t BEEP_TX_START = 0x01;
 const uint8_t BEEP_TX_STOP  = 0x02;
 
+#if defined(PLATFORM_RD5R)
+static uint32_t dirtyTime = 0;
+#endif
 
-
+static bool settingsDirty = false;
+static bool settingsVFODirty = false;
 settingsStruct_t nonVolatileSettings;
 struct_codeplugChannel_t *currentChannelData;
 struct_codeplugChannel_t channelScreenChannelData = { .rxFreq = 0 };
@@ -53,6 +58,7 @@ bool settingsSaveSettings(bool includeVFOs)
 	{
 		codeplugSetVFO_ChannelData(&settingsVFOChannel[0], 0);
 		codeplugSetVFO_ChannelData(&settingsVFOChannel[1], 1);
+		settingsVFODirty = false;
 	}
 
 	// Never reset this setting (as voicePromptsCacheInit() can change it if voice data are missing)
@@ -60,7 +66,14 @@ bool settingsSaveSettings(bool includeVFOs)
 	nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_VOICE_LEVEL_3;
 #endif
 
-	return EEPROM_Write(STORAGE_BASE_ADDRESS, (uint8_t*)&nonVolatileSettings, sizeof(settingsStruct_t));
+	bool ret = EEPROM_Write(STORAGE_BASE_ADDRESS, (uint8_t*)&nonVolatileSettings, sizeof(settingsStruct_t));
+
+	if (ret)
+	{
+		settingsDirty = false;
+	}
+
+	return ret;
 }
 
 bool settingsLoadSettings(void)
@@ -84,12 +97,14 @@ bool settingsLoadSettings(void)
 
 	codeplugInitChannelsPerZone();// Initialise the codeplug channels per zone
 
+	settingsDirty = false;
+	settingsVFODirty = false;
+
 	return readOK;
 }
 
 void settingsInitVFOChannel(int vfoNumber)
 {
-
 	// temporary hack in case the code plug has no RxGroup selected
 	// The TG needs to come from the RxGroupList
 	if (settingsVFOChannel[vfoNumber].rxGroupList == 0)
@@ -212,6 +227,8 @@ void settingsRestoreDefaultSettings(void)
 
 	currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];// Set the current channel data to point to the VFO data since the default screen will be the VFO
 
+	settingsDirty = true;
+
 	settingsSaveSettings(false);
 }
 
@@ -219,4 +236,74 @@ void settingsEraseCustomContent(void)
 {
 	//Erase OpenGD77 custom content
 	SPI_Flash_eraseSector(0);// The first sector (4k) contains the OpenGD77 custom codeplug content e.g. Boot melody and boot image.
+}
+
+void settingsSetBOOL(bool *s, bool v)
+{
+	*s = v;
+	settingsSetDirty();
+}
+
+void settingsSetINT8(int8_t *s, int8_t v)
+{
+	*s = v;
+	settingsSetDirty();
+}
+
+void settingsSetUINT8(uint8_t *s, uint8_t v)
+{
+	*s = v;
+	settingsSetDirty();
+}
+
+void settingsSetINT16(int16_t *s, int16_t v)
+{
+	*s = v;
+	settingsSetDirty();
+}
+
+void settingsSetUINT16(uint16_t *s, uint16_t v)
+{
+	*s = v;
+	settingsSetDirty();
+}
+
+void settingsSetINT32(int32_t *s, int32_t v)
+{
+	*s = v;
+	settingsSetDirty();
+}
+
+void settingsSetUINT32(uint32_t *s, uint32_t v)
+{
+	*s = v;
+	settingsSetDirty();
+}
+
+void settingsSetDirty(void)
+{
+	settingsDirty = true;
+
+#if defined(PLATFORM_RD5R)
+	dirtyTime = fw_millis();
+#endif
+}
+
+void settingsSetVFODirty(void)
+{
+	settingsVFODirty = true;
+
+#if defined(PLATFORM_RD5R)
+	dirtyTime = fw_millis();
+#endif
+}
+
+void settingsSaveIfNeeded(bool immediately)
+{
+#if defined(PLATFORM_RD5R)
+	if ((settingsDirty || settingsVFODirty) && (immediately || ((fw_millis() - dirtyTime) > ((1 * 60) * 1000)))) // 1 minute has passed since last change
+	{
+		settingsSaveSettings(settingsVFODirty);
+	}
+#endif
 }

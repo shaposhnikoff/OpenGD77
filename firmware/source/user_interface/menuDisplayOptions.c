@@ -196,18 +196,12 @@ static void handleEvent(uiEvent_t *ev)
 		isDirty = true;
 		if (ev->function == DEC_BRIGHTNESS)
 		{
-			if (nonVolatileSettings.displayBacklightPercentage <= BACKLIGHT_PERCENTAGE_STEP)
-			{
-				nonVolatileSettings.displayBacklightPercentage -= BACKLIGHT_PERCENTAGE_STEP_SMALL;
-			}
-			else
-			{
-				nonVolatileSettings.displayBacklightPercentage -= BACKLIGHT_PERCENTAGE_STEP;
-			}
+			settingsDecrement(nonVolatileSettings.displayBacklightPercentage,
+					((nonVolatileSettings.displayBacklightPercentage <= BACKLIGHT_PERCENTAGE_STEP) ? BACKLIGHT_PERCENTAGE_STEP_SMALL : BACKLIGHT_PERCENTAGE_STEP));
 
 			if (nonVolatileSettings.displayBacklightPercentage < 0)
 			{
-				nonVolatileSettings.displayBacklightPercentage = 0;
+				settingsSet(nonVolatileSettings.displayBacklightPercentage, 0);
 			}
 			displayLightTrigger();
 			menuSystemPopPreviousMenu();
@@ -216,18 +210,12 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (ev->function == INC_BRIGHTNESS)
 		{
-			if (nonVolatileSettings.displayBacklightPercentage < BACKLIGHT_PERCENTAGE_STEP)
-			{
-				nonVolatileSettings.displayBacklightPercentage += BACKLIGHT_PERCENTAGE_STEP_SMALL;
-			}
-			else
-			{
-				nonVolatileSettings.displayBacklightPercentage += BACKLIGHT_PERCENTAGE_STEP;
-			}
+			settingsIncrement(nonVolatileSettings.displayBacklightPercentage,
+					((nonVolatileSettings.displayBacklightPercentage < BACKLIGHT_PERCENTAGE_STEP) ? BACKLIGHT_PERCENTAGE_STEP_SMALL : BACKLIGHT_PERCENTAGE_STEP));
 
 			if (nonVolatileSettings.displayBacklightPercentage > BACKLIGHT_MAX_PERCENTAGE)
 			{
-				nonVolatileSettings.displayBacklightPercentage = BACKLIGHT_MAX_PERCENTAGE;
+				settingsSet(nonVolatileSettings.displayBacklightPercentage, BACKLIGHT_MAX_PERCENTAGE);
 			}
 			displayLightTrigger();
 			menuSystemPopPreviousMenu();
@@ -257,40 +245,28 @@ static void handleEvent(uiEvent_t *ev)
 			switch(gMenusCurrentItemIndex)
 			{
 				case DISPLAY_MENU_BRIGHTNESS:
-					if (nonVolatileSettings.displayBacklightPercentage < BACKLIGHT_PERCENTAGE_STEP)
-					{
-						nonVolatileSettings.displayBacklightPercentage += BACKLIGHT_PERCENTAGE_STEP_SMALL;
-					}
-					else
-					{
-						nonVolatileSettings.displayBacklightPercentage += BACKLIGHT_PERCENTAGE_STEP;
-					}
+					settingsIncrement(nonVolatileSettings.displayBacklightPercentage,
+							((nonVolatileSettings.displayBacklightPercentage < BACKLIGHT_PERCENTAGE_STEP) ? BACKLIGHT_PERCENTAGE_STEP_SMALL : BACKLIGHT_PERCENTAGE_STEP));
 
 					if (nonVolatileSettings.displayBacklightPercentage > BACKLIGHT_MAX_PERCENTAGE)
 					{
-						nonVolatileSettings.displayBacklightPercentage = BACKLIGHT_MAX_PERCENTAGE;
+						settingsSet(nonVolatileSettings.displayBacklightPercentage, BACKLIGHT_MAX_PERCENTAGE);
 					}
 					break;
 				case DISPLAY_MENU_BRIGHTNESS_OFF:
 					if (nonVolatileSettings.displayBacklightPercentageOff < nonVolatileSettings.displayBacklightPercentage)
 					{
-						if (nonVolatileSettings.displayBacklightPercentageOff < BACKLIGHT_PERCENTAGE_STEP)
-						{
-							nonVolatileSettings.displayBacklightPercentageOff += BACKLIGHT_PERCENTAGE_STEP_SMALL;
-						}
-						else
-						{
-							nonVolatileSettings.displayBacklightPercentageOff += BACKLIGHT_PERCENTAGE_STEP;
-						}
+						settingsIncrement(nonVolatileSettings.displayBacklightPercentageOff,
+								((nonVolatileSettings.displayBacklightPercentageOff < BACKLIGHT_PERCENTAGE_STEP) ? BACKLIGHT_PERCENTAGE_STEP_SMALL : BACKLIGHT_PERCENTAGE_STEP));
 
 						if (nonVolatileSettings.displayBacklightPercentageOff > BACKLIGHT_MAX_PERCENTAGE)
 						{
-							nonVolatileSettings.displayBacklightPercentageOff = BACKLIGHT_MAX_PERCENTAGE;
+							settingsSet(nonVolatileSettings.displayBacklightPercentageOff, BACKLIGHT_MAX_PERCENTAGE);
 						}
 
 						if (nonVolatileSettings.displayBacklightPercentageOff > nonVolatileSettings.displayBacklightPercentage)
 						{
-							nonVolatileSettings.displayBacklightPercentageOff = nonVolatileSettings.displayBacklightPercentage;
+							settingsSet(nonVolatileSettings.displayBacklightPercentageOff, nonVolatileSettings.displayBacklightPercentage);
 						}
 
 						if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_MANUAL) && (!displayIsLit))
@@ -302,23 +278,24 @@ static void handleEvent(uiEvent_t *ev)
 				case DISPLAY_MENU_CONTRAST:
 					if (nonVolatileSettings.displayContrast < CONTRAST_MAX_VALUE)
 					{
-						nonVolatileSettings.displayContrast++;
+						settingsIncrement(nonVolatileSettings.displayContrast, 1);
 					}
 					ucSetContrast(nonVolatileSettings.displayContrast);
 					break;
 				case DISPLAY_MENU_BACKLIGHT_MODE:
 					if (nonVolatileSettings.backlightMode < BACKLIGHT_MODE_NONE)
 					{
-						updateBacklightMode((++nonVolatileSettings.backlightMode));
+						settingsIncrement(nonVolatileSettings.backlightMode, 1);
+						updateBacklightMode(nonVolatileSettings.backlightMode);
 					}
 					break;
 				case DISPLAY_MENU_TIMEOUT:
 					if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO) || (nonVolatileSettings.backlightMode == BACKLIGHT_MODE_SQUELCH))
 					{
-						nonVolatileSettings.backLightTimeout += BACKLIGHT_TIMEOUT_STEP;
+						settingsIncrement(nonVolatileSettings.backLightTimeout, BACKLIGHT_TIMEOUT_STEP);
 						if (nonVolatileSettings.backLightTimeout > BACKLIGHT_MAX_TIMEOUT)
 						{
-							nonVolatileSettings.backLightTimeout = BACKLIGHT_MAX_TIMEOUT;
+							settingsSet(nonVolatileSettings.backLightTimeout, BACKLIGHT_MAX_TIMEOUT);
 						}
 					}
 					break;
@@ -328,13 +305,13 @@ static void handleEvent(uiEvent_t *ev)
 				case DISPLAY_MENU_CONTACT_DISPLAY_ORDER:
 					if (nonVolatileSettings.contactDisplayPriority < CONTACT_DISPLAY_PRIO_TA_DB_CC)
 					{
-						nonVolatileSettings.contactDisplayPriority++;
+						settingsIncrement(nonVolatileSettings.contactDisplayPriority, 1);
 					}
 					break;
 				case DISPLAY_MENU_CONTACT_DISPLAY_SPLIT_CONTACT:
 					if (nonVolatileSettings.splitContact < SPLIT_CONTACT_AUTO)
 					{
-						nonVolatileSettings.splitContact++;
+						settingsIncrement(nonVolatileSettings.splitContact, 1);
 					}
 					break;
 			}
@@ -345,38 +322,26 @@ static void handleEvent(uiEvent_t *ev)
 			switch(gMenusCurrentItemIndex)
 			{
 				case DISPLAY_MENU_BRIGHTNESS:
-					if (nonVolatileSettings.displayBacklightPercentage <= BACKLIGHT_PERCENTAGE_STEP)
-					{
-						nonVolatileSettings.displayBacklightPercentage -= 1;
-					}
-					else
-					{
-						nonVolatileSettings.displayBacklightPercentage -= BACKLIGHT_PERCENTAGE_STEP;
-					}
+					settingsDecrement(nonVolatileSettings.displayBacklightPercentage,
+							((nonVolatileSettings.displayBacklightPercentage <= BACKLIGHT_PERCENTAGE_STEP) ? 1 : BACKLIGHT_PERCENTAGE_STEP));
 
 					if (nonVolatileSettings.displayBacklightPercentage < 0)
 					{
-						nonVolatileSettings.displayBacklightPercentage = 0;
+						settingsSet(nonVolatileSettings.displayBacklightPercentage, 0);
 					}
 
 					if (nonVolatileSettings.displayBacklightPercentageOff > nonVolatileSettings.displayBacklightPercentage)
 					{
-						nonVolatileSettings.displayBacklightPercentageOff = nonVolatileSettings.displayBacklightPercentage;
+						settingsSet(nonVolatileSettings.displayBacklightPercentageOff, nonVolatileSettings.displayBacklightPercentage);
 					}
 					break;
 				case DISPLAY_MENU_BRIGHTNESS_OFF:
-					if (nonVolatileSettings.displayBacklightPercentageOff <= BACKLIGHT_PERCENTAGE_STEP)
-					{
-						nonVolatileSettings.displayBacklightPercentageOff -= BACKLIGHT_PERCENTAGE_STEP_SMALL;
-					}
-					else
-					{
-						nonVolatileSettings.displayBacklightPercentageOff -= BACKLIGHT_PERCENTAGE_STEP;
-					}
+					settingsDecrement(nonVolatileSettings.displayBacklightPercentageOff,
+							((nonVolatileSettings.displayBacklightPercentageOff <= BACKLIGHT_PERCENTAGE_STEP) ? BACKLIGHT_PERCENTAGE_STEP_SMALL : BACKLIGHT_PERCENTAGE_STEP));
 
 					if (nonVolatileSettings.displayBacklightPercentageOff < 0)
 					{
-						nonVolatileSettings.displayBacklightPercentageOff = 0;
+						settingsSet(nonVolatileSettings.displayBacklightPercentageOff, 0);
 					}
 
 					if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_MANUAL) && (!displayIsLit))
@@ -387,21 +352,22 @@ static void handleEvent(uiEvent_t *ev)
 				case DISPLAY_MENU_CONTRAST:
 					if (nonVolatileSettings.displayContrast > CONTRAST_MIN_VALUE)
 					{
-						nonVolatileSettings.displayContrast--;
+						settingsDecrement(nonVolatileSettings.displayContrast, 1);
 					}
 					ucSetContrast(nonVolatileSettings.displayContrast);
 					break;
 				case DISPLAY_MENU_BACKLIGHT_MODE:
 					if (nonVolatileSettings.backlightMode > BACKLIGHT_MODE_AUTO)
 					{
-						updateBacklightMode((--nonVolatileSettings.backlightMode));
+						settingsDecrement(nonVolatileSettings.backlightMode, 1);
+						updateBacklightMode(nonVolatileSettings.backlightMode);
 					}
 					break;
 				case DISPLAY_MENU_TIMEOUT:
 					if (((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_AUTO) && (nonVolatileSettings.backLightTimeout >= BACKLIGHT_TIMEOUT_STEP)) ||
 							((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_SQUELCH) && (nonVolatileSettings.backLightTimeout >= (BACKLIGHT_TIMEOUT_STEP * 2))))
 					{
-						nonVolatileSettings.backLightTimeout -= BACKLIGHT_TIMEOUT_STEP;
+						settingsDecrement(nonVolatileSettings.backLightTimeout, BACKLIGHT_TIMEOUT_STEP);
 					}
 					break;
 				case DISPLAY_MENU_COLOUR_INVERT:
@@ -410,13 +376,13 @@ static void handleEvent(uiEvent_t *ev)
 				case DISPLAY_MENU_CONTACT_DISPLAY_ORDER:
 					if (nonVolatileSettings.contactDisplayPriority > CONTACT_DISPLAY_PRIO_CC_DB_TA)
 					{
-						nonVolatileSettings.contactDisplayPriority--;
+						settingsDecrement(nonVolatileSettings.contactDisplayPriority, 1);
 					}
 					break;
 				case DISPLAY_MENU_CONTACT_DISPLAY_SPLIT_CONTACT:
 					if (nonVolatileSettings.splitContact > SPLIT_CONTACT_SINGLE_LINE_ONLY)
 					{
-						nonVolatileSettings.splitContact--;
+						settingsDecrement(nonVolatileSettings.splitContact, 1);
 					}
 					break;
 			}
@@ -424,7 +390,7 @@ static void handleEvent(uiEvent_t *ev)
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 		{
 			// All parameters has already been applied
-			SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// Some platform require the settings to be saved immediately
+			settingsSaveIfNeeded(true);
 			menuSystemPopAllAndDisplayRootMenu();
 			return;
 		}
@@ -434,19 +400,19 @@ static void handleEvent(uiEvent_t *ev)
 
 			if (nonVolatileSettings.displayContrast != originalNonVolatileSettings.displayContrast)
 			{
-				nonVolatileSettings.displayContrast = originalNonVolatileSettings.displayContrast;
+				settingsSet(nonVolatileSettings.displayContrast, originalNonVolatileSettings.displayContrast);
 				ucSetContrast(nonVolatileSettings.displayContrast);
 			}
 
 			if (nonVolatileSettings.displayInverseVideo != originalNonVolatileSettings.displayInverseVideo)
 			{
-				nonVolatileSettings.displayInverseVideo = originalNonVolatileSettings.displayInverseVideo;
+				settingsSet(nonVolatileSettings.displayInverseVideo, originalNonVolatileSettings.displayInverseVideo);
 				displayInit(nonVolatileSettings.displayInverseVideo);// Need to perform a full reset on the display to change back to non-inverted
 			}
 
-			nonVolatileSettings.displayBacklightPercentage = originalNonVolatileSettings.displayBacklightPercentage;
-			nonVolatileSettings.displayBacklightPercentageOff = originalNonVolatileSettings.displayBacklightPercentageOff;
-			nonVolatileSettings.backLightTimeout = originalNonVolatileSettings.backLightTimeout;
+			settingsSet(nonVolatileSettings.displayBacklightPercentage, originalNonVolatileSettings.displayBacklightPercentage);
+			settingsSet(nonVolatileSettings.displayBacklightPercentageOff, originalNonVolatileSettings.displayBacklightPercentageOff);
+			settingsSet(nonVolatileSettings.backLightTimeout, originalNonVolatileSettings.backLightTimeout);
 
 			if (nonVolatileSettings.backlightMode != originalNonVolatileSettings.backlightMode)
 			{
@@ -458,6 +424,7 @@ static void handleEvent(uiEvent_t *ev)
 				gpioSetDisplayBacklightIntensityPercentage(nonVolatileSettings.displayBacklightPercentageOff);
 			}
 
+			settingsSaveIfNeeded(true);
 			menuSystemPopPreviousMenu();
 			return;
 		}
@@ -471,7 +438,7 @@ static void handleEvent(uiEvent_t *ev)
 
 static void updateBacklightMode(uint8_t mode)
 {
-	nonVolatileSettings.backlightMode = mode;
+	settingsSet(nonVolatileSettings.backlightMode, mode);
 
 	switch (mode)
 	{
@@ -482,7 +449,7 @@ static void updateBacklightMode(uint8_t mode)
 		case BACKLIGHT_MODE_SQUELCH:
 			if (nonVolatileSettings.backLightTimeout < BACKLIGHT_TIMEOUT_STEP)
 			{
-				nonVolatileSettings.backLightTimeout = BACKLIGHT_TIMEOUT_STEP;
+				settingsSet(nonVolatileSettings.backLightTimeout, BACKLIGHT_TIMEOUT_STEP);
 			}
 		case BACKLIGHT_MODE_AUTO:
 			displayLightTrigger();
@@ -499,7 +466,7 @@ static void setDisplayInvert(bool invert)
 
 	bool isLit = displayIsBacklightLit();
 
-	nonVolatileSettings.displayInverseVideo = invert;//!nonVolatileSettings.displayInverseVideo;
+	settingsSet(nonVolatileSettings.displayInverseVideo, invert);//!nonVolatileSettings.displayInverseVideo;
 	displayInit(nonVolatileSettings.displayInverseVideo);// Need to perform a full reset on the display to change back to non-inverted
 	// Need to cycle the backlight
 	if (nonVolatileSettings.backlightMode != BACKLIGHT_MODE_NONE)

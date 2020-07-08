@@ -23,12 +23,6 @@
 #include "codeplug.h"
 #include "trx.h"
 
-#if defined(PLATFORM_RD5R)
-#define SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(includeVFOs) do { settingsSaveSettings(includeVFOs); } while(0)
-#else
-#define SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(includeVFOs) do {} while(0)
-#endif
-
 enum USB_MODE { USB_MODE_CPS, USB_MODE_HOTSPOT, USB_MODE_DEBUG };
 enum SETTINGS_UI_MODE { SETTINGS_CHANNEL_MODE = 0, SETTINGS_VFO_A_MODE, SETTINGS_VFO_B_MODE };
 enum BACKLIGHT_MODE { BACKLIGHT_MODE_AUTO = 0, BACKLIGHT_MODE_SQUELCH, BACKLIGHT_MODE_MANUAL, BACKLIGHT_MODE_NONE };
@@ -46,7 +40,7 @@ extern bool settingsPrivateCallMuteMode;
 extern int *nextKeyBeepMelody;
 extern struct_codeplugChannel_t settingsVFOChannel[2];
 
-typedef struct settingsStruct
+typedef struct
 {
 	int 			magicNumber;
 	int16_t			currentChannelIndexInZone;
@@ -91,8 +85,6 @@ typedef struct settingsStruct
 	uint8_t			voxThreshold; // 0: disabled
 	uint8_t			voxTailUnits; // 500ms units
 	uint8_t			audioPromptMode;
-
-
 } settingsStruct_t;
 
 typedef enum DMR_FILTER_TYPE
@@ -139,6 +131,36 @@ extern struct_codeplugContact_t contactListContactData;
 extern int contactListContactIndex;
 extern int settingsUsbMode;
 
+// Do not use the following settingsSet<TYPE>(...) functions, use settingsSet() instead
+void settingsSetBOOL(bool *s, bool v);
+void settingsSetINT8(int8_t *s, int8_t v);
+void settingsSetUINT8(uint8_t *s, uint8_t v);
+void settingsSetINT16(int16_t *s, int16_t v);
+void settingsSetUINT16(uint16_t *s, uint16_t v);
+void settingsSetINT32(int32_t *s, int32_t v);
+void settingsSetUINT32(uint32_t *s, uint32_t v);
+
+// Workaround for Eclipse's CDT parser angriness because it doesn't support C11 yet
+#ifdef __CDT_PARSER__
+#define settingsSet(S, V) do { /* It uses C11's _Generic() at compile time */ S = V; } while(0)
+#else
+#define settingsSet(S, V) _Generic((S),   \
+	bool:     settingsSetBOOL,            \
+	int8_t:   settingsSetINT8,            \
+	uint8_t:  settingsSetUINT8,           \
+	int16_t:  settingsSetINT16,           \
+	uint16_t: settingsSetUINT16,          \
+	int32_t:  settingsSetINT32,           \
+	uint32_t: settingsSetUINT32           \
+	)(&S, V)
+#endif
+
+#define settingsIncrement(S, V) do { S += V; settingsSetDirty(); } while(0)
+#define settingsDecrement(S, V) do { S -= V; settingsSetDirty(); } while(0)
+
+void settingsSetDirty(void);
+void settingsSetVFODirty(void);
+void settingsSaveIfNeeded(bool immediately);
 bool settingsSaveSettings(bool includeVFOs);
 bool settingsLoadSettings(void);
 void settingsRestoreDefaultSettings(void);
