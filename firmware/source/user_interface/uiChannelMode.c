@@ -68,7 +68,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev);
 
 #endif // PLATFORM_GD77S
 
-static void startScan(void);
+static void startScan(bool longPressBeep);
 static void uiChannelUpdateTrxID(void);
 static void searchNextChannel(void);
 static void setNextChannel(void);
@@ -695,7 +695,7 @@ static void handleEvent(uiEvent_t *ev)
 		if (ev->function == START_SCANNING)
 		{
 			directChannelNumber = 0;
-			startScan();
+			startScan(false);
 			return;
 		}
 	}
@@ -831,7 +831,7 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & KEY_EVENT)
 	{
-		if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+		if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 		{
 			if (directChannelNumber > 0)
 			{
@@ -1227,7 +1227,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_UP) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 		{
-			startScan();
+			startScan(true);
 		}
 		else
 		{
@@ -1594,7 +1594,7 @@ menuStatus_t uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 }
 
 //Scan Mode
-static void startScan(void)
+static void startScan(bool longPressBeep)
 {
 	scanDirection = 1;
 
@@ -1602,11 +1602,19 @@ static void startScan(void)
 	{
 		nuisanceDelete[i] = -1;
 	}
-	nuisanceDeleteIndex=0;
+	nuisanceDeleteIndex = 0;
 
 	scanActive = true;
 	scanTimer = SCAN_SHORT_PAUSE_TIME;
 	scanState = SCAN_SCANNING;
+
+	// Need to set the melody here, otherwise long press will remain silent
+	// since beeps aren't allowed while scanning
+	if (longPressBeep)
+	{
+		soundSetMelody(melody_key_long_beep);
+	}
+
 	menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
 
 	//get current channel index
@@ -2178,7 +2186,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					}
 					else
 					{
-						startScan();
+						startScan(false);
 					}
 
 					voicePromptsInit();
