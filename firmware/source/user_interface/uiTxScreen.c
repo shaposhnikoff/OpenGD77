@@ -40,16 +40,16 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 	if (isFirstRun)
 	{
 		voicePromptsTerminate();
-		startBeepPlayed=false;
+		startBeepPlayed = false;
 		scanActive = false;
 		trxIsTransmittingTone = false;
 		settingsPrivateCallMuteMode = false;
 		isShowingLastHeard = false;
 
-		if ((currentChannelData->flag4 & 0x04) == 0x00 && (trxCheckFrequencyInAmateurBand(currentChannelData->txFreq) || nonVolatileSettings.txFreqLimited == false))
+		if (((currentChannelData->flag4 & 0x04) == 0x00) && (trxCheckFrequencyInAmateurBand(currentChannelData->txFreq) || (nonVolatileSettings.txFreqLimited == false)))
 		{
 			nextSecondPIT = PITCounter + PIT_COUNTS_PER_SECOND;
-			timeInSeconds = currentChannelData->tot*15;
+			timeInSeconds = currentChannelData->tot * 15;
 
 			GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
 			GPIO_PinWrite(GPIO_LEDred, Pin_LEDred, 1);
@@ -57,7 +57,9 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 			txstopdelay = 0;
 			clearIsWakingState();
 			if (trxGetMode() == RADIO_MODE_ANALOG)
+			{
 				trxSetTxCSS(currentChannelData->txTone);
+			}
 			trx_setTX();
 			updateScreen();
 		}
@@ -77,7 +79,6 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 
 			if ((currentChannelData->flag4 & 0x04) != 0x00)
 			{
-
 				ucPrintCentered((DISPLAY_SIZE_Y - 24), currentLanguage->rx_only, FONT_SIZE_3);
 			}
 			else
@@ -147,10 +148,10 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 				if (mode == RADIO_MODE_DIGITAL)
 				{
 					if ((nonVolatileSettings.beepOptions & BEEP_TX_START) &&
-							(startBeepPlayed==false) && (trxIsTransmitting==true)
+							(startBeepPlayed == false) && (trxIsTransmitting == true)
 							&& (melody_play == NULL))
 					{
-						startBeepPlayed=true;// set this even if the beep is not actaully played because of the vox, as otherwise this code will get continuously run
+						startBeepPlayed = true;// set this even if the beep is not actaully played because of the vox, as otherwise this code will get continuously run
 						// If VOX is running, don't send a beep as it will reset its the trigger status.
 						if ((voxIsEnabled() == false) || (voxIsEnabled() && (voxIsTriggered() == false)))
 						{
@@ -170,7 +171,7 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 						drawFMMicLevelBarGraph();
 					}
 
-					ucRenderRows(1,2);
+					ucRenderRows(1, 2);
 					micm = ev->time;
 				}
 
@@ -182,7 +183,9 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 		if ((currentChannelData->tot != 0) && (timeInSeconds == 0))
 		{
 			if ((ev->time - mto) < 500)
+			{
 				return MENU_STATUS_SUCCESS;
+			}
 		}
 
 
@@ -217,8 +220,8 @@ static void updateScreen(void)
 static void handleEvent(uiEvent_t *ev)
 {
 	// Xmiting ends (normal or timeouted)
-	if ((ev->buttons & BUTTON_PTT) == 0
-			|| (currentChannelData->tot != 0 && timeInSeconds == 0))
+	if (((ev->buttons & BUTTON_PTT) == 0)
+			|| ((currentChannelData->tot != 0) && (timeInSeconds == 0)))
 	{
 		if (trxTransmissionEnabled)
 		{
@@ -234,7 +237,7 @@ static void handleEvent(uiEvent_t *ev)
 				taskENTER_CRITICAL();
 				trxSetRxCSS(currentChannelData->rxTone);
 				trxActivateRx();
-				trxIsTransmitting=false;
+				trxIsTransmitting = false;
 				taskEXIT_CRITICAL();
 				menuSystemPopPreviousMenu();
 			}
@@ -242,7 +245,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (isShowingLastHeard)
 				{
-					isShowingLastHeard=false;
+					isShowingLastHeard = false;
 					updateScreen();
 				}
 			}
@@ -311,16 +314,16 @@ static void handleEvent(uiEvent_t *ev)
 		disableAudioAmp(AUDIO_AMP_MODE_RF);
 	}
 
-	if (trxGetMode() == RADIO_MODE_DIGITAL && BUTTONCHECK_DOWN(ev, BUTTON_SK1) && isShowingLastHeard==false && trxTransmissionEnabled==true)
+	if ((trxGetMode() == RADIO_MODE_DIGITAL) && BUTTONCHECK_DOWN(ev, BUTTON_SK1) && (isShowingLastHeard == false) && (trxTransmissionEnabled == true))
 	{
-		isShowingLastHeard=true;
-		menuLastHeardUpdateScreen(false, false,false);
+		isShowingLastHeard = true;
+		menuLastHeardUpdateScreen(false, false, false);
 	}
 	else
 	{
-		if (isShowingLastHeard && BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0)
+		if (isShowingLastHeard && (BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0))
 		{
-			isShowingLastHeard=false;
+			isShowingLastHeard = false;
 			updateScreen();
 		}
 	}

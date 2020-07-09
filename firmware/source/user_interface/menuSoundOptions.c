@@ -57,7 +57,9 @@ menuStatus_t menuSoundOptions(uiEvent_t *ev, bool isFirstRun)
 		menuSoundExitCode = MENU_STATUS_SUCCESS;
 
 		if (ev->hasEvent)
+		{
 			handleEvent(ev);
+		}
 	}
 	return menuSoundExitCode;
 }
@@ -95,7 +97,7 @@ static void updateScreen(bool isFirstRun)
 				{
 					if (nonVolatileSettings.txTimeoutBeepX5Secs != 0)
 					{
-						snprintf(rightSideVar, bufferLen, "%d",nonVolatileSettings.txTimeoutBeepX5Secs * 5);
+						snprintf(rightSideVar, bufferLen, "%d", nonVolatileSettings.txTimeoutBeepX5Secs * 5);
 					}
 					else
 					{
@@ -124,7 +126,7 @@ static void updateScreen(bool isFirstRun)
 				}
 				else
 				{
-					const char * const *beepTX[] = {&currentLanguage->none, &currentLanguage->start, &currentLanguage->stop, &currentLanguage->both};
+					const char * const *beepTX[] = { &currentLanguage->none, &currentLanguage->start, &currentLanguage->stop, &currentLanguage->both };
 					rightSideConst = (char * const *)beepTX[nonVolatileSettings.beepOptions];
 				}
 				break;
@@ -148,7 +150,7 @@ static void updateScreen(bool isFirstRun)
 					uint8_t secs = (uint8_t)tail;
 					uint8_t fracSec = (tail - secs) * 10;
 
-					snprintf(rightSideVar, bufferLen, "%d.%ds",secs, fracSec);
+					snprintf(rightSideVar, bufferLen, "%d.%ds", secs, fracSec);
 				}
 				else
 				{
@@ -158,23 +160,24 @@ static void updateScreen(bool isFirstRun)
 			case OPTIONS_AUDIO_PROMPT_MODE:
 				{
 					leftSide = (char * const *)&currentLanguage->audio_prompt;
-					const char * const *audioPromptOption[] = {&currentLanguage->silent, &currentLanguage->normal, &currentLanguage->beep,
-							&currentLanguage->voice_prompt_level_1, &currentLanguage->voice_prompt_level_2, &currentLanguage->voice_prompt_level_3};
+					const char * const *audioPromptOption[] = { &currentLanguage->silent, &currentLanguage->normal, &currentLanguage->beep,
+							&currentLanguage->voice_prompt_level_1, &currentLanguage->voice_prompt_level_2, &currentLanguage->voice_prompt_level_3 };
 					rightSideConst = (char * const *)audioPromptOption[nonVolatileSettings.audioPromptMode];
 				}
 				break;
 		}
 
-		snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0]?rightSideVar:*rightSideConst));
+		snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0] ? rightSideVar : *rightSideConst));
 
-		if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+		if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
 		{
 			if (!isFirstRun)
 			{
 				voicePromptsInit();
 			}
+
 			voicePromptsAppendLanguageString((const char * const *)leftSide);
-			if (rightSideVar[0] !=0)
+			if (rightSideVar[0] != 0)
 			{
 				voicePromptsAppendString(rightSideVar);
 			}
@@ -200,19 +203,19 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & KEY_EVENT)
 	{
-		if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
+		if (KEYCHECK_PRESS(ev->keys, KEY_DOWN) && (gMenusEndIndex != 0))
 		{
 			isDirty = true;
 			menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_SOUND_MENU_ITEMS);
 			menuSoundExitCode |= MENU_STATUS_LIST_TYPE;
 		}
-		else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
+		else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 		{
 			isDirty = true;
 			menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_SOUND_MENU_ITEMS);
 			menuSoundExitCode |= MENU_STATUS_LIST_TYPE;
 		}
-		else if (KEYCHECK_PRESS(ev->keys,KEY_RIGHT))
+		else if (KEYCHECK_PRESS(ev->keys, KEY_RIGHT))
 		{
 			isDirty = true;
 			switch(gMenusCurrentItemIndex)
@@ -273,7 +276,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 				case OPTIONS_AUDIO_PROMPT_MODE:
-					if (nonVolatileSettings.audioPromptMode < (NUM_AUDIO_PROMPT_MODES - 2 + (int)voicePromptDataIsLoaded ))
+					if (nonVolatileSettings.audioPromptMode < (NUM_AUDIO_PROMPT_MODES - 2 + (int)voicePromptDataIsLoaded))
 					{
 						nonVolatileSettings.audioPromptMode++;
 					}
@@ -281,7 +284,7 @@ static void handleEvent(uiEvent_t *ev)
 
 			}
 		}
-		else if (KEYCHECK_PRESS(ev->keys,KEY_LEFT))
+		else if (KEYCHECK_PRESS(ev->keys, KEY_LEFT))
 		{
 			isDirty = true;
 			switch(gMenusCurrentItemIndex)
@@ -350,7 +353,7 @@ static void handleEvent(uiEvent_t *ev)
 					break;
 			}
 		}
-		else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+		else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 		{
 			// All parameters has already been applied
 			SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// Some platform require the settings to be saved immediately
@@ -358,7 +361,7 @@ static void handleEvent(uiEvent_t *ev)
 			menuSystemPopAllAndDisplayRootMenu();
 			return;
 		}
-		else if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
+		else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 		{
 			// Restore original settings.
 			memcpy(&nonVolatileSettings, &originalNonVolatileSettings, sizeof(settingsStruct_t));
@@ -370,6 +373,7 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 	}
+
 	if (isDirty)
 	{
 		updateScreen(false);
