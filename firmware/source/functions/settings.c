@@ -301,7 +301,7 @@ void settingsSetVFODirty(void)
 void settingsSaveIfNeeded(bool immediately)
 {
 #if defined(PLATFORM_RD5R)
-	if ((settingsDirty || settingsVFODirty) && (immediately || ((fw_millis() - dirtyTime) > ((1 * 60) * 1000)))) // 1 minute has passed since last change
+	if ((settingsDirty || settingsVFODirty) && (immediately || ((fw_millis() - dirtyTime) > (5 * 1000)))) // 5 seconds has passed since last change
 	{
 		settingsSaveSettings(settingsVFODirty);
 	}
