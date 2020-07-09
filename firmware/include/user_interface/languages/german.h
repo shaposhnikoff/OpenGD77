@@ -20,7 +20,7 @@
  * Translators: DG3GSP, DL4LEX
  *
  *
- * Rev: 3.8
+ * Rev: 3.9
  */
 #ifndef USER_INTERFACE_LANGUAGES_GERMAN_H_
 #define USER_INTERFACE_LANGUAGES_GERMAN_H_
@@ -153,11 +153,11 @@ const stringsTable_t germanLanguage =
 .both					= "Beide", // MaxLen 16 (with ':' + .dmr_beep)
 .vox_threshold                          = "VOX Empf.", // MaxLen 16 (with ':' + .off or 1..30)
 .vox_tail                               = "VOX Dauer", // MaxLen 16 (with ':' + .n_a or '0.0s')
-.audio_prompt				= "Prompt",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice_prompt_level_1)
-.silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
+.audio_prompt				= "Ansage",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice_prompt_level_1)
+.silent                                 = "Still", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
-.beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice_prompt_level_1					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.beep					= "Töne", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_1					= "Stimme L1", // Maxlen 16 (with : + audio_prompt)
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
@@ -167,9 +167,9 @@ const stringsTable_t germanLanguage =
 .openGD77S 				= "OpenGD77S",// Do not translate
 .openDM1801 			= "OpenDM1801",// Do not translate
 .openRD5R 				= "OpenRD5R",// Do not translate
-.gitCommit				= "Git commit",
-.voice_prompt_level_2	= "Voice L2", // Maxlen 16 (with : + audio_prompt)
-.voice_prompt_level_3	= "Voice L3" // Maxlen 16 (with : + audio_prompt)
+.gitCommit				= "Git Übergabe",
+.voice_prompt_level_2	= "Stimme L2", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_3	= "Stimme L3" // Maxlen 16 (with : + audio_prompt)
 };
 /********************************************************************
  *
