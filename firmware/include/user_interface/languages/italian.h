@@ -154,10 +154,10 @@ const stringsTable_t italianLanguage =
 .vox_threshold          = "Soglia VOX", // MaxLen 16 (with ':' + .off or 1..30)
 .vox_tail               = "Coda VOX", // MaxLen 16 (with ':' + .n_a or '0.0s')
 .audio_prompt				= "Prompt",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice_prompt_level_1)
-.silent                                 = "Silent", // Maxlen 16 (with : + audio_prompt)
-.normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
-.beep					= "Beep", // Maxlen 16 (with : + audio_prompt)
-.voice_prompt_level_1					= "Voice", // Maxlen 16 (with : + audio_prompt)
+.silent                                 = "Silenzio", // Maxlen 16 (with : + audio_prompt)
+.normal                                 = "Normale", // Maxlen 16 (with : + audio_prompt)
+.beep					= "Bip", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_1					= "Voce", // Maxlen 16 (with : + audio_prompt)
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
@@ -168,8 +168,8 @@ const stringsTable_t italianLanguage =
 .openDM1801 			= "OpenDM1801",// Do not translate
 .openRD5R 				= "OpenRD5R",// Do not translate
 .gitCommit				= "Git commit",
-.voice_prompt_level_2	= "Voice L2", // Maxlen 16 (with : + audio_prompt)
-.voice_prompt_level_3	= "Voice L3" // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_2	= "Voce L2", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_3	= "Voce L3" // Maxlen 16 (with : + audio_prompt)
 };
 /********************************************************************
  *
