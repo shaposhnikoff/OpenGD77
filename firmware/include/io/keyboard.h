@@ -97,7 +97,8 @@
 extern volatile bool keypadLocked;
 extern volatile bool keypadAlphaEnable;
 
-typedef struct keyboardCode {
+typedef struct keyboardCode
+{
 		uint8_t event;
 		char key;
 } keyboardCode_t;

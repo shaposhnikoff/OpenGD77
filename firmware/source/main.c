@@ -310,13 +310,14 @@ void mainTask(void *data)
 	while (1U)
 	{
 		taskENTER_CRITICAL();
-		uint32_t tmp_timer_maintask=timer_maintask;
+		uint32_t tmp_timer_maintask = timer_maintask;
 		taskEXIT_CRITICAL();
-		if (tmp_timer_maintask==0)
+
+		if (tmp_timer_maintask == 0)
 		{
 			taskENTER_CRITICAL();
-			timer_maintask=10;
-			alive_maintask=true;
+			timer_maintask = 10;
+			alive_maintask = true;
 			taskEXIT_CRITICAL();
 
 			tick_com_request();
@@ -388,7 +389,7 @@ void mainTask(void *data)
 
 			if (keypadLocked || PTTLocked)
 			{
-				if (keypadLocked && (buttons & BUTTON_PTT) == 0)
+				if (keypadLocked && ((buttons & BUTTON_PTT) == 0))
 				{
 					if (key_event == EVENT_KEY_CHANGE)
 					{
@@ -407,9 +408,9 @@ void mainTask(void *data)
 
 					// Lockout ORANGE AND BLUE (BLACK stay active regardless lock status, useful to trigger backlight)
 #if defined(PLATFORM_RD5R)
-					if (button_event == EVENT_BUTTON_CHANGE && (buttons & BUTTON_SK2))
+					if ((button_event == EVENT_BUTTON_CHANGE) && (buttons & BUTTON_SK2))
 #else
-					if (button_event == EVENT_BUTTON_CHANGE && ((buttons & BUTTON_ORANGE) || (buttons & BUTTON_SK2)))
+					if ((button_event == EVENT_BUTTON_CHANGE) && ((buttons & BUTTON_ORANGE) || (buttons & BUTTON_SK2)))
 #endif
 					{
 						if ((PTTToggledDown == false) && (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN))
@@ -550,11 +551,11 @@ void mainTask(void *data)
 					 * if ((slot_state == DMR_STATE_IDLE || trxDMRMode == DMR_MODE_PASSIVE)  &&
 					 *
 					 */
-					if (	trxGetMode() != RADIO_MODE_NONE &&
-							settingsUsbMode != USB_MODE_HOTSPOT &&
-							currentMenu != UI_POWER_OFF &&
-							currentMenu != UI_SPLASH_SCREEN &&
-							currentMenu != UI_TX_SCREEN )
+					if ((trxGetMode() != RADIO_MODE_NONE) &&
+							(settingsUsbMode != USB_MODE_HOTSPOT) &&
+							(currentMenu != UI_POWER_OFF) &&
+							(currentMenu != UI_SPLASH_SCREEN) &&
+							(currentMenu != UI_TX_SCREEN))
 					{
 						bool wasScanning = false;
 
@@ -589,7 +590,7 @@ void mainTask(void *data)
 					}
 				}
 
-				if (buttons & BUTTON_SK1 && buttons & BUTTON_SK2)
+				if ((buttons & BUTTON_SK1) && (buttons & BUTTON_SK2))
 				{
 					settingsSaveSettings(true);
 				}
@@ -601,10 +602,10 @@ void mainTask(void *data)
 				}
 			}
 
-			if (!trxTransmissionEnabled && updateLastHeard==true)
+			if (!trxTransmissionEnabled && (updateLastHeard == true))
 			{
 				lastHeardListUpdate((uint8_t *)DMR_frame_buffer, false);
-				updateLastHeard=false;
+				updateLastHeard = false;
 			}
 
 			if ((nonVolatileSettings.hotspotType == HOTSPOT_TYPE_OFF) ||
@@ -615,12 +616,12 @@ void mainTask(void *data)
 				{
 					menuClearPrivateCall();
 				}
-				if (!trxTransmissionEnabled && menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA && nonVolatileSettings.privateCalls == true)
+				if (!trxTransmissionEnabled && (menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA) && (nonVolatileSettings.privateCalls == true))
 				{
-					if (HRC6000GetReceivedTgOrPcId() == (trxDMRID | (PC_CALL_FLAG<<24)))
+					if (HRC6000GetReceivedTgOrPcId() == (trxDMRID | (PC_CALL_FLAG << 24)))
 					{
 						if ((uiPrivateCallState == NOT_IN_CALL) &&
-								(trxTalkGroupOrPcId != (HRC6000GetReceivedSrcId() | (PC_CALL_FLAG<<24))) &&
+								(trxTalkGroupOrPcId != (HRC6000GetReceivedSrcId() | (PC_CALL_FLAG << 24))) &&
 								(HRC6000GetReceivedSrcId() != uiPrivateCallLastID))
 						{
 							if ((HRC6000GetReceivedSrcId() & 0xFFFFFF) >= 1000000)
@@ -664,15 +665,15 @@ void mainTask(void *data)
 					break;
 #endif
 				case '7':
-					keyFunction = (MENU_DISPLAY <<8) + DEC_BRIGHTNESS;
+					keyFunction = (MENU_DISPLAY << 8) + DEC_BRIGHTNESS;
 					break;
 				case '8':
-					keyFunction = (MENU_DISPLAY <<8) + INC_BRIGHTNESS;
+					keyFunction = (MENU_DISPLAY << 8) + INC_BRIGHTNESS;
 					break;
 #if defined(READ_CPUID)
 				case '0':
 					debugReadCPUID();
-					keyFunction = (NUM_MENU_ENTRIES<<8);
+					keyFunction = (NUM_MENU_ENTRIES << 8);
 					break;
 #endif
 				default:
@@ -723,7 +724,7 @@ void mainTask(void *data)
 			menuSystemCallCurrentMenuTick(&ev);
 
 			// Beep sounds aren't allowed in these modes.
-			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT || voicePromptIsActive) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
+			if (((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT) || voicePromptIsActive) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
 			{
 				if (melody_play != NULL)
 				{
@@ -835,10 +836,10 @@ void debugReadCPUID(void)
 	uint8_t *p = (uint8_t *)0x40048054;
 	USB_DEBUG_PRINT("\nCPU ID\n");
 	vTaskDelay(portTICK_PERIOD_MS * 1);
-	for(int i=0; i<16;i++)
+	for(int i = 0; i < 16; i++)
 	{
-		sprintf(tmp,"%02x ", *p);
-		strcat(buf,tmp);
+		sprintf(tmp, "%02x ", *p);
+		strcat(buf, tmp);
 		p++;
 	}
 	USB_DEBUG_PRINT(buf);
@@ -847,19 +848,18 @@ void debugReadCPUID(void)
 	USB_DEBUG_PRINT("\nProtection bytes\n");
 	vTaskDelay(portTICK_PERIOD_MS * 1);
 
-	buf[0]=0;
+	buf[0] = 0;
 #if defined(PLATFORM_DM1801)
 	p = (uint8_t *)0x3800;
 #else
 	p = (uint8_t *)0x7f800;
 #endif
-	for(int i=0; i<36;i++)
+	for(int i = 0; i < 36; i++)
 	{
-		sprintf(tmp,"%02x ", *p);
-		strcat(buf,tmp);
+		sprintf(tmp, "%02x ", *p);
+		strcat(buf, tmp);
 		p++;
 	}
 	USB_DEBUG_PRINT(buf);
-
 }
 #endif

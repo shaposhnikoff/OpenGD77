@@ -32,7 +32,7 @@ extern const uint16_t CODEPLUG_DCS_INVERTED_MASK;
 
 extern int codeplugChannelsPerZone;
 
-enum CONTACT_CALLTYPE_SELECT { CONTACT_CALLTYPE_TG=0, CONTACT_CALLTYPE_PC, CONTACT_CALLTYPE_ALL };
+enum CONTACT_CALLTYPE_SELECT { CONTACT_CALLTYPE_TG = 0, CONTACT_CALLTYPE_PC, CONTACT_CALLTYPE_ALL };
 
 typedef struct struct_codeplugZone
 {
@@ -109,7 +109,12 @@ typedef struct struct_codeplugDTMFContactList
 	int numContacts;
 } struct_codeplugDTMFContactList_t;
 
-typedef enum { CODEPLUG_CUSTOM_DATA_TYPE_NONE = 0, CODEPLUG_CUSTOM_DATA_TYPE_IMAGE = 1, CODEPLUG_CUSTOM_DATA_TYPE_BEEP = 2 } codeplugCustomDataType_t;
+typedef enum
+{
+	CODEPLUG_CUSTOM_DATA_TYPE_NONE = 0,
+	CODEPLUG_CUSTOM_DATA_TYPE_IMAGE,
+	CODEPLUG_CUSTOM_DATA_TYPE_BEEP
+} codeplugCustomDataType_t;
 
 /*
  * deprecated. Use our own non volatile storage instead

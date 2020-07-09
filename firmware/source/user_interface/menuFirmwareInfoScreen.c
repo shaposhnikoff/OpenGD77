@@ -110,13 +110,13 @@ static void handleEvent(uiEvent_t *ev)
 	}
 
 
-	if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
+	if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
 		menuSystemPopPreviousMenu();
 		return;
 	}
 
-	if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+	if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
 		menuSystemPopAllAndDisplayRootMenu();
 		return;

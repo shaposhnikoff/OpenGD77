@@ -60,16 +60,16 @@ static void updateScreen(void)
 	uint8_t bootScreenType;
 	uint8_t bootScreenPasswordEnabled;
 	uint32_t bootScreenPassword;
-	bool customDataHasImage=false;
+	bool customDataHasImage = false;
 
-	codeplugGetBootScreenData(line1,line2,&bootScreenType,&bootScreenPasswordEnabled,&bootScreenPassword);
+	codeplugGetBootScreenData(line1, line2, &bootScreenType, &bootScreenPasswordEnabled, &bootScreenPassword);
 
-	strcpy(talkAliasText,line1);
-	strcat(talkAliasText,line2);
+	strcpy(talkAliasText, line1);
+	strcat(talkAliasText, line2);
 
-	if (bootScreenType==0)
+	if (bootScreenType == 0)
 	{
-		customDataHasImage = codeplugGetOpenGD77CustomData(CODEPLUG_CUSTOM_DATA_TYPE_IMAGE,ucGetDisplayBuffer() );
+		customDataHasImage = codeplugGetOpenGD77CustomData(CODEPLUG_CUSTOM_DATA_TYPE_IMAGE, ucGetDisplayBuffer());
 	}
 
 	if (!customDataHasImage)
@@ -83,8 +83,8 @@ static void updateScreen(void)
 #elif defined(PLATFORM_DM1801)
 		ucPrintCentered(8, "OpenDM1801", FONT_SIZE_3);
 #endif
-		ucPrintCentered((DISPLAY_SIZE_Y/4)*2, line1, FONT_SIZE_3);
-		ucPrintCentered((DISPLAY_SIZE_Y/4)*3, line2, FONT_SIZE_3);
+		ucPrintCentered((DISPLAY_SIZE_Y / 4) * 2, line1, FONT_SIZE_3);
+		ucPrintCentered((DISPLAY_SIZE_Y / 4) * 3, line2, FONT_SIZE_3);
 	}
 
 	ucRender();
@@ -93,7 +93,7 @@ static void updateScreen(void)
 
 static void handleEvent(uiEvent_t *ev)
 {
-	if (melody_play==NULL)
+	if (melody_play == NULL)
 	{
 		ucClearBuf();
 		ucRender();
