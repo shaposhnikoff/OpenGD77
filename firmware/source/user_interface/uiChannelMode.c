@@ -448,7 +448,7 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 	}
 
 #if ! defined(PLATFORM_GD77S) // GD77S handle voice prompts on its own
-	if (!inhibitInitialVoicePrompt || loadVoicePromptAnnouncement)
+	if ((!inhibitInitialVoicePrompt || loadVoicePromptAnnouncement) && (scanActive == false))
 	{
 		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition + 1] == UI_TX_SCREEN ? PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY : PROMPT_THRESHOLD_3);
 	}
@@ -1683,6 +1683,16 @@ static void scanning(void)
 		{
 			if(trxCarrierDetected())
 			{
+#if ! defined(PLATFORM_GD77S) // GD77S handle voice prompts on its own
+				// Reload the channel as voice prompts aren't set while scanning
+				if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+				{
+					scanActive = false;
+					loadChannelData(false, true);
+					scanActive = true;
+				}
+#endif
+
 				if (nonVolatileSettings.scanModePause == SCAN_MODE_STOP)
 				{
 					scanActive = false;
@@ -1697,6 +1707,7 @@ static void scanning(void)
 					scanTimer = SCAN_SHORT_PAUSE_TIME;	//start short delay to allow full detection of signal
 					scanState = SCAN_SHORT_PAUSED;		//state 1 = pause and test for valid signal that produces audio
 				}
+
 			}
 		}
 	}
@@ -1744,6 +1755,14 @@ static void scanning(void)
 void uiChannelModeStopScanning(void)
 {
 	scanActive = false;
+
+#if ! defined(PLATFORM_GD77S) // GD77S handle voice prompts on its own
+	// Reload the channel as voice prompts aren't set while scanning
+	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+	{
+		loadChannelData(false, true);
+	}
+#endif
 }
 
 bool uiChannelModeIsScanning(void)
