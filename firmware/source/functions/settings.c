@@ -238,6 +238,7 @@ void settingsEraseCustomContent(void)
 	SPI_Flash_eraseSector(0);// The first sector (4k) contains the OpenGD77 custom codeplug content e.g. Boot melody and boot image.
 }
 
+// --- Helpers ---
 void settingsSetBOOL(bool *s, bool v)
 {
 	*s = v;
@@ -279,6 +280,80 @@ void settingsSetUINT32(uint32_t *s, uint32_t v)
 	*s = v;
 	settingsSetDirty();
 }
+
+void settingsIncINT8(int8_t *s, int8_t v)
+{
+	*s = *s + v;
+	settingsSetDirty();
+}
+
+void settingsIncUINT8(uint8_t *s, uint8_t v)
+{
+	*s = *s + v;
+	settingsSetDirty();
+}
+
+void settingsIncINT16(int16_t *s, int16_t v)
+{
+	*s = *s + v;
+	settingsSetDirty();
+}
+
+void settingsIncUINT16(uint16_t *s, uint16_t v)
+{
+	*s = *s + v;
+	settingsSetDirty();
+}
+
+void settingsIncINT32(int32_t *s, int32_t v)
+{
+	*s = *s + v;
+	settingsSetDirty();
+}
+
+void settingsIncUINT32(uint32_t *s, uint32_t v)
+{
+	*s = *s + v;
+	settingsSetDirty();
+}
+
+void settingsDecINT8(int8_t *s, int8_t v)
+{
+	*s = *s - v;
+	settingsSetDirty();
+}
+
+void settingsDecUINT8(uint8_t *s, uint8_t v)
+{
+	*s = *s - v;
+	settingsSetDirty();
+}
+
+void settingsDecINT16(int16_t *s, int16_t v)
+{
+	*s = *s - v;
+	settingsSetDirty();
+}
+
+void settingsDecUINT16(uint16_t *s, uint16_t v)
+{
+	*s = *s - v;
+	settingsSetDirty();
+}
+
+void settingsDecINT32(int32_t *s, int32_t v)
+{
+	*s = *s - v;
+	settingsSetDirty();
+}
+
+void settingsDecUINT32(uint32_t *s, uint32_t v)
+{
+	*s = *s - v;
+	settingsSetDirty();
+}
+// --- End of Helpers ---
+
 
 void settingsSetDirty(void)
 {

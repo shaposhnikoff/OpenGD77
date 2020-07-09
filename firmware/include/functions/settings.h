@@ -140,6 +140,21 @@ void settingsSetUINT16(uint16_t *s, uint16_t v);
 void settingsSetINT32(int32_t *s, int32_t v);
 void settingsSetUINT32(uint32_t *s, uint32_t v);
 
+// Do not use the following settingsInc/Dec<TYPE>(...) functions, use settingsIncrement/Decrement() instead
+void settingsIncINT8(int8_t *s, int8_t v);
+void settingsIncUINT8(uint8_t *s, uint8_t v);
+void settingsIncINT16(int16_t *s, int16_t v);
+void settingsIncUINT16(uint16_t *s, uint16_t v);
+void settingsIncINT32(int32_t *s, int32_t v);
+void settingsIncUINT32(uint32_t *s, uint32_t v);
+
+void settingsDecINT8(int8_t *s, int8_t v);
+void settingsDecUINT8(uint8_t *s, uint8_t v);
+void settingsDecINT16(int16_t *s, int16_t v);
+void settingsDecUINT16(uint16_t *s, uint16_t v);
+void settingsDecINT32(int32_t *s, int32_t v);
+void settingsDecUINT32(uint32_t *s, uint32_t v);
+
 // Workaround for Eclipse's CDT parser angriness because it doesn't support C11 yet
 #ifdef __CDT_PARSER__
 #define settingsSet(S, V) do { /* It uses C11's _Generic() at compile time */ S = V; } while(0)
@@ -155,8 +170,31 @@ void settingsSetUINT32(uint32_t *s, uint32_t v);
 	)(&S, V)
 #endif
 
-#define settingsIncrement(S, V) do { S += V; settingsSetDirty(); } while(0)
-#define settingsDecrement(S, V) do { S -= V; settingsSetDirty(); } while(0)
+#ifdef __CDT_PARSER__
+#define settingsIncrement(S, V) do { /* It uses C11's _Generic() at compile time */ S += V; } while(0)
+#else
+#define settingsIncrement(S, V) _Generic((S),   \
+	int8_t:   settingsIncINT8,            \
+	uint8_t:  settingsIncUINT8,           \
+	int16_t:  settingsIncINT16,           \
+	uint16_t: settingsIncUINT16,          \
+	int32_t:  settingsIncINT32,           \
+	uint32_t: settingsIncUINT32           \
+	)(&S, V)
+#endif
+
+#ifdef __CDT_PARSER__
+#define settingsDecrement(S, V) do { /* It uses C11's _Generic() at compile time */ S -= V; } while(0)
+#else
+#define settingsDecrement(S, V) _Generic((S),   \
+	int8_t:   settingsDecINT8,            \
+	uint8_t:  settingsDecUINT8,           \
+	int16_t:  settingsDecINT16,           \
+	uint16_t: settingsDecUINT16,          \
+	int32_t:  settingsDecINT32,           \
+	uint32_t: settingsDecUINT32           \
+	)(&S, V)
+#endif
 
 void settingsSetDirty(void);
 void settingsSetVFODirty(void);
