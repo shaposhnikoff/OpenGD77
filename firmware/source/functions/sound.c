@@ -271,7 +271,7 @@ void soundReceiveData(void)
 				swapper.bytes8[1] = *(spi_soundBuf + 4 * i + 3);
 				audioAndHotspotDataBuffer.wavbuffer[wavbuffer_write_idx][ 2 * i + 1] = swapper.bytes8[1];
 				swapper.bytes8[0] = *(spi_soundBuf + 4 * i + 2);
-				audioAndHotspotDataBuffer.wavbuffer[wavbuffer_write_idx][2 * i ] = swapper.bytes8[0];
+				audioAndHotspotDataBuffer.wavbuffer[wavbuffer_write_idx][2 * i] = swapper.bytes8[0];
 				if (abs(swapper.byte16) > runningMaxValue)
 				{
 					runningMaxValue = abs(swapper.byte16);

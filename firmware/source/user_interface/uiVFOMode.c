@@ -722,8 +722,11 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				trxSetDMRTimeSlot(dmrMonitorCapturedTS);
 				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0));// Clear lower nibble value
-				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (dmrMonitorCapturedTS + 1)));// Store manual TS override
+#warning CHECK ME
+				// WAS settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (dmrMonitorCapturedTS + 1)));// Store manual TS override
+				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | ((dmrMonitorCapturedTS + 1) << 4)));// Store manual TS override
 			}
+
 			if (trxTalkGroupOrPcId != tg)
 			{
 				trxTalkGroupOrPcId = tg;
@@ -889,9 +892,7 @@ static void handleEvent(uiEvent_t *ev)
 						// Toggle TimeSlot
 						trxSetDMRTimeSlot(1 - trxGetDMRTimeSlot());
 						settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0x0F));// Clear upper nibble value
-#warning CHECK ME
-						// WAS settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (trxGetDMRTimeSlot() + 1) << 4));// Store manual TS override for VFO in upper nibble
-						settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (trxGetDMRTimeSlot() + 1)));// Store manual TS override for VFO in upper nibble
+						settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | ((trxGetDMRTimeSlot() + 1) << 4)));// Store manual TS override for VFO in upper nibble
 
 						disableAudioAmp(AUDIO_AMP_MODE_RF);
 						clearActiveDMRID();
@@ -1599,6 +1600,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 						break;
 					}
 				}
+
 				if (newChannelIndex < 1024)
 				{
 					//set zone to all channels and channel index to free channel found
@@ -1608,7 +1610,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 
 					settingsCurrentChannelNumber = newChannelIndex;
 
-					memcpy(&channelScreenChannelData.rxFreq, &settingsVFOChannel[nonVolatileSettings.currentVFONumber].rxFreq, sizeof(struct_codeplugChannel_t)- 16);// Don't copy the name of the vfo, which are in the first 16 bytes
+					memcpy(&channelScreenChannelData.rxFreq, &settingsVFOChannel[nonVolatileSettings.currentVFONumber].rxFreq, sizeof(struct_codeplugChannel_t) - 16);// Don't copy the name of the vfo, which are in the first 16 bytes
 
 					snprintf((char *) &channelScreenChannelData.name, 16, "%s %d", currentLanguage->new_channel, newChannelIndex);
 
