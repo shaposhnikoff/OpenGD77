@@ -68,7 +68,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev);
 
 #endif // PLATFORM_GD77S
 
-static void startScan(void);
+static void startScan(bool longPressBeep);
 static void uiChannelUpdateTrxID(void);
 static void searchNextChannel(void);
 static void setNextChannel(void);
@@ -447,7 +447,7 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 	}
 
 #if ! defined(PLATFORM_GD77S) // GD77S handle voice prompts on its own
-	if (!inhibitInitialVoicePrompt || loadVoicePromptAnnouncement)
+	if ((!inhibitInitialVoicePrompt || loadVoicePromptAnnouncement) && (scanActive == false))
 	{
 		announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, menuControlData.stack[menuControlData.stackPosition + 1] == UI_TX_SCREEN ? PROMPT_THRESHOLD_NEVER_PLAY_IMMEDIATELY : PROMPT_THRESHOLD_3);
 	}
@@ -694,7 +694,7 @@ static void handleEvent(uiEvent_t *ev)
 		if (ev->function == START_SCANNING)
 		{
 			directChannelNumber = 0;
-			startScan();
+			startScan(false);
 			return;
 		}
 	}
@@ -830,7 +830,7 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & KEY_EVENT)
 	{
-		if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+		if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 		{
 			if (directChannelNumber > 0)
 			{
@@ -1220,7 +1220,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_UP) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 		{
-			startScan();
+			startScan(true);
 		}
 		else
 		{
@@ -1587,7 +1587,7 @@ menuStatus_t uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 }
 
 //Scan Mode
-static void startScan(void)
+static void startScan(bool longPressBeep)
 {
 	scanDirection = 1;
 
@@ -1595,11 +1595,19 @@ static void startScan(void)
 	{
 		nuisanceDelete[i] = -1;
 	}
-	nuisanceDeleteIndex=0;
+	nuisanceDeleteIndex = 0;
 
 	scanActive = true;
 	scanTimer = SCAN_SHORT_PAUSE_TIME;
 	scanState = SCAN_SCANNING;
+
+	// Need to set the melody here, otherwise long press will remain silent
+	// since beeps aren't allowed while scanning
+	if (longPressBeep)
+	{
+		soundSetMelody(melody_key_long_beep);
+	}
+
 	menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
 
 	//get current channel index
@@ -1668,6 +1676,16 @@ static void scanning(void)
 		{
 			if(trxCarrierDetected())
 			{
+#if ! defined(PLATFORM_GD77S) // GD77S handle voice prompts on its own
+				// Reload the channel as voice prompts aren't set while scanning
+				if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+				{
+					scanActive = false;
+					loadChannelData(false, true);
+					scanActive = true;
+				}
+#endif
+
 				if (nonVolatileSettings.scanModePause == SCAN_MODE_STOP)
 				{
 					scanActive = false;
@@ -1682,6 +1700,7 @@ static void scanning(void)
 					scanTimer = SCAN_SHORT_PAUSE_TIME;	//start short delay to allow full detection of signal
 					scanState = SCAN_SHORT_PAUSED;		//state 1 = pause and test for valid signal that produces audio
 				}
+
 			}
 		}
 	}
@@ -1729,6 +1748,14 @@ static void scanning(void)
 void uiChannelModeStopScanning(void)
 {
 	scanActive = false;
+
+#if ! defined(PLATFORM_GD77S) // GD77S handle voice prompts on its own
+	// Reload the channel as voice prompts aren't set while scanning
+	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+	{
+		loadChannelData(false, true);
+	}
+#endif
 }
 
 bool uiChannelModeIsScanning(void)
@@ -2171,7 +2198,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					}
 					else
 					{
-						startScan();
+						startScan(false);
 					}
 
 					voicePromptsInit();
