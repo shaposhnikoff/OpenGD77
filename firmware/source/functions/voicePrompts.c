@@ -90,7 +90,7 @@ void voicePromptsCacheInit(void)
 	if ((nonVolatileSettings.audioPromptMode > AUDIO_PROMPT_MODE_BEEP) && (voicePromptDataIsLoaded == false))
 
 	{
-		nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_BEEP;
+		settingsSet(nonVolatileSettings.audioPromptMode, AUDIO_PROMPT_MODE_BEEP);
 	}
 }
 

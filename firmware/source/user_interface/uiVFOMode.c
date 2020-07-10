@@ -58,7 +58,7 @@ static CSSTypes_t scanToneType = CSS_CTCSS;
 static bool displayChannelSettings;
 static bool reverseRepeater;
 static int prevDisplayQSODataState;
-static vfoScreenOperationMode_t screenOperationMode[2] = {VFO_SCREEN_OPERATION_NORMAL,VFO_SCREEN_OPERATION_NORMAL};// For VFO A and B
+static vfoScreenOperationMode_t screenOperationMode[2] = { VFO_SCREEN_OPERATION_NORMAL, VFO_SCREEN_OPERATION_NORMAL };// For VFO A and B
 
 static menuStatus_t menuVFOExitStatus = MENU_STATUS_SUCCESS;
 static menuStatus_t menuQuickVFOExitStatus = MENU_STATUS_SUCCESS;
@@ -96,14 +96,14 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 		isDisplayingQSOData = false;
 		reverseRepeater = false;
-		nonVolatileSettings.initialMenuNumber=UI_VFO_MODE;
+		settingsSet(nonVolatileSettings.initialMenuNumber, UI_VFO_MODE);
 		prevDisplayQSODataState = QSO_DISPLAY_IDLE;
 		currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
 
 		settingsCurrentChannelNumber = -1;// This is not a regular channel. Its the special VFO channel!
 		displayChannelSettings = false;
 
-		trxSetFrequency(currentChannelData->rxFreq, currentChannelData->txFreq,DMR_MODE_AUTO);
+		trxSetFrequency(currentChannelData->rxFreq, currentChannelData->txFreq, DMR_MODE_AUTO);
 
 		if (!inhibitInitialVoicePrompt)
 		{
@@ -146,7 +146,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 					// Check whether the contact data seems valid
 					if ((currentContactData.name[0] == 0) || (currentContactData.tgNumber == 0) || (currentContactData.tgNumber > 9999999))
 					{
-						nonVolatileSettings.overrideTG = 9;// If the VFO does not have an Rx Group list assigned to it. We can't get a TG from the codeplug. So use TG 9.
+						settingsSet(nonVolatileSettings.overrideTG, 9);// If the VFO does not have an Rx Group list assigned to it. We can't get a TG from the codeplug. So use TG 9.
 						trxTalkGroupOrPcId = nonVolatileSettings.overrideTG;
 						trxSetDMRTimeSlot(((currentChannelData->flag2 & 0x40) != 0));
 					}
@@ -158,7 +158,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 				}
 				else
 				{
-					nonVolatileSettings.overrideTG = 9;// If the VFO does not have an Rx Group list assigned to it. We can't get a TG from the codeplug. So use TG 9.
+					settingsSet(nonVolatileSettings.overrideTG, 9);// If the VFO does not have an Rx Group list assigned to it. We can't get a TG from the codeplug. So use TG 9.
 				}
 
 			}
@@ -182,7 +182,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 		reset_freq_enter_digits();
 		displayLightTrigger();
 		uiVFOModeUpdateScreen(0);
-		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);
+		settingsSetVFODirty();
 
 		menuVFOExitStatus = MENU_STATUS_SUCCESS;
 	}
@@ -607,7 +607,7 @@ static void update_frequency(int frequency, bool announceImmediately)
 	announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, announceImmediately);
 
 	menuClearPrivateCall();
-	SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);// For Baofeng RD-5R
+	settingsSetVFODirty();
 }
 
 static void checkAndFixIndexInRxGroup(void)
@@ -615,7 +615,7 @@ static void checkAndFixIndexInRxGroup(void)
 	if (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber]
 			> (currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1))
 	{
-		nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] = 0;
+		settingsSet(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber], 0);
 	}
 }
 
@@ -721,13 +721,16 @@ static void handleEvent(uiEvent_t *ev)
 			if ((dmrMonitorCapturedTS != -1) && (dmrMonitorCapturedTS != trxGetDMRTimeSlot()))
 			{
 				trxSetDMRTimeSlot(dmrMonitorCapturedTS);
-				nonVolatileSettings.tsManualOverride &= 0xF0;// Clear lower nibble value
-				nonVolatileSettings.tsManualOverride |= (dmrMonitorCapturedTS + 1);// Store manual TS override
+				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0));// Clear lower nibble value
+#warning CHECK ME
+				// WAS settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (dmrMonitorCapturedTS + 1)));// Store manual TS override
+				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | ((dmrMonitorCapturedTS + 1) << 4)));// Store manual TS override
 			}
+
 			if (trxTalkGroupOrPcId != tg)
 			{
 				trxTalkGroupOrPcId = tg;
-				nonVolatileSettings.overrideTG = trxTalkGroupOrPcId;
+				settingsSet(nonVolatileSettings.overrideTG, trxTalkGroupOrPcId);
 			}
 
 			currentChannelData->rxColor = trxGetDMRColourCode();// Set the CC to the current CC, which may have been determined by the CC finding algorithm in C6000.c
@@ -887,9 +890,9 @@ static void handleEvent(uiEvent_t *ev)
 					if (trxGetMode() == RADIO_MODE_DIGITAL)
 					{
 						// Toggle TimeSlot
-						trxSetDMRTimeSlot(1-trxGetDMRTimeSlot());
-						nonVolatileSettings.tsManualOverride &= 0x0F;// Clear upper nibble value
-						nonVolatileSettings.tsManualOverride |= (trxGetDMRTimeSlot() + 1) << 4;// Store manual TS override for VFO in upper nibble
+						trxSetDMRTimeSlot(1 - trxGetDMRTimeSlot());
+						settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0x0F));// Clear upper nibble value
+						settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | ((trxGetDMRTimeSlot() + 1) << 4)));// Store manual TS override for VFO in upper nibble
 
 						disableAudioAmp(AUDIO_AMP_MODE_RF);
 						clearActiveDMRID();
@@ -912,7 +915,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					nonVolatileSettings.tsManualOverride &= 0x0F; // remove TS override for VFO
+					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0x0F)); // remove TS override for VFO
 					// Check if this channel has an Rx Group
 					if ((currentRxGroupData.name[0] != 0) &&
 							(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup))
@@ -947,7 +950,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					stepFrequency(VFO_FREQ_STEP_TABLE[(currentChannelData->VFOflag5 >> 4)] * -1);
 					uiVFOModeUpdateScreen(0);
-					SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);// For Baofeng RD-5R
+					settingsSetVFODirty();
 				}
 			}
 			else if (KEYCHECK_LONGDOWN(ev->keys, KEY_DOWN))
@@ -983,7 +986,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) && (menuUtilityTgBeforePcMode != 0))
 				{
-					nonVolatileSettings.overrideTG = menuUtilityTgBeforePcMode;
+					settingsSet(nonVolatileSettings.overrideTG, menuUtilityTgBeforePcMode);
 					uiVFOUpdateTrxID();
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;// Force redraw
 					menuClearPrivateCall();
@@ -1039,7 +1042,7 @@ static void handleEvent(uiEvent_t *ev)
 #if defined(PLATFORM_DM1801)
 			else if (KEYCHECK_SHORTUP(ev->keys, KEY_A_B))
 			{
-				nonVolatileSettings.currentVFONumber = 1 - nonVolatileSettings.currentVFONumber;// Switch to other VFO
+				settingsSet(nonVolatileSettings.currentVFONumber, (1 - nonVolatileSettings.currentVFONumber));// Switch to other VFO
 				currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				menuSystemPopAllAndDisplayRootMenu(); // Force to set all TX/RX settings.
@@ -1056,7 +1059,6 @@ static void handleEvent(uiEvent_t *ev)
 						increasePowerLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
-						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
 					}
 				}
 			}
@@ -1069,7 +1071,6 @@ static void handleEvent(uiEvent_t *ev)
 						increasePowerLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
-						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
 					}
 				}
 				else
@@ -1078,15 +1079,15 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						if (nonVolatileSettings.overrideTG == 0)
 						{
-							nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber]++;
+							settingsIncrement(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber], 1);
 							checkAndFixIndexInRxGroup();
 						}
 
-						if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] == 0)
+						if (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] == 0)
 						{
 							menuVFOExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 						}
-						nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
+						settingsSet(nonVolatileSettings.overrideTG, 0);// setting the override TG to 0 indicates the TG is not overridden
 						menuClearPrivateCall();
 						uiVFOUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -1123,7 +1124,6 @@ static void handleEvent(uiEvent_t *ev)
 						decreasePowerLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						uiVFOModeUpdateScreen(0);
-						SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);
 					}
 
 					if (nonVolatileSettings.txPowerLevel == 0)
@@ -1138,11 +1138,11 @@ static void handleEvent(uiEvent_t *ev)
 						// To Do change TG in on same channel freq
 						if (nonVolatileSettings.overrideTG == 0)
 						{
-							nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber]--;
+							settingsDecrement(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber], 1);
 							if (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] < 0)
 							{
-								nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] =
-										currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1;
+								settingsSet(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber],
+										(currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup - 1));
 							}
 
 							if(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] == 0)
@@ -1150,7 +1150,7 @@ static void handleEvent(uiEvent_t *ev)
 								menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
 							}
 						}
-						nonVolatileSettings.overrideTG = 0;// setting the override TG to 0 indicates the TG is not overridden
+						settingsSet(nonVolatileSettings.overrideTG, 0);// setting the override TG to 0 indicates the TG is not overridden
 						menuClearPrivateCall();
 						uiVFOUpdateTrxID();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
@@ -1272,8 +1272,8 @@ static void handleEvent(uiEvent_t *ev)
 
 						if ((trxGetBandFromFrequency(fLower) != -1) && (trxGetBandFromFrequency(fUpper) != -1) && (fLower < fUpper))
 						{
-							nonVolatileSettings.vfoScanLow[nonVolatileSettings.currentVFONumber] = fLower;
-							nonVolatileSettings.vfoScanHigh[nonVolatileSettings.currentVFONumber] = fUpper;
+							settingsSet(nonVolatileSettings.vfoScanLow[nonVolatileSettings.currentVFONumber], fLower);
+							settingsSet(nonVolatileSettings.vfoScanHigh[nonVolatileSettings.currentVFONumber], fUpper);
 
 							reset_freq_enter_digits();
 							soundSetMelody(melody_ACK_beep);
@@ -1318,7 +1318,7 @@ static void handleUpKey(uiEvent_t *ev)
 	}
 	scanTimer = 500;
 	scanState = SCAN_SCANNING;
-	SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);
+	settingsSetVFODirty();
 }
 
 static void stepFrequency(int increment)
@@ -1582,13 +1582,13 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 			case VFO_SCREEN_QUICK_MENU_FILTER:
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					nonVolatileSettings.dmrFilterLevel = tmpQuickMenuDmrFilterLevel;
+					settingsSet(nonVolatileSettings.dmrFilterLevel, tmpQuickMenuDmrFilterLevel);
 					init_digital_DMR_RX();
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
 				}
 				else
 				{
-					nonVolatileSettings.analogFilterLevel = tmpQuickMenuAnalogFilterLevel;
+					settingsSet(nonVolatileSettings.analogFilterLevel, tmpQuickMenuAnalogFilterLevel);
 				}
 				break;
 			case VFO_SCREEN_QUICK_MENU_VFO_TO_NEW:
@@ -1600,16 +1600,17 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 						break;
 					}
 				}
+
 				if (newChannelIndex < 1024)
 				{
 					//set zone to all channels and channel index to free channel found
-					nonVolatileSettings.currentZone = codeplugZonesGetCount() - 1;
+					settingsSet(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
 
-					nonVolatileSettings.currentChannelIndexInAllZone = newChannelIndex;
+					settingsSet(nonVolatileSettings.currentChannelIndexInAllZone, newChannelIndex);
 
 					settingsCurrentChannelNumber = newChannelIndex;
 
-					memcpy(&channelScreenChannelData.rxFreq, &settingsVFOChannel[nonVolatileSettings.currentVFONumber].rxFreq, sizeof(struct_codeplugChannel_t)- 16);// Don't copy the name of the vfo, which are in the first 16 bytes
+					memcpy(&channelScreenChannelData.rxFreq, &settingsVFOChannel[nonVolatileSettings.currentVFONumber].rxFreq, sizeof(struct_codeplugChannel_t) - 16);// Don't copy the name of the vfo, which are in the first 16 bytes
 
 					snprintf((char *) &channelScreenChannelData.name, 16, "%s %d", currentLanguage->new_channel, newChannelIndex);
 
@@ -1617,16 +1618,16 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 
 					//Set channel index as valid
 					codeplugChannelIndexSetValid(newChannelIndex);
-					//nonVolatileSettings.overrideTG = 0; // remove any TG override
-					nonVolatileSettings.currentChannelIndexInZone = 0;// Since we are switching zones the channel index should be reset
+					//settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
+					settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
 					channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
 
 					//copy current channel from vfo to channel
-					nonVolatileSettings.currentIndexInTRxGroupList[0] = nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber];
+					settingsSet(nonVolatileSettings.currentIndexInTRxGroupList[0], nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber]);
 
 					//copy current TS
-					nonVolatileSettings.tsManualOverride &= 0xF0;// Clear lower nibble value
-					nonVolatileSettings.tsManualOverride |= (trxGetDMRTimeSlot()+1);// Store manual TS override
+					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0));// Clear lower nibble value
+					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (trxGetDMRTimeSlot() + 1)));// Store manual TS override
 
 					inhibitInitialVoicePrompt = true;
 					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
@@ -1659,7 +1660,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
 	else if (((ev->events & BUTTON_EVENT) && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE)) && (gMenusCurrentItemIndex == VFO_SCREEN_QUICK_MENU_VFO_A_B))
 	{
-		nonVolatileSettings.currentVFONumber = 1 - nonVolatileSettings.currentVFONumber;// Switch to other VFO
+		settingsSet(nonVolatileSettings.currentVFONumber, (1 - nonVolatileSettings.currentVFONumber));// Switch to other VFO
 		currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
 		menuSystemPopPreviousMenu();
 		if (nonVolatileSettings.currentVFONumber == 0)
@@ -1683,7 +1684,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 			case VFO_SCREEN_QUICK_MENU_VFO_A_B:
 				if (nonVolatileSettings.currentVFONumber == 0)
 				{
-					nonVolatileSettings.currentVFONumber++;
+					settingsIncrement(nonVolatileSettings.currentVFONumber, 1);
 					currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
 				}
 				break;
@@ -1715,7 +1716,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 			case VFO_SCREEN_QUICK_MENU_VFO_A_B:
 				if (nonVolatileSettings.currentVFONumber == 1)
 				{
-					nonVolatileSettings.currentVFONumber--;
+					settingsDecrement(nonVolatileSettings.currentVFONumber, 1);
 					currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
 				}
 				menuQuickVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
@@ -1799,7 +1800,7 @@ static void uiVFOUpdateTrxID(void )
 	}
 	else
 	{
-		nonVolatileSettings.tsManualOverride &= 0x0F; // remove TS override for VFO
+		settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0x0F)); // remove TS override for VFO
 
 		// Check if this channel has an Rx Group
 		if ((currentRxGroupData.name[0] != 0) && (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup))
@@ -1839,8 +1840,8 @@ static void initScan(void)
 	// If scan limits have not been defined. Set them to the current Rx freq -1MHz to +1MHz
 	if ((nonVolatileSettings.vfoScanLow[nonVolatileSettings.currentVFONumber] == 0) || (nonVolatileSettings.vfoScanHigh[nonVolatileSettings.currentVFONumber] == 0))
 	{
-		nonVolatileSettings.vfoScanLow[nonVolatileSettings.currentVFONumber] = currentChannelData->rxFreq - 100000;
-		nonVolatileSettings.vfoScanHigh[nonVolatileSettings.currentVFONumber] = currentChannelData->rxFreq + 100000;
+		settingsSet(nonVolatileSettings.vfoScanLow[nonVolatileSettings.currentVFONumber], (currentChannelData->rxFreq - 100000));
+		settingsSet(nonVolatileSettings.vfoScanHigh[nonVolatileSettings.currentVFONumber], (currentChannelData->rxFreq + 100000));
 	}
 
 	//clear all nuisance delete channels at start of scanning

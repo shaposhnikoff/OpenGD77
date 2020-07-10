@@ -218,73 +218,73 @@ static void handleEvent(uiEvent_t *ev)
 				doFactoryReset = true;
 				break;
 			case OPTIONS_MENU_USE_CALIBRATION:
-				nonVolatileSettings.useCalibration = true;
+				settingsSet(nonVolatileSettings.useCalibration, true);
 				break;
 			case OPTIONS_MENU_TX_FREQ_LIMITS:
-				nonVolatileSettings.txFreqLimited = true;
+				settingsSet(nonVolatileSettings.txFreqLimited, true);
 				break;
 			case OPTIONS_MENU_KEYPAD_TIMER_LONG:
 				if (nonVolatileSettings.keypadTimerLong < 90)
 				{
-					nonVolatileSettings.keypadTimerLong++;
+					settingsIncrement(nonVolatileSettings.keypadTimerLong, 1);
 				}
 				break;
 			case OPTIONS_MENU_KEYPAD_TIMER_REPEAT:
 				if (nonVolatileSettings.keypadTimerRepeat < 90)
 				{
-					nonVolatileSettings.keypadTimerRepeat++;
+					settingsIncrement(nonVolatileSettings.keypadTimerRepeat, 1);
 				}
 				break;
 			case OPTIONS_MENU_DMR_MONITOR_CAPTURE_TIMEOUT:
 				if (nonVolatileSettings.dmrCaptureTimeout < 90)
 				{
-					nonVolatileSettings.dmrCaptureTimeout++;
+					settingsIncrement(nonVolatileSettings.dmrCaptureTimeout, 1);
 				}
 				break;
 			case OPTIONS_MENU_SCAN_DELAY:
 				if (nonVolatileSettings.scanDelay < 30)
 				{
-					nonVolatileSettings.scanDelay++;
+					settingsIncrement(nonVolatileSettings.scanDelay, 1);
 				}
 				break;
 			case OPTIONS_MENU_SCAN_MODE:
 				if (nonVolatileSettings.scanModePause < SCAN_MODE_STOP)
 				{
-					nonVolatileSettings.scanModePause++;
+					settingsIncrement(nonVolatileSettings.scanModePause, 1);
 				}
 				break;
 			case OPTIONS_MENU_SQUELCH_DEFAULT_VHF:
 				if (nonVolatileSettings.squelchDefaults[RADIO_BAND_VHF] < CODEPLUG_MAX_VARIABLE_SQUELCH)
 				{
-					nonVolatileSettings.squelchDefaults[RADIO_BAND_VHF]++;
+					settingsIncrement(nonVolatileSettings.squelchDefaults[RADIO_BAND_VHF], 1);
 				}
 				break;
 			case OPTIONS_MENU_SQUELCH_DEFAULT_220MHz:
 				if (nonVolatileSettings.squelchDefaults[RADIO_BAND_220MHz] < CODEPLUG_MAX_VARIABLE_SQUELCH)
 				{
-					nonVolatileSettings.squelchDefaults[RADIO_BAND_220MHz]++;
+					settingsIncrement(nonVolatileSettings.squelchDefaults[RADIO_BAND_220MHz], 1);
 				}
 				break;
 			case OPTIONS_MENU_SQUELCH_DEFAULT_UHF:
 				if (nonVolatileSettings.squelchDefaults[RADIO_BAND_UHF] < CODEPLUG_MAX_VARIABLE_SQUELCH)
 				{
-					nonVolatileSettings.squelchDefaults[RADIO_BAND_UHF]++;
+					settingsIncrement(nonVolatileSettings.squelchDefaults[RADIO_BAND_UHF], 1);
 				}
 				break;
 			case OPTIONS_MENU_PTT_TOGGLE:
-				nonVolatileSettings.pttToggle = true;
+				settingsSet(nonVolatileSettings.pttToggle, true);
 				break;
 			case OPTIONS_MENU_HOTSPOT_TYPE:
 				if (nonVolatileSettings.hotspotType < HOTSPOT_TYPE_BLUEDV)
 				{
-					nonVolatileSettings.hotspotType++;
+					settingsIncrement(nonVolatileSettings.hotspotType, 1);
 				}
 				break;
 			case OPTIONS_MENU_TALKER_ALIAS_TX:
-				nonVolatileSettings.transmitTalkerAlias = true;
+				settingsSet(nonVolatileSettings.transmitTalkerAlias, true);
 				break;
 			case OPTIONS_MENU_PRIVATE_CALLS:
-				nonVolatileSettings.privateCalls = true;
+				settingsSet(nonVolatileSettings.privateCalls, true);
 				break;
 		}
 	}
@@ -297,73 +297,73 @@ static void handleEvent(uiEvent_t *ev)
 				doFactoryReset = false;
 				break;
 			case OPTIONS_MENU_USE_CALIBRATION:
-				nonVolatileSettings.useCalibration = false;
+				settingsSet(nonVolatileSettings.useCalibration, false);
 				break;
 			case OPTIONS_MENU_TX_FREQ_LIMITS:
-				nonVolatileSettings.txFreqLimited = false;
+				settingsSet(nonVolatileSettings.txFreqLimited, false);
 				break;
 			case OPTIONS_MENU_KEYPAD_TIMER_LONG:
 				if (nonVolatileSettings.keypadTimerLong > 1)
 				{
-					nonVolatileSettings.keypadTimerLong--;
+					settingsDecrement(nonVolatileSettings.keypadTimerLong, 1);
 				}
 				break;
 			case OPTIONS_MENU_KEYPAD_TIMER_REPEAT:
 				if (nonVolatileSettings.keypadTimerRepeat > 1) // Don't set it to zero, otherwise watchdog may kicks in.
 				{
-					nonVolatileSettings.keypadTimerRepeat--;
+					settingsDecrement(nonVolatileSettings.keypadTimerRepeat, 1);
 				}
 				break;
 			case OPTIONS_MENU_DMR_MONITOR_CAPTURE_TIMEOUT:
 				if (nonVolatileSettings.dmrCaptureTimeout > 1)
 				{
-					nonVolatileSettings.dmrCaptureTimeout--;
+					settingsDecrement(nonVolatileSettings.dmrCaptureTimeout, 1);
 				}
 				break;
 			case OPTIONS_MENU_SCAN_DELAY:
 				if (nonVolatileSettings.scanDelay > 1)
 				{
-					nonVolatileSettings.scanDelay--;
+					settingsDecrement(nonVolatileSettings.scanDelay, 1);
 				}
 				break;
 			case OPTIONS_MENU_SCAN_MODE:
 				if (nonVolatileSettings.scanModePause > SCAN_MODE_HOLD)
 				{
-					nonVolatileSettings.scanModePause--;
+					settingsDecrement(nonVolatileSettings.scanModePause, 1);
 				}
 				break;
 			case OPTIONS_MENU_SQUELCH_DEFAULT_VHF:
 				if (nonVolatileSettings.squelchDefaults[RADIO_BAND_VHF] > 1)
 				{
-					nonVolatileSettings.squelchDefaults[RADIO_BAND_VHF]--;
+					settingsDecrement(nonVolatileSettings.squelchDefaults[RADIO_BAND_VHF], 1);
 				}
 				break;
 			case OPTIONS_MENU_SQUELCH_DEFAULT_220MHz:
 				if (nonVolatileSettings.squelchDefaults[RADIO_BAND_220MHz] > 1)
 				{
-					nonVolatileSettings.squelchDefaults[RADIO_BAND_220MHz]--;
+					settingsDecrement(nonVolatileSettings.squelchDefaults[RADIO_BAND_220MHz], 1);
 				}
 				break;
 			case OPTIONS_MENU_SQUELCH_DEFAULT_UHF:
 				if (nonVolatileSettings.squelchDefaults[RADIO_BAND_UHF] > 1)
 				{
-					nonVolatileSettings.squelchDefaults[RADIO_BAND_UHF]--;
+					settingsDecrement(nonVolatileSettings.squelchDefaults[RADIO_BAND_UHF], 1);
 				}
 				break;
 			case OPTIONS_MENU_PTT_TOGGLE:
-				nonVolatileSettings.pttToggle = false;
+				settingsSet(nonVolatileSettings.pttToggle, false);
 				break;
 			case OPTIONS_MENU_HOTSPOT_TYPE:
 				if (nonVolatileSettings.hotspotType > HOTSPOT_TYPE_OFF)
 				{
-					nonVolatileSettings.hotspotType--;
+					settingsDecrement(nonVolatileSettings.hotspotType, 1);
 				}
 				break;
 			case OPTIONS_MENU_TALKER_ALIAS_TX:
-				nonVolatileSettings.transmitTalkerAlias = false;
+				settingsSet(nonVolatileSettings.transmitTalkerAlias, false);
 				break;
 			case OPTIONS_MENU_PRIVATE_CALLS:
-				nonVolatileSettings.privateCalls = false;
+				settingsSet(nonVolatileSettings.privateCalls, false);
 				break;
 		}
 	}
@@ -374,7 +374,8 @@ static void handleEvent(uiEvent_t *ev)
 			settingsRestoreDefaultSettings();
 			watchdogReboot();
 		}
-		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// Some platform require the settings to be saved immediately
+
+		settingsSaveIfNeeded(true);
 		menuSystemPopAllAndDisplayRootMenu();
 		return;
 	}
@@ -382,6 +383,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		// Restore original settings.
 		memcpy(&nonVolatileSettings, &originalNonVolatileSettings, sizeof(settingsStruct_t));
+		settingsSaveIfNeeded(true);
 		menuSystemPopPreviousMenu();
 		return;
 	}

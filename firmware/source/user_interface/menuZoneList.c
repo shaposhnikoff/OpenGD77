@@ -123,13 +123,14 @@ static void handleEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
-		nonVolatileSettings.overrideTG = 0; // remove any TG override
-		nonVolatileSettings.currentZone = gMenusCurrentItemIndex;
-		nonVolatileSettings.currentChannelIndexInZone = 0;// Since we are switching zones the channel index should be reset
-		nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] = 0;// Since we are switching zones the TRx Group index should be reset
+		settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
+		settingsSet(nonVolatileSettings.currentZone, gMenusCurrentItemIndex);
+		settingsSet(nonVolatileSettings.currentChannelIndexInZone , 0);// Since we are switching zones the channel index should be reset
+		settingsSet(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE], 0);// Since we are switching zones the TRx Group index should be reset
 		channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
+
+		settingsSaveIfNeeded(true);
 		menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
-		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
 
 		return;
 	}

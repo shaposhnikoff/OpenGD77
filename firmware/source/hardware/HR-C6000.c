@@ -239,7 +239,7 @@ void SPI_HR_C6000_init(void)
 	SPI0SeClearPageRegByteWithMask(0x04, 0xE4, 0x3F, 0x00); // Set CODEC LineOut Gain to 0dB
 	// ------ end spi_more_init
 
-	dmrMonitorCapturedTimeout = nonVolatileSettings.dmrCaptureTimeout*1000;
+	dmrMonitorCapturedTimeout = nonVolatileSettings.dmrCaptureTimeout * 1000;
 }
 
 void SPI_C6000_postinit(void)

@@ -345,7 +345,7 @@ menuStatus_t menuHotspotMode(uiEvent_t *ev, bool isFirstRun)
 		{
 			// Override DMR filtering
 			savedDMRFilterLevel = nonVolatileSettings.dmrFilterLevel;
-			nonVolatileSettings.dmrFilterLevel = DMR_FILTER_CC_TS;
+			settingsSet(nonVolatileSettings.dmrFilterLevel, DMR_FILTER_CC_TS);
 		}
 
 		hotspotState = HOTSPOT_STATE_NOT_CONNECTED;
@@ -464,7 +464,7 @@ void menuHotspotRestoreSettings(void)
 {
 	if (savedDMRFilterLevel != 0xFF)
 	{
-		nonVolatileSettings.dmrFilterLevel = savedDMRFilterLevel;
+		settingsSet(nonVolatileSettings.dmrFilterLevel, savedDMRFilterLevel);
 		savedDMRFilterLevel = 0xFF; // Unset saved DMR filter level
 	}
 }

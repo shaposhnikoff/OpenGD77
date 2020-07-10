@@ -893,7 +893,10 @@ static void handleEvent(uiEvent_t *ev)
 		{
 			codeplugChannelSaveDataForIndex(settingsCurrentChannelNumber, currentChannelData);
 		}
-		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(true);// For Baofeng RD-5R
+
+		settingsSetVFODirty();
+		settingsSaveIfNeeded(true);
+
 		menuSystemPopAllAndDisplayRootMenu();
 		return;
 	}

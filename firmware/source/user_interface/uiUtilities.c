@@ -1344,7 +1344,7 @@ void menuUtilityRenderHeader(void)
 		const int COLOR_CODE_X_POSITION = 84;
 		int ccode = trxGetDMRColourCode();
 		snprintf(buffer, bufferLen, "C%d", ccode);
-		if (nonVolatileSettings.dmrFilterLevel == DMR_FILTER_NONE )
+		if (nonVolatileSettings.dmrFilterLevel == DMR_FILTER_NONE)
 		{
 			ucFillRect(COLOR_CODE_X_POSITION - 1, Y_OFFSET - 1,13 + ((ccode > 9)*6), 9, false);
 		}
@@ -1417,7 +1417,7 @@ void setOverrideTGorPC(int tgOrPc, bool privateCall)
 	int tmpTGorPC = nonVolatileSettings.overrideTG;
 
 	menuUtilityTgBeforePcMode = 0;
-	nonVolatileSettings.overrideTG = tgOrPc;
+	settingsSet(nonVolatileSettings.overrideTG, tgOrPc);
 	if (privateCall == true)
 	{
 		// Private Call
@@ -1427,7 +1427,7 @@ void setOverrideTGorPC(int tgOrPc, bool privateCall)
 			// if the current Tx TG is a TalkGroup then save it so it can be restored after the end of the private call
 			menuUtilityTgBeforePcMode = tmpTGorPC;
 		}
-		nonVolatileSettings.overrideTG |= (PC_CALL_FLAG << 24);
+		settingsSet(nonVolatileSettings.overrideTG, (nonVolatileSettings.overrideTG | (PC_CALL_FLAG << 24)));
 	}
 }
 
@@ -1554,14 +1554,14 @@ int getBatteryPercentage(void)
 
 void increasePowerLevel(void)
 {
-	nonVolatileSettings.txPowerLevel++;
+	settingsIncrement(nonVolatileSettings.txPowerLevel, 1);
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
 	announceItem(PROMPT_SEQUENCE_POWER, PROMPT_THRESHOLD_3);
 }
 
 void decreasePowerLevel(void)
 {
-	nonVolatileSettings.txPowerLevel--;
+	settingsDecrement(nonVolatileSettings.txPowerLevel, 1);
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
 	announceItem(PROMPT_SEQUENCE_POWER, PROMPT_THRESHOLD_3);
 }
@@ -1595,7 +1595,7 @@ void announceContactNameTgOrPc(void)
 	{
 		char buf[17];
 		itoa(nonVolatileSettings.overrideTG & 0xFFFFFF, buf, 10);
-		if ((nonVolatileSettings.overrideTG>>24)  == PC_CALL_FLAG)
+		if ((nonVolatileSettings.overrideTG >> 24) == PC_CALL_FLAG)
 		{
 			voicePromptsAppendLanguageString(&currentLanguage->private_call);
 			voicePromptsAppendString("ID");

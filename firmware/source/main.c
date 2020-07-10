@@ -71,9 +71,9 @@ void powerOffFinalStage(void)
 
 	// If user was in a private call when they turned the radio off we need to restore the last Tg prior to stating the Private call.
 	// to the nonVolatile Setting overrideTG, otherwise when the radio is turned on again it be in PC mode to that station.
-	if ((trxTalkGroupOrPcId>>24) == PC_CALL_FLAG)
+	if ((trxTalkGroupOrPcId >> 24) == PC_CALL_FLAG)
 	{
-		nonVolatileSettings.overrideTG = menuUtilityTgBeforePcMode;
+		settingsSet(nonVolatileSettings.overrideTG, menuUtilityTgBeforePcMode);
 	}
 
 	menuHotspotRestoreSettings();
@@ -91,7 +91,7 @@ void powerOffFinalStage(void)
 		}
 	}
 
-	nonVolatileSettings.displayBacklightPercentageOff = 0;
+	settingsSet(nonVolatileSettings.displayBacklightPercentageOff, 0);
 	displayEnableBacklight(false);
 
 #if !defined(PLATFORM_RD5R)
@@ -279,7 +279,7 @@ void mainTask(void *data)
 	// Band limits
 	if ((buttons & (BUTTON_SK1 | BUTTON_PTT)) == (BUTTON_SK1 | BUTTON_PTT))
 	{
-		nonVolatileSettings.txFreqLimited = !nonVolatileSettings.txFreqLimited;
+		settingsSet(nonVolatileSettings.txFreqLimited, !nonVolatileSettings.txFreqLimited);
 
 		voicePromptsInit();
 		voicePromptsAppendLanguageString(&currentLanguage->band_limits);
@@ -289,7 +289,7 @@ void mainTask(void *data)
 	// Hotspot mode
 	else if ((buttons & BUTTON_SK1) == BUTTON_SK1)
 	{
-		nonVolatileSettings.hotspotType = (nonVolatileSettings.hotspotType == HOTSPOT_TYPE_MMDVM) ? HOTSPOT_TYPE_BLUEDV : HOTSPOT_TYPE_MMDVM;
+		settingsSet(nonVolatileSettings.hotspotType, ((nonVolatileSettings.hotspotType == HOTSPOT_TYPE_MMDVM) ? HOTSPOT_TYPE_BLUEDV : HOTSPOT_TYPE_MMDVM));
 
 		voicePromptsInit();
 		voicePromptsAppendLanguageString(&currentLanguage->hotspot_mode);
@@ -763,8 +763,6 @@ void mainTask(void *data)
 			if ((battery_voltage < (CUTOFF_VOLTAGE_LOWER_HYST + 6))
 					&& ((lowbatteryTimerForGD77S == 0) || ((fw_millis() - lowbatteryTimerForGD77S) > LOW_BATTERY_INTERVAL_GD77S)))
 			{
-				//uint8_t buf[2];
-
 				lowbatteryTimerForGD77S = fw_millis();
 
 				voicePromptsAppendLanguageString(&currentLanguage->low_battery);
@@ -823,6 +821,10 @@ void mainTask(void *data)
 			}
 			soundTickMelody();
 			voxTick();
+
+#if defined(PLATFORM_RD5R) // Needed for platforms which can't control the poweroff
+			settingsSaveIfNeeded(false);
+#endif
 		}
 		vTaskDelay(0);
 	}
