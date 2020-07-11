@@ -123,7 +123,7 @@ void tsSetOverride(Channel_t chan, int8_t ts)
 // returns (TS + 1, 0 no override)
 int8_t tsGetOverride(Channel_t chan)
 {
-	return ((nonVolatileSettings.tsManualOverride & (0x03 << (2 * ((int8_t)chan)))) >> (2 * ((int8_t)chan)));
+	return (nonVolatileSettings.tsManualOverride >> (2 * (int8_t)chan)) & 0x03;
 }
 
 // Check if TS is overrode
