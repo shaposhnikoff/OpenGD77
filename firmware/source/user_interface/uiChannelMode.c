@@ -440,9 +440,9 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 			trxTalkGroupOrPcId = nonVolatileSettings.overrideTG;
 		}
 
-		if ((nonVolatileSettings.tsManualOverride & 0x0F) != 0)
+		if (tsIsOverridden(CHANNEL_CHANNEL))
 		{
-			trxSetDMRTimeSlot ((nonVolatileSettings.tsManualOverride & 0x0F) - 1);
+			trxSetDMRTimeSlot((tsGetOverride(CHANNEL_CHANNEL) - 1));
 		}
 	}
 
@@ -727,8 +727,7 @@ static void handleEvent(uiEvent_t *ev)
 			if ((dmrMonitorCapturedTS != -1) && (dmrMonitorCapturedTS != trxGetDMRTimeSlot()))
 			{
 				trxSetDMRTimeSlot(dmrMonitorCapturedTS);
-				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0));// Clear lower nibble value
-				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (dmrMonitorCapturedTS + 1)));// Store manual TS override
+				tsSetOverride(CHANNEL_CHANNEL, (dmrMonitorCapturedTS + 1));
 			}
 			if (trxTalkGroupOrPcId != tg)
 			{
@@ -1104,8 +1103,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					// Toggle timeslot
 					trxSetDMRTimeSlot(1 - trxGetDMRTimeSlot());
-					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0));// Clear lower nibble value
-					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (trxGetDMRTimeSlot() + 1)));// Store manual TS override
+					tsSetOverride(CHANNEL_CHANNEL, (trxGetDMRTimeSlot() + 1));
 
 					//	init_digital();
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
@@ -1129,7 +1127,7 @@ static void handleEvent(uiEvent_t *ev)
 		{
 			if (trxGetMode() == RADIO_MODE_DIGITAL)
 			{
-				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0)); // remove TS override from channel
+				tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
 				if ((currentRxGroupData.name[0] != 0) && (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup))
 				{
 					codeplugContactGetDataForIndex(currentRxGroupData.contacts[nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE]], &currentContactData);
@@ -1163,7 +1161,7 @@ static void handleEvent(uiEvent_t *ev)
 				}
 
 				settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
-				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0)); // remove TS override from channel
+				tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
 				settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
 				channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screeen that the channel data is now invalid and needs to be reloaded
 				menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
@@ -1287,7 +1285,7 @@ static void handleUpKey(uiEvent_t *ev)
 			settingsSet(nonVolatileSettings.currentZone, 0);
 		}
 		settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
-		settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0)); // remove TS override from channel
+		tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
 		settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
 		channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
 		menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
@@ -1631,7 +1629,7 @@ static void uiChannelUpdateTrxID(void)
 	}
 	else
 	{
-		settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0)); // remove TS override for channel
+		tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
 
 		if ((currentRxGroupData.name[0] != 0) && (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup))
 		{
@@ -1777,8 +1775,7 @@ void toggleTimeslotForGD77S(void)
 	{
 		// Toggle timeslot
 		trxSetDMRTimeSlot(1 - trxGetDMRTimeSlot());
-		settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0));// Clear lower nibble value
-		settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (trxGetDMRTimeSlot() + 1)));// Store manual TS override
+		tsSetOverride(CHANNEL_CHANNEL, (trxGetDMRTimeSlot() + 1));
 
 		//	init_digital();
 		disableAudioAmp(AUDIO_AMP_MODE_RF);
@@ -2258,7 +2255,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					menuSystemMenuIncrement((int32_t *)&nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
 
 					settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
-					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0)); // remove TS override from channel
+					tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
 					settingsSet(nonVolatileSettings.currentChannelIndexInZone, -2); // Will be updated when reloading the UiChannelMode screen
 					channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
 
@@ -2300,8 +2297,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 				if ((dmrMonitorCapturedTS != -1) && (dmrMonitorCapturedTS != trxGetDMRTimeSlot()))
 				{
 					trxSetDMRTimeSlot(dmrMonitorCapturedTS);
-					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0));// Clear lower nibble value
-					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (dmrMonitorCapturedTS + 1)));// Store manual TS override
+					tsSetOverride(CHANNEL_CHANNEL, (dmrMonitorCapturedTS + 1));
 				}
 				if (trxTalkGroupOrPcId != tg)
 				{
@@ -2433,7 +2429,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 					menuSystemMenuDecrement((int32_t *)&nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
 
 					settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
-					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0)); // remove TS override from channel
+					tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
 					settingsSet(nonVolatileSettings.currentChannelIndexInZone, -2); // Will be updated when reloading the UiChannelMode screen
 					channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screeen that the channel data is now invalid and needs to be reloaded
 

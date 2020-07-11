@@ -22,6 +22,7 @@
 #include <settings.h>
 #include <trx.h>
 #include <user_interface/menuSystem.h>
+#include <user_interface/uiUtilities.h>
 
 
 int trx_measure_count = 0;
@@ -960,18 +961,18 @@ void trxUpdateTsForCurrentChannelWithSpecifiedContact(struct_codeplugContact_t *
 {
 	bool hasManualTsOverride = false;
 
-	// nonVolatileSettings.tsManualOverride stores separate TS overrides for VFO and Channel mode
-	// Lower nibble is the Channel screen override and upper nibble if the VFO
+	// nonVolatileSettings.tsManualOverride stores separate TS overrides for VFO A, VFO B and Channel mode
+	// Use tsIsOverriden(), tsGetOverride(), tsSetOverride() to access the overridden
 	if (nonVolatileSettings.initialMenuNumber == UI_CHANNEL_MODE)
 	{
-		if ((nonVolatileSettings.tsManualOverride & 0x0F) != 0)
+		if (tsIsOverridden(CHANNEL_CHANNEL))
 		{
 			hasManualTsOverride = true;
 		}
 	}
 	else
 	{
-		if ((nonVolatileSettings.tsManualOverride & 0xF0) != 0)
+		if (tsIsOverridden(CHANNEL_VFO_A) || tsIsOverridden(CHANNEL_VFO_B))
 		{
 			hasManualTsOverride = true;
 		}
@@ -981,7 +982,7 @@ void trxUpdateTsForCurrentChannelWithSpecifiedContact(struct_codeplugContact_t *
 	{
 		if ((contactData->reserve1 & 0x01) == 0x00)
 		{
-			if ( (contactData->reserve1 & 0x02) !=0 )
+			if ((contactData->reserve1 & 0x02) != 0)
 			{
 				trxCurrentDMRTimeSlot = 1;
 			}
@@ -992,7 +993,7 @@ void trxUpdateTsForCurrentChannelWithSpecifiedContact(struct_codeplugContact_t *
 		}
 		else
 		{
-			trxCurrentDMRTimeSlot = ((currentChannelData->flag2 & 0x40)!=0);
+			trxCurrentDMRTimeSlot = ((currentChannelData->flag2 & 0x40) != 0);
 		}
 	}
 }
