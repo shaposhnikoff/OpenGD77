@@ -167,9 +167,9 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 				trxTalkGroupOrPcId = nonVolatileSettings.overrideTG;
 			}
 
-			if ((nonVolatileSettings.tsManualOverride & 0xF0) != 0)
+			if (tsIsOverridden(((Channel_t)nonVolatileSettings.currentVFONumber)))
 			{
-				trxSetDMRTimeSlot(((nonVolatileSettings.tsManualOverride & 0xF0) >> 4) - 1);
+				trxSetDMRTimeSlot((tsGetOverride(((Channel_t)nonVolatileSettings.currentVFONumber)) - 1));
 			}
 		}
 
@@ -721,10 +721,7 @@ static void handleEvent(uiEvent_t *ev)
 			if ((dmrMonitorCapturedTS != -1) && (dmrMonitorCapturedTS != trxGetDMRTimeSlot()))
 			{
 				trxSetDMRTimeSlot(dmrMonitorCapturedTS);
-				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0));// Clear lower nibble value
-#warning CHECK ME
-				// WAS settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (dmrMonitorCapturedTS + 1)));// Store manual TS override
-				settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | ((dmrMonitorCapturedTS + 1) << 4)));// Store manual TS override
+				tsSetOverride(((Channel_t)nonVolatileSettings.currentVFONumber), (dmrMonitorCapturedTS + 1));
 			}
 
 			if (trxTalkGroupOrPcId != tg)
@@ -891,8 +888,7 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						// Toggle TimeSlot
 						trxSetDMRTimeSlot(1 - trxGetDMRTimeSlot());
-						settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0x0F));// Clear upper nibble value
-						settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | ((trxGetDMRTimeSlot() + 1) << 4)));// Store manual TS override for VFO in upper nibble
+						tsSetOverride(((Channel_t)nonVolatileSettings.currentVFONumber), (trxGetDMRTimeSlot() + 1));
 
 						disableAudioAmp(AUDIO_AMP_MODE_RF);
 						clearActiveDMRID();
@@ -915,7 +911,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0x0F)); // remove TS override for VFO
+					tsSetOverride(((Channel_t)nonVolatileSettings.currentVFONumber), TS_NO_OVERRIDE);
 					// Check if this channel has an Rx Group
 					if ((currentRxGroupData.name[0] != 0) &&
 							(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup))
@@ -1626,8 +1622,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					settingsSet(nonVolatileSettings.currentIndexInTRxGroupList[0], nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber]);
 
 					//copy current TS
-					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0xF0));// Clear lower nibble value
-					settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride | (trxGetDMRTimeSlot() + 1)));// Store manual TS override
+					tsSetOverride(((Channel_t)nonVolatileSettings.currentVFONumber), (trxGetDMRTimeSlot() + 1));
 
 					inhibitInitialVoicePrompt = true;
 					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
@@ -1800,7 +1795,7 @@ static void uiVFOUpdateTrxID(void )
 	}
 	else
 	{
-		settingsSet(nonVolatileSettings.tsManualOverride, (nonVolatileSettings.tsManualOverride & 0x0F)); // remove TS override for VFO
+		tsSetOverride(((Channel_t)nonVolatileSettings.currentVFONumber), TS_NO_OVERRIDE);
 
 		// Check if this channel has an Rx Group
 		if ((currentRxGroupData.name[0] != 0) && (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup))

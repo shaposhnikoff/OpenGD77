@@ -123,6 +123,12 @@ extern int freq_enter_idx;
 extern int numLastHeard;
 extern bool inhibitInitialVoicePrompt;
 
+#define TS_NO_OVERRIDE  0
+bool tsIsOverridden(Channel_t chan);
+int8_t tsGetOverride(Channel_t chan);
+void tsSetOverride(Channel_t chan, int8_t ts);
+
+
 bool isQSODataAvailableForCurrentTalker(void);
 char *chomp(char *str);
 int32_t getFirstSpacePos(char *str);

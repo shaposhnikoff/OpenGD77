@@ -56,8 +56,8 @@ bool settingsSaveSettings(bool includeVFOs)
 {
 	if (includeVFOs)
 	{
-		codeplugSetVFO_ChannelData(&settingsVFOChannel[0], 0);
-		codeplugSetVFO_ChannelData(&settingsVFOChannel[1], 1);
+		codeplugSetVFO_ChannelData(&settingsVFOChannel[CHANNEL_VFO_A], CHANNEL_VFO_A);
+		codeplugSetVFO_ChannelData(&settingsVFOChannel[CHANNEL_VFO_B], CHANNEL_VFO_B);
 		settingsVFODirty = false;
 	}
 
@@ -84,8 +84,8 @@ bool settingsLoadSettings(void)
 		settingsRestoreDefaultSettings();
 	}
 
-	codeplugGetVFO_ChannelData(&settingsVFOChannel[0], 0);
-	codeplugGetVFO_ChannelData(&settingsVFOChannel[1], 1);
+	codeplugGetVFO_ChannelData(&settingsVFOChannel[CHANNEL_VFO_A], CHANNEL_VFO_A);
+	codeplugGetVFO_ChannelData(&settingsVFOChannel[CHANNEL_VFO_B], CHANNEL_VFO_B);
 	settingsInitVFOChannel(0);// clean up any problems with VFO data
 	settingsInitVFOChannel(1);
 
@@ -172,7 +172,7 @@ void settingsRestoreDefaultSettings(void)
 	nonVolatileSettings.tsManualOverride = 0; // No manual TS override using the Star key
 	nonVolatileSettings.keypadTimerLong = 5;
 	nonVolatileSettings.keypadTimerRepeat = 3;
-	nonVolatileSettings.currentVFONumber = 0;
+	nonVolatileSettings.currentVFONumber = CHANNEL_VFO_A;
 	nonVolatileSettings.dmrFilterLevel =
 #if defined(PLATFORM_GD77S)
 			DMR_FILTER_CC_TS_TG;
@@ -202,10 +202,10 @@ void settingsRestoreDefaultSettings(void)
     		true;
 #endif
     // Set all these value to zero to force the operator to set their own limits.
-	nonVolatileSettings.vfoScanLow[0] = 0;
-	nonVolatileSettings.vfoScanLow[1] = 0;
-	nonVolatileSettings.vfoScanHigh[0] = 0;
-	nonVolatileSettings.vfoScanHigh[1] = 0;
+	nonVolatileSettings.vfoScanLow[CHANNEL_VFO_A] = 0;
+	nonVolatileSettings.vfoScanLow[CHANNEL_VFO_B] = 0;
+	nonVolatileSettings.vfoScanHigh[CHANNEL_VFO_A] = 0;
+	nonVolatileSettings.vfoScanHigh[CHANNEL_VFO_B] = 0;
 
 
 	nonVolatileSettings.contactDisplayPriority = CONTACT_DISPLAY_PRIO_CC_DB_TA;

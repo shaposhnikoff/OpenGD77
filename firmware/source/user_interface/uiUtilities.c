@@ -100,6 +100,40 @@ bool inhibitInitialVoicePrompt =
 		false;//Used to indicate whether the voice prompts should be reloaded with the channel name or VFO freq
 #endif
 
+// Set TS manual override
+// chan: CHANNEL_VFO_A, CHANNEL_VFO_B, CHANNEL_CHANNEL
+// ts: 1, 2, TS_NO_OVERRIDE
+void tsSetOverride(Channel_t chan, int8_t ts)
+{
+	uint8_t tsOverride = nonVolatileSettings.tsManualOverride;
+
+	// Clear TS override for given channel
+	tsOverride &= ~(0x03 << (2 * ((int8_t)chan)));
+	if (ts != TS_NO_OVERRIDE)
+	{
+		// Set TS override for given channel
+		tsOverride |= (ts << (2 * ((int8_t)chan)));
+	}
+
+	settingsSet(nonVolatileSettings.tsManualOverride, tsOverride);
+}
+
+// Get TS override value
+// chan: CHANNEL_VFO_A, CHANNEL_VFO_B, CHANNEL_CHANNEL
+// returns (TS + 1, 0 no override)
+int8_t tsGetOverride(Channel_t chan)
+{
+	return ((nonVolatileSettings.tsManualOverride & (0x03 << (2 * ((int8_t)chan)))) >> (2 * ((int8_t)chan)));
+}
+
+// Check if TS is overrode
+// chan: CHANNEL_VFO_A, CHANNEL_VFO_B, CHANNEL_CHANNEL
+// returns true on overrode for the specified channel
+bool tsIsOverridden(Channel_t chan)
+{
+	return (nonVolatileSettings.tsManualOverride & (0x03 << (2 * ((int8_t)chan))));
+}
+
 
 bool isQSODataAvailableForCurrentTalker(void)
 {
