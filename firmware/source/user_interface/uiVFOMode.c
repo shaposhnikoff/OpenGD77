@@ -1787,7 +1787,7 @@ static void toneScan(void)
 	}
 }
 
-static void uiVFOUpdateTrxID(void )
+static void uiVFOUpdateTrxID(void)
 {
 	if (nonVolatileSettings.overrideTG != 0)
 	{
