@@ -1808,6 +1808,10 @@ static void uiVFOUpdateTrxID(void)
 		}
 
 		trxTalkGroupOrPcId = currentContactData.tgNumber;
+		if (currentContactData.callType == CONTACT_CALLTYPE_PC)
+		{
+			trxTalkGroupOrPcId |= (PC_CALL_FLAG << 24);
+		}
 
 		trxUpdateTsForCurrentChannelWithSpecifiedContact(&currentContactData);
 	}
