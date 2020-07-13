@@ -17,10 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 /*
- * Translators: IU4LEG, IZ2EIB
+ * Translators: IU4LEG, IZ2EIB, IU4LEG
  *
  *
- * Rev:
+ * Rev: 2020.07.13 IZ2EIB  & IU4LEG 
  */
 #ifndef USER_INTERFACE_LANGUAGES_ITALIAN_H_
 #define USER_INTERFACE_LANGUAGES_ITALIAN_H_
@@ -162,7 +162,7 @@ const stringsTable_t italianLanguage =
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
 .squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
-.display_background_colour = "Colore" , // Maxlen 16 (with : + .colour_normal or .colour_invert)
+.display_background_colour = "Sfondo" , // Maxlen 16 (with : + .colour_normal or .colour_invert)
 .openGD77 				= "OpenGD77",// Do not translate
 .openGD77S 				= "OpenGD77S",// Do not translate
 .openDM1801 			= "OpenDM1801",// Do not translate
