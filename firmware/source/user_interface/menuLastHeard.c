@@ -106,7 +106,11 @@ void menuLastHeardUpdateScreen(bool showTitleOrHeader, bool displayDetails, bool
 		if (numDisplayed == 0)
 		{
 			invertColour = true;
+#if defined(PLATFORM_RD5R)
+			ucFillRect(0, 15, 128, 10, false);
+#else
 			ucFillRect(0, 16, 128, 16, false);
+#endif
 			selectedID = item->id;
 		}
 		else
