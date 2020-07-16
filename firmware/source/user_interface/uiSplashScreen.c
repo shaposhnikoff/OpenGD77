@@ -20,6 +20,10 @@
 
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
+static void exitSplashScreen(void);
+
+const uint32_t SILENT_PROMPT_HOLD_DURATION_MILLISECONDS = 2000;
+static uint32_t initialEventTime;
 
 menuStatus_t uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
 {
@@ -27,6 +31,8 @@ menuStatus_t uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
 
 	if (isFirstRun)
 	{
+		initialEventTime = ev->time;
+
 #if defined(PLATFORM_GD77S)
 			// Don't play boot melody when the 77S is already speaking, otherwise if will mute the speech halfway
 			if (voicePromptsIsPlaying() == false)
@@ -42,7 +48,6 @@ menuStatus_t uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
 					soundSetMelody(melody_poweron);
 				}
 			}
-
 		updateScreen();
 	}
 	else
@@ -93,10 +98,23 @@ static void updateScreen(void)
 
 static void handleEvent(uiEvent_t *ev)
 {
-	if (melody_play == NULL)
+	if (nonVolatileSettings.audioPromptMode != AUDIO_PROMPT_MODE_SILENT)
 	{
-		ucClearBuf();
-		ucRender();
-		menuSystemSetCurrentMenu(nonVolatileSettings.initialMenuNumber);
+		if (melody_play == NULL)
+		{
+			exitSplashScreen();
+		}
 	}
+	else
+	{
+		if ((ev->time - initialEventTime) > SILENT_PROMPT_HOLD_DURATION_MILLISECONDS)
+		{
+			exitSplashScreen();
+		}
+	}
+}
+
+static void exitSplashScreen(void)
+{
+	menuSystemSetCurrentMenu(nonVolatileSettings.initialMenuNumber);
 }
