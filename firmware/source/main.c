@@ -789,11 +789,11 @@ void mainTask(void *data)
 					{
 						powerOffFinalStage();
 					}
-#endif
 				}
 				else
 				{
 					menuSystemPushNewMenu(UI_POWER_OFF);
+#endif // ! PLATFORM_RD5R
 				}
 				GPIO_PinWrite(GPIO_audio_amp_enable, Pin_audio_amp_enable, 0);
 				soundSetMelody(NULL);
