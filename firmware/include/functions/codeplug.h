@@ -93,7 +93,7 @@ typedef struct struct_codeplugContact
 	uint8_t		callType;
 	uint8_t		callRxTone;
 	uint8_t		ringStyle;
-	uint8_t		reserve1;
+	uint8_t		reserve1; // TS override: bit0 1 = no TS override, bit1 + 1: timeslot override value
 	int         NOT_IN_CODEPLUGDATA_indexNumber;
 } struct_codeplugContact_t;
 
