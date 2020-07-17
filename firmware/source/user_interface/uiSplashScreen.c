@@ -40,8 +40,17 @@ menuStatus_t uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
 			{
 				if (codeplugGetOpenGD77CustomData(CODEPLUG_CUSTOM_DATA_TYPE_BEEP, melodyBuf))
 				{
-					soundCreateSong(melodyBuf);
-					soundSetMelody(melody_generic);
+					if (melodyBuf[0]==0 && melodyBuf[1]==0)
+					{
+						exitSplashScreen();
+						return MENU_STATUS_SUCCESS;
+					}
+					else
+					{
+						soundCreateSong(melodyBuf);
+						soundSetMelody(melody_generic);
+					}
+
 				}
 				else
 				{
