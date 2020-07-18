@@ -118,6 +118,17 @@ void tsSetOverride(Channel_t chan, int8_t ts)
 	settingsSet(nonVolatileSettings.tsManualOverride, tsOverride);
 }
 
+// Set TS manual override
+// chan: CHANNEL_VFO_A, CHANNEL_VFO_B, CHANNEL_CHANNEL
+// contact: apply TS override from contact setting
+void tsSetContactOverride(Channel_t chan, struct_codeplugContact_t *contact)
+{
+	if ((contact->reserve1 & 0x01) == 0x00)
+	{
+		tsSetOverride(chan, (((contact->reserve1 & 0x02) >> 1) + 1));
+	}
+}
+
 // Get TS override value
 // chan: CHANNEL_VFO_A, CHANNEL_VFO_B, CHANNEL_CHANNEL
 // returns (TS + 1, 0 no override)
@@ -133,7 +144,6 @@ bool tsIsOverridden(Channel_t chan)
 {
 	return (nonVolatileSettings.tsManualOverride & (0x03 << (2 * ((int8_t)chan))));
 }
-
 
 bool isQSODataAvailableForCurrentTalker(void)
 {

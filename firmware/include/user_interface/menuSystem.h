@@ -132,6 +132,8 @@ void menuSystemPushNewMenuWithQuickFunction(int menuNumber, int quickFunction);
 
 void menuSystemSetCurrentMenu(int menuNumber);
 int menuSystemGetCurrentMenuNumber(void);
+int menuSystemGetPreviousMenuNumber(void);
+int menuSystemGetRootMenuNumber(void);
 
 void menuSystemPopPreviousMenu(void);
 void menuSystemPopAllAndDisplayRootMenu(void);

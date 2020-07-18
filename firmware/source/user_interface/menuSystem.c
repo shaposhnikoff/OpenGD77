@@ -216,6 +216,22 @@ int menuSystemGetCurrentMenuNumber(void)
 	return menuControlData.stack[menuControlData.stackPosition];
 }
 
+int menuSystemGetPreviousMenuNumber(void)
+{
+	if (menuControlData.stackPosition >= 1)
+	{
+		return menuControlData.stack[menuControlData.stackPosition - 1];
+	}
+
+	return -1;
+}
+
+int menuSystemGetRootMenuNumber(void)
+{
+	return menuControlData.stack[0];
+}
+
+
 void menuSystemCallCurrentMenuTick(uiEvent_t *ev)
 {
 	menuStatus_t status;
