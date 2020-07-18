@@ -127,6 +127,10 @@ void tsSetContactOverride(Channel_t chan, struct_codeplugContact_t *contact)
 	{
 		tsSetOverride(chan, (((contact->reserve1 & 0x02) >> 1) + 1));
 	}
+	else
+	{
+		tsSetOverride(chan, TS_NO_OVERRIDE);
+	}
 }
 
 // Get TS override value
