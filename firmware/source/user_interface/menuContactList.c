@@ -149,7 +149,7 @@ static void updateScreen(bool isFirstRun)
 					menuDisplayEntry(i, mNum, (char*) nameBuf);
 				}
 
-				if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+				if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
 				{
 					voicePromptsAppendString(nameBuf);
 				}
@@ -161,7 +161,6 @@ static void updateScreen(bool isFirstRun)
 		menuDisplayTitle(nameBuf);
 		ucPrintCentered(16, currentLanguage->delete_contact_qm, FONT_SIZE_3);
 		ucDrawChoice(CHOICE_YESNO, false);
-
 		break;
 	case MENU_CONTACT_LIST_DELETED:
 		codeplugUtilConvertBufToString(contactListContactData.name, nameBuf, 16);
@@ -197,59 +196,48 @@ static void handleEvent(uiEvent_t *ev)
 			updateScreen(false);
 			menuContactListExitCode |= MENU_STATUS_LIST_TYPE;
 		}
-		else
+		else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 		{
-			if (KEYCHECK_PRESS(ev->keys, KEY_UP))
+			menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
+			contactListContactIndex = codeplugContactGetDataForNumber(gMenusCurrentItemIndex + 1, contactCallType,&contactListContactData);
+			updateScreen(false);
+			menuContactListExitCode |= MENU_STATUS_LIST_TYPE;
+		}
+		else if (KEYCHECK_SHORTUP(ev->keys, KEY_HASH))
+		{
+			if (contactCallType == CONTACT_CALLTYPE_TG)
 			{
-				menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
-				contactListContactIndex = codeplugContactGetDataForNumber(gMenusCurrentItemIndex + 1, contactCallType,&contactListContactData);
-				updateScreen(false);
-				menuContactListExitCode |= MENU_STATUS_LIST_TYPE;
+				contactCallType = CONTACT_CALLTYPE_PC;
 			}
 			else
 			{
-				if (KEYCHECK_SHORTUP(ev->keys, KEY_HASH))
-				{
-					if (contactCallType == CONTACT_CALLTYPE_TG)
-					{
-						contactCallType = CONTACT_CALLTYPE_PC;
-					}
-					else
-					{
-						contactCallType = CONTACT_CALLTYPE_TG;
-					}
-					reloadContactList();
-					updateScreen(false);
-				}
-				else
-				{
-					if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
-					{
-						if (menuSystemGetCurrentMenuNumber() == MENU_CONTACT_QUICKLIST)
-						{
-							setOverrideTGorPC(contactListContactData.tgNumber, contactListContactData.callType == CONTACT_CALLTYPE_PC);
-							contactListContactIndex = 0;
-							announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
-							menuSystemPopAllAndDisplayRootMenu();
-							return;
-						}
-						else
-						{
-							menuSystemPushNewMenu(MENU_CONTACT_LIST_SUBMENU);
-							return;
-						}
-					}
-					else
-					{
-						if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
-						{
-							contactListContactIndex = 0;
-							menuSystemPopPreviousMenu();
-							return;
-						}
-					}
-				}
+				contactCallType = CONTACT_CALLTYPE_TG;
 			}
+			reloadContactList();
+			updateScreen(false);
+		}
+		else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
+		{
+			if (menuSystemGetCurrentMenuNumber() == MENU_CONTACT_QUICKLIST)
+			{
+				setOverrideTGorPC(contactListContactData.tgNumber, contactListContactData.callType == CONTACT_CALLTYPE_PC);
+				tsSetContactOverride(((menuSystemGetRootMenuNumber() == UI_CHANNEL_MODE) ? CHANNEL_CHANNEL : (CHANNEL_VFO_A + nonVolatileSettings.currentVFONumber)), &contactListContactData);
+				contactListContactIndex = 0;
+				announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC, PROMPT_THRESHOLD_3);
+				menuSystemPopAllAndDisplayRootMenu();
+				return;
+			}
+			else
+			{
+				menuSystemPushNewMenu(MENU_CONTACT_LIST_SUBMENU);
+				return;
+			}
+		}
+		else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
+		{
+			contactListContactIndex = 0;
+			menuSystemPopPreviousMenu();
+			return;
 		}
 		break;
 
@@ -266,14 +254,11 @@ static void handleEvent(uiEvent_t *ev)
 			reloadContactList();
 			updateScreen(false);
 		}
-		else
+		else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 		{
-			if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
-			{
-				menuContactListDisplayState = MENU_CONTACT_LIST_DISPLAY;
-				reloadContactList();
-				updateScreen(false);
-			}
+			menuContactListDisplayState = MENU_CONTACT_LIST_DISPLAY;
+			reloadContactList();
+			updateScreen(false);
 		}
 		break;
 
@@ -368,11 +353,14 @@ static void handleSubMenuEvent(uiEvent_t *ev)
 		switch (gMenusCurrentItemIndex)
 		{
 		case CONTACT_LIST_QUICK_MENU_SELECT:
+		{
 			setOverrideTGorPC(contactListContactData.tgNumber, (contactListContactData.callType == CONTACT_CALLTYPE_PC));
+			tsSetContactOverride(((menuSystemGetRootMenuNumber() == UI_CHANNEL_MODE) ? CHANNEL_CHANNEL : (CHANNEL_VFO_A + nonVolatileSettings.currentVFONumber)), &contactListContactData);
 			contactListContactIndex = 0;
-			announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
+			announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC, PROMPT_THRESHOLD_3);
 			inhibitInitialVoicePrompt = true;
 			menuSystemPopAllAndDisplayRootMenu();
+		}
 			break;
 		case CONTACT_LIST_QUICK_MENU_EDIT:
 			menuSystemSetCurrentMenu(MENU_CONTACT_DETAILS);

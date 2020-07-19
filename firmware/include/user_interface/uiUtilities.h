@@ -127,6 +127,7 @@ extern bool inhibitInitialVoicePrompt;
 bool tsIsOverridden(Channel_t chan);
 int8_t tsGetOverride(Channel_t chan);
 void tsSetOverride(Channel_t chan, int8_t ts);
+void tsSetContactOverride(Channel_t chan, struct_codeplugContact_t *contact);
 
 
 bool isQSODataAvailableForCurrentTalker(void);

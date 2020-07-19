@@ -258,14 +258,14 @@ static void handleEvent(uiEvent_t *ev)
 		return;
 	}
 
-	if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
+	if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
 		menuSystemPopPreviousMenu();
 		return;
 	}
 	else
 	{
-		if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+		if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 		{
 			tmpID = atoi(digits);
 			if ((tmpID > 0) && (tmpID <= MAX_TG_OR_PC_VALUE))
@@ -279,6 +279,12 @@ static void handleEvent(uiEvent_t *ev)
 					else
 					{
 						setOverrideTGorPC(tmpID, false);
+					}
+
+					// Apply TS override, if any
+					if (gMenusCurrentItemIndex == ENTRY_SELECT_CONTACT)
+					{
+						tsSetContactOverride(((menuSystemGetRootMenuNumber() == UI_CHANNEL_MODE) ? CHANNEL_CHANNEL : (CHANNEL_VFO_A + nonVolatileSettings.currentVFONumber)), &contact);
 					}
 				}
 				else
@@ -360,6 +366,7 @@ static void handleEvent(uiEvent_t *ev)
 				announceContactName();
 			}
 		}
+
 		if (pcIdx != idx)
 		{
 			pcIdx = idx;
