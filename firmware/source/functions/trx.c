@@ -1127,14 +1127,16 @@ void trxUpdateDeviation(int channel)
 			calRes.offset = CAL_DEV_TONE;
 			calibrationGetSectionData(calBand, CalibrationSection_DEV_TONE, &calRes);
 			deviation = (calRes.value & 0x7f);
-			I2C_AT1846_set_register_with_mask(0x59, 0x003f, deviation, 6); // Tone deviation value
+			//I2C_AT1846_set_register_with_mask(0x59, 0x003f, deviation, 6); // THIS IS THE WRONG REGISTER TO CONTROL 'TONE' DEV. SEE THE LINE BELOW INSTEAD , reg  Tone deviation value
+			I2C_AT1846_set_register_with_mask(0x41, 0xFF80, deviation, 0);// Tone deviation value
 			break;
 
 		case AT1846_VOICE_CHANNEL_DTMF:
 			calRes.offset = CAL_DEV_DTMF;
 			calibrationGetSectionData(calBand, CalibrationSection_DEV_TONE, &calRes);
 			deviation = (calRes.value & 0x7f);
-			I2C_AT1846_set_register_with_mask(0x59, 0x003f, deviation, 6); // Tone deviation value
+			//I2C_AT1846_set_register_with_mask(0x59, 0x003f, deviation, 6); // THIS IS THE WRONG REGISTER TO CONTROL DTMF DEV. SEE THE LINE BELOW INSTEAD , reg  Tone deviation value
+			I2C_AT1846_set_register_with_mask(0x41, 0xFF80, deviation, 0);//  Tone deviation value
 			break;
 	}
 	taskEXIT_CRITICAL();
@@ -1166,17 +1168,19 @@ void trxSelectVoiceChannel(uint8_t channel) {
 
 		trxUpdateDeviation(channel);
 
-		AT1846SetClearReg2byteWithMask(0x41, 0xff, 0x80, 0x00, 0x05);
+		//AT1846SetClearReg2byteWithMask(0x41, 0xff, 0x80, 0x00, 0x05);// Commented out because the deviation set in trxUpdateDeviation uses reg 0x41
 		break;
 	default:
 		AT1846SetClearReg2byteWithMask(0x57, 0xff, 0xfe, 0x00, 0x00); // Audio feedback off
 		if (trxSaveVoiceGainTx != 0xff)
 		{
 			I2C_AT1846_set_register_with_mask(0x41, 0xFF80, trxSaveVoiceGainTx, 0);
+			trxSaveVoiceGainTx = 0xff;
 		}
 		if (trxSaveDeviation != 0xFF)
 		{
 			I2C_AT1846_set_register_with_mask(0x59, 0x003f, trxSaveDeviation, 6);
+			trxSaveDeviation = 0xFF;
 		}
 		break;
 	}
