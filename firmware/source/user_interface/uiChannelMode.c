@@ -575,7 +575,7 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 			{
 				if (nonVolatileSettings.overrideTG != 0)
 				{
-					buildTgOrPCDisplayName(nameBuf,bufferLen);
+					buildTgOrPCDisplayName(nameBuf, bufferLen);
 					nameBuf[bufferLen - 1] = 0;
 #if defined(PLATFORM_RD5R)
 					ucDrawRect(0, CONTACT_Y_POS + verticalPositionOffset, DISPLAY_SIZE_X, 11, true);
@@ -730,6 +730,7 @@ static void handleEvent(uiEvent_t *ev)
 				trxSetDMRTimeSlot(dmrMonitorCapturedTS);
 				tsSetOverride(CHANNEL_CHANNEL, (dmrMonitorCapturedTS + 1));
 			}
+
 			if (trxTalkGroupOrPcId != tg)
 			{
 				trxTalkGroupOrPcId = tg;
