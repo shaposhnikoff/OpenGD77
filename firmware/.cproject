@@ -609,7 +609,7 @@
 					</fileInfo>
 					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.744079513" name="uiUtilities.c" rcbsApplicability="disable" resourcePath="source/user_interface/uiUtilities.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.475830819.1007247384">
 						<tool id="com.crt.advproject.gcc.exe.debug.475830819.1007247384" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.475830819">
-							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.205021327" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="true" value="gnu.c.optimization.level.general" valueType="enumerated"/>
+							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.205021327" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="true" value="gnu.c.optimization.level.size" valueType="enumerated"/>
 							<inputType id="com.crt.advproject.compiler.input.2129685031" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
