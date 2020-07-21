@@ -1522,7 +1522,14 @@ static void updateQuickMenuScreen(bool isFirstRun)
 
 		if (leftSide != NULL)
 		{
-			snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0] ? rightSideVar : *rightSideConst));
+			if ((mNum == VFO_SCREEN_CODE_SCAN) && (rightSideConst == NULL))
+			{
+				snprintf(buf, bufferLen, "%s", *leftSide);
+			}
+			else
+			{
+				snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0] ? rightSideVar : *rightSideConst));
+			}
 		}
 		else
 		{
