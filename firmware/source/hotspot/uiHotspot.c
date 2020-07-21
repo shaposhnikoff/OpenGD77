@@ -311,7 +311,8 @@ static uint8_t cwBuffer[64U];
 static uint16_t cwpoLen;
 static uint16_t cwpoPtr;
 static bool cwKeying = false;
-static uint8_t savedDMRFilterLevel = 0xFF; // 0xFF value means unset
+static uint8_t savedDMRDestinationFilter = 0xFF; // 0xFF value means unset
+static uint8_t savedDMRCcTsFilter = 0xFF; // 0xFF value means unset
 
 // End of CWID related
 
@@ -341,11 +342,13 @@ menuStatus_t menuHotspotMode(uiEvent_t *ev, bool isFirstRun)
 	{
 		// DMR filter level isn't saved yet (cycling power OFF/ON quickly can corrupt
 		// this value otherwise, as menuHotspotMode(true) could be called twice.
-		if (savedDMRFilterLevel == 0xFF)
+		if (savedDMRDestinationFilter == 0xFF)
 		{
 			// Override DMR filtering
-			savedDMRFilterLevel = nonVolatileSettings.dmrFilterLevel;
-			settingsSet(nonVolatileSettings.dmrFilterLevel, DMR_FILTER_CC_TS);
+			savedDMRDestinationFilter = nonVolatileSettings.dmrDestinationFilter;
+			savedDMRCcTsFilter = nonVolatileSettings.dmrCcTsFilter;
+			settingsSet(nonVolatileSettings.dmrDestinationFilter, DMR_DESTINATION_FILTER_NONE);
+			settingsSet(nonVolatileSettings.dmrCcTsFilter, DMR_CCTS_FILTER_CC_TS);
 		}
 
 		hotspotState = HOTSPOT_STATE_NOT_CONNECTED;
@@ -462,10 +465,13 @@ menuStatus_t menuHotspotMode(uiEvent_t *ev, bool isFirstRun)
 
 void menuHotspotRestoreSettings(void)
 {
-	if (savedDMRFilterLevel != 0xFF)
+	if (savedDMRDestinationFilter != 0xFF)
 	{
-		settingsSet(nonVolatileSettings.dmrFilterLevel, savedDMRFilterLevel);
-		savedDMRFilterLevel = 0xFF; // Unset saved DMR filter level
+		settingsSet(nonVolatileSettings.dmrDestinationFilter, savedDMRDestinationFilter);
+		savedDMRDestinationFilter = 0xFF; // Unset saved DMR destination filter level
+
+		settingsSet(nonVolatileSettings.dmrCcTsFilter, savedDMRCcTsFilter);
+		savedDMRCcTsFilter = 0xFF; // Unset saved CC TS filter level
 	}
 }
 

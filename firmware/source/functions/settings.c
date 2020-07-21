@@ -28,7 +28,7 @@
 
 static const int STORAGE_BASE_ADDRESS 		= 0x6000;
 
-static const int STORAGE_MAGIC_NUMBER 		= 0x474B;
+static const int STORAGE_MAGIC_NUMBER 		= 0x474C;
 
 // Bit patterns for DMR Beep
 const uint8_t BEEP_TX_NONE  = 0x00;
@@ -173,12 +173,15 @@ void settingsRestoreDefaultSettings(void)
 	nonVolatileSettings.keypadTimerLong = 5;
 	nonVolatileSettings.keypadTimerRepeat = 3;
 	nonVolatileSettings.currentVFONumber = CHANNEL_VFO_A;
-	nonVolatileSettings.dmrFilterLevel =
+	nonVolatileSettings.dmrDestinationFilter =
 #if defined(PLATFORM_GD77S)
-			DMR_FILTER_CC_TS_TG;
+	DMR_DESTINATION_FILTER_TG;
 #else
-			DMR_FILTER_CC_TS;
+	DMR_DESTINATION_FILTER_NONE;
 #endif
+	nonVolatileSettings.dmrCcTsFilter = DMR_CCTS_FILTER_CC_TS;
+
+
 	nonVolatileSettings.dmrCaptureTimeout = 10;// Default to holding 10 seconds after a call ends
 	nonVolatileSettings.analogFilterLevel = ANALOG_FILTER_CTCSS;
 	nonVolatileSettings.languageIndex = 0;

@@ -313,7 +313,7 @@ static inline bool checkTimeSlotFilter(void)
 	}
 	else
 	{
-		if (nonVolatileSettings.dmrFilterLevel >= DMR_FILTER_CC_TS)
+		if (nonVolatileSettings.dmrCcTsFilter & 0x02)
 		{
 			return (timeCode == trxGetDMRTimeSlot());
 		}
@@ -339,15 +339,15 @@ bool checkTalkGroupFilter(void)
 	{
 		return true;
 	}
-	switch(nonVolatileSettings.dmrFilterLevel)
+	switch(nonVolatileSettings.dmrDestinationFilter)
 	{
-		case DMR_FILTER_CC_TS_TG:
+		case DMR_DESTINATION_FILTER_TG:
 			return ((trxTalkGroupOrPcId & 0x00FFFFFF) == receivedTgOrPcId);
 			break;
-		case DMR_FILTER_CC_TS_DC:
+		case DMR_DESTINATION_FILTER_DC:
 			return codeplugContactsContainsPC(receivedSrcId);
 			break;
-		case DMR_FILTER_CC_TS_RXG:
+		case DMR_DESTINATION_FILTER_RXG:
 			{
 				for(int i = 0; i < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup; i++)
 				{
@@ -783,7 +783,8 @@ inline static void HRC6000SysInterruptHandler(void)
 
 	if (!trxTransmissionEnabled) // ignore the LC data when we are transmitting
 	{
-		if ((!ccHold) && (nonVolatileSettings.dmrFilterLevel < DMR_FILTER_CC))
+		//if ((!ccHold) && (nonVolatileSettings.dmrDestinationFilter < DMR_CCTS_FILTER_CC))
+		if ((!ccHold) && (nonVolatileSettings.dmrCcTsFilter == DMR_CCTS_FILTER_NONE || nonVolatileSettings.dmrCcTsFilter == DMR_CCTS_FILTER_TS))
 		{
 			if(rxColorCode == lastRxColorCode)
 			{
@@ -1402,7 +1403,7 @@ bool callAcceptFilter(void)
 void tick_HR_C6000(void)
 {
 
-	if(nonVolatileSettings.dmrFilterLevel < DMR_FILTER_CC)
+	if((nonVolatileSettings.dmrCcTsFilter & 0x01) == 0)
 	{
 		if(slot_state == DMR_STATE_IDLE)
 		{

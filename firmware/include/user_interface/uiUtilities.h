@@ -94,7 +94,8 @@ typedef enum
 extern const int MAX_POWER_SETTING_NUM;
 extern const char *POWER_LEVELS[];
 extern const char *POWER_LEVEL_UNITS[];
-extern const char *DMR_FILTER_LEVELS[];
+extern const char *DMR_DESTINATION_FILTER_LEVELS[];
+extern const char *DMR_CCTS_FILTER_LEVELS[];
 extern const char *ANALOG_FILTER_LEVELS[];
 extern const int SCAN_SHORT_PAUSE_TIME;			//time to wait after carrier detected to allow time for full signal detection. (CTCSS or DMR)
 extern const int SCAN_TOTAL_INTERVAL;			    //time between each scan step
@@ -122,6 +123,9 @@ extern char freq_enter_digits[12];
 extern int freq_enter_idx;
 extern int numLastHeard;
 extern bool inhibitInitialVoicePrompt;
+extern int tmpQuickMenuDmrDestinationFilterLevel;
+extern int tmpQuickMenuDmrCcTsFilterLevel;
+extern int tmpQuickMenuAnalogFilterLevel;
 
 #define TS_NO_OVERRIDE  0
 bool tsIsOverridden(Channel_t chan);

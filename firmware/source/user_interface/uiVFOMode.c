@@ -46,8 +46,7 @@ static void setCurrentFreqToScanLimits(void);
 static void handleUpKey(uiEvent_t *ev);
 
 static bool isDisplayingQSOData = false;
-static int tmpQuickMenuDmrFilterLevel;
-static int tmpQuickMenuAnalogFilterLevel;
+
 static int16_t newChannelIndex = 0;
 
 bool scanToneActive = false;//tone scan active flag  (CTCSS/DCS)
@@ -1376,7 +1375,10 @@ enum VFO_SCREEN_QUICK_MENU_ITEMS // The last item in the list is used so that we
 	VFO_SCREEN_QUICK_MENU_TX_SWAP_RX = 0,
 #endif
 	VFO_SCREEN_QUICK_MENU_BOTH_TO_RX, VFO_SCREEN_QUICK_MENU_BOTH_TO_TX,
-	VFO_SCREEN_QUICK_MENU_FILTER, VFO_SCREEN_QUICK_MENU_VFO_TO_NEW, VFO_SCREEN_CODE_SCAN,
+	VFO_SCREEN_QUICK_MENU_FILTER,
+	VFO_SCREEN_QUICK_MENU_DMR_CC_FILTER,
+	VFO_SCREEN_QUICK_MENU_DMR_TS_FILTER,
+	VFO_SCREEN_QUICK_MENU_VFO_TO_NEW, VFO_SCREEN_CODE_SCAN,
 	NUM_VFO_SCREEN_QUICK_MENU_ITEMS
 };
 
@@ -1384,7 +1386,8 @@ menuStatus_t uiVFOModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
-		tmpQuickMenuDmrFilterLevel = nonVolatileSettings.dmrFilterLevel;
+		tmpQuickMenuDmrDestinationFilterLevel = nonVolatileSettings.dmrDestinationFilter;
+		tmpQuickMenuDmrCcTsFilterLevel = nonVolatileSettings.dmrCcTsFilter;
 		tmpQuickMenuAnalogFilterLevel = nonVolatileSettings.analogFilterLevel;
 
 		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
@@ -1453,21 +1456,22 @@ static void updateQuickMenuScreen(bool isFirstRun)
 				strcpy(rightSideVar, "Tx --> Rx");
 				break;
 			case VFO_SCREEN_QUICK_MENU_FILTER:
-				leftSide = (char * const *)&currentLanguage->filter;
+
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					if (tmpQuickMenuDmrFilterLevel == 0)
+					leftSide = (char * const *)&currentLanguage->dmr_filter;
+					if (tmpQuickMenuDmrDestinationFilterLevel == 0)
 					{
 						rightSideConst = (char * const *)&currentLanguage->none;
 					}
 					else
 					{
-						snprintf(rightSideVar, bufferLen, "%s", DMR_FILTER_LEVELS[tmpQuickMenuDmrFilterLevel - 1]);
+						snprintf(rightSideVar, bufferLen, "%s", DMR_DESTINATION_FILTER_LEVELS[tmpQuickMenuDmrDestinationFilterLevel - 1]);
 					}
-
 				}
 				else
 				{
+					leftSide = (char * const *)&currentLanguage->filter;
 					if (tmpQuickMenuAnalogFilterLevel == 0)
 					{
 						rightSideConst = (char * const *)&currentLanguage->none;
@@ -1476,6 +1480,29 @@ static void updateQuickMenuScreen(bool isFirstRun)
 					{
 						snprintf(rightSideVar, bufferLen, "%s", ANALOG_FILTER_LEVELS[tmpQuickMenuAnalogFilterLevel - 1]);
 					}
+				}
+				break;
+			case VFO_SCREEN_QUICK_MENU_DMR_CC_FILTER:
+				leftSide = (char * const *)&currentLanguage->dmr_cc_filter;
+				if (trxGetMode() == RADIO_MODE_DIGITAL)
+				{
+					rightSideConst = (tmpQuickMenuDmrCcTsFilterLevel & DMR_CC_FILTER_PATTERN)?(char * const *)&currentLanguage->on:(char * const *)&currentLanguage->off;
+				}
+				else
+				{
+					rightSideConst = (char * const *)&currentLanguage->n_a;
+				}
+				break;
+			case VFO_SCREEN_QUICK_MENU_DMR_TS_FILTER:
+				leftSide = (char * const *)&currentLanguage->dmr_ts_filter;
+				if (trxGetMode() == RADIO_MODE_DIGITAL)
+				{
+					rightSideConst = (tmpQuickMenuDmrCcTsFilterLevel & DMR_TS_FILTER_PATTERN)?(char * const *)&currentLanguage->on:(char * const *)&currentLanguage->off;
+
+				}
+				else
+				{
+					rightSideConst = (char * const *)&currentLanguage->n_a;
 				}
 				break;
 		    case VFO_SCREEN_QUICK_MENU_VFO_TO_NEW:
@@ -1578,7 +1605,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 			case VFO_SCREEN_QUICK_MENU_FILTER:
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					settingsSet(nonVolatileSettings.dmrFilterLevel, tmpQuickMenuDmrFilterLevel);
+					settingsSet(nonVolatileSettings.dmrDestinationFilter, tmpQuickMenuDmrDestinationFilterLevel);
 					init_digital_DMR_RX();
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
 				}
@@ -1587,6 +1614,17 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					settingsSet(nonVolatileSettings.analogFilterLevel, tmpQuickMenuAnalogFilterLevel);
 				}
 				break;
+
+			case VFO_SCREEN_QUICK_MENU_DMR_CC_FILTER:
+			case VFO_SCREEN_QUICK_MENU_DMR_TS_FILTER:
+				if (trxGetMode() == RADIO_MODE_DIGITAL)
+				{
+					settingsSet(nonVolatileSettings.dmrCcTsFilter, tmpQuickMenuDmrCcTsFilterLevel);
+					init_digital_DMR_RX();
+					disableAudioAmp(AUDIO_AMP_MODE_RF);
+				}
+				break;
+
 			case VFO_SCREEN_QUICK_MENU_VFO_TO_NEW:
 				//look for empty channel
 				for (newChannelIndex = 1; newChannelIndex < 1024; newChannelIndex++)
@@ -1687,9 +1725,9 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 			case VFO_SCREEN_QUICK_MENU_FILTER:
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					if (tmpQuickMenuDmrFilterLevel < NUM_DMR_FILTER_LEVELS - 1)
+					if (tmpQuickMenuDmrDestinationFilterLevel < NUM_DMR_DESTINATION_FILTER_LEVELS - 1)
 					{
-						tmpQuickMenuDmrFilterLevel++;
+						tmpQuickMenuDmrDestinationFilterLevel++;
 					}
 				}
 				else
@@ -1697,6 +1735,24 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					if (tmpQuickMenuAnalogFilterLevel < NUM_ANALOG_FILTER_LEVELS - 1)
 					{
 						tmpQuickMenuAnalogFilterLevel++;
+					}
+				}
+				break;
+			case VFO_SCREEN_QUICK_MENU_DMR_CC_FILTER:
+				if (trxGetMode() == RADIO_MODE_DIGITAL)
+				{
+					if (!(tmpQuickMenuDmrCcTsFilterLevel & DMR_CC_FILTER_PATTERN))
+					{
+						tmpQuickMenuDmrCcTsFilterLevel |= DMR_CC_FILTER_PATTERN;
+					}
+				}
+				break;
+			case VFO_SCREEN_QUICK_MENU_DMR_TS_FILTER:
+				if (trxGetMode() == RADIO_MODE_DIGITAL)
+				{
+					if (!(tmpQuickMenuDmrCcTsFilterLevel & DMR_TS_FILTER_PATTERN))
+					{
+						tmpQuickMenuDmrCcTsFilterLevel |= DMR_TS_FILTER_PATTERN;
 					}
 				}
 				break;
@@ -1720,9 +1776,9 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 			case VFO_SCREEN_QUICK_MENU_FILTER:
 				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
-					if (tmpQuickMenuDmrFilterLevel > DMR_FILTER_NONE)
+					if (tmpQuickMenuDmrDestinationFilterLevel > DMR_DESTINATION_FILTER_NONE)
 					{
-						tmpQuickMenuDmrFilterLevel--;
+						tmpQuickMenuDmrDestinationFilterLevel--;
 					}
 				}
 				else
@@ -1730,6 +1786,24 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					if (tmpQuickMenuAnalogFilterLevel > ANALOG_FILTER_NONE)
 					{
 						tmpQuickMenuAnalogFilterLevel--;
+					}
+				}
+				break;
+			case VFO_SCREEN_QUICK_MENU_DMR_CC_FILTER:
+				if (trxGetMode() == RADIO_MODE_DIGITAL)
+				{
+					if (tmpQuickMenuDmrCcTsFilterLevel & DMR_CC_FILTER_PATTERN)
+					{
+						tmpQuickMenuDmrCcTsFilterLevel &= ~DMR_CC_FILTER_PATTERN;
+					}
+				}
+				break;
+			case VFO_SCREEN_QUICK_MENU_DMR_TS_FILTER:
+				if (trxGetMode() == RADIO_MODE_DIGITAL)
+				{
+					if (tmpQuickMenuDmrCcTsFilterLevel & DMR_TS_FILTER_PATTERN)
+					{
+						tmpQuickMenuDmrCcTsFilterLevel &= ~DMR_TS_FILTER_PATTERN;
 					}
 				}
 				break;

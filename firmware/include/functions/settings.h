@@ -76,7 +76,7 @@ typedef struct
 	uint16_t		keypadTimerLong;
 	uint16_t		keypadTimerRepeat;
 	uint8_t			currentVFONumber;
-	uint8_t			dmrFilterLevel;
+	uint8_t			dmrDestinationFilter;
 	uint8_t			dmrCaptureTimeout;
 	uint8_t			analogFilterLevel;
 	uint8_t			languageIndex;
@@ -92,18 +92,33 @@ typedef struct
 	uint8_t			voxThreshold; // 0: disabled
 	uint8_t			voxTailUnits; // 500ms units
 	uint8_t			audioPromptMode;
+	uint8_t			dmrCcTsFilter;
 } settingsStruct_t;
 
-typedef enum DMR_FILTER_TYPE
+typedef enum DMR_DESTINATION_FILTER_TYPE
 {
-	DMR_FILTER_NONE = 0,
-	DMR_FILTER_CC,
-	DMR_FILTER_CC_TS,
-	DMR_FILTER_CC_TS_TG,
-	DMR_FILTER_CC_TS_DC,
-	DMR_FILTER_CC_TS_RXG,
-	NUM_DMR_FILTER_LEVELS
-} dmrFilter_t;
+	DMR_DESTINATION_FILTER_NONE = 0,
+	DMR_DESTINATION_FILTER_TG,
+	DMR_DESTINATION_FILTER_DC,
+	DMR_DESTINATION_FILTER_RXG,
+	NUM_DMR_DESTINATION_FILTER_LEVELS
+} dmrDestinationFilter_t;
+
+// Bit patterns
+#define DMR_CC_FILTER_PATTERN  0x01
+#define DMR_TS_FILTER_PATTERN  0x02
+
+// NOTE. THIS ENUM IS USED AS BIT PATTERNS, DO NOT CHANGE THE DEFINED VALUES WITHOUT UPDATING ANY CODE WHICH USES THIS ENUM
+typedef enum DMR_CCTS_FILTER_TYPE
+{
+	DMR_CCTS_FILTER_NONE = 0,
+	DMR_CCTS_FILTER_CC = DMR_CC_FILTER_PATTERN,
+	DMR_CCTS_FILTER_TS = DMR_TS_FILTER_PATTERN,
+	DMR_CCTS_FILTER_CC_TS = DMR_CC_FILTER_PATTERN | DMR_TS_FILTER_PATTERN,
+	NUM_DMR_CCTS_FILTER_LEVELS
+} dmrCcTsFilter_t;
+
+
 
 typedef enum ANALOG_FILTER_TYPE
 {

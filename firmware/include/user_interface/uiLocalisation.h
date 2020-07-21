@@ -174,6 +174,9 @@ typedef struct stringsTable
    const char *gitCommit;
    const char *voice_prompt_level_2;
    const char *voice_prompt_level_3;
+   const char *dmr_filter;
+   const char *dmr_cc_filter;
+   const char *dmr_ts_filter;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

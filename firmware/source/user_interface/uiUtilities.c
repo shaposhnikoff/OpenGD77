@@ -61,7 +61,8 @@ uint32_t menuUtilityTgBeforePcMode 	= 0;// No TG saved, prior to a Private call 
 
 const char *POWER_LEVELS[]         = { "50","250","500","750","1","2","3","4","5","5"};
 const char *POWER_LEVEL_UNITS[]    = { "mW","mW","mW","mW","W","W","W","W","W","W++"};
-const char *DMR_FILTER_LEVELS[]    = {"CC","CC,TS","CC,TS,TG","CC,TS,Ct","CC,TS,RxG"};
+const char *DMR_CCTS_FILTER_LEVELS[]    = {"CC","TS","CC,TS"};
+const char *DMR_DESTINATION_FILTER_LEVELS[]   = {"TG","Ct","RxG"};
 const char *ANALOG_FILTER_LEVELS[] = {"CTCSS|DCS"};
 
 volatile uint32_t lastID = 0;// This needs to be volatile as lastHeardClearLastID() is called from an ISR
@@ -80,6 +81,10 @@ bool displaySquelch = false;
 
 char freq_enter_digits[12] = { '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-' };
 int freq_enter_idx;
+
+int tmpQuickMenuDmrDestinationFilterLevel;
+int tmpQuickMenuDmrCcTsFilterLevel;
+int tmpQuickMenuAnalogFilterLevel;
 
 __attribute__((section(".data.$RAM4"))) struct_codeplugRxGroup_t currentRxGroupData;
 struct_codeplugContact_t currentContactData;
@@ -1340,19 +1345,19 @@ void menuUtilityRenderHeader(void)
 			if (settingsUsbMode != USB_MODE_HOTSPOT)
 			{
 //				(trxGetMode() == RADIO_MODE_DIGITAL && settingsPrivateCallMuteMode == true)?" MUTE":"");// The location that this was displayed is now used for the power level
-				if (!scanBlinkPhase && (nonVolatileSettings.dmrFilterLevel > DMR_FILTER_CC_TS))
+				if (!scanBlinkPhase && (nonVolatileSettings.dmrDestinationFilter > DMR_DESTINATION_FILTER_NONE))
 				{
 					ucFillRect(0, Y_OFFSET - 1, 20, 9, false);
 				}
 				if (!scanBlinkPhase)
 				{
-					bool isInverted = scanBlinkPhase ^ (nonVolatileSettings.dmrFilterLevel > DMR_FILTER_CC_TS);
+					bool isInverted = scanBlinkPhase ^ (nonVolatileSettings.dmrDestinationFilter > DMR_DESTINATION_FILTER_NONE);
 					ucPrintCore(MODE_TEXT_X_OFFSET, Y_OFFSET, "DMR", ((nonVolatileSettings.hotspotType != HOTSPOT_TYPE_OFF) ? FONT_SIZE_1_BOLD : FONT_SIZE_1), TEXT_ALIGN_LEFT, isInverted);
 				}
 
 				snprintf(buffer, bufferLen, "%s%d", currentLanguage->ts, trxGetDMRTimeSlot() + 1);
 				buffer[bufferLen - 1] = 0;
-				if (nonVolatileSettings.dmrFilterLevel < DMR_FILTER_CC_TS)
+				if (!(nonVolatileSettings.dmrCcTsFilter & DMR_TS_FILTER_PATTERN))
 				{
 					ucFillRect(FILTER_TEXT_X_OFFSET - 2, Y_OFFSET - 1, 21, 9, false);
 					ucPrintCore(FILTER_TEXT_X_OFFSET, Y_OFFSET, buffer, FONT_SIZE_1, TEXT_ALIGN_LEFT, true);
@@ -1392,12 +1397,13 @@ void menuUtilityRenderHeader(void)
 		const int COLOR_CODE_X_POSITION = 84;
 		int ccode = trxGetDMRColourCode();
 		snprintf(buffer, bufferLen, "C%d", ccode);
-		if (nonVolatileSettings.dmrFilterLevel == DMR_FILTER_NONE)
+		bool isNotFilteringCC = !(nonVolatileSettings.dmrCcTsFilter & DMR_CC_FILTER_PATTERN);
+		if (isNotFilteringCC)
 		{
 			ucFillRect(COLOR_CODE_X_POSITION - 1, Y_OFFSET - 1,13 + ((ccode > 9)*6), 9, false);
 		}
 
-		ucPrintCore(COLOR_CODE_X_POSITION, Y_OFFSET, buffer, FONT_SIZE_1, TEXT_ALIGN_LEFT, nonVolatileSettings.dmrFilterLevel == DMR_FILTER_NONE);
+		ucPrintCore(COLOR_CODE_X_POSITION, Y_OFFSET, buffer, FONT_SIZE_1, TEXT_ALIGN_LEFT, isNotFilteringCC);
 
 		snprintf(buffer, bufferLen, "%d%%", getBatteryPercentage());
 		buffer[bufferLen - 1] = 0;
