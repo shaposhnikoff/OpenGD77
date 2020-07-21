@@ -61,7 +61,6 @@ uint32_t menuUtilityTgBeforePcMode 	= 0;// No TG saved, prior to a Private call 
 
 const char *POWER_LEVELS[]         = { "50","250","500","750","1","2","3","4","5","5"};
 const char *POWER_LEVEL_UNITS[]    = { "mW","mW","mW","mW","W","W","W","W","W","W++"};
-const char *DMR_CCTS_FILTER_LEVELS[]    = {"CC","TS","CC,TS"};
 const char *DMR_DESTINATION_FILTER_LEVELS[]   = {"TG","Ct","RxG"};
 const char *ANALOG_FILTER_LEVELS[] = {"CTCSS|DCS"};
 
