@@ -2082,13 +2082,13 @@ static void buildSpeechUiModeForGD77S(GD77S_UIMODES_t uiMode)
 			voicePromptsAppendLanguageString(&currentLanguage->filter);
 			if (trxGetMode() == RADIO_MODE_DIGITAL)
 			{
-				if (nonVolatileSettings.dmrDestinationFilter == DMR_FILTER_NONE)
+				if (nonVolatileSettings.dmrDestinationFilter == DMR_DESTINATION_FILTER_NONE)
 				{
 					voicePromptsAppendLanguageString(&currentLanguage->none);
 				}
 				else
 				{
-					voicePromptsAppendString((char *)DMR_FILTER_DESTINATION_LEVELS[nonVolatileSettings.dmrDestinationFilter - 1]);
+					voicePromptsAppendString((char *)DMR_DESTINATION_FILTER_LEVELS[nonVolatileSettings.dmrDestinationFilter - 1]);
 				}
 
 			}
@@ -2307,7 +2307,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 				case GD77S_UIMODE_FILTER:
 					if (trxGetMode() == RADIO_MODE_DIGITAL)
 					{
-						if (nonVolatileSettings.dmrDestinationFilter < DMR_FILTER_DESTINATION_LEVELS - 1)
+						if (nonVolatileSettings.dmrDestinationFilter < NUM_DMR_DESTINATION_FILTER_LEVELS - 1)
 						{
 							settingsIncrement(nonVolatileSettings.dmrDestinationFilter, 1);
 							init_digital_DMR_RX();
@@ -2481,7 +2481,7 @@ static void handleEventForGD77S(uiEvent_t *ev)
 				case GD77S_UIMODE_FILTER:
 					if (trxGetMode() == RADIO_MODE_DIGITAL)
 					{
-						if (nonVolatileSettings.dmrDestinationFilter > DMR_FILTER_NONE)
+						if (nonVolatileSettings.dmrDestinationFilter > DMR_DESTINATION_FILTER_NONE)
 						{
 							settingsDecrement(nonVolatileSettings.dmrDestinationFilter, 1);
 							init_digital_DMR_RX();
