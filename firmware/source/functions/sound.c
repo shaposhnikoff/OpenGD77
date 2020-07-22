@@ -93,7 +93,7 @@ const int melody_dmr_tx_stop_beep[] = { 500, 50, -1, -1 };
 const int melody_key_beep_first_item[] = { 800, 100, -1, -1 };
 
 // To calculate the pitch use a spreadsheet etc   =ROUND(98*POWER(2, (NOTE_NUMBER/12)),0)
-static const int freqs[] = {0,104,110,117,123,131,139,147,156,165,175,185,196,208,220,233,247,262,277,294,311,330,349,370,392,415,440,466,494,523,554,587,622,659,698,740,784,831,880,932,988,1047,1109,1175,1245,1319,1397,1480};
+static const int freqs[64] = {0,104,110,117,123,131,139,147,156,165,175,185,196,208,220,233,247,262,277,294,311,330,349,370,392,415,440,466,494,523,554,587,622,659,698,740,784,831,880,932,988,1047,1109,1175,1245,1319,1397,1480,1568,1661,1760,1865,1976,2093,2217,2349,2489,2637,2794,2960,3136,3322,3520,3729};
 
 volatile int *melody_play = NULL;
 volatile int melody_idx = 0;
@@ -146,7 +146,12 @@ void soundCreateSong(const uint8_t *melody)
 	{
 		if (melody[2 * i + 1] != 0)
 		{
-			melody_generic[song_idx++] = freqs[melody[2 * i]];
+			int freqNum = melody[2 * i];
+			if ((freqNum > 63) || (freqNum < 0))
+			{
+				freqNum = 63;
+			}
+			melody_generic[song_idx++] = freqs[freqNum];
 			melody_generic[song_idx++] = melody[2 * i + 1] * 27;
 		}
 		else
