@@ -348,18 +348,34 @@ Press the **Orange** button or **Green** key to copy the content of the current 
 
 Press the **Orange** button or **Green** key to confirm and save the updated channel to the codeplug memory. **Red** key to cancel.
 
-##### Filter (DMR only)
+##### Filter
+
+###### Filter in FM Mode
+Use the **Right** or **Left** arrows to enable or disable CTCSS/DCS filtering
+
+###### Filter in DMR mode
 
 Use the **Right** or **Left** arrows to select
 * **None** (for no filtering, i.e. "promiscuous" mode).
-* **CC** (filter by Colour Code).
-* **CC**,**TS** (to filter by Colour Code and the selected timeslot),
-* **CC**,**TS**,**TG** (to filter by Colour Code and the selected timeslot and also the selected Talkgroup)
-* **CC**,**TS**,**Ct** (to filter by Colour Code and the selected timeslot and also only for contacts in the Digital Contacts in the codeplug)
-* **CC**,**TS**,**RxG** (to filter by Colour Code and the selected timeslot and also only for the selected or manually entered Talkgroup, and the Talkgroups in the TG list / Rx Group list)
+* **TG** (to filter by the selected Talkgroup)
+* **Ct** (to filter by Private Call Contacts in the codeplug)
+* **RxG** (to filter by Talkgroups in the TG list / Rx Group list)
 
-When timeslot filtering is disabled, the TS1 / TS2 indication at the top of the screen is displayed in inverse video.
-When Talkgroup filtering is enabled the DMR  mode indication at the top of the screen is displayed in inverse video.
+When this filter is enabled the DMR  mode indication at the top of the screen is displayed in inverse video.
+
+##### CC Filter (DMR mode only)
+
+Controls whether the radio filters by Colour Codeplug
+Use the **Right** or **Left** arrows to enable or disable
+
+When Colour Code filtering is disabled the Colour Code number is displayed in inverse video.
+
+##### TS Filter (DMR mode only)
+
+Controls whether the radio filters by Timeslot
+Use the **Right** or **Left** arrows to enable or disable
+
+When Timeslot filtering is disabled the Timeslot number is displayed in inverse video.
 
 ![](media/channel-quick-menu.png)
 
@@ -1130,6 +1146,18 @@ Instead the firmware will use the power setting specified by the user in the Uti
 If the power setting in the PiStar MMDVMHost Expert settings is any other value e.g. 50%, the hotspot will use that power setting closest to the chosen value.
 So 50% of 5W is 2.5W, and the closest power setting to this is 2W.
 
+Power | PiStar RFLevel
+--- | ---
+50mW  | 1
+250mW  | 5
+500mW  |10
+750mW  |15
+1W  |  20
+2W  | 40
+4W  | 80
+5W  | 99
+5W++ | N/A
+
 The receive frequency specified by PiStar will be displayed at the bottom of the screen.
 
 *Note.* Offsets should not be applied to the TX or RX frequencies in PiStar, because the radio should not need any offsets, and any offset will be reflected in the frequency displayed on the radio, because PiStar actually sends the master frequency +/- the offset to the hotspot.
@@ -1144,12 +1172,14 @@ The LED on the top of the radio also turns red to indicate the radio is transmit
 
 ## Resetting the Settings
 
-The radio can also be set to the default settings by holding the **Blue (Function)** key while turning on the radio.
+The radio can also be set to the default settings by holding the **Blue (SK2)** key while turning on the radio.
 
-Additionally holding the **Orange** button, resets any custom boot melody and custom boot image that has been uploaded using the OpenGD77 CPS.
+Additionally holding the **Blue (SK2)** button as well as the **Up arrow** and **Down arrow** keys , resets any custom boot melody and custom boot image that has been uploaded using the OpenGD77 CPS.
+
+On the GD-77S, because it does not have a keypad, then holding **Blue (SK2)** and **Orange** resets any custom boot melody.
 
 
-##GD-77S operation
+## GD-77S operation
 
 To use the firmware with the GD-77S you **must** load voice prompt files using the OpenGD77 CPS. If you do not load voice files the radio will not announce thing, and it will be virtually unusable.
 
@@ -1225,7 +1255,7 @@ However we advise all users to set the “Contact” to the first channel in the
 
 Next select the TG List that you wish to use for the channel.
 
-The firmware can use the TG list to filter the incoming DMR signal, or it can operate in “Digital Monitor Mode” (aka promiscuous mode) all the time. This can be set in the radio quick menu setting for **Filter**.
+The firmware can use the TG list to filter the incoming DMR signal, or it can operate in “Digital Monitor Mode” (aka promiscuous mode) all the time. This can be set in the radio quick menu setting for **Filter** and **DMR filter**
 
 ![](media/cps-channel-rx-grouplist.png)
 
