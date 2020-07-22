@@ -750,6 +750,15 @@ Pressing the <strong>Red</strong> menu key closes the menu without making any ch
 <p><img src="media/private-call.png" alt></p>
 <p>Once the private call is complete, you can return to the Talkgroup you were on prior to accepting the Private Call, by pressing <strong>Function + Red</strong> menu key. (or by any of the methods described in the section on making a Private Call)</p>
 <h2 id="hotspot-mode">Hotspot mode</h2>
+<p><strong>IMPORTANT INFORMATION</strong></p>
+<ul>
+<li>Although hotspot mode is available for all supported radios, the Baofeng RD-5R seems to have hardware faults which prevent it working reliably as a hotspot. Its currently unclear whether this is cause by the bad internal voltage stabilisation in the RD-5R, or RF injection internally into the USB data line.</li>
+<li>The USB connection between the radio and the host system e.g. PiStar needs to be protected from RF injection, otherwise the USB connection will be occasionally be reset when the radio is transmitting, which will cause the hotspot to stop working.</li>
+<li>Do not use the antenna on top of the radio when in hotspot mode, this usually causes RF injection problems which can&apos;t be resolved by screening or ferrite</li>
+<li>Connect the radio to an external antenna.</li>
+<li>Use ferrite RFI protection on the USB cable.</li>
+<li>When using a Raspberry Pi as the host system, use a metal enclosure for the Raspberry Pi</li>
+</ul>
 <p>The firmware can operate as a DMR (<em>voice only</em>) hotspot when connected via its USB programming cable to a Raspberry Pi running PiStar or any other device that is running MMDVMHost.</p>
 <p><em>Note.</em> Hotspot mode may be compatible with software like BlueDV, but your mileage may vary.</p>
 <p>First, connect the radio to a Raspberry Pi via its programming cable.</p>

@@ -1107,6 +1107,16 @@ Once the private call is complete, you can return to the Talkgroup you were on p
 
 ## Hotspot mode
 
+**IMPORTANT INFORMATION**
+
+* Although hotspot mode is available for all supported radios, the Baofeng RD-5R seems to have hardware faults which prevent it working reliably as a hotspot. Its currently unclear whether this is cause by the bad internal voltage stabilisation in the RD-5R, or RF injection internally into the USB data line.
+* The USB connection between the radio and the host system e.g. PiStar needs to be protected from RF injection, otherwise the USB connection will be occasionally be reset when the radio is transmitting, which will cause the hotspot to stop working.
+* Do not use the antenna on top of the radio when in hotspot mode, this usually causes RF injection problems which can't be resolved by screening or ferrite
+* Connect the radio to an external antenna.
+* Use ferrite RFI protection on the USB cable.
+* When using a Raspberry Pi as the host system, use a metal enclosure for the Raspberry Pi
+
+
 The firmware can operate as a DMR (*voice only*) hotspot when connected via its USB programming cable to a Raspberry Pi running PiStar or any other device that is running MMDVMHost.
 
 *Note.* Hotspot mode may be compatible with software like BlueDV, but your mileage may vary.
