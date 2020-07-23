@@ -21,6 +21,7 @@
  *
  *
  * Rev: 2020.07.13 IZ2EIB  & IU4LEG 
+ *		2020.07.22 IU4LEG 
  */
 #ifndef USER_INTERFACE_LANGUAGES_ITALIAN_H_
 #define USER_INTERFACE_LANGUAGES_ITALIAN_H_
@@ -170,9 +171,9 @@ const stringsTable_t italianLanguage =
 .gitCommit				= "Git commit",
 .voice_prompt_level_2	= "Voce L2", // Maxlen 16 (with : + audio_prompt)
 .voice_prompt_level_3	= "Voce L3", // Maxlen 16 (with : + audio_prompt)
-.dmr_filter				= "DMR Filter",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
-.dmr_cc_filter			= "CC Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			= "TS Filter" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_filter				= "Filtro DMR",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
+.dmr_cc_filter			= "Filtro CC", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "Filtro TS" // MaxLen: 12 (with ':' + settings: .on or .off)
 };
 /********************************************************************
  *
