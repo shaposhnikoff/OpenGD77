@@ -60,6 +60,7 @@ extern uint8_t screenBuf[];
 extern const int FONT_SIZE_3_HEIGHT;
 extern const int DISPLAY_SIZE_Y;
 extern const int DISPLAY_SIZE_X;
+extern const int DISPLAY_NUMBER_OF_ROWS;
 
 void ucBegin(bool isInverted);
 void ucClearBuf(void);
