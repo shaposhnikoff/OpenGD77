@@ -448,9 +448,18 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					ucPrintAt(DISPLAY_SIZE_X - ((7 * 8) + 2), TX_FREQ_Y_POS, buffer, FONT_SIZE_3);
 					// Scanning direction arrow
 					static const int scanDirArrow[2][6] = {
-							{ 59, 55, 67, 51, 67, 59 }, // Down
-							{ 59, 59, 59, 51, 67, 55 }, // Up
+							{ // Down
+									59, (TX_FREQ_Y_POS + (FONT_SIZE_3_HEIGHT / 2) - 1),
+									67, (TX_FREQ_Y_POS + (FONT_SIZE_3_HEIGHT / 2) - (FONT_SIZE_3_HEIGHT / 4) - 1),
+									67, (TX_FREQ_Y_POS + (FONT_SIZE_3_HEIGHT / 2) + (FONT_SIZE_3_HEIGHT / 4) - 1)
+							}, // Up
+							{
+									59, (TX_FREQ_Y_POS + (FONT_SIZE_3_HEIGHT / 2) + (FONT_SIZE_3_HEIGHT / 4) - 1),
+									59, (TX_FREQ_Y_POS + (FONT_SIZE_3_HEIGHT / 2) - (FONT_SIZE_3_HEIGHT / 4) - 1),
+									67, (TX_FREQ_Y_POS + (FONT_SIZE_3_HEIGHT / 2) - 1)
+							}
 					};
+
 					ucFillTriangle(scanDirArrow[(scanDirection > 0)][0], scanDirArrow[(scanDirection > 0)][1],
 								   scanDirArrow[(scanDirection > 0)][2], scanDirArrow[(scanDirection > 0)][3],
 								   scanDirArrow[(scanDirection > 0)][4], scanDirArrow[(scanDirection > 0)][5], true);
@@ -460,6 +469,12 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 			{
 				int8_t xCursor = -1;
 				int8_t yCursor = -1;
+				int labelsVOffset =
+#if defined(PLATFORM_RD5R)
+						4;
+#else
+						0;
+#endif
 
 				if (screenOperationMode[nonVolatileSettings.currentVFONumber] == VFO_SCREEN_OPERATION_NORMAL)
 				{
@@ -472,42 +487,30 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					snprintf(buffer, bufferLen, FREQ_DISP_STR, freq_enter_digits[0], freq_enter_digits[1], freq_enter_digits[2],
 							freq_enter_digits[3], freq_enter_digits[4], freq_enter_digits[5], freq_enter_digits[6], freq_enter_digits[7]);
 
-#if defined(PLATFORM_RD5R)
-					ucPrintCentered((selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX) ? TX_FREQ_Y_POS : 24, buffer, FONT_SIZE_3);
-#else
 					ucPrintCentered((selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX) ? TX_FREQ_Y_POS : RX_FREQ_Y_POS, buffer, FONT_SIZE_3);
-#endif
+
 					// Cursor
 					if (freq_enter_idx < 8)
 					{
 						xCursor = ((DISPLAY_SIZE_X - (strlen(buffer) * 8)) >> 1) + ((freq_enter_idx + ((freq_enter_idx > 2) ? 1 : 0)) * 8);
-						yCursor = ((selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX) ? TX_FREQ_Y_POS : RX_FREQ_Y_POS) + 14;
+						yCursor = ((selectedFreq == VFO_SELECTED_FREQUENCY_INPUT_TX) ? TX_FREQ_Y_POS : RX_FREQ_Y_POS) + (FONT_SIZE_3_HEIGHT - 2);
 					}
 				}
 				else
 				{
 					uint8_t hiX = DISPLAY_SIZE_X - ((7 * 8) + 2);
-					ucPrintAt(5, (DISPLAY_SIZE_Y / 2), "Low", FONT_SIZE_3);
-#if defined(PLATFORM_RD5R)
-					ucDrawFastVLine(0, 29, 24, true);
-#else
-					ucDrawFastVLine(0, 37, 24, true);
-#endif
-					ucDrawFastHLine(1, TX_FREQ_Y_POS, 57, true);
+					ucPrintAt(5, RX_FREQ_Y_POS - labelsVOffset, "Low", FONT_SIZE_3);
+					ucDrawFastVLine(0, RX_FREQ_Y_POS - labelsVOffset, ((FONT_SIZE_3_HEIGHT * 2) + labelsVOffset), true);
+					ucDrawFastHLine(1, TX_FREQ_Y_POS - (labelsVOffset / 2), 57, true);
 
 					sprintf(buffer, "%c%c%c.%c%c%c", freq_enter_digits[0], freq_enter_digits[1], freq_enter_digits[2],
 													 freq_enter_digits[3], freq_enter_digits[4], freq_enter_digits[5]);
 
 					ucPrintAt(2, TX_FREQ_Y_POS, buffer, FONT_SIZE_3);
 
-#if defined(PLATFORM_RD5R)
-					ucPrintAt(73, 24, "High", FONT_SIZE_3);
-					ucDrawFastVLine(68, 29, 24, true);
-#else
-					ucPrintAt(73, 32, "High", FONT_SIZE_3);
-					ucDrawFastVLine(68, 37, 24, true);
-#endif
-					ucDrawFastHLine(69, TX_FREQ_Y_POS, 57, true);
+					ucPrintAt(73, RX_FREQ_Y_POS - labelsVOffset, "High", FONT_SIZE_3);
+					ucDrawFastVLine(68, RX_FREQ_Y_POS - labelsVOffset, ((FONT_SIZE_3_HEIGHT * 2) + labelsVOffset), true);
+					ucDrawFastHLine(69, TX_FREQ_Y_POS - (labelsVOffset / 2), 57, true);
 
 					sprintf(buffer, "%c%c%c.%c%c%c", freq_enter_digits[6], freq_enter_digits[7], freq_enter_digits[8],
 													 freq_enter_digits[9], freq_enter_digits[10], freq_enter_digits[11]);
@@ -521,7 +524,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 								+ (((freq_enter_idx < 6) ? (freq_enter_idx - 1) : (freq_enter_idx - 7)) * 8) // Length
 								+ ((freq_enter_idx > 2 ? (freq_enter_idx > 8 ? 2 : 1) : 0) * 8); // MHz/kHz separator(s)
 
-						yCursor = TX_FREQ_Y_POS + 14;
+						yCursor = TX_FREQ_Y_POS + (FONT_SIZE_3_HEIGHT - 2);
 					}
 				}
 

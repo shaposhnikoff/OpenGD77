@@ -29,23 +29,14 @@
 
 settingsStruct_t originalNonVolatileSettings;
 
-const int QSO_TIMER_TIMEOUT = 2400;
+
 
 #if defined(PLATFORM_RD5R)
-const int TX_TIMER_Y_OFFSET = 12;
-const int CONTACT_Y_POS = 12;
 static const int BAR_Y_POS = 8;
 #else
-const int TX_TIMER_Y_OFFSET = 8;
-const int CONTACT_Y_POS = 16;
 static const int BAR_Y_POS = 10;
 #endif
 
-const int FREQUENCY_X_POS = /* '>Ta'*/ (3 * 8) + 4;
-const int MAX_POWER_SETTING_NUM = 9;
-
-const int NUM_PC_OR_TG_DIGITS = 8;
-const int MAX_TG_OR_PC_VALUE = 16777215;
 
 static const int DMRID_MEMORY_STORAGE_START = 0x30000;
 static const int DMRID_HEADER_LENGTH = 0x0C;
@@ -950,7 +941,7 @@ static void displayChannelNameOrRxFrequency(char *buffer, size_t maxLen)
 {
 	if (menuSystemGetCurrentMenuNumber() == UI_CHANNEL_MODE)
 	{
-		codeplugUtilConvertBufToString(currentChannelData->name,buffer,16);
+		codeplugUtilConvertBufToString(currentChannelData->name, buffer, 16);
 	}
 	else
 	{
@@ -969,67 +960,70 @@ static void displayChannelNameOrRxFrequency(char *buffer, size_t maxLen)
 
 static void printSplitOrSpanText(uint8_t y, char *text)
 {
-	uint8_t len = strlen(text);
-
-	if (len == 0)
+	if (text != NULL)
 	{
-		return;
-	}
+		uint8_t len = strlen(text);
 
-	if (len <= 16)
-	{
-		ucPrintCentered(y, text, FONT_SIZE_3);
-	}
-	else
-	{
-		uint8_t nLines = len / 21 + (((len % 21) != 0) ? 1 : 0);
-
-		if (nLines > 2)
+		if (len == 0)
 		{
-			nLines = 2;
+			return;
 		}
-
-		if (nLines > 1)
+		else if (len <= 16)
 		{
-			char buffer[43]; // 2 * 21 chars + NULL
-
-			memcpy(buffer, text, len + 1);
-
-			char *p = buffer + 20;
-
-			// Find a space backward
-			while ((*p != ' ') && (p > buffer))
-			{
-				p--;
-			}
-
-			uint8_t rest = (uint8_t)((buffer + strlen(buffer)) - p) - ((*p == ' ') ? 1 : 0);
-
-			// rest is too long, just split the line in two chunks
-			if (rest > 21)
-			{
-				char c = buffer[21];
-
-				buffer[21] = 0;
-
-				ucPrintCentered(y, buffer, FONT_SIZE_1); // 2 pixels are saved, could center
-
-				buffer[21] = c;
-				buffer[42] = 0;
-
-				ucPrintCentered(y + 8, buffer + 21, FONT_SIZE_1);
-			}
-			else
-			{
-				*p = 0;
-
-				ucPrintCentered(y, buffer, FONT_SIZE_1);
-				ucPrintCentered(y + 8, p + 1, FONT_SIZE_1);
-			}
+			ucPrintCentered(y, text, FONT_SIZE_3);
 		}
-		else // One line of 21 chars max
+		else
 		{
-			ucPrintCentered(y + 4, text, FONT_SIZE_1);
+			uint8_t nLines = len / 21 + (((len % 21) != 0) ? 1 : 0);
+
+			if (nLines > 2)
+			{
+				nLines = 2;
+				len = 42; // 2 lines max.
+			}
+
+			if (nLines > 1)
+			{
+				char buffer[43]; // 2 * 21 chars + NULL
+
+				memcpy(buffer, text, len + 1);
+
+				char *p = buffer + 20;
+
+				// Find a space backward
+				while ((*p != ' ') && (p > buffer))
+				{
+					p--;
+				}
+
+				uint8_t rest = (uint8_t)((buffer + strlen(buffer)) - p) - ((*p == ' ') ? 1 : 0);
+
+				// rest is too long, just split the line in two chunks
+				if (rest > 21)
+				{
+					char c = buffer[21];
+
+					buffer[21] = 0;
+
+					ucPrintCentered(y, chomp(buffer), FONT_SIZE_1); // 2 pixels are saved, could center
+
+					buffer[21] = c;
+					buffer[42] = 0;
+
+					ucPrintCentered(y + 8, chomp(buffer + 21), FONT_SIZE_1);
+				}
+				else
+				{
+					*p = 0;
+
+					ucPrintCentered(y, chomp(buffer), FONT_SIZE_1);
+					ucPrintCentered(y + 8, chomp(p + 1), FONT_SIZE_1);
+				}
+			}
+			else // One line of 21 chars max
+			{
+				ucPrintCentered(y + 4, text, FONT_SIZE_1);
+			}
 		}
 	}
 }
@@ -1056,11 +1050,8 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 		{
 			memcpy(buffer, text, 17);
 			buffer[16] = 0;
-#if defined(PLATFORM_RD5R)
-			ucPrintCentered(28, chomp(buffer), FONT_SIZE_3);
-#else
-			ucPrintCentered(32, chomp(buffer), FONT_SIZE_3);
-#endif
+
+			ucPrintCentered(CONTACT_FIRST_LINE_Y_POS, chomp(buffer), FONT_SIZE_3);
 			displayChannelNameOrRxFrequency(buffer, (sizeof(buffer) / sizeof(buffer[0])));
 			return;
 		}
@@ -1071,11 +1062,8 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 			memcpy(buffer, text, cpos);
 			buffer[cpos] = 0;
 
-#if defined(PLATFORM_RD5R)
-			ucPrintCentered(24, chomp(buffer), FONT_SIZE_3);
-#else
-			ucPrintCentered(32, chomp(buffer), FONT_SIZE_3);
-#endif
+			ucPrintCentered(CONTACT_FIRST_LINE_Y_POS, chomp(buffer), FONT_SIZE_3);
+
 			memcpy(buffer, text + (cpos + 1), (maxLen - (cpos + 1)));
 			buffer[(strlen(text) - (cpos + 1))] = 0;
 
@@ -1083,11 +1071,7 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 
 			if (strlen(pbuf))
 			{
-#if defined(PLATFORM_RD5R)
-				printSplitOrSpanText(33, pbuf);
-#else
-				printSplitOrSpanText(48, pbuf);
-#endif
+				printSplitOrSpanText(CONTACT_SECOND_LINE_Y_POS, pbuf);
 			}
 			else
 			{
@@ -1100,11 +1084,8 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 			memcpy(buffer, text, 16);
 			buffer[16] = 0;
 
-#if defined(PLATFORM_RD5R)
-			ucPrintCentered(24, chomp(buffer), FONT_SIZE_3);
-#else
-			ucPrintCentered(32, chomp(buffer), FONT_SIZE_3);
-#endif
+			ucPrintCentered(CONTACT_FIRST_LINE_Y_POS, chomp(buffer), FONT_SIZE_3);
+
 			memcpy(buffer, text + 16, (maxLen - 16));
 			buffer[(strlen(text) - 16)] = 0;
 
@@ -1112,11 +1093,7 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 
 			if (strlen(pbuf))
 			{
-#if defined(PLATFORM_RD5R)
-				printSplitOrSpanText(32, pbuf);
-#else
-				printSplitOrSpanText(48, pbuf);
-#endif
+				printSplitOrSpanText(CONTACT_SECOND_LINE_Y_POS, pbuf);
 			}
 			else
 			{
@@ -1140,7 +1117,7 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 
 void menuUtilityRenderQSOData(void)
 {
-	menuUtilityReceivedPcId=0;//reset the received PcId
+	menuUtilityReceivedPcId = 0;//reset the received PcId
 
 	/*
 	 * Note.
@@ -1161,7 +1138,7 @@ void menuUtilityRenderQSOData(void)
 			// Its a Private call
 			ucPrintCentered(16, LinkHead->contact, FONT_SIZE_3);
 
-			ucPrintCentered((DISPLAY_SIZE_Y/2), currentLanguage->private_call, FONT_SIZE_3);
+			ucPrintCentered((DISPLAY_SIZE_Y / 2), currentLanguage->private_call, FONT_SIZE_3);
 
 			if (LinkHead->talkGroupOrPcId != (trxDMRID | (PC_CALL_FLAG << 24)))
 			{

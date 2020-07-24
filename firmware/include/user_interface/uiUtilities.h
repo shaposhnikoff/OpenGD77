@@ -21,14 +21,28 @@
 #include <functions/settings.h>
 
 
-#define MAX_ZONE_SCAN_NUISANCE_CHANNELS 16
-#define NUM_LASTHEARD_STORED 32
-extern const int QSO_TIMER_TIMEOUT;
-extern const int TX_TIMER_Y_OFFSET;
-extern const int CONTACT_Y_POS;
-extern const int FREQUENCY_X_POS;
-extern const int NUM_PC_OR_TG_DIGITS;
-extern const int MAX_TG_OR_PC_VALUE;
+#define MAX_ZONE_SCAN_NUISANCE_CHANNELS       16
+#define NUM_LASTHEARD_STORED                  32
+
+#define QSO_TIMER_TIMEOUT                   2400
+
+#if defined(PLATFORM_RD5R)
+#define TX_TIMER_Y_OFFSET                     12
+#define CONTACT_Y_POS                         12
+#define CONTACT_FIRST_LINE_Y_POS              24
+#define CONTACT_SECOND_LINE_Y_POS             33
+#else
+#define TX_TIMER_Y_OFFSET                      8
+#define CONTACT_Y_POS                         16
+#define CONTACT_FIRST_LINE_Y_POS              32
+#define CONTACT_SECOND_LINE_Y_POS             48
+#endif
+
+#define FREQUENCY_X_POS  /* '>Ta'*/ ((3 * 8) + 4)
+#define MAX_POWER_SETTING_NUM                  9
+#define NUM_PC_OR_TG_DIGITS                    8
+#define MAX_TG_OR_PC_VALUE              16777215
+
 
 extern struct_codeplugRxGroup_t currentRxGroupData;
 extern struct_codeplugContact_t currentContactData;
@@ -91,7 +105,6 @@ typedef enum
 	SCAN_PAUSED
 } ScanState_t;
 
-extern const int MAX_POWER_SETTING_NUM;
 extern const char *POWER_LEVELS[];
 extern const char *POWER_LEVEL_UNITS[];
 extern const char *DMR_DESTINATION_FILTER_LEVELS[];
