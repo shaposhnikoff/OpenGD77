@@ -143,6 +143,10 @@ static void updateScreen(bool isFirstRun)
 				break;
 			case OPTIONS_MENU_HOTSPOT_TYPE:
 				leftSide = (char * const *)&currentLanguage->hotspot_mode;
+#if defined(PLATFORM_RD5R)
+				rightSideConst = (char * const *)&currentLanguage->n_a;
+
+#else
 				{
 					const char *hsTypes[] = {"MMDVM", "BlueDV" };
 					if (nonVolatileSettings.hotspotType == 0)
@@ -154,6 +158,7 @@ static void updateScreen(bool isFirstRun)
 						snprintf(rightSideVar, bufferLen, "%s", hsTypes[nonVolatileSettings.hotspotType - 1]);
 					}
 				}
+#endif
 				break;
 			case OPTIONS_MENU_TALKER_ALIAS_TX:
 				leftSide = (char * const *)&currentLanguage->transmitTalkerAlias;
@@ -275,10 +280,12 @@ static void handleEvent(uiEvent_t *ev)
 				settingsSet(nonVolatileSettings.pttToggle, true);
 				break;
 			case OPTIONS_MENU_HOTSPOT_TYPE:
+#if !defined(PLATFORM_RD5R)
 				if (nonVolatileSettings.hotspotType < HOTSPOT_TYPE_BLUEDV)
 				{
 					settingsIncrement(nonVolatileSettings.hotspotType, 1);
 				}
+#endif
 				break;
 			case OPTIONS_MENU_TALKER_ALIAS_TX:
 				settingsSet(nonVolatileSettings.transmitTalkerAlias, true);
@@ -354,10 +361,12 @@ static void handleEvent(uiEvent_t *ev)
 				settingsSet(nonVolatileSettings.pttToggle, false);
 				break;
 			case OPTIONS_MENU_HOTSPOT_TYPE:
+#if !defined(PLATFORM_RD5R)
 				if (nonVolatileSettings.hotspotType > HOTSPOT_TYPE_OFF)
 				{
 					settingsDecrement(nonVolatileSettings.hotspotType, 1);
 				}
+#endif
 				break;
 			case OPTIONS_MENU_TALKER_ALIAS_TX:
 				settingsSet(nonVolatileSettings.transmitTalkerAlias, false);

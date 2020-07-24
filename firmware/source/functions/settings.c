@@ -84,6 +84,11 @@ bool settingsLoadSettings(void)
 		settingsRestoreDefaultSettings();
 	}
 
+// Force Hotspot mode to off for existing RD-5R users.
+#if defined(PLATFORM_RD5R)
+	nonVolatileSettings.hotspotType = HOTSPOT_TYPE_OFF;
+#endif
+
 	codeplugGetVFO_ChannelData(&settingsVFOChannel[CHANNEL_VFO_A], CHANNEL_VFO_A);
 	codeplugGetVFO_ChannelData(&settingsVFOChannel[CHANNEL_VFO_B], CHANNEL_VFO_B);
 	settingsInitVFOChannel(0);// clean up any problems with VFO data
