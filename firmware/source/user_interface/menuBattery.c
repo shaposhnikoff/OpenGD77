@@ -294,7 +294,11 @@ static void updateScreen(bool forceRedraw)
 
 	blink = !blink;
 
+#if defined(PLATFORM_RD5R)
+	ucRenderRows((renderArrowOnly ? 5 : 1), 6);
+#else
 	ucRenderRows((renderArrowOnly ? 7 : 1), 8);
+#endif
 }
 
 static void handleEvent(uiEvent_t *ev)
