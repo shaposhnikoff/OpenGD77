@@ -4,160 +4,156 @@
 
 For latest information and discussions, please refer to the development and community forum at https://opengd77.com
 
-<!-- MDTOC maxdepth:6 firsth1:1 numbering:0 flatten:0 bullets:1 updateOnSave:1 -->
+<!-- TOC titleSize:2 tabSpaces:2 depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 skip:0 title:1 charForUnorderedList:* -->
+## Table of Contents
+* [OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide](#opengd77--opengd77s--opendm1801--openrd5r-user-guide)
+  * [Introduction](#introduction)
+    * [Download links and other resources](#download-links-and-other-resources)
+  * [Installation](#installation)
+  * [Codeplug compatibility](#codeplug-compatibility)
+  * [Variations between different supported radios](#variations-between-different-supported-radios)
+  * [Main screens (VFO and Channel screens)](#main-screens-vfo-and-channel-screens)
+    * [Changing between VFO and Channel](#changing-between-vfo-and-channel)
+    * [Changing Timeslot in DMR mode](#changing-timeslot-in-dmr-mode)
+    * [Controlling Tx power](#controlling-tx-power)
+    * [Signal strength bar graph](#signal-strength-bar-graph)
+    * [Channel screen specific functionality](#channel-screen-specific-functionality)
+      * [Changing channels within the current zone](#changing-channels-within-the-current-zone)
+      * [Changing zones](#changing-zones)
+    * [Displaying the channel Frequency](#displaying-the-channel-frequency)
+    * [Displaying FM specific channel information](#displaying-fm-specific-channel-information)
+    * [Listening on a repeater input](#listening-on-a-repeater-input)
+      * [Channel screen Quick Menu](#channel-screen-quick-menu)
+        * [Copying a channel to VFO](#copying-a-channel-to-vfo)
+        * [Read the VFO into the current channel](#read-the-vfo-into-the-current-channel)
+        * [Filter (DMR only)](#filter-dmr-only)
+      * [VFO Quick Menu](#vfo-quick-menu)
+        * [VFO selection A or B](#vfo-selection-a-or-b)
+        * [Exchange the TX and RX frequencies](#exchange-the-tx-and-rx-frequencies)
+        * [Copy the RX frequency to the TX frequency](#copy-the-rx-frequency-to-the-tx-frequency)
+        * [Copy TX frequency to the RX frequency](#copy-tx-frequency-to-the-rx-frequency)
+        * [Filter (DMR mode only)](#filter-dmr-mode-only)
+      * [VFO to New Channel](#vfo-to-new-channel)
+        * [Tone Scan for CTCSS tone in FM](#tone-scan-for-ctcss-tone-in-fm)
+    * [DMR specific functionality (VFO and Channel screens)](#dmr-specific-functionality-vfo-and-channel-screens)
+      * [Timeslot selection](#timeslot-selection)
+      * [DMR ID callsign and name display](#dmr-id-callsign-and-name-display)
+      * [Talker Alias display](#talker-alias-display)
+      * [Talkgroup selection from the Rx Group list](#talkgroup-selection-from-the-rx-group-list)
+      * [Assignment of Timeslot to Digital Contact TalkGroup](#assignment-of-timeslot-to-digital-contact-talkgroup)
+      * [TalkGroup displayed in inverse video](#talkgroup-displayed-in-inverse-video)
+      * [Manual TalkGroup number entry](#manual-talkgroup-number-entry)
+      * [Private Call number entry](#private-call-number-entry)
+      * [Digital Contact selection](#digital-contact-selection)
+      * [Station DMR ID number entry](#station-dmr-id-number-entry)
+    * [FM specific functionality (VFO and Channel screens)](#fm-specific-functionality-vfo-and-channel-screens)
+      * [FM and FM Narrow](#fm-and-fm-narrow)
+      * [CTCSS Tone or DCS Code](#ctcss-tone-or-dcs-code)
+      * [Squelch](#squelch)
+      * [1750Hz Tone for repeater operation](#1750hz-tone-for-repeater-operation)
+      * [DTMF tone transmission](#dtmf-tone-transmission)
+    * [VFO specific functionality](#vfo-specific-functionality)
+      * [Frequency change up/down step](#frequency-change-updown-step)
+      * [Numerical frequency entry](#numerical-frequency-entry)
+      * [To adjust the TX frequency, independent of the RX frequency](#to-adjust-the-tx-frequency-independent-of-the-rx-frequency)
+  * [Transmitting](#transmitting)
+    * [Timeout warning beep](#timeout-warning-beep)
+    * [TOT](#tot)
+  * [Scanning](#scanning)
+    * [Channel scanning](#channel-scanning)
+    * [VFO scanning](#vfo-scanning)
+  * [Other screens](#other-screens)
+    * [Lock screen](#lock-screen)
+    * [Text entry](#text-entry)
+  * [The control keys and buttons](#the-control-keys-and-buttons)
+  * [The Menu System](#the-menu-system)
+  * [Main Menu](#main-menu)
+    * [Zone](#zone)
+    * [RSSI](#rssi)
+    * [Battery](#battery)
+    * [Last Heard](#last-heard)
+    * [Firmware Info](#firmware-info)
+    * [Options](#options)
+      * [Fact Reset](#fact-reset)
+      * [Calibration](#calibration)
+      * [Band Limits](#band-limits)
+      * [Key long](#key-long)
+      * [Key rpt](#key-rpt)
+      * [Filter time](#filter-time)
+      * [Scan delay](#scan-delay)
+      * [Scan mode](#scan-mode)
+      * [Squelch UHF](#squelch-uhf)
+      * [Squelch 220](#squelch-220)
+      * [Squelch VHF](#squelch-vhf)
+      * [PTT Latch](#ptt-latch)
+      * [Hotspot](#hotspot)
+      * [TA Tx](#ta-tx)
+      * [Allow PC](#allow-pc)
+    * [Display Options](#display-options)
+      * [Brightness](#brightness)
+      * [Min Bright](#min-bright)
+      * [Contrast](#contrast)
+      * [Display mode](#display-mode)
+      * [Timeout](#timeout)
+      * [Colour mode](#colour-mode)
+      * [Order](#order)
+      * [Contact](#contact)
+    * [Sound Options](#sound-options)
+      * [Timeout beep](#timeout-beep)
+      * [Beep volume](#beep-volume)
+      * [DMR Beep](#dmr-beep)
+      * [DMR mic](#dmr-mic)
+      * [FM mic](#fm-mic)
+      * [VOX threshold](#vox-threshold)
+      * [VOX Tail](#vox-tail)
+    * [Channel Details](#channel-details)
+      * [Mode](#mode)
+      * [Color Code](#color-code)
+      * [Timeslot](#timeslot)
+      * [Tx/RX Grp](#txrx-grp)
+      * [Tx CTCSS or DCS](#tx-ctcss-or-dcs)
+      * [Rx CTCSS or DCS](#rx-ctcss-or-dcs)
+      * [Bandwidth](#bandwidth)
+      * [RX](#rx)
+      * [TX](#tx)
+      * [Step](#step)
+      * [TOT](#tot)
+      * [Zone Skip](#zone-skip)
+      * [All Skip](#all-skip)
+      * [VOX](#vox)
+      * [Accepting and saving the changes to the channel](#accepting-and-saving-the-changes-to-the-channel)
+    * [Credits Screen](#credits-screen)
+  * [Making and receiving DMR Private Calls](#making-and-receiving-dmr-private-calls)
+    * [To make a Private Call](#to-make-a-private-call)
+    * [To Receive a Private Call](#to-receive-a-private-call)
+  * [Hotspot mode](#hotspot-mode)
+  * [Resetting the Settings](#resetting-the-settings)
+  * [GD-77S operation](#gd-77s-operation)
+    * [GD77S Channel / TG modem](#gd77s-channel--tg-modem)
+    * [GD77S Scan mode](#gd77s-scan-mode)
+    * [GD77S Timeslot mode](#gd77s-timeslot-mode)
+    * [GD77S Colourcode mode](#gd77s-colourcode-mode)
+    * [GD77S DMR Filter mode](#gd77s-dmr-filter-mode)
+    * [GD77S Zone mode](#gd77s-zone-mode)
+    * [GD77S Power modem](#gd77s-power-modem)
+  * [CPS software](#cps-software)
+    * [Overview](#overview)
+      * [New Driver Installation](#new-driver-installation)
+      * [OpenGD77 Menu](#opengd77-menu)
+      * [Backup Before You Do Anything Else](#backup-before-you-do-anything-else)
+      * [Reading and Writing Your Codeplug](#reading-and-writing-your-codeplug)
+      * [Writing DMR IDs -- the User Database](#writing-dmr-ids----the-user-database)
+<!-- /TOC -->
 
-- [OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide](#opengd77-opengd77s-opendm1801-openrd5r-user-guide)   
-   - [Introduction](#introduction)   
-      - [Credits](#credits)   
-      - [Download links and other resources](#download-links-and-other-resources)   
-   - [Installation](#installation)   
-   - [Codeplug compatibility](#codeplug-compatibility)   
-   - [Variations between different supported radios](#variations-between-different-supported-radios)   
-   - [Main screens (VFO and Channel screens)](#main-screens-vfo-and-channel-screens)   
-      - [Changing between VFO and Channel](#changing-between-vfo-and-channel)   
-      - [Changing Timeslot in DMR mode](#changing-timeslot-in-dmr-mode)   
-      - [Controlling Tx power](#controlling-tx-power)   
-      - [Signal strength bar graph](#signal-strength-bar-graph)   
-      - [Channel screen specific functionality](#channel-screen-specific-functionality)   
-         - [Changing channels within the current zone](#changing-channels-within-the-current-zone)   
-         - [Changing zones](#changing-zones)   
-      - [Displaying the channel Frequency](#displaying-the-channel-frequency)   
-      - [Displaying FM specific channel information](#displaying-fm-specific-channel-information)   
-      - [Listening on a repeater input](#listening-on-a-repeater-input)   
-         - [Channel screen Quick Menu](#channel-screen-quick-menu)   
-            - [Copying a channel to VFO](#copying-a-channel-to-vfo)   
-            - [Read the VFO into the current channel](#read-the-vfo-into-the-current-channel)   
-            - [Filter (DMR only)](#filter-dmr-only)   
-         - [VFO Quick Menu](#vfo-quick-menu)   
-            - [VFO selection A or B](#vfo-selection-a-or-b)   
-            - [Exchange the TX and RX frequencies](#exchange-the-tx-and-rx-frequencies)   
-            - [Copy the RX frequency to the TX frequency](#copy-the-rx-frequency-to-the-tx-frequency)   
-            - [Copy TX frequency to the RX frequency](#copy-tx-frequency-to-the-rx-frequency)   
-            - [Filter (DMR mode only)](#filter-dmr-mode-only)   
-         - [VFO to New Channel](#vfo-to-new-channel)   
-            - [Tone Scan for CTCSS tone in FM](#tone-scan-for-ctcss-tone-in-fm)   
-      - [DMR specific functionality (VFO and Channel screens)](#dmr-specific-functionality-vfo-and-channel-screens)   
-         - [Timeslot selection](#timeslot-selection)   
-         - [DMR ID callsign and name display](#dmr-id-callsign-and-name-display)   
-         - [Talker Alias display](#talker-alias-display)   
-         - [Talkgroup selection from the Rx Group list](#talkgroup-selection-from-the-rx-group-list)   
-         - [Assignment of Timeslot to Digital Contact TalkGroup](#assignment-of-timeslot-to-digital-contact-talkgroup)   
-         - [TalkGroup displayed in inverse video](#talkgroup-displayed-in-inverse-video)   
-         - [Manual TalkGroup number entry](#manual-talkgroup-number-entry)   
-         - [Private Call number entry](#private-call-number-entry)   
-         - [Digital Contact selection](#digital-contact-selection)   
-         - [Station DMR ID number entry](#station-dmr-id-number-entry)   
-      - [FM specific functionality (VFO and Channel screens)](#fm-specific-functionality-vfo-and-channel-screens)   
-         - [FM and FM Narrow](#fm-and-fm-narrow)   
-         - [CTCSS Tone or DCS Code](#ctcss-tone-or-dcs-code)   
-         - [Squelch](#squelch)   
-         - [1750Hz Tone for repeater operation](#1750hz-tone-for-repeater-operation)   
-         - [DTMF tone transmission](#dtmf-tone-transmission)   
-      - [VFO specific functionality](#vfo-specific-functionality)   
-         - [Frequency change up/down step](#frequency-change-updown-step)   
-         - [Numerical frequency entry](#numerical-frequency-entry)   
-         - [To adjust the TX frequency, independent of the RX frequency](#to-adjust-the-tx-frequency-independent-of-the-rx-frequency)   
-   - [Transmitting](#transmitting)   
-      - [Timeout warning beep](#timeout-warning-beep)   
-      - [TOT](#tot)   
-   - [Scanning](#scanning)   
-      - [Channel scanning](#channel-scanning)   
-      - [VFO scanning](#vfo-scanning)   
-   - [Other screens](#other-screens)   
-      - [Lock screen](#lock-screen)   
-      - [Text entry](#text-entry)   
-   - [The control keys and buttons](#the-control-keys-and-buttons)   
-      - [GD-77](#gd-77)   
-      - [Baofeng RD-5R](#baofeng-rd-5r)   
-   - [The Menu System](#the-menu-system)   
-   - [Main Menu](#main-menu)   
-      - [Zone](#zone)   
-      - [RSSI](#rssi)   
-      - [Battery](#battery)   
-      - [Last Heard](#last-heard)   
-      - [Firmware Info](#firmware-info)   
-      - [Options](#options)   
-         - [Fact Reset](#fact-reset)   
-         - [Calibration](#calibration)   
-         - [Band Limits](#band-limits)   
-         - [Key long](#key-long)   
-         - [Key rpt](#key-rpt)   
-         - [Filter time](#filter-time)   
-         - [Scan delay](#scan-delay)   
-         - [Scan mode](#scan-mode)   
-         - [Squelch UHF](#squelch-uhf)   
-         - [Squelch 220](#squelch-220)   
-         - [Squelch VHF](#squelch-vhf)   
-         - [PTT Latch](#ptt-latch)   
-         - [Hotspot](#hotspot)   
-         - [TA Tx](#ta-tx)   
-         - [Allow PC](#allow-pc)   
-      - [Display Options](#display-options)   
-         - [Brightness](#brightness)   
-         - [Min Bright](#min-bright)   
-         - [Contrast](#contrast)   
-         - [Display mode](#display-mode)   
-         - [Timeout](#timeout)   
-         - [Colour mode](#colour-mode)   
-         - [Order](#order)   
-         - [Contact](#contact)   
-      - [Sound Options](#sound-options)   
-         - [Timeout beep](#timeout-beep)   
-         - [Beep volume](#beep-volume)   
-         - [DMR Beep](#dmr-beep)   
-         - [DMR mic](#dmr-mic)   
-         - [FM mic](#fm-mic)   
-         - [VOX threshold](#vox-threshold)   
-         - [VOX Tail](#vox-tail)   
-         - [Prompt](#prompt)   
-            - [Silent](#silent)   
-            - [Normal](#normal)   
-            - [Beep](#beep)   
-            - [Voice](#voice)   
-            - [Voice L2](#voice-l2)   
-            - [Voice L2](#voice-l2)   
-      - [Channel Details](#channel-details)   
-         - [Mode](#mode)   
-         - [Color Code](#color-code)   
-         - [Timeslot](#timeslot)   
-         - [Tx/RX Grp](#txrx-grp)   
-         - [Tx CTCSS or DCS](#tx-ctcss-or-dcs)   
-         - [Rx CTCSS or DCS](#rx-ctcss-or-dcs)   
-         - [Bandwidth](#bandwidth)   
-         - [RX](#rx)   
-         - [TX](#tx)   
-         - [Step](#step)   
-         - [TOT](#tot)   
-         - [Zone Skip](#zone-skip)   
-         - [All Skip](#all-skip)   
-         - [VOX](#vox)   
-         - [Accepting and saving the changes to the channel](#accepting-and-saving-the-changes-to-the-channel)   
-      - [Credits Screen](#credits-screen)   
-   - [Making and receiving DMR Private Calls](#making-and-receiving-dmr-private-calls)   
-      - [To make a Private Call](#to-make-a-private-call)   
-      - [To Receive a Private Call](#to-receive-a-private-call)   
-   - [Hotspot mode](#hotspot-mode)   
-   - [Resetting the Settings](#resetting-the-settings)   
-   - [Programming Channels and Talkgroups for use with the firmware](#programming-channels-and-talkgroups-for-use-with-the-firmware)   
-      - [Overview](#overview)   
-         - [New Driver Installation](#new-driver-installation)   
-         - [OpenGD77 Menu](#opengd77-menu)   
-         - [Backup Before You Do Anything Else](#backup-before-you-do-anything-else)   
-         - [Reading and Writing Your Codeplug](#reading-and-writing-your-codeplug)   
-         - [Writing DMR IDs -- the User Database](#writing-dmr-ids-the-user-database)   
-         - [Loading Voice prompt files onto the radios](#loading-voice-prompt-files-onto-the-radios)   
-
-<!-- /MDTOC -->
 
 <div style="page-break-after: always; break-after: page;"></div>
-
 
 ![](media/OpenGD77-logo.png)
 
 
 ## Introduction
 
-This user guide is a work in progress as is the OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R and OpenGD77S firmware. If you find any errors or omissions please let me know so they can be corrected.
+This user guide is a work in progress as is the OpenGD77, OpenGD77S, OpenDM1801 and  OpenRD5R firmware.
 
 Due to the rapid pace of development some of photos of screens are now out of date and not completely accurate.
 
@@ -167,39 +163,21 @@ The intention of the project is to create a fully featured non-commercial firmwa
 This firmware is specifically designed for **Amateur Radio** use, and has features not available in the official firmware.
 
 **Note:**
-**The firmware is still under development and there are some key areas of functionality which have yet to be written.**
+**The firmware is still under development and there are some key areas of functionality which are supported in the official firmware but not in this firmware**
 
-1. DMR Tier 2 Tx and Rx voice transmissions works.
+SMS message Tx and Rx are not currently supported, but may possibly be supported in the future.
 
-   Text messaging and other similar features are currently not supported, but are on the To Do list.
+Dual Watch is not supported, and may never be supported, because this functionality can almost be replicated using the Channel / Zone scan feature
+Scan Lists are not supported because Channel / Zone scan feature provides almost identical functionality.
 
-1. FM Rx and Tx transmission works.
+Privacy and Encryption will not be supported, as its illegal for Amateur Radio use, developers in some countries (e.g. Australia) are now legally required to put a back door access into any encryption systems at the request of the government, hence effectively making it illegal or impossible to develop systems that contain encryption.
 
-   This includes repeater operation using CTCSS or DCS on both Tx and Rx.
+Battery saving features have not been developed, hence this firmware causes much higher battery usage in Rx when there is no signal. Some battery saving features may be developed in the future, however some advanced features like the S meter will not be possible if battery saving is implemented.
 
-
-   For a full list of current bugs, and proposed enhancements see
-   <https://github.com/rogerclarkmelbourne/opengd77/issues>
-
-Also, as far as possible the firmware is open source.
-This allows anyone to modify the firmware to suit their own individual needs, and also for peer review and improvement of the firmware source code.
-
-### Credits
-
-The project was conceived by Kai DG4KLU, who developed the initial framework and all the FM and DMR TX and RX (Tier 1) functionality. Kai ceased actively participating in the project in June 2019.
-
-At the time of writing Roger VK3KYY is now the lead developer, with assistance from Daniel F1RMB.
-
-The Tier 2 functionality, User Interface, Display driver, Codeplug API, EEPROM memory API, Flash memory API, Hotspot mode and many other features were developed by Roger VK3KYY
-Other code sections were written or bug fixed by Daniel F1RMB, Alex DL4LEX, Colin G4EML and others.
-
-This user guide was written by Roger VK3KYY based on work by Alister G0NEF. Additional edits by Angelo 4I1RAC and Bud W0RMT, and graphics by Thierry F1CXG (buttons) and Rafa EA3BIL (menu map).
-
-Thanks to all the Beta Testers that provide detailed bug reports and user feedback, especially VK7ZCR, W1RHS and G4TSN
 
 ### Download links and other resources
 
-**Firmware source code and binaries:**
+**Firmware binaries:**
 
 **Latest version:**
 <https://github.com/rogerclarkmelbourne/OpenGD77/releases>
@@ -207,32 +185,28 @@ Thanks to all the Beta Testers that provide detailed bug reports and user feedba
 **OpenGD77 CPS with support new features like 80 channel zones:**
 <https://github.com/rogerclarkmelbourne/OpenGD77CPS/releases>
 
-**OpenGD77Forum:**<br>
+**OpenGD77Forum:**
 <https://www.opengd77.com/>
 
 ## Installation
 
-The firmware can be installed onto the
+The firmware can be installed onto the following radios
 
-* Radioddity GD-77
+* Radioddity GD-77 (also known as TYT MD-760)
 * Radioddity GD-77S
-* TYT MD-760
-* Baofeng DM-1801
-* Baofeng DM-860
-* Baofeng RD-5R
+* Baofeng DM-1801 (also know as Baofeng DM-860)
+* Baofeng RD-5R (also know as Baofeng DM-5R Tier 2)
 
-using the firmware update tool provided by Radioddity, or Baofeng with their official firmware update packages. This can be downloaded from Radioddity’s website [radioddity.com](https://radioddity.com/) . See Radioddity’s documentation on how to use their firmware update tool.
+Firmware can be installed using the FirmwareLoader.exe in the firmware release, or by using the firmware update tool provided by Radioddity, or Baofeng with their official firmware update packages. This can be downloaded from Radioddity’s website [radioddity.com](https://radioddity.com/) . See Radioddity’s documentation on how to use their firmware update tool.
 
-Or using the FirmwareLoader.exe in the firmware release
+Installation of the firmware is undertaken at the owners own risk, but the official firmware can usually be reloaded onto the radio if the user has problems with the firmware, **as long as the operator takes a full backup of their radio using the OpenGD77 CPS immediately after the firmware has been installed**
 
-Installation of the firmware is undertaken at the owners own risk, but the official firmware can usually be reloaded onto the radio if the user has problems with the firmware.
-
-*Note:* The official Radioddity CPS PC software is not compatible with the firmware, and the “Community CPS” or the "OpenGD77 CPS" should be used instead. This can be downloaded from the link show in section 1.1 of this guide. This CPS must also be used for the Baofeng DM-1801
+*Note:* The official Radioddity CPS PC software is not compatible with the firmware, and the "OpenGD77 CPS" should be used instead. This can be downloaded from the link show in section 1.1 of this guide. This CPS must also be used for the Baofeng DM-1801
 
 
 ## Codeplug compatibility
 
-The offficial frimware for each of these radios use slighly different codeplug formats.
+The official firmware for each of these radios use slightly different codeplug formats.
 
 Users radios other than the GD-77 will need to convert their codeplug using the tools written by Colin G4EML.
 See http://www.gb3gf.co.uk/downloads.html
@@ -245,13 +219,24 @@ Its also recommended that you restructure your codeplug to remove any duplicate 
 
 ## Variations between different supported radios
 
-Not all the supported radios have the same number of buttons, or the same size screen, hence there are some differences when operating radios other than the Radioddity GD-77
+Not all the supported radios have the same number of buttons, or the same size screen, hence there are some differences when operating radios other than the Radioddity GD-77.
+Also, not all radios support all the functionality
 
-* The Baofeng DM-1801 / DM-860 has a dedicated **MR/VFO** button, which is used to change between Channel and VFO mode, in place of pressing the **Red** menu key
-* The Baofeng DM-1801 / DM-860 has a dedicated **A/B** button, which is used to change between VFO A and B, in place of pressing the quick menu via the **Orange** button on the top of the radio
+* The Baofeng RD-5R / DM-5R USB hardware will not support USB connections while the radio is transmitting, so it is not possible to use Hotspot mode on this radio.
+
 * The Baofeng RD-5R / DM-5R does not have left or right arrow buttons, so the **A/B** button is used to replace the left arrow and the "Band" button is used to replace the right arrow
 * The Baofeng RD-5R / DM-5R does not the **Orange** button, and its functionality has been similated by using a Long press on the orange coloured **MR/VFO** button
 * The Baofeng RD-5R / DM-5R has 2 buttons on the side, but their position is different from the GD-77 and DM-1801. The button above the PTT is used as the "Black" button on the side of the GD-77, also know as button SK1. The button below the PTT is used as the **Blue** button, also know as SK2.
+
+* The Baofeng RD-5R / DM-5R does not work well as a Hotspot, because its RF output is impure and seems to cause RFI problems with the Raspberry Pi and possibly other host systems, causing the USB connection to fail.
+
+* The Radioddity GD-77S does not have a keypad or screen, hence its operation is completely different from the other supported radios that have a screen.
+
+See the appendix on GD-77S operation
+(#gd-77s-operation)
+
+* The Baofeng DM-1801 / DM-860 has a dedicated **MR/VFO** button, which is used to change between Channel and VFO mode, in place of pressing the **Red** menu key
+* The Baofeng DM-1801 / DM-860 has a dedicated **A/B** button, which is used to change between VFO A and B, in place of pressing the quick menu via the **Orange** button on the top of the radio
 
 
 ## Main screens (VFO and Channel screens)
@@ -313,7 +298,7 @@ To acess this power setting, select the 5W power setting, then press and hold **
 
 ### Signal strength bar graph
 
-In both FM and DMR mode, the signal strength of the received signal is show as a bar graph across with width of the screen. 100% bar graph is approximately S9 +40 dB.
+In both FM and DMR mode, the signal strength of the received signal is show as a bar graph across with width of the screen. 100% bar graph is approximately S9 +40dB.
 
 In DMR mode the signal meter will only be active when the DMR hardware detects a DMR signal.
 
@@ -367,18 +352,34 @@ Press the **Orange** button or **Green** key to copy the content of the current 
 
 Press the **Orange** button or **Green** key to confirm and save the updated channel to the codeplug memory. **Red** key to cancel.
 
-##### Filter (DMR only)
+##### Filter
+
+###### Filter in FM Mode
+Use the **Right** or **Left** arrows to enable or disable CTCSS/DCS filtering
+
+###### Filter in DMR mode
 
 Use the **Right** or **Left** arrows to select
 * **None** (for no filtering, i.e. "promiscuous" mode).
-* **CC** (filter by Colour Code).
-* **CC**,**TS** (to filter by Colour Code and the selected timeslot),
-* **CC**,**TS**,**TG** (to filter by Colour Code and the selected timeslot and also the selected Talkgroup)
-* **CC**,**TS**,**Ct** (to filter by Colour Code and the selected timeslot and also only for contacts in the Digital Contacts in the codeplug)
-* **CC**,**TS**,**RxG** (to filter by Colour Code and the selected timeslot and also only for the selected or manually entered Talkgroup, and the Talkgroups in the TG list / Rx Group list)
+* **TG** (to filter by the selected Talkgroup)
+* **Ct** (to filter by Private Call Contacts in the codeplug)
+* **RxG** (to filter by Talkgroups in the TG list / Rx Group list)
 
-When timeslot filtering is disabled, the TS1 / TS2 indication at the top of the screen is displayed in inverse video.
-When Talkgroup filtering is enabled the DMR  mode indication at the top of the screen is displayed in inverse video.
+When this filter is enabled the DMR  mode indication at the top of the screen is displayed in inverse video.
+
+##### CC Filter (DMR mode only)
+
+Controls whether the radio filters by Colour Codeplug
+Use the **Right** or **Left** arrows to enable or disable
+
+When Colour Code filtering is disabled the Colour Code number is displayed in inverse video.
+
+##### TS Filter (DMR mode only)
+
+Controls whether the radio filters by Timeslot
+Use the **Right** or **Left** arrows to enable or disable
+
+When Timeslot filtering is disabled the Timeslot number is displayed in inverse video.
 
 ![](media/channel-quick-menu.png)
 
@@ -391,7 +392,7 @@ Note. The Baofeng RD-5R does not have an Orange button. On this radio press and 
 ##### VFO selection A or B
 
 Pressing the **Orange** button twice while in VFO mode quickly toggles between VFO A and VFO B.
-On the Baofeng DM-1801 / DM-860, this function is contolled using the **A/B** button.
+On the Baofeng DM-1801 / DM-860, this function is controlled using the **A/B** button.
 
 ##### Exchange the TX and RX frequencies
 
@@ -407,18 +408,18 @@ Copies the TX frequency to the RX frequency. Press **Green** key or **Orange** b
 
 ##### Filter (DMR mode only)
 
-This function is identical to the Filter described forChannel mode operation (above)
+This function is identical to the Filter described for Channel mode operation (above)
 
 #### VFO to New Channel
 
-The "VFO --> New Chan" option, creats a new channel using the current VFO settings.
+The "VFO --> New Chan" option, creates a new channel using the current VFO settings.
 The name of the new channel uses the format "New channel NNN", where NNN is next available number in the All Channels zone.
 
 This channel is not added to a Zone but is available via the "All Channels" Zone.
 
 ##### Tone Scan for CTCSS tone in FM
 
-This scans for any CTCSS tone, and sets the VFO to these paramaters.
+This scans for any CTCSS tone, and sets the VFO to these parameters.
 
 Press the **Orange** button or **Green** key to confirm the copy or **Red** key to cancel.
 
@@ -487,7 +488,7 @@ To return to the previous TG prior to manually entering the TG, press either the
 
 ![](media/talkgroup-entry.png)
 
-When a TG has been manually entered, the display shows a 1 pixel box around the TG display area to indicate that this TG has been manually entered, even if the Contact / TG name is displayed rather than the TG nunber.
+When a TG has been manually entered, the display shows a 1 pixel box around the TG display area to indicate that this TG has been manually entered, even if the Contact / TG name is displayed rather than the TG number.
 
 ![](media/talkgroup-manually-entered.png)
 
@@ -642,7 +643,7 @@ If TOT is setup for the current channel or VFO, when the timer counts down to ze
 
 ## Scanning
 
-Both the Channel and VFO screens support scanning, but their operation is slighly different.
+Both the Channel and VFO screens support scanning, but their operation is slightly different.
 
 ### Channel scanning
 
@@ -704,12 +705,7 @@ Press **Left** and **Right** to move the cursor. Press **Function-Left** as back
 
 ## The control keys and buttons
 
-### GD-77
 ![](media/RadioButtonsHSs.jpg)
-
-### Baofeng RD-5R
-
-![](media/OpenRD5R_controlkeys.jpg)
 
 ## The Menu System
 
@@ -874,6 +870,8 @@ Note. The PTT latch function, only works if a timeout has been defined for the c
 
 #### Hotspot
 
+**Hotspot mode is not supported on the Baofeng RD-5R / DMR-5R because the hardware does not support reliable USB communications while the radio is transmitting**
+
 This option controls whether the firmware will enter hotspot mode when connected to MMDVMHost, including PiStar, or to BlueDV.
 
 Options are
@@ -881,12 +879,18 @@ Options are
 **MMDVM**  for use with PiStar or any other system using MMDVMHost
 **BlueDV** for use with BlueDV
 
-On the GD-77S. To enable hotspot mode, Press and hold the **black button** (SK1) when turning on the radio to enable **MMDVM** mode or **black button** and **PTT** to enable **BlueDV** mode.
+On the GD-77S. To enable hotspot mode, Press and hold the **black button** (SK1) when turning on the radio will toggle hotspot mode between **MMDVM** and **BlueDV** mode.
+
+
 
 #### TA Tx
 
-Enables Talker Alias data transmission.
-The the text of "Line1" and "Line2" from the "Boot Item" screen is used for this transmission, with no space between the Line1 and Line2 data.
+Enables **transmission** of Talker Alias data
+
+Please note.
+Talker Alias reception is always operational. Do not enable this feature because you are not receiving TA data, as it does not control TA Rx.
+
+The text of "Line1" and "Line2" from the "Boot Item" screen is used for this transmission, with no space between the Line1 and Line2 data.
 
 Note.
 Use of this feature will cause problems on Motorola based repeaters and networks, and should only be used for simplex and possibly on Brandmeister and other networks which correctly support Talker Alias
@@ -935,7 +939,7 @@ Cc = Digital Contacts (in the codeplug)
 Db = DMR ID database
 TA = Talker Alias
 
-The default is Cc/Db/TA, which means the receiced DMR ID is first checked in the Digital Contacts, and if not found the internal DMR ID database is searched, and if not found and the DMR transmission includes Talker Alias, then Talker Alias will be used.
+The default is Cc/Db/TA, which means the received DMR ID is first checked in the Digital Contacts, and if not found the internal DMR ID database is searched, and if not found and the DMR transmission includes Talker Alias, then Talker Alias will be used.
 
 #### Contact
 Controls the position on the screen where the DMR Callsign and Name etc, is displayed on the screen
@@ -965,7 +969,7 @@ This controls the volume of the beep and other tones, and can be set from 100% t
 ####  DMR Beep
 
 This setting controls the beeps which are played at the start or end, or both start and end of DRM transmissions
-The beep at the start of transmissions is used to confirm connection to a repeater, becuase it is only played when the radio enters the main transmission phase to a repeater, and not when its 'waking' the repeater
+The beep at the start of transmissions is used to confirm connection to a repeater, because it is only played when the radio enters the main transmission phase to a repeater, and not when its 'waking' the repeater
 These beeps are only played through the radio's speaker, they are not transmitted via the DMR audio signal
 
 Options are "Start", "Stop", "None" or "Both"
@@ -990,47 +994,6 @@ Threshold value which controls the mic level which triggers the radio to transmi
 
 Controls the length of time after the operator stops speaking, before the transmission is ended.
 
-#### Prompt
-
-Controls the beep or voice prompt which is produced when keys are pressed.
-
-Options are
-
-##### Silent
-No beep or other sound is produced when keys or buttons are pressed.
-
-##### Normal
-A single pitch beep sound is played when any keys are pressed.
-
-##### Beep
-This option is the same as the "Normal" option with beeps played when keys are pressed, but the pitch of the beep changes, with the first item in any screen producing a higher pitch beep.
-For Example. The when changing channels, using the Up or Down arrow keys, when the first channel in the current zone is reached, the higher frequency beep pitch is played.
-Likewise when navigating the menus, when the first item in each menu is reached the higher pitch beep is played.
-
-##### Voice
-This mode can only be selected if voice prompt files have been installed into the radio using the OpenGD77CPS.
-
-When selected this option will immediately voice all menu items.
-Also if button SK1 is pressed details of the current Channel , Talkgroup or VFO frequency etc, are voiced.
-
-The prompt that is played in resonse to pressing button SK1, will depend on the last action peformed by the operator.
-For Example. If the last operation was selecting VFO mode, then presing SK1 will voice the current VFO name (A or B), and also the VFO frequency.
-If the last operation was to change the channel on the Channel screen, the channel name will be announced, letter my letter.
-If the last operation was to select a menu option, that menu option will be voiced.
-
-##### Voice L2
-This is voice prompt level 2, also known as (mode 2).
-The operation of this mode is currently almost identical to the normal voice mode, except if a button is pressed whilst the previous prompt is still playing, the effect of the button press will be immediatly voiced.
-
-For example, if button SK1 is pressed on the Channel screen to play the current channel name, and the Up or Down arrows are pressed to change channel, the newly selected channel name will immediately be played in response to the button press on Up or Down.
-
-##### Voice L2
-This is voice prompt level 3, also known as (mode 3).
-
-In this mode, the voice prompt is played immediately in response to any button press.
-
-
-
 ### Channel Details
 
 ![](media/channel-details.png)
@@ -1046,7 +1009,7 @@ Sets the color code when the VFO/Channel is set to DMR
 Selects DMR Timeslot 1 or 2 when the VFO/Channel is set to DMR.
 
 #### Tx/RX Grp
-Selects which Tx/Rx group is assigned to teh current channel (DMR only).
+Selects which Tx/Rx group is assigned to the current channel (DMR only).
 
 #### Tx CTCSS or DCS
 Sets the transmit CTCSS tone or DCS code when the VFO/Channel is set to FM.
@@ -1056,21 +1019,17 @@ Sets the receive CTCSS tone or DCS code when the VFO/Channel is set to FM.
 
 For both Tx and Rx CTCSS / DCS. **Long press** of **Right arrow** or **Left arrow**, skips forward, or back by 5 entries in the list of possible CTCSS / DCS settings.
 
-Pressing **Funtion + Right** or **Function + Left** skips to the end or beginning of the current CTCSS / DSC items.
+Pressing **Function + Right** or **Function + Left** skips to the end or beginning of the current CTCSS / DSC items.
 
 #### Bandwidth
 Sets the Rx and Tx bandwidth in FM mode to either 25Khz or 12.5Khz
 
 #### RX
-
 Rx frequency.
-
 Enter the frequency via the keypad
 
 #### TX
-
 Tx frequency
-
 Enter the frequency via the keypad
 
 #### Step
@@ -1086,8 +1045,7 @@ Set to skip the channel when scanning within the zone.
 Set to skip the channel when scanning within the All Channels list.
 
 #### VOX
-
-Controls whether VOX is enabled or disabled.
+Controls whether VOX (Voice Operated Switch) is enabled or disabled.
 
 #### Accepting and saving the changes to the channel
 Pressing the **Green** menu key confirms the changes.
@@ -1102,6 +1060,7 @@ Pressing the **Red** menu key closes the menu without making any changes to the 
 Details of the creators of firmware.
 
 If other developers contribute to the development effort they will be added to this screen, and the addition details will be viewed by pressing the **Down Arrow** to scroll the text
+
 
 ## Making and receiving DMR Private Calls
 
@@ -1154,6 +1113,17 @@ Once the private call is complete, you can return to the Talkgroup you were on p
 
 ## Hotspot mode
 
+**IMPORTANT INFORMATION**
+
+**Hotspot mode is not supported on the Baofeng RD-5R / DMR-5R because the hardware does not support reliable USB communications while the radio is transmitting**
+
+* The USB connection between the radio and the host system e.g. PiStar needs to be protected from RF injection, otherwise the USB connection will be occasionally be reset when the radio is transmitting, which will cause the hotspot to stop working.
+* Do not use the antenna on top of the radio when in hotspot mode, this usually causes RF injection problems which can't be resolved by screening or ferrite chokes.
+* Connect the radio to an external antenna.
+* Use ferrite RFI protection on the USB cable.
+* When using a Raspberry Pi as the host system, use a metal enclosure for the Raspberry Pi
+
+
 The firmware can operate as a DMR (*voice only*) hotspot when connected via its USB programming cable to a Raspberry Pi running PiStar or any other device that is running MMDVMHost.
 
 *Note.* Hotspot mode may be compatible with software like BlueDV, but your mileage may vary.
@@ -1193,6 +1163,18 @@ Instead the firmware will use the power setting specified by the user in the Uti
 If the power setting in the PiStar MMDVMHost Expert settings is any other value e.g. 50%, the hotspot will use that power setting closest to the chosen value.
 So 50% of 5W is 2.5W, and the closest power setting to this is 2W.
 
+Power | PiStar RFLevel
+--- | ---
+50mW  | 1
+250mW  | 5
+500mW  |10
+750mW  |15
+1W  |  20
+2W  | 40
+4W  | 80
+5W  | 99
+5W++ | N/A
+
 The receive frequency specified by PiStar will be displayed at the bottom of the screen.
 
 *Note.* Offsets should not be applied to the TX or RX frequencies in PiStar, because the radio should not need any offsets, and any offset will be reflected in the frequency displayed on the radio, because PiStar actually sends the master frequency +/- the offset to the hotspot.
@@ -1207,12 +1189,60 @@ The LED on the top of the radio also turns red to indicate the radio is transmit
 
 ## Resetting the Settings
 
-The radio can also be set to the default settings by holding the **Blue (Function)** key while turning on the radio.
+The radio can also be set to the default settings by holding the **Blue (SK2)** key while turning on the radio.
 
-Additionally holding the **Orange** button, resets any custom boot melody and custom boot image that has been uploaded using the OpenGD77 CPS.
+Additionally holding the **Blue (SK2)** button as well as the **Up arrow** and **Down arrow** keys , resets any custom boot melody and custom boot image that has been uploaded using the OpenGD77 CPS.
+
+On the GD-77S, because it does not have a keypad, then holding **Blue (SK2)** and **Orange** resets any custom boot melody.
 
 
-## Programming Channels and Talkgroups for use with the firmware
+## GD-77S operation
+
+To use the firmware with the GD-77S you **must** load voice prompt files using the OpenGD77 CPS. If you do not load voice files the radio will not announce thing, and it will be virtually unusable.
+
+See the section relating to voice prompts and how to install them.
+
+The GD-77 has a 16 position rotary switch, on the top of the radio, next to the volume control.
+This control is used to select the channel in the current zone.
+Note. Although the OpenGD77 CPS and codeplug format allows up to 80 channels per Zone, the GD-77S can only access the first 16 channels in each Zone, so codeplugs designed for the GD-77 containing more than 16 channels will need to be modified so that each zone only contains a maximum of 16 channels.
+
+The GD-77S has 2 buttons on the side of the radio below the PTT button. A black button known as SK1 and a blue button know as SK2, it also has an orange coloured button at the top, next to the channel selector switch.
+
+The firmware uses the concepts of different Control modes. In each mode buttons SK1 and SK2 perform a different function, the operator cycles through the Control modes by pressing the Orange button.
+
+The Control modes, and the function of buttons SK1 and SK2 in each mode is as follows
+
+### GD77S Channel / TG modem
+
+This mode is announced as "Channel mode".
+In this mode, button SK1 and SK2 are used to cycle through the Talkgroups / Contacts assigned to the current channels
+
+### GD77S Scan mode
+This mode is mode is similar to the Channel scan mode in the normal firmware.
+Pressing SK1 toggles scanning to start or stop, in the same way that holding the Up and Down arrows controls the Zone scan function in the normal firmware.
+
+### GD77S Timeslot mode
+In this mode, pressing either button (SK1 or SK2) toggles from Timeslot 1 to Timeslot 2
+
+### GD77S Colourcode mode
+In this mode, pressing SK1 increases the colourcode number, and pressing SK2 decreases the colourcode number
+
+### GD77S DMR Filter mode
+In this mode, pressing SK1 increases the DMR filter level and pressing SK2 reduces the filter level.
+See information in the normal firmware, in the VFO or Channel screen quick menu, for details for DMR filter levels
+
+### GD77S Zone mode
+In this mode pressing SK1 or SK2 cycles through the Zones, pressing SK1 selects the next zone and pressing SK2 selects the previous Zone.
+Zone selection wraps around, so pressing SK2 on the first Zone, selects the last Zone, and pressing SK1 on the last Zone selects the first zone
+
+### GD77S Power modem
+In this mode, pressing SK1 increases the power by one step, and pressing SK2 decreases the power by one step.
+See details of available power step levels in the normal firmware.
+
+Note. Like in the normal firmware, the power output will only be at all accurate if the operator has calibrated the power of the radio, as the factory power level calibration is likely to be highly inaccurate.
+
+
+## CPS software
 
 **NOTE**: You cannot use the standard Radioddity CPS, of Baofeng CPS, to write to a radio flashed with the firmware. If you wish to use the Radioddity CPS the radio will need to run the official Radioddity firmware. Once the codeplug has been written to the radio with your ID and callsign, you can then flash the firmware to the radio and it will then read and operate with the code plug written to it with the standard firmware and CPS software.
 
@@ -1242,7 +1272,7 @@ However we advise all users to set the “Contact” to the first channel in the
 
 Next select the TG List that you wish to use for the channel.
 
-The firmware can use the TG list to filter the incoming DMR signal, or it can operate in “Digital Monitor Mode” (aka promiscuous mode) all the time. This can be set in the radio quick menu setting for **Filter**.
+The firmware can use the TG list to filter the incoming DMR signal, or it can operate in “Digital Monitor Mode” (aka promiscuous mode) all the time. This can be set in the radio quick menu setting for **Filter** and **DMR filter**
 
 ![](media/cps-channel-rx-grouplist.png)
 
@@ -1295,15 +1325,3 @@ Then, you can add in DMR IDs into the database by selecting an ID prefix. You ca
 *Note.* Because the memory size used for the DMR ID is limited, you can store more DMR IDs if you assign fewer characters per ID. Depending on actual information, the firmware can store approximately 13,000-26,000 IDs in its user database.
 
 As the firmware supports Talker Alias, you might find this sufficient -- the firmware will display callsign and name data retrieved from the DMR stream, for user IDs not stored in your radio's User Database.
-
-#### Loading Voice prompt files onto the radios
-On the OpenGD77 Support screen, press the Write Voice Prompts button and select the voice prompts file to be loaded into the radio
-
-Voice prompts for various languages, in various voices can be downloaded From
-https://github.com/LibreDMR/voice-prompts/releases/latest
-
-The file name of the prompt indicates the language e.g. "english", and sometimes the country or region e.g. UK or AU or USA followed by the name of the voice.
-Voice prompts are generated using the Amazon Polly speech synthesis system, where each voice is given an arbitary name.
-Some voices are male some are female.
-
-Once loaded into the radio, voice prompts need to be enabled in the Sound Options->Prompt->Voice option before they will be operational
