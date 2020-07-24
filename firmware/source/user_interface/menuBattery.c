@@ -294,7 +294,7 @@ static void updateScreen(bool forceRedraw)
 
 	blink = !blink;
 
-	ucRenderRows((renderArrowOnly ? 7 : 1), 8);
+	ucRenderRows((renderArrowOnly ? (DISPLAY_NUMBER_OF_ROWS - 1) : 1), DISPLAY_NUMBER_OF_ROWS);
 }
 
 static void handleEvent(uiEvent_t *ev)
