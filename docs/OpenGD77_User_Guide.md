@@ -219,10 +219,11 @@ Its also recommended that you restructure your codeplug to remove any duplicate 
 
 ## Variations between different supported radios
 
-Not all the supported radios have the same number of buttons, or the same size screen, hence there are some differences when operating radios other than the Radioddity GD-77
+Not all the supported radios have the same number of buttons, or the same size screen, hence there are some differences when operating radios other than the Radioddity GD-77.
+Also, not all radios support all the functionality
 
-* The Baofeng DM-1801 / DM-860 has a dedicated **MR/VFO** button, which is used to change between Channel and VFO mode, in place of pressing the **Red** menu key
-* The Baofeng DM-1801 / DM-860 has a dedicated **A/B** button, which is used to change between VFO A and B, in place of pressing the quick menu via the **Orange** button on the top of the radio
+* The Baofeng RD-5R / DM-5R USB hardware will not support USB connections while the radio is transmitting, so it is not possible to use Hotspot mode on this radio.
+
 * The Baofeng RD-5R / DM-5R does not have left or right arrow buttons, so the **A/B** button is used to replace the left arrow and the "Band" button is used to replace the right arrow
 * The Baofeng RD-5R / DM-5R does not the **Orange** button, and its functionality has been similated by using a Long press on the orange coloured **MR/VFO** button
 * The Baofeng RD-5R / DM-5R has 2 buttons on the side, but their position is different from the GD-77 and DM-1801. The button above the PTT is used as the "Black" button on the side of the GD-77, also know as button SK1. The button below the PTT is used as the **Blue** button, also know as SK2.
@@ -233,6 +234,9 @@ Not all the supported radios have the same number of buttons, or the same size s
 
 See the appendix on GD-77S operation
 (#gd-77s-operation)
+
+* The Baofeng DM-1801 / DM-860 has a dedicated **MR/VFO** button, which is used to change between Channel and VFO mode, in place of pressing the **Red** menu key
+* The Baofeng DM-1801 / DM-860 has a dedicated **A/B** button, which is used to change between VFO A and B, in place of pressing the quick menu via the **Orange** button on the top of the radio
 
 
 ## Main screens (VFO and Channel screens)
@@ -866,6 +870,8 @@ Note. The PTT latch function, only works if a timeout has been defined for the c
 
 #### Hotspot
 
+**Hotspot mode is not supported on the Baofeng RD-5R / DMR-5R because the hardware does not support reliable USB communications while the radio is transmitting**
+
 This option controls whether the firmware will enter hotspot mode when connected to MMDVMHost, including PiStar, or to BlueDV.
 
 Options are
@@ -1109,9 +1115,10 @@ Once the private call is complete, you can return to the Talkgroup you were on p
 
 **IMPORTANT INFORMATION**
 
-* Although hotspot mode is available for all supported radios, the Baofeng RD-5R seems to have hardware faults which prevent it working reliably as a hotspot. Its currently unclear whether this is cause by the bad internal voltage stabilisation in the RD-5R, or RF injection internally into the USB data line.
+**Hotspot mode is not supported on the Baofeng RD-5R / DMR-5R because the hardware does not support reliable USB communications while the radio is transmitting**
+
 * The USB connection between the radio and the host system e.g. PiStar needs to be protected from RF injection, otherwise the USB connection will be occasionally be reset when the radio is transmitting, which will cause the hotspot to stop working.
-* Do not use the antenna on top of the radio when in hotspot mode, this usually causes RF injection problems which can't be resolved by screening or ferrite
+* Do not use the antenna on top of the radio when in hotspot mode, this usually causes RF injection problems which can't be resolved by screening or ferrite chokes.
 * Connect the radio to an external antenna.
 * Use ferrite RFI protection on the USB cable.
 * When using a Raspberry Pi as the host system, use a metal enclosure for the Raspberry Pi

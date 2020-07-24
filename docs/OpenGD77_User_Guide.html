@@ -257,11 +257,13 @@ Specifically export their existing codeplug to CSV format, and then import those
 <p>The codeplug can only be uploaded to the firmware using the OpenGD77CPS.</p>
 <p>Its also recommended that you restructure your codeplug to remove any duplicate channels which are the same frequency but use different TalkGroup. See the section &apos;Programming Channels and Talkgroups for use with the firmware&apos; at the end of this User Guide</p>
 <h2 id="variations-between-different-supported-radios">Variations between different supported radios</h2>
-<p>Not all the supported radios have the same number of buttons, or the same size screen, hence there are some differences when operating radios other than the Radioddity GD-77</p>
+<p>Not all the supported radios have the same number of buttons, or the same size screen, hence there are some differences when operating radios other than the Radioddity GD-77.
+Also, not all radios support all the functionality</p>
 <ul>
-<li>The Baofeng DM-1801 / DM-860 has a dedicated <strong>MR/VFO</strong> button, which is used to change between Channel and VFO mode, in place of pressing the <strong>Red</strong> menu key</li>
-<li>The Baofeng DM-1801 / DM-860 has a dedicated <strong>A/B</strong> button, which is used to change between VFO A and B, in place of pressing the quick menu via the <strong>Orange</strong> button on the top of the radio</li>
-<li>The Baofeng RD-5R / DM-5R does not have left or right arrow buttons, so the <strong>A/B</strong> button is used to replace the left arrow and the &quot;Band&quot; button is used to replace the right arrow</li>
+<li><p>The Baofeng RD-5R / DM-5R USB hardware will not support USB connections while the radio is transmitting, so it is not possible to use Hotspot mode on this radio.</p>
+</li>
+<li><p>The Baofeng RD-5R / DM-5R does not have left or right arrow buttons, so the <strong>A/B</strong> button is used to replace the left arrow and the &quot;Band&quot; button is used to replace the right arrow</p>
+</li>
 <li>The Baofeng RD-5R / DM-5R does not the <strong>Orange</strong> button, and its functionality has been similated by using a Long press on the orange coloured <strong>MR/VFO</strong> button</li>
 <li><p>The Baofeng RD-5R / DM-5R has 2 buttons on the side, but their position is different from the GD-77 and DM-1801. The button above the PTT is used as the &quot;Black&quot; button on the side of the GD-77, also know as button SK1. The button below the PTT is used as the <strong>Blue</strong> button, also know as SK2.</p>
 </li>
@@ -272,6 +274,10 @@ Specifically export their existing codeplug to CSV format, and then import those
 </ul>
 <p>See the appendix on GD-77S operation
 (#gd-77s-operation)</p>
+<ul>
+<li>The Baofeng DM-1801 / DM-860 has a dedicated <strong>MR/VFO</strong> button, which is used to change between Channel and VFO mode, in place of pressing the <strong>Red</strong> menu key</li>
+<li>The Baofeng DM-1801 / DM-860 has a dedicated <strong>A/B</strong> button, which is used to change between VFO A and B, in place of pressing the quick menu via the <strong>Orange</strong> button on the top of the radio</li>
+</ul>
 <h2 id="main-screens-vfo-and-channel-screens-">Main screens (VFO and Channel screens)</h2>
 <p>The firmware has 2 main screens.  The VFO screen and the Channel screen. These are similar to the channel and VFO screens in the official firmware, except have additional functionality.</p>
 <p>Initially after the firmware is installed, the VFO screen will be displayed.</p>
@@ -601,6 +607,7 @@ Press the <strong>Right arrow</strong> arrow to mark the current frequency as a 
 <p>When PTT latch is enabled, the PTT switch toggles the radio to transmit or receive. In this mode the PTT does not need to be pressed continuously during an over.</p>
 <p>Note. The PTT latch function, only works if a timeout has been defined for the channel, or VFO, to prevent constant accidental transmission.</p>
 <h4 id="hotspot">Hotspot</h4>
+<p><strong>Hotspot mode is not supported on the Baofeng RD-5R / DMR-5R because the hardware does not support reliable USB communications while the radio is transmitting</strong></p>
 <p>This option controls whether the firmware will enter hotspot mode when connected to MMDVMHost, including PiStar, or to BlueDV.</p>
 <p>Options are
 <strong>Off</strong>
@@ -751,10 +758,10 @@ Pressing the <strong>Red</strong> menu key closes the menu without making any ch
 <p>Once the private call is complete, you can return to the Talkgroup you were on prior to accepting the Private Call, by pressing <strong>Function + Red</strong> menu key. (or by any of the methods described in the section on making a Private Call)</p>
 <h2 id="hotspot-mode">Hotspot mode</h2>
 <p><strong>IMPORTANT INFORMATION</strong></p>
+<p><strong>Hotspot mode is not supported on the Baofeng RD-5R / DMR-5R because the hardware does not support reliable USB communications while the radio is transmitting</strong></p>
 <ul>
-<li>Although hotspot mode is available for all supported radios, the Baofeng RD-5R seems to have hardware faults which prevent it working reliably as a hotspot. Its currently unclear whether this is cause by the bad internal voltage stabilisation in the RD-5R, or RF injection internally into the USB data line.</li>
 <li>The USB connection between the radio and the host system e.g. PiStar needs to be protected from RF injection, otherwise the USB connection will be occasionally be reset when the radio is transmitting, which will cause the hotspot to stop working.</li>
-<li>Do not use the antenna on top of the radio when in hotspot mode, this usually causes RF injection problems which can&apos;t be resolved by screening or ferrite</li>
+<li>Do not use the antenna on top of the radio when in hotspot mode, this usually causes RF injection problems which can&apos;t be resolved by screening or ferrite chokes.</li>
 <li>Connect the radio to an external antenna.</li>
 <li>Use ferrite RFI protection on the USB cable.</li>
 <li>When using a Raspberry Pi as the host system, use a metal enclosure for the Raspberry Pi</li>
