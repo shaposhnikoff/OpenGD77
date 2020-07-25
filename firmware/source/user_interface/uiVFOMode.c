@@ -1372,9 +1372,9 @@ static void stepFrequency(int increment)
 // ---------------------------------------- Quick Menu functions -------------------------------------------------------------------
 enum VFO_SCREEN_QUICK_MENU_ITEMS // The last item in the list is used so that we automatically get a total number of items in the list
 {
-#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
+#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S) || defined(PLATFORM_RD5R)
 	VFO_SCREEN_QUICK_MENU_VFO_A_B = 0, VFO_SCREEN_QUICK_MENU_TX_SWAP_RX,
-#elif defined(PLATFORM_DM1801) || defined(PLATFORM_RD5R)
+#elif defined(PLATFORM_DM1801)
 	VFO_SCREEN_QUICK_MENU_TX_SWAP_RX = 0,
 #endif
 	VFO_SCREEN_QUICK_MENU_BOTH_TO_RX, VFO_SCREEN_QUICK_MENU_BOTH_TO_TX,
@@ -1441,7 +1441,7 @@ static void updateQuickMenuScreen(bool isFirstRun)
 
 		switch(mNum)
 		{
-#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
+#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S) || defined(PLATFORM_RD5R)
 			case VFO_SCREEN_QUICK_MENU_VFO_A_B:
 				sprintf(rightSideVar, "VFO:%c", ((nonVolatileSettings.currentVFONumber==0) ? 'A' : 'B'));
 				break;
@@ -1539,7 +1539,7 @@ static void updateQuickMenuScreen(bool isFirstRun)
 			snprintf(buf, bufferLen, "%s", (rightSideVar[0] ? rightSideVar : *rightSideConst));
 		}
 
-		if (i==0 && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+		if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
 		{
 			if (!isFirstRun)
 			{
@@ -1700,8 +1700,12 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 		menuSystemPopPreviousMenu();
 		return;
 	}
-#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
+#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S) || defined(PLATFORM_RD5R)
+ #if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
 	else if (((ev->events & BUTTON_EVENT) && BUTTONCHECK_DOWN(ev, BUTTON_ORANGE)) && (gMenusCurrentItemIndex == VFO_SCREEN_QUICK_MENU_VFO_A_B))
+ #elif defined(PLATFORM_RD5R)
+	else if (KEYCHECK_SHORTUP(ev->keys, KEY_VFO_MR) && (gMenusCurrentItemIndex == VFO_SCREEN_QUICK_MENU_VFO_A_B))
+ #endif
 	{
 		settingsSet(nonVolatileSettings.currentVFONumber, (1 - nonVolatileSettings.currentVFONumber));// Switch to other VFO
 		currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
@@ -1723,7 +1727,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 		isDirty = true;
 		switch(gMenusCurrentItemIndex)
 		{
-#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
+#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S) || defined(PLATFORM_RD5R)
 			case VFO_SCREEN_QUICK_MENU_VFO_A_B:
 				if (nonVolatileSettings.currentVFONumber == 0)
 				{
@@ -1773,7 +1777,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 		isDirty = true;
 		switch(gMenusCurrentItemIndex)
 		{
-#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S)
+#if defined(PLATFORM_GD77) || defined(PLATFORM_GD77S) || defined(PLATFORM_RD5R)
 			case VFO_SCREEN_QUICK_MENU_VFO_A_B:
 				if (nonVolatileSettings.currentVFONumber == 1)
 				{
