@@ -47,10 +47,10 @@ void debugReadCPUID(void);
 
 TaskHandle_t mainTaskHandle;
 
-#if defined(PLATFORM_GD77S)
-static uint32_t lowbatteryTimerForGD77S = 0;
-static const int LOW_BATTERY_INTERVAL_GD77S = ((1000 * 60) * 5); // 5 minutes;
-#endif
+
+static uint32_t lowbatteryTimer = 0;
+static const int LOW_BATTERY_INTERVAL = ((1000 * 60) * 1); // 1 minute;
+const int LOW_BATTERY_WARNING_VOLTAGE_DIFFERENTIAL = 6;	// Offset between the minimum voltage and when the battery warning audio starts. 6 = 0.6V
 
 void mainTaskInit(void)
 {
@@ -759,16 +759,25 @@ void mainTask(void *data)
 			}
 #endif
 
-#if defined(PLATFORM_GD77S)
-			if ((battery_voltage < (CUTOFF_VOLTAGE_LOWER_HYST + 6))
-					&& ((lowbatteryTimerForGD77S == 0) || ((fw_millis() - lowbatteryTimerForGD77S) > LOW_BATTERY_INTERVAL_GD77S)))
-			{
-				lowbatteryTimerForGD77S = fw_millis();
 
-				voicePromptsAppendLanguageString(&currentLanguage->low_battery);
-				voicePromptsPlay();
-			}
+#if defined(PLATFORM_GD77S)
+			if (trxTransmissionEnabled == false &&
+#else
+				if ((menuSystemGetCurrentMenuNumber() != UI_TX_SCREEN) &&
+					(nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) &&
 #endif
+				(battery_voltage < (CUTOFF_VOLTAGE_LOWER_HYST + LOW_BATTERY_WARNING_VOLTAGE_DIFFERENTIAL))	&&
+				((lowbatteryTimer == 0) || ((fw_millis() - lowbatteryTimer) > LOW_BATTERY_INTERVAL)))
+			{
+
+				if (melody_play == NULL)
+				{
+					lowbatteryTimer = fw_millis();
+					voicePromptsInit();
+					voicePromptsAppendLanguageString(&currentLanguage->low_battery);
+					voicePromptsPlay();
+				}
+			}
 
 #if defined(PLATFORM_RD5R)
 			if ((battery_voltage < CUTOFF_VOLTAGE_LOWER_HYST)
