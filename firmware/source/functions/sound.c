@@ -78,12 +78,14 @@ const int melody_private_call[] = {
 								0, DIT_LENGTH,
 								880, DIT_LENGTH
 
-								-1, -1 };// Morse letters PC for Priavte Call
+								-1, -1 };// Morse letters PC for Private Call
 const int melody_key_beep[] = { 600, 60, -1, -1 };
 const int melody_key_long_beep[] = { 880, 60, -1, -1 };
+/* These melodies are not currently used
 const int melody_sk1_beep[] = { 466, 60, 0, 60, 466, 60, -1, -1 };
 const int melody_sk2_beep[] = { 494, 60, 0, 60, 494, 60, -1, -1 };
 const int melody_orange_beep[] = { 440, 60, 494, 60, 440, 60, 494, 60, -1, -1 };
+*/
 const int melody_ACK_beep[] = { 440, 120, 660, 120, 880, 120, -1, -1 };
 const int melody_NACK_beep[] = { 494, 120, 466, 120, -1, -1 };
 const int melody_ERROR_beep[] = { 440, 30, 0, 30, 440, 30, 0, 30, 440, 30, -1, -1 };
