@@ -45,17 +45,7 @@ __attribute__((section(".data.$RAM2"))) uint8_t screenBuf[1024];
 #ifdef DISPLAY_CHECK_BOUNDS
 static const uint8_t *screenBufEnd = screenBuf + sizeof(screenBuf);
 #endif
-int activeBufNum=0;
 
-#if defined(PLATFORM_RD5R)
-const int DISPLAY_SIZE_Y = 48;
-const int FONT_SIZE_3_HEIGHT = 8;
-#else
-const int DISPLAY_SIZE_Y = 64;
-const int FONT_SIZE_3_HEIGHT = 16;
-#endif
-const int DISPLAY_SIZE_X = 128;
-const int DISPLAY_NUMBER_OF_ROWS = (DISPLAY_SIZE_Y / 8);
 
 
 int16_t ucSetPixel(int16_t x, int16_t y, bool color)
@@ -83,7 +73,7 @@ int16_t ucSetPixel(int16_t x, int16_t y, bool color)
 
 void ucRender(void)
 {
-	ucRenderRows(0,8);
+	ucRenderRows(0, DISPLAY_NUMBER_OF_ROWS);
 }
 
 //#define DISPLAY_CHECK_BOUNDS
