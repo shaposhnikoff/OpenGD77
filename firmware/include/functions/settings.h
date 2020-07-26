@@ -43,7 +43,6 @@ extern const uint8_t BEEP_TX_START;
 extern const uint8_t BEEP_TX_STOP;
 
 extern int settingsCurrentChannelNumber;
-extern bool settingsPrivateCallMuteMode;
 extern int *nextKeyBeepMelody;
 extern struct_codeplugChannel_t settingsVFOChannel[2];
 

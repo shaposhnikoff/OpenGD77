@@ -734,10 +734,7 @@ inline static void HRC6000SysReceivedDataInt(void)
 				}
 				else
 				{
-					if (settingsPrivateCallMuteMode == false)
-					{
-						hasEncodedAudio = true;// tell foreground that there is audio to encode
-					}
+					hasEncodedAudio = true;// tell foreground that there is audio to encode
 				}
 			}
 		}

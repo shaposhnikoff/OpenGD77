@@ -49,7 +49,7 @@ struct_codeplugChannel_t settingsVFOChannel[2];// VFO A and VFO B from the codep
 int contactListContactIndex;
 int settingsUsbMode = USB_MODE_CPS;
 int settingsCurrentChannelNumber = 0;
-bool settingsPrivateCallMuteMode = false;
+
 int *nextKeyBeepMelody = (int *)MELODY_KEY_BEEP;
 
 bool settingsSaveSettings(bool includeVFOs)

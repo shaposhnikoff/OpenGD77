@@ -43,7 +43,6 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 		startBeepPlayed = false;
 		scanActive = false;
 		trxIsTransmittingTone = false;
-		settingsPrivateCallMuteMode = false;
 		isShowingLastHeard = false;
 
 		if (((currentChannelData->flag4 & 0x04) == 0x00) && (trxCheckFrequencyInAmateurBand(currentChannelData->txFreq) || (nonVolatileSettings.txFreqLimited == false)))

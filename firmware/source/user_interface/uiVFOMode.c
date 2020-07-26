@@ -803,9 +803,7 @@ static void handleEvent(uiEvent_t *ev)
 		{
 			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
-				settingsPrivateCallMuteMode = !settingsPrivateCallMuteMode;// Toggle PC mute only mode
-				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-				uiVFOModeUpdateScreen(0);
+				announceItem(PROMPT_SEQUENCE_BATTERY, AUDIO_PROMPT_MODE_VOICE_LEVEL_1);
 			}
 			else
 			{

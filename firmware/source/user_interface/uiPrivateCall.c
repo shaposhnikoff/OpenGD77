@@ -103,7 +103,6 @@ void menuAcceptPrivateCall(int id )
 {
 	uiPrivateCallState = PRIVATE_CALL;
 	uiPrivateCallLastID = (id & 0xffffff);
-	settingsPrivateCallMuteMode = false;
 	menuUtilityReceivedPcId = 0;
 
 	setOverrideTGorPC(uiPrivateCallLastID, true);
