@@ -54,7 +54,7 @@ menuStatus_t uiSplashScreen(uiEvent_t *ev, bool isFirstRun)
 				}
 				else
 				{
-					soundSetMelody(melody_poweron);
+					soundSetMelody(MELODY_POWER_ON);
 				}
 			}
 		updateScreen();

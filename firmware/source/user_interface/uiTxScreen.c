@@ -87,7 +87,7 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 			}
 			ucRender();
 			displayLightOverrideTimeout(-1);
-			soundSetMelody(melody_ERROR_beep);
+			soundSetMelody(MELODY_ERROR_BEEP);
 			PTTToggledDown = false;
 		}
 
@@ -115,14 +115,14 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 					{
 						if ((timeInSeconds % 5) == 0)
 						{
-							soundSetMelody(melody_key_beep);
+							soundSetMelody(MELODY_KEY_BEEP);
 						}
 					}
 				}
 
 				if ((currentChannelData->tot != 0) && (timeInSeconds == 0))
 				{
-					soundSetMelody(melody_tx_timeout_beep);
+					soundSetMelody(MELODY_TX_TIMEOUT_BEEP);
 
 					ucClearBuf();
 					ucPrintCentered(20, currentLanguage->timeout, FONT_SIZE_4);
@@ -155,7 +155,7 @@ menuStatus_t menuTxScreen(uiEvent_t *ev, bool isFirstRun)
 						// If VOX is running, don't send a beep as it will reset its the trigger status.
 						if ((voxIsEnabled() == false) || (voxIsEnabled() && (voxIsTriggered() == false)))
 						{
-							soundSetMelody(melody_dmr_tx_start_beep);
+							soundSetMelody(MELODY_DMR_TX_START_BEEP);
 						}
 					}
 				}
@@ -260,7 +260,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				if ((nonVolatileSettings.beepOptions & BEEP_TX_STOP) && (melody_play == NULL))
 				{
-					soundSetMelody(melody_dmr_tx_stop_beep);
+					soundSetMelody(MELODY_DMR_TX_STOP_BEEP);
 				}
 
 				GPIO_PinWrite(GPIO_LEDred, Pin_LEDred, 0);

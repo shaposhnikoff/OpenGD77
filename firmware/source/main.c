@@ -132,14 +132,14 @@ static void keyBeepHandler(uiEvent_t *ev, bool PTTToggledDown)
 			}
 			else
 			{
-				soundSetMelody(melody_key_beep);
+				soundSetMelody(MELODY_KEY_BEEP);
 			}
-			nextKeyBeepMelody = (int *)melody_key_beep;// set back to the default beep
+			nextKeyBeepMelody = (int *)MELODY_KEY_BEEP;// set back to the default beep
 		}
 		else
 		{ 	// Reset the beep sound if we are scanning, otherwise the AudioAssist
 			// beep will be played instead of the normal one.
-			soundSetMelody(melody_key_beep);
+			soundSetMelody(MELODY_KEY_BEEP);
 		}
 	}
 	else
@@ -148,7 +148,7 @@ static void keyBeepHandler(uiEvent_t *ev, bool PTTToggledDown)
 		{
 			if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 			{
-				soundSetMelody(melody_key_long_beep);
+				soundSetMelody(MELODY_KEY_LONG_BEEP);
 			}
 		}
 	}
@@ -430,7 +430,7 @@ void mainTask(void *data)
 				{
 					if ((buttons & BUTTON_PTT) && (button_event == EVENT_BUTTON_CHANGE))
 					{
-						soundSetMelody(melody_ERROR_beep);
+						soundSetMelody(MELODY_ERROR_BEEP);
 
 						if (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN)
 						{

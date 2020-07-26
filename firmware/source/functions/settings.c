@@ -50,7 +50,7 @@ int contactListContactIndex;
 int settingsUsbMode = USB_MODE_CPS;
 int settingsCurrentChannelNumber = 0;
 bool settingsPrivateCallMuteMode = false;
-int *nextKeyBeepMelody = (int *)melody_key_beep;
+int *nextKeyBeepMelody = (int *)MELODY_KEY_BEEP;
 
 bool settingsSaveSettings(bool includeVFOs)
 {

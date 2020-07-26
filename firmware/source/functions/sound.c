@@ -50,7 +50,7 @@ __attribute__((section(".data.$RAM2"))) int melody_generic[512];// Note. As we d
 #define DIT_LENGTH  60
 #define DAH_LENGTH  3 * DIT_LENGTH
 //const int melody_poweron[] = { 440, 300, 466, 300, 494, 300, -1, -1 };
-const int melody_poweron[] = { 880, DAH_LENGTH,
+const int MELODY_POWER_ON[] = { 880, DAH_LENGTH,
 								0, DIT_LENGTH,
 								880, DIT_LENGTH,
 								0, DIT_LENGTH,
@@ -60,7 +60,7 @@ const int melody_poweron[] = { 880, DAH_LENGTH,
 								0, DIT_LENGTH,
 								880, DAH_LENGTH,
 								-1, -1 };
-const int melody_private_call[] = {
+const int MELODY_PRIVATE_CALL[] = {
 								880, DIT_LENGTH,
 								0, DIT_LENGTH,
 								880, DAH_LENGTH,
@@ -79,20 +79,20 @@ const int melody_private_call[] = {
 								880, DIT_LENGTH
 
 								-1, -1 };// Morse letters PC for Private Call
-const int melody_key_beep[] = { 600, 60, -1, -1 };
-const int melody_key_long_beep[] = { 880, 60, -1, -1 };
+const int MELODY_KEY_BEEP[] = { 600, 60, -1, -1 };
+const int MELODY_KEY_LONG_BEEP[] = { 880, 60, -1, -1 };
 /* These melodies are not currently used
 const int melody_sk1_beep[] = { 466, 60, 0, 60, 466, 60, -1, -1 };
 const int melody_sk2_beep[] = { 494, 60, 0, 60, 494, 60, -1, -1 };
 const int melody_orange_beep[] = { 440, 60, 494, 60, 440, 60, 494, 60, -1, -1 };
 */
-const int melody_ACK_beep[] = { 440, 120, 660, 120, 880, 120, -1, -1 };
-const int melody_NACK_beep[] = { 494, 120, 466, 120, -1, -1 };
-const int melody_ERROR_beep[] = { 440, 30, 0, 30, 440, 30, 0, 30, 440, 30, -1, -1 };
-const int melody_tx_timeout_beep[] = { 440, 60, 494, 60, 440, 60, 494, 60, 440, 60, 494, 60, 440, 60, 494, 60, -1, -1 };
-const int melody_dmr_tx_start_beep[] = { 800, 50, -1, -1 };
-const int melody_dmr_tx_stop_beep[] = { 500, 50, -1, -1 };
-const int melody_key_beep_first_item[] = { 800, 100, -1, -1 };
+const int MELODY_ACK_BEEP[] = { 440, 120, 660, 120, 880, 120, -1, -1 };
+const int MELODY_NACK_BEEP[] = { 494, 120, 466, 120, -1, -1 };
+const int MELODY_ERROR_BEEP[] = { 440, 30, 0, 30, 440, 30, 0, 30, 440, 30, -1, -1 };
+const int MELODY_TX_TIMEOUT_BEEP[] = { 440, 60, 494, 60, 440, 60, 494, 60, 440, 60, 494, 60, 440, 60, 494, 60, -1, -1 };
+const int MELODY_DMR_TX_START_BEEP[] = { 800, 50, -1, -1 };
+const int MELODY_DMR_TX_STOP_BEEP[] = { 500, 50, -1, -1 };
+const int MELODY_KEY_BEEP_FIRST_ITEM[] = { 800, 100, -1, -1 };
 
 // To calculate the pitch use a spreadsheet etc   =ROUND(98*POWER(2, (NOTE_NUMBER/12)),0)
 static const int freqs[64] = {0,104,110,117,123,131,139,147,156,165,175,185,196,208,220,233,247,262,277,294,311,330,349,370,392,415,440,466,494,523,554,587,622,659,698,740,784,831,880,932,988,1047,1109,1175,1245,1319,1397,1480,1568,1661,1760,1865,1976,2093,2217,2349,2489,2637,2794,2960,3136,3322,3520,3729};

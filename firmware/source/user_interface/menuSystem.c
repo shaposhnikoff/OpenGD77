@@ -110,11 +110,11 @@ static void menuSystemCheckForFirstEntryAudible(menuStatus_t status)
 	{
 		 if (((status & MENU_STATUS_LIST_TYPE) && (gMenusCurrentItemIndex == 0)) || (status & MENU_STATUS_FORCE_FIRST))
 		 {
-			 nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+			 nextKeyBeepMelody = (int *)MELODY_KEY_BEEP_FIRST_ITEM;
 		 }
 		 else if (status & MENU_STATUS_INPUT_TYPE)
 		 {
-			 nextKeyBeepMelody = (int *)melody_ACK_beep;
+			 nextKeyBeepMelody = (int *)MELODY_ACK_BEEP;
 		 }
 	}
 }

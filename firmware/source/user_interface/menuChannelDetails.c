@@ -615,7 +615,7 @@ static void updateFrequency(void)
 	}
 	else
 	{
-		soundSetMelody(melody_ERROR_beep);
+		soundSetMelody(MELODY_ERROR_BEEP);
 	}
 }
 

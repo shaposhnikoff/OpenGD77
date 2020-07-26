@@ -840,7 +840,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					else
 					{
-						soundSetMelody(melody_ERROR_beep);
+						soundSetMelody(MELODY_ERROR_BEEP);
 					}
 				}
 				else
@@ -852,7 +852,7 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					else
 					{
-						soundSetMelody(melody_ERROR_beep);
+						soundSetMelody(MELODY_ERROR_BEEP);
 					}
 
 				}
@@ -1116,7 +1116,7 @@ static void handleEvent(uiEvent_t *ev)
 				}
 				else
 				{
-					soundSetMelody(melody_ERROR_beep);
+					soundSetMelody(MELODY_ERROR_BEEP);
 				}
 			}
 		}
@@ -1229,7 +1229,7 @@ static void handleEvent(uiEvent_t *ev)
 					if(directChannelNumber > 1024)
 					{
 						directChannelNumber = 0;
-						soundSetMelody(melody_ERROR_beep);
+						soundSetMelody(MELODY_ERROR_BEEP);
 					}
 				}
 				else
@@ -1237,7 +1237,7 @@ static void handleEvent(uiEvent_t *ev)
 					if(directChannelNumber > currentZone.NOT_IN_MEMORY_numChannelsInZone)
 						{
 							directChannelNumber = 0;
-							soundSetMelody(melody_ERROR_beep);
+							soundSetMelody(MELODY_ERROR_BEEP);
 						}
 
 				}
@@ -1675,7 +1675,7 @@ static void startScan(bool longPressBeep)
 	// since beeps aren't allowed while scanning
 	if (longPressBeep)
 	{
-		soundSetMelody(melody_key_long_beep);
+		soundSetMelody(MELODY_KEY_LONG_BEEP);
 	}
 
 	menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);

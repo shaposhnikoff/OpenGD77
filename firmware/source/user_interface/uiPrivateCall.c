@@ -31,7 +31,7 @@ menuStatus_t menuPrivateCall(uiEvent_t *ev, bool isFirstRun)
 {
 	if (isFirstRun)
 	{
-		soundSetMelody(melody_private_call);
+		soundSetMelody(MELODY_PRIVATE_CALL);
 		uiPrivateCallState = PRIVATE_CALL_ACCEPT;
 		menuUtilityReceivedPcId = LinkHead->id;
 
