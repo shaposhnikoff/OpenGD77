@@ -764,7 +764,6 @@ void mainTask(void *data)
 			if (trxTransmissionEnabled == false &&
 #else
 				if ((menuSystemGetCurrentMenuNumber() != UI_TX_SCREEN) &&
-					(nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) &&
 #endif
 				(battery_voltage < (CUTOFF_VOLTAGE_LOWER_HYST + LOW_BATTERY_WARNING_VOLTAGE_DIFFERENTIAL))	&&
 				((lowbatteryTimer == 0) || ((fw_millis() - lowbatteryTimer) > LOW_BATTERY_INTERVAL)))
@@ -772,10 +771,17 @@ void mainTask(void *data)
 
 				if (melody_play == NULL)
 				{
+					if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+					{
+						soundSetMelody(MELODY_LOW_BATTERY);
+					}
+					else
+					{
+						voicePromptsInit();
+						voicePromptsAppendLanguageString(&currentLanguage->low_battery);
+						voicePromptsPlay();
+					}
 					lowbatteryTimer = fw_millis();
-					voicePromptsInit();
-					voicePromptsAppendLanguageString(&currentLanguage->low_battery);
-					voicePromptsPlay();
 				}
 			}
 
