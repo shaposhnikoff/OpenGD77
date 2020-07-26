@@ -528,7 +528,7 @@ inline static void HRC6000SysSendEndInt(void)
 	/*
 		Bit5: In DMR mode: indicates the end of transmission; in MSK mode: indicates the end of	transmission.
 	*/
-//	read_SPI_page_reg_byte_SPI0(0x04, 0x86, &reg_0x86);  //Read Interrupt Flag Register2
+//	SPI0ReadPageRegByte(0x04, 0x86, &reg_0x86);  //Read Interrupt Flag Register2
 
 	/*
 		In DMR mode, there is a sub-status register 0x86 at the end of the transmission, and the
