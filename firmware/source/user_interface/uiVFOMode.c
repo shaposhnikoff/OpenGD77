@@ -95,6 +95,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 		isDisplayingQSOData = false;
 		reverseRepeater = false;
+		displaySquelch = false;
 		settingsSet(nonVolatileSettings.initialMenuNumber, UI_VFO_MODE);
 		prevDisplayQSODataState = QSO_DISPLAY_IDLE;
 		currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];
@@ -210,11 +211,11 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 				{
 					displaySquelch = false;
 #if defined(PLATFORM_RD5R)
-					ucFillRect(0, 16, DISPLAY_SIZE_X, 12, true);
+					ucClearRows(2, 3, false);
 #else
 					ucClearRows(2, 4, false);
 #endif
-					ucRenderRows(2,4);
+					ucRenderRows(2, 4);
 				}
 
 				if ((ev->time - m) > RSSI_UPDATE_COUNTER_RELOAD)

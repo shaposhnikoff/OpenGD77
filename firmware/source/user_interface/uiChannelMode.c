@@ -115,6 +115,8 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 		displayChannelSettings = false;
 		reverseRepeater = false;
 		nextChannelReady = false;
+		displaySquelch = false;
+
 
 		// We're in digital mode, RXing, and current talker is already at the top of last heard list,
 		// hence immediately display complete contact/TG info on screen
@@ -205,13 +207,12 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 				if (displaySquelch && ((ev->time - sqm) > 1000))
 				{
 					displaySquelch = false;
-
 #if defined(PLATFORM_RD5R)
-					ucFillRect(0, 15, DISPLAY_SIZE_X, 9, true);
+					ucClearRows(2, 3, false);
 #else
 					ucClearRows(2, 4, false);
 #endif
-					ucRenderRows(2,4);
+					ucRenderRows(2, 4);
 				}
 
 				if ((ev->time - m) > RSSI_UPDATE_COUNTER_RELOAD)
