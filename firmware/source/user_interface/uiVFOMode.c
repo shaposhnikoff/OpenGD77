@@ -372,7 +372,7 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					strncpy(buffer, currentLanguage->squelch, 9);
 					buffer[8] = 0; // Avoid overlap with bargraph
 					// Center squelch word between col0 and bargraph, if possible.
-					ucPrintAt(0 + ((strlen(buffer) * 8) < xbar - 2 ? (((xbar - 2) - (strlen(buffer) * 8)) >> 1) : 0), 16, buffer, FONT_SIZE_3);
+					ucPrintAt(0 + ((strlen(buffer) * 8) < xbar - 2 ? (((xbar - 2) - (strlen(buffer) * 8)) >> 1) : 0), SQUELCH_BAR_Y_POS, buffer, FONT_SIZE_3);
 
 					int bargraph = 1 + ((currentChannelData->sql - 1) * 5) /2;
 					ucDrawRect(xbar - 2, SQUELCH_BAR_Y_POS, 55, SQUELCH_BAR_H + 4, true);
