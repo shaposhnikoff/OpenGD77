@@ -38,7 +38,7 @@
 #define CONTACT_Y_POS                         16
 #define CONTACT_FIRST_LINE_Y_POS              32
 #define CONTACT_SECOND_LINE_Y_POS             48
-#define SQUELCH_BAR_Y_POS                     17
+#define SQUELCH_BAR_Y_POS                     16
 #define SQUELCH_BAR_H                          9
 #endif
 
