@@ -307,6 +307,8 @@ void mainTask(void *data)
 	keys.event = 0;
 	keys.key = 0;
 
+	lowbatteryTimer = fw_millis() + 5000;// Check battery 5 seconds after the firmware starts
+
 	while (1U)
 	{
 		taskENTER_CRITICAL();
@@ -766,7 +768,7 @@ void mainTask(void *data)
 				if ((menuSystemGetCurrentMenuNumber() != UI_TX_SCREEN) &&
 #endif
 				(battery_voltage < (CUTOFF_VOLTAGE_LOWER_HYST + LOW_BATTERY_WARNING_VOLTAGE_DIFFERENTIAL))	&&
-				((lowbatteryTimer == 0) || ((fw_millis() - lowbatteryTimer) > LOW_BATTERY_INTERVAL)))
+				(fw_millis() > lowbatteryTimer))
 			{
 
 				if (melody_play == NULL)
@@ -781,7 +783,7 @@ void mainTask(void *data)
 						voicePromptsAppendLanguageString(&currentLanguage->low_battery);
 						voicePromptsPlay();
 					}
-					lowbatteryTimer = fw_millis();
+					lowbatteryTimer = fw_millis() + LOW_BATTERY_INTERVAL;
 				}
 			}
 
