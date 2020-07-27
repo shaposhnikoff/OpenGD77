@@ -70,8 +70,6 @@ const int TX_FREQ_Y_POS = 40;
 const int CONTACT_TX_Y_POS = 28;
 const int CONTACT_TX_FRAME_Y_POS = 26;
 const int CONTACT_Y_POS_OFFSET = 2;
-const int XBAR_Y_POS = 16;
-const int XBAR_H = 4;
 #else
 const int RX_FREQ_Y_POS = 32;
 const int TX_FREQ_Y_POS = 48;
@@ -79,8 +77,6 @@ const int TX_FREQ_Y_POS = 48;
 const int CONTACT_TX_Y_POS = 34;
 const int CONTACT_TX_FRAME_Y_POS = 34;
 const int CONTACT_Y_POS_OFFSET = 0;
-const int XBAR_Y_POS = 17;
-const int XBAR_H = 9;
 #endif
 
 
@@ -211,7 +207,7 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 				{
 					displaySquelch = false;
 #if defined(PLATFORM_RD5R)
-					ucClearRows(2, 3, false);
+					ucFillRect(0, SQUELCH_BAR_Y_POS, DISPLAY_SIZE_X, 9, true);
 #else
 					ucClearRows(2, 4, false);
 #endif
@@ -376,12 +372,11 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					strncpy(buffer, currentLanguage->squelch, 9);
 					buffer[8] = 0; // Avoid overlap with bargraph
 					// Center squelch word between col0 and bargraph, if possible.
-
 					ucPrintAt(0 + ((strlen(buffer) * 8) < xbar - 2 ? (((xbar - 2) - (strlen(buffer) * 8)) >> 1) : 0), 16, buffer, FONT_SIZE_3);
-					int bargraph = 1 + ((currentChannelData->sql - 1) * 5) /2;
 
-					ucDrawRect(xbar - 2, XBAR_Y_POS, 55, XBAR_H + 4, true);
-					ucFillRect(xbar, XBAR_Y_POS + 2, bargraph, XBAR_H, false);
+					int bargraph = 1 + ((currentChannelData->sql - 1) * 5) /2;
+					ucDrawRect(xbar - 2, SQUELCH_BAR_Y_POS, 55, SQUELCH_BAR_H + 4, true);
+					ucFillRect(xbar, SQUELCH_BAR_Y_POS + 2, bargraph, SQUELCH_BAR_H, false);
 				}
 
 				// SK1 is pressed, we don't want to clear the first info row after 1s
@@ -429,7 +424,11 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 					if (displaySquelch)
 					{
 						displaySquelch = false;
+#if defined(PLATFORM_RD5R)
+						ucFillRect(0, SQUELCH_BAR_Y_POS, DISPLAY_SIZE_X, 9, true);
+#else
 						ucClearRows(2, 4, false);
+#endif
 					}
 					snprintf(buffer, bufferLen, " %d ", txTimeSecs);
 					ucPrintCentered(TX_TIMER_Y_OFFSET, buffer, FONT_SIZE_4);

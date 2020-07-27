@@ -93,12 +93,8 @@ static menuStatus_t menuQuickChannelExitStatus = MENU_STATUS_SUCCESS;
 
 #if defined(PLATFORM_RD5R)
 static const int  CH_NAME_Y_POS = 40;
-static const int  XBAR_Y_POS = 15;
-static const int  XBAR_H = 4;
 #else
 static const int  CH_NAME_Y_POS = 50;
-static const int  XBAR_Y_POS = 17;
-static const int  XBAR_H = 9;
 #endif
 
 menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
@@ -208,7 +204,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 				{
 					displaySquelch = false;
 #if defined(PLATFORM_RD5R)
-					ucClearRows(2, 3, false);
+					ucFillRect(0, SQUELCH_BAR_Y_POS, DISPLAY_SIZE_X, 9, true);
 #else
 					ucClearRows(2, 4, false);
 #endif
@@ -504,7 +500,7 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 				{
 					displaySquelch = false;
 #if defined(PLATFORM_RD5R)
-					ucClearRows(2, 3, false);
+					ucFillRect(0, SQUELCH_BAR_Y_POS, DISPLAY_SIZE_X, 9, true);
 #else
 					ucClearRows(2, 4, false);
 #endif
@@ -513,7 +509,7 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 				snprintf(buffer, bufferLen, " %d ", txTimeSecs);
 				buffer[bufferLen - 1] = 0;
 				ucPrintCentered(TX_TIMER_Y_OFFSET, buffer, FONT_SIZE_4);
-				verticalPositionOffset=16;
+				verticalPositionOffset = 16;
 			}
 			else
 			{
@@ -598,10 +594,11 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 				strncpy(buffer, currentLanguage->squelch, 9);
 				buffer[8] = 0; // Avoid overlap with bargraph
 				// Center squelch word between col0 and bargraph, if possible.
-				ucPrintAt(0 + ((strlen(buffer) * 8) < xbar - 2 ? (((xbar - 2) - (strlen(buffer) * 8)) >> 1) : 0), 16, buffer, FONT_SIZE_3);
+				ucPrintAt(0 + ((strlen(buffer) * 8) < xbar - 2 ? (((xbar - 2) - (strlen(buffer) * 8)) >> 1) : 0), SQUELCH_BAR_Y_POS, buffer, FONT_SIZE_3);
+
 				int bargraph = 1 + ((currentChannelData->sql - 1) * 5) /2;
-				ucDrawRect(xbar - 2, XBAR_Y_POS, 55, XBAR_H + 4, true);
-				ucFillRect(xbar, XBAR_Y_POS + 2, bargraph, XBAR_H, false);
+				ucDrawRect(xbar - 2, SQUELCH_BAR_Y_POS, 55, SQUELCH_BAR_H + 4, true);
+				ucFillRect(xbar, SQUELCH_BAR_Y_POS + 2, bargraph, SQUELCH_BAR_H, false);
 			}
 
 			// SK1 is pressed, we don't want to clear the first info row after 1s
@@ -1141,6 +1138,8 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_DOWN) || KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_DOWN))
 		{
+			displaySquelch = false;
+
 			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
 				int numZones = codeplugZonesGetCount();
@@ -1207,6 +1206,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_UP) || KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_UP))
 		{
+			displaySquelch = false;
 			handleUpKey(ev);
 			return;
 		}
