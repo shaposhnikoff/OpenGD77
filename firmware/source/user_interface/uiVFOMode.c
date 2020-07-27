@@ -224,7 +224,11 @@ menuStatus_t uiVFOMode(uiEvent_t *ev, bool isFirstRun)
 
 					if (scanActive && (scanState == SCAN_PAUSED))
 					{
+#if defined(PLATFORM_RD5R)
+						ucClearRows(0, 1, false);
+#else
 						ucClearRows(0, 2, false);
+#endif
 						menuUtilityRenderHeader();
 					}
 					else
