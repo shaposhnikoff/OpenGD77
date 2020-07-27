@@ -221,11 +221,7 @@ menuStatus_t uiChannelMode(uiEvent_t *ev, bool isFirstRun)
 
 					if (scanActive && (scanState == SCAN_PAUSED))
 					{
-#if defined(PLATFORM_RD5R)
-						ucFillRect(0, 16, DISPLAY_SIZE_X, 8, true);
-#else
 						ucClearRows(0, 2, false);
-#endif
 						menuUtilityRenderHeader();
 					}
 					else
@@ -469,7 +465,7 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 			((menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA) || (menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA_UPDATE)))
 	{
 #if defined(PLATFORM_RD5R)
-		ucFillRect(0, 0, DISPLAY_SIZE_X, 8, true);
+		ucClearRows(0, 1, false);
 #else
 		ucClearRows(0, 2, false);
 #endif
@@ -504,7 +500,7 @@ void uiChannelModeUpdateScreen(int txTimeSecs)
 				{
 					displaySquelch = false;
 #if defined(PLATFORM_RD5R)
-					ucFillRect(0, 15, DISPLAY_SIZE_X, 9, true);
+					ucClearRows(2, 3, false);
 #else
 					ucClearRows(2, 4, false);
 #endif

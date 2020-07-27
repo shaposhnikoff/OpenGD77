@@ -298,12 +298,12 @@ void uiVFOModeUpdateScreen(int txTimeSecs)
 			((menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA) || (menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA_UPDATE)))
 	{
 #if defined(PLATFORM_RD5R)
-		ucFillRect(0, 0, DISPLAY_SIZE_X, 8, true);
+		ucClearRows(0, 1, false);
 #else
-		ucClearRows(0,  2, false);
+		ucClearRows(0, 2, false);
 #endif
 		menuUtilityRenderHeader();
-		ucRenderRows(0,  2);
+		ucRenderRows(0, 2);
 		return;
 	}
 
