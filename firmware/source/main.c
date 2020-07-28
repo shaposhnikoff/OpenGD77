@@ -587,6 +587,11 @@ void mainTask(void *data)
 						}
 						if (!wasScanning)
 						{
+							if ((menuSystemGetCurrentMenuNumber() == UI_PRIVATE_CALL) && (nonVolatileSettings.privateCalls == ALLOW_PRIVATE_CALLS_PTT))
+							{
+								acceptPrivateCall(menuUtilityReceivedPcId);
+								menuSystemPopPreviousMenu();
+							}
 							menuSystemPushNewMenu(UI_TX_SCREEN);
 						}
 					}
@@ -618,7 +623,7 @@ void mainTask(void *data)
 				{
 					menuClearPrivateCall();
 				}
-				if (!trxTransmissionEnabled && (menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA) && (nonVolatileSettings.privateCalls == true))
+				if (!trxTransmissionEnabled && (menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA) && (nonVolatileSettings.privateCalls > ALLOW_PRIVATE_CALLS_OFF))
 				{
 					if (HRC6000GetReceivedTgOrPcId() == (trxDMRID | (PC_CALL_FLAG << 24)))
 					{
@@ -628,7 +633,14 @@ void mainTask(void *data)
 						{
 							if ((HRC6000GetReceivedSrcId() & 0xFFFFFF) >= 1000000)
 							{
-								menuSystemPushNewMenu(UI_PRIVATE_CALL);
+								if (nonVolatileSettings.privateCalls == ALLOW_PRIVATE_CALLS_AUTO)
+								{
+									acceptPrivateCall(menuUtilityReceivedPcId);
+								}
+								else
+								{
+									menuSystemPushNewMenu(UI_PRIVATE_CALL);
+								}
 							}
 						}
 					}

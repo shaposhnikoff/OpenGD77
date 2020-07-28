@@ -335,10 +335,17 @@ static inline bool checkTimeSlotFilter(void)
 
 bool checkTalkGroupFilter(void)
 {
+
 	if (((trxTalkGroupOrPcId >> 24) == PC_CALL_FLAG))
 	{
 		return true;
 	}
+
+	if ((nonVolatileSettings.privateCalls == 0) && ((receivedTgOrPcId >> 24) == PC_CALL_FLAG))
+	{
+		return false;
+	}
+
 	switch(nonVolatileSettings.dmrDestinationFilter)
 	{
 		case DMR_DESTINATION_FILTER_TG:

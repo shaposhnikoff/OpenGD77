@@ -28,7 +28,7 @@
 
 static const int STORAGE_BASE_ADDRESS 		= 0x6000;
 
-static const int STORAGE_MAGIC_NUMBER 		= 0x474C;
+static const int STORAGE_MAGIC_NUMBER 		= 0x474D;
 
 // Bit patterns for DMR Beep
 const uint8_t BEEP_TX_NONE  = 0x00;
@@ -205,9 +205,9 @@ void settingsRestoreDefaultSettings(void)
 	nonVolatileSettings.transmitTalkerAlias	= false;
     nonVolatileSettings.privateCalls =
 #if defined(PLATFORM_GD77S)
-    		false;
+    ALLOW_PRIVATE_CALLS_OFF;
 #else
-    		true;
+    ALLOW_PRIVATE_CALLS_ON;
 #endif
     // Set all these value to zero to force the operator to set their own limits.
 	nonVolatileSettings.vfoScanLow[CHANNEL_VFO_A] = 0;

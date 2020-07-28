@@ -200,5 +200,5 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouc
 void playNextSettingSequence(void);
 
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
-
+void acceptPrivateCall(int id );
 #endif

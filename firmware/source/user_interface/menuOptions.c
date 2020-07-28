@@ -166,7 +166,8 @@ static void updateScreen(bool isFirstRun)
 				break;
 			case OPTIONS_MENU_PRIVATE_CALLS:
 				leftSide = (char * const *)&currentLanguage->private_call_handling;
-				rightSideConst = (char * const *)(nonVolatileSettings.privateCalls ? &currentLanguage->on : &currentLanguage->off);
+				const char * const *allowPCOptions[] = { &currentLanguage->off, &currentLanguage->on, &currentLanguage->ptt, &currentLanguage->Auto};
+				rightSideConst = (char * const *)allowPCOptions[nonVolatileSettings.privateCalls];
 				break;
 		}
 
@@ -291,7 +292,10 @@ static void handleEvent(uiEvent_t *ev)
 				settingsSet(nonVolatileSettings.transmitTalkerAlias, true);
 				break;
 			case OPTIONS_MENU_PRIVATE_CALLS:
-				settingsSet(nonVolatileSettings.privateCalls, true);
+				if (nonVolatileSettings.privateCalls < ALLOW_PRIVATE_CALLS_AUTO)
+				{
+					settingsIncrement(nonVolatileSettings.privateCalls, 1);
+				}
 				break;
 		}
 	}
@@ -372,7 +376,10 @@ static void handleEvent(uiEvent_t *ev)
 				settingsSet(nonVolatileSettings.transmitTalkerAlias, false);
 				break;
 			case OPTIONS_MENU_PRIVATE_CALLS:
-				settingsSet(nonVolatileSettings.privateCalls, false);
+				if (nonVolatileSettings.privateCalls > 0)
+				{
+					settingsDecrement(nonVolatileSettings.privateCalls, 1);
+				}
 				break;
 		}
 	}

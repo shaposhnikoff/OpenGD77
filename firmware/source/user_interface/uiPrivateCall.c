@@ -84,7 +84,7 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 		{
-			menuAcceptPrivateCall(menuUtilityReceivedPcId);
+			acceptPrivateCall(menuUtilityReceivedPcId);
 			menuSystemPopPreviousMenu();
 			return;
 		}
@@ -99,12 +99,4 @@ void menuClearPrivateCall(void )
 	menuUtilityReceivedPcId = 0;
 }
 
-void menuAcceptPrivateCall(int id )
-{
-	uiPrivateCallState = PRIVATE_CALL;
-	uiPrivateCallLastID = (id & 0xffffff);
-	menuUtilityReceivedPcId = 0;
 
-	setOverrideTGorPC(uiPrivateCallLastID, true);
-	announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
-}

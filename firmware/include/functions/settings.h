@@ -30,6 +30,7 @@ enum HOTSPOT_TYPE { HOTSPOT_TYPE_OFF = 0, HOTSPOT_TYPE_MMDVM, HOTSPOT_TYPE_BLUED
 enum CONTACT_DISPLAY_PRIO { CONTACT_DISPLAY_PRIO_CC_DB_TA = 0, CONTACT_DISPLAY_PRIO_DB_CC_TA, CONTACT_DISPLAY_PRIO_TA_CC_DB, CONTACT_DISPLAY_PRIO_TA_DB_CC };
 enum SCAN_MODE { SCAN_MODE_HOLD = 0, SCAN_MODE_PAUSE, SCAN_MODE_STOP };
 enum SPLIT_CONTACT { SPLIT_CONTACT_SINGLE_LINE_ONLY = 0, SPLIT_CONTACT_ON_TWO_LINES, SPLIT_CONTACT_AUTO };
+enum ALLOW_PRIVATE_CALLS_MODE { ALLOW_PRIVATE_CALLS_OFF = 0, ALLOW_PRIVATE_CALLS_ON, ALLOW_PRIVATE_CALLS_PTT, ALLOW_PRIVATE_CALLS_AUTO };
 
 typedef enum
 {
@@ -82,7 +83,7 @@ typedef struct
 	uint8_t			scanDelay;
 	uint8_t			squelchDefaults[RADIO_BANDS_TOTAL_NUM];// VHF,200Mhz and UHF
 	uint8_t			hotspotType;
-    bool     		privateCalls;
+    uint8_t    		privateCalls;
 	uint32_t		vfoScanLow[2];                  //low frequency for VFO Scanning
 	uint32_t		vfoScanHigh[2];                 //High frequency for VFO Scanning
 	uint8_t			contactDisplayPriority;
