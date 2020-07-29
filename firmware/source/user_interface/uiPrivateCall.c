@@ -63,6 +63,7 @@ static void updateScreen(void)
 	}
 	ucPrintCentered(32, buffer, FONT_SIZE_3);
 
+	ucPrintCentered(0, currentLanguage->private_call, FONT_SIZE_3);
 	ucPrintCentered(16, currentLanguage->accept_call, FONT_SIZE_3);
 	ucDrawChoice(CHOICE_YESNO, false);
 	ucRender();
