@@ -633,14 +633,17 @@ void mainTask(void *data)
 						{
 							if ((HRC6000GetReceivedSrcId() & 0xFFFFFF) >= 1000000)
 							{
+								/*
 								if (nonVolatileSettings.privateCalls == ALLOW_PRIVATE_CALLS_AUTO)
 								{
 									acceptPrivateCall(menuUtilityReceivedPcId);
 								}
 								else
 								{
+								*/
 									menuSystemPushNewMenu(UI_PRIVATE_CALL);
-								}
+								/*
+								}*/
 							}
 						}
 					}

@@ -292,7 +292,8 @@ static void handleEvent(uiEvent_t *ev)
 				settingsSet(nonVolatileSettings.transmitTalkerAlias, true);
 				break;
 			case OPTIONS_MENU_PRIVATE_CALLS:
-				if (nonVolatileSettings.privateCalls < ALLOW_PRIVATE_CALLS_AUTO)
+				// Note. Currently the "AUTO" option is not available
+				if (nonVolatileSettings.privateCalls < ALLOW_PRIVATE_CALLS_PTT)
 				{
 					settingsIncrement(nonVolatileSettings.privateCalls, 1);
 				}
