@@ -1444,18 +1444,16 @@ void drawDMRMicLevelBarGraph(void)
 
 void setOverrideTGorPC(int tgOrPc, bool privateCall)
 {
-	int tmpTGorPC = nonVolatileSettings.overrideTG;
-
 	menuUtilityTgBeforePcMode = 0;
 	settingsSet(nonVolatileSettings.overrideTG, tgOrPc);
 	if (privateCall == true)
 	{
 		// Private Call
 
-		if ((tmpTGorPC >> 24) != PC_CALL_FLAG)
+		if ((trxTalkGroupOrPcId >> 24) != PC_CALL_FLAG)
 		{
 			// if the current Tx TG is a TalkGroup then save it so it can be restored after the end of the private call
-			menuUtilityTgBeforePcMode = tmpTGorPC;
+			menuUtilityTgBeforePcMode = trxTalkGroupOrPcId;
 		}
 		settingsSet(nonVolatileSettings.overrideTG, (nonVolatileSettings.overrideTG | (PC_CALL_FLAG << 24)));
 	}
