@@ -20,7 +20,7 @@
  * Translators: DG3GSP, DL4LEX
  *
  *
- * Rev: 3.9
+ * Rev: 4.0
  */
 #ifndef USER_INTERFACE_LANGUAGES_GERMAN_H_
 #define USER_INTERFACE_LANGUAGES_GERMAN_H_
@@ -69,7 +69,7 @@ const stringsTable_t germanLanguage =
 .pc_entry				= "PC Eingabe", // MaxLen: 15
 .user_dmr_id			= "Benutzer ID", // MaxLen: 15
 .contact 				= "Kontakt", // MaxLen: 15
-.accept_call			= "Ruf annehmen?", // MaxLen: 16
+.accept_call			= "PC erlauben", // MaxLen: 16
 .private_call			= "Privater Ruf", // MaxLen: 16
 .squelch				= "Squelch",  // MaxLen: 8
 .quick_menu 			= "Schnellfunktion", // MaxLen: 16
