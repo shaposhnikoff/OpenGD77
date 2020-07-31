@@ -870,7 +870,11 @@ Note. The PTT latch function, only works if a timeout has been defined for the c
 
 #### Hotspot
 
+<<<<<<< HEAD
 **Hotspot mode is not supported on the Baofeng RD-5R / DMR-5R because the hardware does not support reliable USB communications while the radio is transmitting**
+=======
+**Hotspot mode is not supported on the Baofeng RD-5R / DM-5R because the hardware does not support reliable USB communications while the radio is transmitting**
+>>>>>>> development
 
 This option controls whether the firmware will enter hotspot mode when connected to MMDVMHost, including PiStar, or to BlueDV.
 
@@ -1115,7 +1119,11 @@ Once the private call is complete, you can return to the Talkgroup you were on p
 
 **IMPORTANT INFORMATION**
 
+<<<<<<< HEAD
 **Hotspot mode is not supported on the Baofeng RD-5R / DMR-5R because the hardware does not support reliable USB communications while the radio is transmitting**
+=======
+**Hotspot mode is not supported on the Baofeng RD-5R / DM-5R because the hardware does not support reliable USB communications while the radio is transmitting**
+>>>>>>> development
 
 * The USB connection between the radio and the host system e.g. PiStar needs to be protected from RF injection, otherwise the USB connection will be occasionally be reset when the radio is transmitting, which will cause the hotspot to stop working.
 * Do not use the antenna on top of the radio when in hotspot mode, this usually causes RF injection problems which can't be resolved by screening or ferrite chokes.

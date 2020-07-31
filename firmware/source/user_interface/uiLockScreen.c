@@ -80,12 +80,16 @@ static void redrawScreen(bool update, bool state)
 		memset(buf, 0, bufferLen);
 
 		if (keypadLocked)
+		{
 			strcat(buf, currentLanguage->keypad);
+		}
 
 		if (PTTLocked)
 		{
 			if (keypadLocked)
+			{
 				strcat(buf, " & ");
+			}
 
 			strcat(buf, currentLanguage->ptt);
 		}
@@ -194,5 +198,7 @@ void menuLockScreenPop(void)
 	lockDisplayed = false;
 
 	if (menuSystemGetCurrentMenuNumber() == UI_LOCK_SCREEN)
+	{
 		menuSystemPopPreviousMenu();
+	}
 }

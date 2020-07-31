@@ -47,10 +47,10 @@ void debugReadCPUID(void);
 
 TaskHandle_t mainTaskHandle;
 
-#if defined(PLATFORM_GD77S)
-static uint32_t lowbatteryTimerForGD77S = 0;
-static const int LOW_BATTERY_INTERVAL_GD77S = ((1000 * 60) * 5); // 5 minutes;
-#endif
+
+static uint32_t lowbatteryTimer = 0;
+static const int LOW_BATTERY_INTERVAL = ((1000 * 60) * 1); // 1 minute;
+const int LOW_BATTERY_WARNING_VOLTAGE_DIFFERENTIAL = 6;	// Offset between the minimum voltage and when the battery warning audio starts. 6 = 0.6V
 
 void mainTaskInit(void)
 {
@@ -71,9 +71,9 @@ void powerOffFinalStage(void)
 
 	// If user was in a private call when they turned the radio off we need to restore the last Tg prior to stating the Private call.
 	// to the nonVolatile Setting overrideTG, otherwise when the radio is turned on again it be in PC mode to that station.
-	if ((trxTalkGroupOrPcId>>24) == PC_CALL_FLAG)
+	if ((trxTalkGroupOrPcId >> 24) == PC_CALL_FLAG)
 	{
-		nonVolatileSettings.overrideTG = menuUtilityTgBeforePcMode;
+		settingsSet(nonVolatileSettings.overrideTG, menuUtilityTgBeforePcMode);
 	}
 
 	menuHotspotRestoreSettings();
@@ -91,7 +91,7 @@ void powerOffFinalStage(void)
 		}
 	}
 
-	nonVolatileSettings.displayBacklightPercentageOff = 0;
+	settingsSet(nonVolatileSettings.displayBacklightPercentageOff, 0);
 	displayEnableBacklight(false);
 
 #if !defined(PLATFORM_RD5R)
@@ -132,14 +132,14 @@ static void keyBeepHandler(uiEvent_t *ev, bool PTTToggledDown)
 			}
 			else
 			{
-				soundSetMelody(melody_key_beep);
+				soundSetMelody(MELODY_KEY_BEEP);
 			}
-			nextKeyBeepMelody = (int *)melody_key_beep;// set back to the default beep
+			nextKeyBeepMelody = (int *)MELODY_KEY_BEEP;// set back to the default beep
 		}
 		else
 		{ 	// Reset the beep sound if we are scanning, otherwise the AudioAssist
 			// beep will be played instead of the normal one.
-			soundSetMelody(melody_key_beep);
+			soundSetMelody(MELODY_KEY_BEEP);
 		}
 	}
 	else
@@ -148,7 +148,7 @@ static void keyBeepHandler(uiEvent_t *ev, bool PTTToggledDown)
 		{
 			if ((PTTToggledDown == false) && (uiVFOModeIsScanning() == false) && (uiChannelModeIsScanning() == false))
 			{
-				soundSetMelody(melody_key_long_beep);
+				soundSetMelody(MELODY_KEY_LONG_BEEP);
 			}
 		}
 	}
@@ -170,11 +170,10 @@ void mainTask(void *data)
 	USB_DeviceApplicationInit();
 
 	// Init I2C
-	init_I2C0a();
-	setup_I2C0();
-	fw_init_common();
+	I2C0aInit();
+	gpioInitCommon();
 	buttonsInit();
-	fw_init_LEDs();
+	LEDsInit();
 	keyboardInit();
 	rotarySwitchInit();
 
@@ -190,16 +189,14 @@ void mainTask(void *data)
 	displayInit(nonVolatileSettings.displayInverseVideo);
 
 	// Init SPI
-	init_SPI();
-	setup_SPI0();
-	setup_SPI1();
+	SPIInit();
 
 	// Init I2S
 	init_I2S();
 	setup_I2S();
 
 	// Init ADC
-	adc_init();
+	adcInit();
 
 	// Init DAC
 	dac_init();
@@ -227,9 +224,6 @@ void mainTask(void *data)
 	// Init HR-C6000 interrupts
 	init_HR_C6000_interrupts();
 
-	// Speech Synthesis (GD77S Only)
-	speechSynthesisInit();
-
 	// VOX init
 	voxInit();
 
@@ -240,7 +234,7 @@ void mainTask(void *data)
 
 	trx_measure_count = 0;
 
-	if (get_battery_voltage() < CUTOFF_VOLTAGE_UPPER_HYST)
+	if (adcGetBatteryVoltage() < CUTOFF_VOLTAGE_UPPER_HYST)
 	{
 		showLowBattery();
 #if !defined(PLATFORM_RD5R)
@@ -280,17 +274,27 @@ void mainTask(void *data)
 	voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);
 
 #if defined(PLATFORM_GD77S)
-	// Change hotspot modem type setting
-	if (buttons & BUTTON_SK1)
+	// Those act as a toggles
+
+	// Band limits
+	if ((buttons & (BUTTON_SK1 | BUTTON_PTT)) == (BUTTON_SK1 | BUTTON_PTT))
 	{
-		uint8_t buf[3U] = { 0 };
+		settingsSet(nonVolatileSettings.txFreqLimited, !nonVolatileSettings.txFreqLimited);
 
-		nonVolatileSettings.hotspotType = (buttons & BUTTON_PTT) ? HOTSPOT_TYPE_BLUEDV : HOTSPOT_TYPE_MMDVM;
+		voicePromptsInit();
+		voicePromptsAppendLanguageString(&currentLanguage->band_limits);
+		voicePromptsAppendLanguageString(nonVolatileSettings.txFreqLimited ? &currentLanguage->on : &currentLanguage->off);
+		voicePromptsPlay();
+	}
+	// Hotspot mode
+	else if ((buttons & BUTTON_SK1) == BUTTON_SK1)
+	{
+		settingsSet(nonVolatileSettings.hotspotType, ((nonVolatileSettings.hotspotType == HOTSPOT_TYPE_MMDVM) ? HOTSPOT_TYPE_BLUEDV : HOTSPOT_TYPE_MMDVM));
 
-		buf[0U] = 2U;
-		buf[1U] = SPEECH_SYNTHESIS_MODE;
-		buf[2U] = (nonVolatileSettings.hotspotType == HOTSPOT_TYPE_BLUEDV) ? SPEECH_SYNTHESIS_BLUE : SPEECH_SYNTHESIS_RED;
-		speechSynthesisSpeak(buf);
+		voicePromptsInit();
+		voicePromptsAppendLanguageString(&currentLanguage->hotspot_mode);
+		voicePromptsAppendString((nonVolatileSettings.hotspotType == HOTSPOT_TYPE_MMDVM) ? "MMDVM" : "BlueDV");
+		voicePromptsPlay();
 	}
 #endif
 
@@ -303,16 +307,19 @@ void mainTask(void *data)
 	keys.event = 0;
 	keys.key = 0;
 
+	lowbatteryTimer = fw_millis() + 5000;// Check battery 5 seconds after the firmware starts
+
 	while (1U)
 	{
 		taskENTER_CRITICAL();
-		uint32_t tmp_timer_maintask=timer_maintask;
+		uint32_t tmp_timer_maintask = timer_maintask;
 		taskEXIT_CRITICAL();
-		if (tmp_timer_maintask==0)
+
+		if (tmp_timer_maintask == 0)
 		{
 			taskENTER_CRITICAL();
-			timer_maintask=10;
-			alive_maintask=true;
+			timer_maintask = 10;
+			alive_maintask = true;
 			taskEXIT_CRITICAL();
 
 			tick_com_request();
@@ -384,7 +391,7 @@ void mainTask(void *data)
 
 			if (keypadLocked || PTTLocked)
 			{
-				if (keypadLocked && (buttons & BUTTON_PTT) == 0)
+				if (keypadLocked && ((buttons & BUTTON_PTT) == 0))
 				{
 					if (key_event == EVENT_KEY_CHANGE)
 					{
@@ -403,9 +410,9 @@ void mainTask(void *data)
 
 					// Lockout ORANGE AND BLUE (BLACK stay active regardless lock status, useful to trigger backlight)
 #if defined(PLATFORM_RD5R)
-					if (button_event == EVENT_BUTTON_CHANGE && (buttons & BUTTON_SK2))
+					if ((button_event == EVENT_BUTTON_CHANGE) && (buttons & BUTTON_SK2))
 #else
-					if (button_event == EVENT_BUTTON_CHANGE && ((buttons & BUTTON_ORANGE) || (buttons & BUTTON_SK2)))
+					if ((button_event == EVENT_BUTTON_CHANGE) && ((buttons & BUTTON_ORANGE) || (buttons & BUTTON_SK2)))
 #endif
 					{
 						if ((PTTToggledDown == false) && (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN))
@@ -425,7 +432,7 @@ void mainTask(void *data)
 				{
 					if ((buttons & BUTTON_PTT) && (button_event == EVENT_BUTTON_CHANGE))
 					{
-						soundSetMelody(melody_ERROR_beep);
+						soundSetMelody(MELODY_ERROR_BEEP);
 
 						if (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN)
 						{
@@ -546,11 +553,11 @@ void mainTask(void *data)
 					 * if ((slot_state == DMR_STATE_IDLE || trxDMRMode == DMR_MODE_PASSIVE)  &&
 					 *
 					 */
-					if (	trxGetMode() != RADIO_MODE_NONE &&
-							settingsUsbMode != USB_MODE_HOTSPOT &&
-							currentMenu != UI_POWER_OFF &&
-							currentMenu != UI_SPLASH_SCREEN &&
-							currentMenu != UI_TX_SCREEN )
+					if ((trxGetMode() != RADIO_MODE_NONE) &&
+							(settingsUsbMode != USB_MODE_HOTSPOT) &&
+							(currentMenu != UI_POWER_OFF) &&
+							(currentMenu != UI_SPLASH_SCREEN) &&
+							(currentMenu != UI_TX_SCREEN))
 					{
 						bool wasScanning = false;
 
@@ -580,12 +587,17 @@ void mainTask(void *data)
 						}
 						if (!wasScanning)
 						{
+							if ((menuSystemGetCurrentMenuNumber() == UI_PRIVATE_CALL) && (nonVolatileSettings.privateCalls == ALLOW_PRIVATE_CALLS_PTT))
+							{
+								acceptPrivateCall(menuUtilityReceivedPcId);
+								menuSystemPopPreviousMenu();
+							}
 							menuSystemPushNewMenu(UI_TX_SCREEN);
 						}
 					}
 				}
 
-				if (buttons & BUTTON_SK1 && buttons & BUTTON_SK2)
+				if ((buttons & BUTTON_SK1) && (buttons & BUTTON_SK2))
 				{
 					settingsSaveSettings(true);
 				}
@@ -597,10 +609,10 @@ void mainTask(void *data)
 				}
 			}
 
-			if (!trxTransmissionEnabled && updateLastHeard==true)
+			if (!trxTransmissionEnabled && (updateLastHeard == true))
 			{
 				lastHeardListUpdate((uint8_t *)DMR_frame_buffer, false);
-				updateLastHeard=false;
+				updateLastHeard = false;
 			}
 
 			if ((nonVolatileSettings.hotspotType == HOTSPOT_TYPE_OFF) ||
@@ -611,17 +623,27 @@ void mainTask(void *data)
 				{
 					menuClearPrivateCall();
 				}
-				if (!trxTransmissionEnabled && menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA && nonVolatileSettings.privateCalls == true)
+				if (!trxTransmissionEnabled && (menuDisplayQSODataState == QSO_DISPLAY_CALLER_DATA) && (nonVolatileSettings.privateCalls > ALLOW_PRIVATE_CALLS_OFF))
 				{
-					if (HRC6000GetReceivedTgOrPcId() == (trxDMRID | (PC_CALL_FLAG<<24)))
+					if (HRC6000GetReceivedTgOrPcId() == (trxDMRID | (PC_CALL_FLAG << 24)))
 					{
 						if ((uiPrivateCallState == NOT_IN_CALL) &&
-								(trxTalkGroupOrPcId != (HRC6000GetReceivedSrcId() | (PC_CALL_FLAG<<24))) &&
+								(trxTalkGroupOrPcId != (HRC6000GetReceivedSrcId() | (PC_CALL_FLAG << 24))) &&
 								(HRC6000GetReceivedSrcId() != uiPrivateCallLastID))
 						{
 							if ((HRC6000GetReceivedSrcId() & 0xFFFFFF) >= 1000000)
 							{
-								menuSystemPushNewMenu(UI_PRIVATE_CALL);
+								/*
+								if (nonVolatileSettings.privateCalls == ALLOW_PRIVATE_CALLS_AUTO)
+								{
+									acceptPrivateCall(menuUtilityReceivedPcId);
+								}
+								else
+								{
+								*/
+									menuSystemPushNewMenu(UI_PRIVATE_CALL);
+								/*
+								}*/
 							}
 						}
 					}
@@ -660,15 +682,15 @@ void mainTask(void *data)
 					break;
 #endif
 				case '7':
-					keyFunction = (MENU_DISPLAY <<8) + DEC_BRIGHTNESS;
+					keyFunction = (MENU_DISPLAY << 8) + DEC_BRIGHTNESS;
 					break;
 				case '8':
-					keyFunction = (MENU_DISPLAY <<8) + INC_BRIGHTNESS;
+					keyFunction = (MENU_DISPLAY << 8) + INC_BRIGHTNESS;
 					break;
 #if defined(READ_CPUID)
 				case '0':
 					debugReadCPUID();
-					keyFunction = (NUM_MENU_ENTRIES<<8);
+					keyFunction = (NUM_MENU_ENTRIES << 8);
 					break;
 #endif
 				default:
@@ -719,7 +741,7 @@ void mainTask(void *data)
 			menuSystemCallCurrentMenuTick(&ev);
 
 			// Beep sounds aren't allowed in these modes.
-			if ((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT || voicePromptIsActive) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
+			if (((nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_SILENT) || voicePromptIsActive) /*|| (nonVolatileSettings.audioPromptMode == AUDIO_PROMPT_MODE_VOICE)*/)
 			{
 				if (melody_play != NULL)
 				{
@@ -754,19 +776,31 @@ void mainTask(void *data)
 			}
 #endif
 
+
 #if defined(PLATFORM_GD77S)
-			if ((battery_voltage < (CUTOFF_VOLTAGE_LOWER_HYST + 6))
-					&& ((lowbatteryTimerForGD77S == 0) || ((fw_millis() - lowbatteryTimerForGD77S) > LOW_BATTERY_INTERVAL_GD77S)))
-			{
-				uint8_t buf[2];
-
-				lowbatteryTimerForGD77S = fw_millis();
-
-				buf[0U] = 1;
-				buf[1U] = SPEECH_SYNTHESIS_PLEASE_CHARGE_THE_BATTERY;
-				speechSynthesisSpeak(buf);
-			}
+			if (trxTransmissionEnabled == false &&
+#else
+				if ((menuSystemGetCurrentMenuNumber() != UI_TX_SCREEN) &&
 #endif
+				(battery_voltage < (CUTOFF_VOLTAGE_LOWER_HYST + LOW_BATTERY_WARNING_VOLTAGE_DIFFERENTIAL))	&&
+				(fw_millis() > lowbatteryTimer))
+			{
+
+				if (melody_play == NULL)
+				{
+					if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+					{
+						soundSetMelody(MELODY_LOW_BATTERY);
+					}
+					else
+					{
+						voicePromptsInit();
+						voicePromptsAppendLanguageString(&currentLanguage->low_battery);
+						voicePromptsPlay();
+					}
+					lowbatteryTimer = fw_millis() + LOW_BATTERY_INTERVAL;
+				}
+			}
 
 #if defined(PLATFORM_RD5R)
 			if ((battery_voltage < CUTOFF_VOLTAGE_LOWER_HYST)
@@ -787,11 +821,11 @@ void mainTask(void *data)
 					{
 						powerOffFinalStage();
 					}
-#endif
 				}
 				else
 				{
 					menuSystemPushNewMenu(UI_POWER_OFF);
+#endif // ! PLATFORM_RD5R
 				}
 				GPIO_PinWrite(GPIO_audio_amp_enable, Pin_audio_amp_enable, 0);
 				soundSetMelody(NULL);
@@ -813,13 +847,16 @@ void mainTask(void *data)
 				}
 			}
 
-			if (voicePromptIsActive)
+			if (voicePromptsIsPlaying())
 			{
 				voicePromptsTick();
 			}
 			soundTickMelody();
-			speechSynthesisTick();
 			voxTick();
+
+#if defined(PLATFORM_RD5R) // Needed for platforms which can't control the poweroff
+			settingsSaveIfNeeded(false);
+#endif
 		}
 		vTaskDelay(0);
 	}
@@ -833,10 +870,10 @@ void debugReadCPUID(void)
 	uint8_t *p = (uint8_t *)0x40048054;
 	USB_DEBUG_PRINT("\nCPU ID\n");
 	vTaskDelay(portTICK_PERIOD_MS * 1);
-	for(int i=0; i<16;i++)
+	for(int i = 0; i < 16; i++)
 	{
-		sprintf(tmp,"%02x ", *p);
-		strcat(buf,tmp);
+		sprintf(tmp, "%02x ", *p);
+		strcat(buf, tmp);
 		p++;
 	}
 	USB_DEBUG_PRINT(buf);
@@ -845,19 +882,18 @@ void debugReadCPUID(void)
 	USB_DEBUG_PRINT("\nProtection bytes\n");
 	vTaskDelay(portTICK_PERIOD_MS * 1);
 
-	buf[0]=0;
+	buf[0] = 0;
 #if defined(PLATFORM_DM1801)
 	p = (uint8_t *)0x3800;
 #else
 	p = (uint8_t *)0x7f800;
 #endif
-	for(int i=0; i<36;i++)
+	for(int i = 0; i < 36; i++)
 	{
-		sprintf(tmp,"%02x ", *p);
-		strcat(buf,tmp);
+		sprintf(tmp, "%02x ", *p);
+		strcat(buf, tmp);
 		p++;
 	}
 	USB_DEBUG_PRINT(buf);
-
 }
 #endif

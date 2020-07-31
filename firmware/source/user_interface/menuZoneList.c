@@ -46,7 +46,9 @@ menuStatus_t menuZoneList(uiEvent_t *ev, bool isFirstRun)
 		menuZoneExitCode = MENU_STATUS_SUCCESS;
 
 		if (ev->hasEvent)
+		{
 			handleEvent(ev);
+		}
 	}
 	return menuZoneExitCode;
 }
@@ -72,16 +74,16 @@ static void updateScreen(bool isFirstRun)
 		codeplugZoneGetDataForNumber(mNum, &zoneBuf);
 		codeplugUtilConvertBufToString(zoneBuf.name, nameBuf, 16);// need to convert to zero terminated string
 
-		menuDisplayEntry(i, mNum, (char* )nameBuf);
+		menuDisplayEntry(i, mNum, (char *)nameBuf);
 
-		if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) && (i==0))
+		if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) && (i == 0))
 		{
 			if (!isFirstRun)
 			{
 				voicePromptsInit();
 			}
 
-			if (strcmp(nameBuf,currentLanguage->all_channels)==0)
+			if (strcmp(nameBuf,currentLanguage->all_channels) == 0)
 			{
 				voicePromptsAppendLanguageString(&currentLanguage->all_channels);
 			}
@@ -107,31 +109,32 @@ static void handleEvent(uiEvent_t *ev)
 		voicePromptsPlay();
 	}
 
-	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN))
+	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen(false);
 		menuZoneExitCode |= MENU_STATUS_LIST_TYPE;
 	}
-	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
+	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, gMenusEndIndex);
 		updateScreen(false);
 		menuZoneExitCode |= MENU_STATUS_LIST_TYPE;
 	}
-	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+	else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
-		nonVolatileSettings.overrideTG = 0; // remove any TG override
-		nonVolatileSettings.currentZone = gMenusCurrentItemIndex;
-		nonVolatileSettings.currentChannelIndexInZone = 0;// Since we are switching zones the channel index should be reset
-		nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE]=0;// Since we are switching zones the TRx Group index should be reset
-		channelScreenChannelData.rxFreq=0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
+		settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
+		settingsSet(nonVolatileSettings.currentZone, gMenusCurrentItemIndex);
+		settingsSet(nonVolatileSettings.currentChannelIndexInZone , 0);// Since we are switching zones the channel index should be reset
+		settingsSet(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE], 0);// Since we are switching zones the TRx Group index should be reset
+		channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
+
+		settingsSaveIfNeeded(true);
 		menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
-		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// For Baofeng RD-5R
 
 		return;
 	}
-	else if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
+	else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
 		menuSystemPopPreviousMenu();
 		return;

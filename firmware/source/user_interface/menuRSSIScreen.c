@@ -38,7 +38,9 @@ menuStatus_t menuRSSIScreen(uiEvent_t *ev, bool isFirstRun)
 	else
 	{
 		if (ev->hasEvent)
+		{
 			handleEvent(ev);
+		}
 
 		if((ev->time - m) > RSSI_UPDATE_COUNTER_RELOAD)
 		{
@@ -78,9 +80,9 @@ static void updateScreen(void)
 		ucPrintCentered(20, buffer, FONT_SIZE_3);
 
 		barGraphLength = ((dBm + 130) * 24)/10;
-		if (barGraphLength<0)
+		if (barGraphLength < 0)
 		{
-			barGraphLength=0;
+			barGraphLength = 0;
 		}
 
 		if (barGraphLength > ((DISPLAY_SIZE_X - 1) - 4))
@@ -88,11 +90,11 @@ static void updateScreen(void)
 			barGraphLength = ((DISPLAY_SIZE_X - 1) - 4);
 		}
 
-		ucFillRect(4, DISPLAY_SIZE_Y-18,barGraphLength,8,false);
-		ucPrintCore(5,DISPLAY_SIZE_Y-8,"S1  S3  S5  S7  S9", FONT_SIZE_1, TEXT_ALIGN_LEFT, false);
+		ucFillRect(4, DISPLAY_SIZE_Y - 18, barGraphLength, 8, false);
+		ucPrintCore(5, DISPLAY_SIZE_Y - 8, "S1  S3  S5  S7  S9", FONT_SIZE_1, TEXT_ALIGN_LEFT, false);
 
 		ucRender();
-		trxRxSignal=0;
+		trxRxSignal = 0;
 }
 
 
@@ -100,12 +102,12 @@ static void handleEvent(uiEvent_t *ev)
 {
 	displayLightTrigger();
 
-	if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
+	if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
 		menuSystemPopPreviousMenu();
 		return;
 	}
-	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+	else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
 		menuSystemPopAllAndDisplayRootMenu();
 		return;

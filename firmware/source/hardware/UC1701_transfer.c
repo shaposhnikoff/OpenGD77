@@ -22,6 +22,7 @@
 #include <display.h>
 #include <hardware/UC1701.h>
 #include <settings.h>
+#include <gpio.h>
 
 /*
  * IMPORTANT
@@ -31,17 +32,17 @@
  * This file implements software SPI which is messed up if compiler optimisation is enabled.
  */
 
-void UC1701_setCommandMode();
-void UC1701_setDataMode();
+void UC1701_setCommandMode(void);
+void UC1701_setDataMode(void);
 void UC1701_transfer(register uint8_t data1);
 
 #if ! defined(PLATFORM_GD77S)
-void UC1701_setCommandMode()
+void UC1701_setCommandMode(void)
 {
 	GPIO_Display_RS->PCOR = 1U << Pin_Display_RS;// set the command / data pin low to signify Command mode
 }
 
-void UC1701_setDataMode()
+void UC1701_setDataMode(void)
 {
 	GPIO_Display_RS->PSOR = 1U << Pin_Display_RS;// set the command / data pin low to signify Data mode
 }
@@ -52,7 +53,7 @@ void ucRenderRows(int16_t startRow, int16_t endRow)
 #if ! defined(PLATFORM_GD77S)
 	uint8_t *rowPos = (screenBuf + startRow * DISPLAY_SIZE_X);
 
-	for(int16_t row=startRow;row<endRow;row++)
+	for(int16_t row = startRow; row < endRow; row++)
 	{
 		UC1701_setCommandMode();
 		UC1701_transfer(0xb0 | row); // set Y
@@ -73,7 +74,7 @@ void ucRenderRows(int16_t startRow, int16_t endRow)
 
 				GPIO_Display_SCK->PCOR = 1U << Pin_Display_SCK;
 
-				if ((data1&0x80) == 0U)
+				if ((data1 & 0x80) == 0U)
 				{
 					GPIO_Display_SDA->PCOR = 1U << Pin_Display_SDA;// Hopefully the compiler will optimise this to a value rather than using a shift
 				}
@@ -84,7 +85,7 @@ void ucRenderRows(int16_t startRow, int16_t endRow)
 
 				GPIO_Display_SCK->PSOR = 1U << Pin_Display_SCK;// Hopefully the compiler will optimise this to a value rather than using a shift
 
-				data1=data1<<1;
+				data1 = data1 << 1;
 			}
 			rowPos++;
 		}
@@ -95,11 +96,11 @@ void ucRenderRows(int16_t startRow, int16_t endRow)
 void UC1701_transfer(register uint8_t data1)
 {
 #if ! defined(PLATFORM_GD77S)
-	for (register int i=0; i<8; i++)
+	for (register int i = 0; i < 8; i++)
 	{
 		GPIO_Display_SCK->PCOR = 1U << Pin_Display_SCK;
 
-		if ((data1&0x80) == 0U)
+		if ((data1 & 0x80) == 0U)
 		{
 			GPIO_Display_SDA->PCOR = 1U << Pin_Display_SDA;// Hopefully the compiler will otimise this to a value rather than using a shift
 		}
@@ -109,7 +110,7 @@ void UC1701_transfer(register uint8_t data1)
 		}
 		GPIO_Display_SCK->PSOR = 1U << Pin_Display_SCK;// Hopefully the compiler will otimise this to a value rather than using a shift
 
-		data1=data1<<1;
+		data1 = data1 << 1;
 	}
 #endif // ! PLATFORM_GD77S
 }

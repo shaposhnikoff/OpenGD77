@@ -168,15 +168,14 @@ const uint8_t AT1846DMRSettings[][AT1846_BYTES_PER_COMMAND] = {
 		{0x66, 0xEB, 0x2E}, // rssi_comp  and afc range
 		};
 
-#define I2C_DATA_LENGTH (4)  /* Maximum transfer size seems to be 3 bytes. So use 4 to pad to 32 byte boundary */
-static uint8_t i2c_master_buff[I2C_DATA_LENGTH];
+
 
 void I2C_AT1846S_send_Settings(const uint8_t settings[][3],int numSettings)
 {
 	taskENTER_CRITICAL();
-	for(int i=0;i<numSettings;i++)
+	for(int i = 0; i < numSettings; i++)
 	{
-		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT,	settings[i][0], settings[i][1],	settings[i][2]);
+		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, settings[i][0], settings[i][1],	settings[i][2]);
 	}
 	taskEXIT_CRITICAL();
 }
@@ -185,16 +184,16 @@ void AT1846Init(void)
 {
 	// --- start of AT1846_init()
 	taskENTER_CRITICAL();
-	AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x00, 0x01); // Soft reset
+	I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x00, 0x01); // Soft reset
 	vTaskDelay(portTICK_PERIOD_MS * 50);
 
 	I2C_AT1846S_send_Settings(AT1846InitSettings,sizeof(AT1846InitSettings)/AT1846_BYTES_PER_COMMAND);
 	vTaskDelay(portTICK_PERIOD_MS * 50);
 
-	AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0xA6); // chip_cal_en Enable calibration
+	I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0xA6); // chip_cal_en Enable calibration
 	vTaskDelay(portTICK_PERIOD_MS * 100);
 
-	AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x06); // chip_cal_en Disable calibration
+	I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x30, 0x40, 0x06); // chip_cal_en Disable calibration
 	vTaskDelay(portTICK_PERIOD_MS * 10);
 	// Calibration end
 	// --- end of AT1846_init()
@@ -237,19 +236,19 @@ void AT1846SetMode(void)
 		if (trxGetBandwidthIs25kHz())
 		{
 			// 25 kHz settings
-			AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x3A, 0x40, 0xCB);
+			I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x3A, 0x40, 0xCB);
 		}
 		else
 		{
 			// 12.5 kHz settings
-			AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x3A, 0x44, 0xCB);
+			I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x3A, 0x44, 0xCB);
 		}
 	}
 	else
 	{
 		AT1846SetClearReg2byteWithMask(0x30,0xCF,0x9F,0x00,0x00); // Clear the 25Khz Bits and turn off the Rx and Tx
 		AT1846SetClearReg2byteWithMask(0x30,0xFF,0x9F,0x00,0x20); // Turn the Rx On
-		AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x3A, 0x44, 0xCB);
+		I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x3A, 0x44, 0xCB);
 		I2C_AT1846S_send_Settings(AT1846DMRSettings, sizeof(AT1846DMRSettings)/AT1846_BYTES_PER_COMMAND);
 	}
 }
@@ -257,108 +256,17 @@ void AT1846SetMode(void)
 void AT1846ReadVoxAndMicStrength(void)
 {
 	taskENTER_CRITICAL();
-	AT1846ReadReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x1a, (uint8_t *)&trxTxVox, (uint8_t *)&trxTxMic);
+	I2CReadReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x1a, (uint8_t *)&trxTxVox, (uint8_t *)&trxTxMic);
 	taskEXIT_CRITICAL();
 }
 
 void AT1846ReadRSSIAndNoise(void)
 {
 	taskENTER_CRITICAL();
-	AT1846ReadReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x1b, (uint8_t *)&trxRxSignal, (uint8_t *)&trxRxNoise);
+	I2CReadReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, 0x1b, (uint8_t *)&trxRxSignal, (uint8_t *)&trxRxNoise);
 	taskEXIT_CRITICAL();
 }
 
-int AT1846WriteReg2byte(uint8_t addr, uint8_t reg, uint8_t val1, uint8_t val2)
-{
-    i2c_master_transfer_t masterXfer;
-    status_t status;
-
-    if (isI2cInUse)
-    {
-#if defined(USE_SEGGER_RTT)
-    	SEGGER_RTT_printf(0, "Clash in write_I2C_reg_2byte (3) with %d\n",isI2cInUse);
-#endif
-    	return 0;
-    }
-    isI2cInUse = 3;
-
-	i2c_master_buff[0] = reg;
-	i2c_master_buff[1] = val1;
-	i2c_master_buff[2] = val2;
-
-    memset(&masterXfer, 0, sizeof(masterXfer));
-    masterXfer.slaveAddress = addr;
-    masterXfer.direction = kI2C_Write;
-    masterXfer.subaddress = 0;
-    masterXfer.subaddressSize = 0;
-    masterXfer.data = i2c_master_buff;
-    masterXfer.dataSize = 3;
-    masterXfer.flags = kI2C_TransferDefaultFlag;
-
-    status = I2C_MasterTransferBlocking(I2C0, &masterXfer);
-    if (status != kStatus_Success)
-    {
-    	isI2cInUse = 0;
-    	return status;
-    }
-
-    isI2cInUse = 0;
-	return kStatus_Success;
-}
-
-int AT1846ReadReg2byte(uint8_t addr, uint8_t reg, uint8_t* val1, uint8_t* val2)
-{
-    i2c_master_transfer_t masterXfer;
-    status_t status;
-
-    if (isI2cInUse)
-    {
-#if defined(USE_SEGGER_RTT)
-    	SEGGER_RTT_printf(0, "Clash in read_I2C_reg_2byte (4) with %d\n",isI2cInUse);
-#endif
-    	return 0;
-    }
-    isI2cInUse = 4;
-
-	i2c_master_buff[0] = reg;
-
-    memset(&masterXfer, 0, sizeof(masterXfer));
-    masterXfer.slaveAddress = addr;
-    masterXfer.direction = kI2C_Write;
-    masterXfer.subaddress = 0;
-    masterXfer.subaddressSize = 0;
-    masterXfer.data = i2c_master_buff;
-    masterXfer.dataSize = 1;
-    masterXfer.flags = kI2C_TransferDefaultFlag;
-
-    status = I2C_MasterTransferBlocking(I2C0, &masterXfer);
-    if (status != kStatus_Success)
-    {
-    	isI2cInUse = 0;
-    	return status;
-    }
-
-    masterXfer.slaveAddress = AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT;
-    masterXfer.direction = kI2C_Read;
-    masterXfer.subaddress = 0;
-    masterXfer.subaddressSize = 0;
-    masterXfer.data = i2c_master_buff;
-    masterXfer.dataSize = 2;
-    masterXfer.flags = kI2C_TransferDefaultFlag;
-
-    status = I2C_MasterTransferBlocking(I2C0, &masterXfer);
-    if (status != kStatus_Success)
-    {
-    	isI2cInUse = 0;
-    	return status;
-    }
-
-    *val1 = i2c_master_buff[0];
-    *val2 = i2c_master_buff[1];
-
-    isI2cInUse = 0;
-	return kStatus_Success;
-}
 
 int AT1846SetClearReg2byteWithMask(uint8_t reg, uint8_t mask1, uint8_t mask2, uint8_t val1, uint8_t val2)
 {
@@ -366,14 +274,14 @@ int AT1846SetClearReg2byteWithMask(uint8_t reg, uint8_t mask1, uint8_t mask2, ui
 
 	uint8_t tmp_val1;
 	uint8_t tmp_val2;
-	status = AT1846ReadReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, reg, &tmp_val1, &tmp_val2);
+	status = I2CReadReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, reg, &tmp_val1, &tmp_val2);
     if (status != kStatus_Success)
     {
     	return status;
     }
 	tmp_val1 = val1 | (tmp_val1 & mask1);
 	tmp_val2 = val2 | (tmp_val2 & mask2);
-	status = AT1846WriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, reg, tmp_val1, tmp_val2);
+	status = I2CWriteReg2byte(AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT, reg, tmp_val1, tmp_val2);
     if (status != kStatus_Success)
     {
     	return status;

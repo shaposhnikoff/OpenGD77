@@ -29,20 +29,14 @@
 
 settingsStruct_t originalNonVolatileSettings;
 
-const int QSO_TIMER_TIMEOUT = 2400;
+
 
 #if defined(PLATFORM_RD5R)
-const int TX_TIMER_Y_OFFSET = 12;
-const int CONTACT_Y_POS = 12;
 static const int BAR_Y_POS = 8;
 #else
-const int TX_TIMER_Y_OFFSET = 8;
-const int CONTACT_Y_POS = 16;
 static const int BAR_Y_POS = 10;
 #endif
 
-const int FREQUENCY_X_POS = /* '>Ta'*/ (3 * 8) + 4;
-const int MAX_POWER_SETTING_NUM = 9;
 
 static const int DMRID_MEMORY_STORAGE_START = 0x30000;
 static const int DMRID_HEADER_LENGTH = 0x0C;
@@ -56,42 +50,99 @@ const uint32_t RSSI_UPDATE_COUNTER_RELOAD = 100;
 uint32_t menuUtilityReceivedPcId 	= 0;// No current Private call awaiting acceptance
 uint32_t menuUtilityTgBeforePcMode 	= 0;// No TG saved, prior to a Private call being accepted.
 
-const char *POWER_LEVELS[]={ "50","250","500","750","1","2","3","4","5","5"};
-const char *POWER_LEVEL_UNITS[]={ "mW","mW","mW","mW","W","W","W","W","W","W++"};
-const char *DMR_FILTER_LEVELS[]={"CC","CC,TS","CC,TS,TG","CC,TS,Ct","CC,TS,RxG"};
-const char *ANALOG_FILTER_LEVELS[]={"CTCSS|DCS"};
+const char *POWER_LEVELS[]         = { "50","250","500","750","1","2","3","4","5","5"};
+const char *POWER_LEVEL_UNITS[]    = { "mW","mW","mW","mW","W","W","W","W","W","W++"};
+const char *DMR_DESTINATION_FILTER_LEVELS[]   = {"TG","Ct","RxG"};
+const char *ANALOG_FILTER_LEVELS[] = {"CTCSS|DCS"};
 
-volatile uint32_t lastID=0;// This needs to be volatile as lastHeardClearLastID() is called from an ISR
-uint32_t lastTG=0;
+volatile uint32_t lastID = 0;// This needs to be volatile as lastHeardClearLastID() is called from an ISR
+uint32_t lastTG = 0;
 
 static dmrIDsCache_t dmrIDsCache;
 
 int nuisanceDelete[MAX_ZONE_SCAN_NUISANCE_CHANNELS];
 int nuisanceDeleteIndex;
-int scanTimer=0;
+int scanTimer = 0;
 bool scanActive = false;
 ScanState_t scanState = SCAN_SCANNING;		//state flag for scan routine.
 int scanDirection = 1;
 
-bool displaySquelch=false;
+bool displaySquelch = false;
 
 char freq_enter_digits[12] = { '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-' };
 int freq_enter_idx;
+
+int tmpQuickMenuDmrDestinationFilterLevel;
+int tmpQuickMenuDmrCcTsFilterLevel;
+int tmpQuickMenuAnalogFilterLevel;
 
 __attribute__((section(".data.$RAM4"))) struct_codeplugRxGroup_t currentRxGroupData;
 struct_codeplugContact_t currentContactData;
 
 const int SCAN_SHORT_PAUSE_TIME = 500;			//time to wait after carrier detected to allow time for full signal detection. (CTCSS or DMR)
 const int SCAN_TOTAL_INTERVAL = 30;			    //time between each scan step
-const int SCAN_DMR_SIMPLEX_MIN_INTERVAL=60;		//minimum time between steps when scanning DMR Simplex. (needs extra time to capture TDMA Pulsing)
+const int SCAN_DMR_SIMPLEX_MIN_INTERVAL = 60;	//minimum time between steps when scanning DMR Simplex. (needs extra time to capture TDMA Pulsing)
 const int SCAN_FREQ_CHANGE_SETTLING_INTERVAL = 1;//Time after frequency is changed before RSSI sampling starts
 const int SCAN_SKIP_CHANNEL_INTERVAL = 1;		//This is actually just an implicit flag value to indicate the channel should be skipped
 
 voicePromptItem_t voicePromptSequenceState = PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ;
 struct_codeplugZone_t currentZone;
 static bool voicePromptWasPlaying;
-bool inhibitInitialVoicePrompt = false;//Used to indicate whether the voice prompts should be reloaded with the channel name or VFO freq
+bool inhibitInitialVoicePrompt =
+#if defined(PLATFORM_GD77S)
+		true;
+#else
+		false;//Used to indicate whether the voice prompts should be reloaded with the channel name or VFO freq
+#endif
 
+// Set TS manual override
+// chan: CHANNEL_VFO_A, CHANNEL_VFO_B, CHANNEL_CHANNEL
+// ts: 1, 2, TS_NO_OVERRIDE
+void tsSetOverride(Channel_t chan, int8_t ts)
+{
+	uint8_t tsOverride = nonVolatileSettings.tsManualOverride;
+
+	// Clear TS override for given channel
+	tsOverride &= ~(0x03 << (2 * ((int8_t)chan)));
+	if (ts != TS_NO_OVERRIDE)
+	{
+		// Set TS override for given channel
+		tsOverride |= (ts << (2 * ((int8_t)chan)));
+	}
+
+	settingsSet(nonVolatileSettings.tsManualOverride, tsOverride);
+}
+
+// Set TS manual override
+// chan: CHANNEL_VFO_A, CHANNEL_VFO_B, CHANNEL_CHANNEL
+// contact: apply TS override from contact setting
+void tsSetContactOverride(Channel_t chan, struct_codeplugContact_t *contact)
+{
+	if ((contact->reserve1 & 0x01) == 0x00)
+	{
+		tsSetOverride(chan, (((contact->reserve1 & 0x02) >> 1) + 1));
+	}
+	else
+	{
+		tsSetOverride(chan, TS_NO_OVERRIDE);
+	}
+}
+
+// Get TS override value
+// chan: CHANNEL_VFO_A, CHANNEL_VFO_B, CHANNEL_CHANNEL
+// returns (TS + 1, 0 no override)
+int8_t tsGetOverride(Channel_t chan)
+{
+	return (nonVolatileSettings.tsManualOverride >> (2 * (int8_t)chan)) & 0x03;
+}
+
+// Check if TS is overrode
+// chan: CHANNEL_VFO_A, CHANNEL_VFO_B, CHANNEL_CHANNEL
+// returns true on overrode for the specified channel
+bool tsIsOverridden(Channel_t chan)
+{
+	return (nonVolatileSettings.tsManualOverride & (0x03 << (2 * ((int8_t)chan))));
+}
 
 bool isQSODataAvailableForCurrentTalker(void)
 {
@@ -119,24 +170,33 @@ char *chomp(char *str)
 	char *sp = str, *ep = str;
 
 	while (*ep != '\0')
+	{
 		ep++;
+	}
 
 	// Spaces at the end
 	while (ep > str)
 	{
 		if (*ep == '\0')
-			;
+		{
+		}
 		else if (*ep == ' ')
+		{
 			*ep = '\0';
+		}
 		else
+		{
 			break;
+		}
 
 		ep--;
 	}
 
 	// Spaces at the beginning
 	while (*sp == ' ')
+	{
 		sp++;
+	}
 
 	return sp;
 }
@@ -148,7 +208,9 @@ int32_t getFirstSpacePos(char *str)
 	while(*p != '\0')
 	{
 		if (*p == ' ')
+		{
 			return (p - str);
+		}
 
 		p++;
 	}
@@ -343,7 +405,9 @@ static uint8_t *decodeTA(uint8_t *TA)
 					if (++t1 == 7U)
 					{
 						if (i > 0U)
+						{
 							buffer[t2++] = c & 0x7FU;
+						}
 
 						t1 = 0U;
 						c = 0U;
@@ -364,9 +428,13 @@ static uint8_t *decodeTA(uint8_t *TA)
 			for (i = 0U; (i < 15U) && (t2 < TAsize); i++)
 			{
 				if (talkerAlias[2U * i + 1U] == 0)
+				{
 					buffer[t2++] = talkerAlias[2U * i + 2U];
+				}
 				else
+				{
 					buffer[t2++] = '?';
+				}
 			}
 			buffer[TAsize] = 0;
 			break;
@@ -377,7 +445,7 @@ static uint8_t *decodeTA(uint8_t *TA)
 
 void lastHeardClearLastID(void)
 {
-	lastID=0;
+	lastID = 0;
 }
 
 static void updateLHItem(LinkItem_t *item)
@@ -575,7 +643,7 @@ bool lastHeardListUpdate(uint8_t *dmrDataBuffer, bool forceOnHotspot)
 					// Not in the list
 					item = LinkHead;// setup to traverse the list from the top.
 
-					if (numLastHeard<NUM_LASTHEARD_STORED)
+					if (numLastHeard < NUM_LASTHEARD_STORED)
 					{
 						numLastHeard++;
 					}
@@ -743,7 +811,7 @@ void dmrIDCacheInit(void)
 
 	SPI_Flash_read(DMRID_MEMORY_STORAGE_START, headerBuf, DMRID_HEADER_LENGTH);
 
-	if (headerBuf[0] != 'I' || headerBuf[1] != 'D' || headerBuf[2] != '-')
+	if ((headerBuf[0] != 'I') || (headerBuf[1] != 'D') || (headerBuf[2] != '-'))
 	{
 		return;
 	}
@@ -873,12 +941,12 @@ static void displayChannelNameOrRxFrequency(char *buffer, size_t maxLen)
 {
 	if (menuSystemGetCurrentMenuNumber() == UI_CHANNEL_MODE)
 	{
-		codeplugUtilConvertBufToString(currentChannelData->name,buffer,16);
+		codeplugUtilConvertBufToString(currentChannelData->name, buffer, 16);
 	}
 	else
 	{
-		int val_before_dp = currentChannelData->rxFreq/100000;
-		int val_after_dp = currentChannelData->rxFreq - val_before_dp*100000;
+		int val_before_dp = currentChannelData->rxFreq / 100000;
+		int val_after_dp = currentChannelData->rxFreq - val_before_dp * 100000;
 		snprintf(buffer, maxLen, "%d.%05d MHz", val_before_dp, val_after_dp);
 		buffer[maxLen - 1] = 0;
 	}
@@ -892,61 +960,70 @@ static void displayChannelNameOrRxFrequency(char *buffer, size_t maxLen)
 
 static void printSplitOrSpanText(uint8_t y, char *text)
 {
-	uint8_t len = strlen(text);
-
-	if (len == 0)
-		return;
-
-	if (len <= 16)
+	if (text != NULL)
 	{
-		ucPrintCentered(y, text, FONT_SIZE_3);
-	}
-	else
-	{
-		uint8_t nLines = len / 21 + (((len % 21) != 0) ? 1 : 0);
+		uint8_t len = strlen(text);
 
-		if (nLines > 2)
-			nLines = 2;
-
-		if (nLines > 1)
+		if (len == 0)
 		{
-			char buffer[43]; // 2 * 21 chars + NULL
-
-			memcpy(buffer, text, len + 1);
-
-			char *p = buffer + 20;
-
-			// Find a space backward
-			while ((*p != ' ') && (p > buffer))
-				p--;
-
-			uint8_t rest = (uint8_t)((buffer + strlen(buffer)) - p) - ((*p == ' ') ? 1 : 0);
-
-			// rest is too long, just split the line in two chunks
-			if (rest > 21)
-			{
-				char c = buffer[21];
-
-				buffer[21] = 0;
-
-				ucPrintCentered(y, buffer, FONT_SIZE_1); // 2 pixels are saved, could center
-
-				buffer[21] = c;
-				buffer[42] = 0;
-
-				ucPrintCentered(y + 8, buffer + 21, FONT_SIZE_1);
-			}
-			else
-			{
-				*p = 0;
-
-				ucPrintCentered(y, buffer, FONT_SIZE_1);
-				ucPrintCentered(y + 8, p + 1, FONT_SIZE_1);
-			}
+			return;
 		}
-		else // One line of 21 chars max
+		else if (len <= 16)
 		{
-			ucPrintCentered(y + 4, text, FONT_SIZE_1);
+			ucPrintCentered(y, text, FONT_SIZE_3);
+		}
+		else
+		{
+			uint8_t nLines = len / 21 + (((len % 21) != 0) ? 1 : 0);
+
+			if (nLines > 2)
+			{
+				nLines = 2;
+				len = 42; // 2 lines max.
+			}
+
+			if (nLines > 1)
+			{
+				char buffer[43]; // 2 * 21 chars + NULL
+
+				memcpy(buffer, text, len + 1);
+
+				char *p = buffer + 20;
+
+				// Find a space backward
+				while ((*p != ' ') && (p > buffer))
+				{
+					p--;
+				}
+
+				uint8_t rest = (uint8_t)((buffer + strlen(buffer)) - p) - ((*p == ' ') ? 1 : 0);
+
+				// rest is too long, just split the line in two chunks
+				if (rest > 21)
+				{
+					char c = buffer[21];
+
+					buffer[21] = 0;
+
+					ucPrintCentered(y, chomp(buffer), FONT_SIZE_1); // 2 pixels are saved, could center
+
+					buffer[21] = c;
+					buffer[42] = 0;
+
+					ucPrintCentered(y + 8, chomp(buffer + 21), FONT_SIZE_1);
+				}
+				else
+				{
+					*p = 0;
+
+					ucPrintCentered(y, chomp(buffer), FONT_SIZE_1);
+					ucPrintCentered(y + 8, chomp(p + 1), FONT_SIZE_1);
+				}
+			}
+			else // One line of 21 chars max
+			{
+				ucPrintCentered(y + 4, text, FONT_SIZE_1);
+			}
 		}
 	}
 }
@@ -973,11 +1050,8 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 		{
 			memcpy(buffer, text, 17);
 			buffer[16] = 0;
-#if defined(PLATFORM_RD5R)
-			ucPrintCentered(28, chomp(buffer), FONT_SIZE_3);
-#else
-			ucPrintCentered(32, chomp(buffer), FONT_SIZE_3);
-#endif
+
+			ucPrintCentered(CONTACT_FIRST_LINE_Y_POS, chomp(buffer), FONT_SIZE_3);
 			displayChannelNameOrRxFrequency(buffer, (sizeof(buffer) / sizeof(buffer[0])));
 			return;
 		}
@@ -988,24 +1062,21 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 			memcpy(buffer, text, cpos);
 			buffer[cpos] = 0;
 
-#if defined(PLATFORM_RD5R)
-			ucPrintCentered(24, chomp(buffer), FONT_SIZE_3);
-#else
-			ucPrintCentered(32, chomp(buffer), FONT_SIZE_3);
-#endif
+			ucPrintCentered(CONTACT_FIRST_LINE_Y_POS, chomp(buffer), FONT_SIZE_3);
+
 			memcpy(buffer, text + (cpos + 1), (maxLen - (cpos + 1)));
 			buffer[(strlen(text) - (cpos + 1))] = 0;
 
 			pbuf = chomp(buffer);
 
 			if (strlen(pbuf))
-#if defined(PLATFORM_RD5R)
-				printSplitOrSpanText(33, pbuf);
-#else
-				printSplitOrSpanText(48, pbuf);
-#endif
+			{
+				printSplitOrSpanText(CONTACT_SECOND_LINE_Y_POS, pbuf);
+			}
 			else
+			{
 				displayChannelNameOrRxFrequency(buffer, (sizeof(buffer) / sizeof(buffer[0])));
+			}
 		}
 		else
 		{
@@ -1013,24 +1084,21 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 			memcpy(buffer, text, 16);
 			buffer[16] = 0;
 
-#if defined(PLATFORM_RD5R)
-			ucPrintCentered(24, chomp(buffer), FONT_SIZE_3);
-#else
-			ucPrintCentered(32, chomp(buffer), FONT_SIZE_3);
-#endif
+			ucPrintCentered(CONTACT_FIRST_LINE_Y_POS, chomp(buffer), FONT_SIZE_3);
+
 			memcpy(buffer, text + 16, (maxLen - 16));
 			buffer[(strlen(text) - 16)] = 0;
 
 			pbuf = chomp(buffer);
 
 			if (strlen(pbuf))
-#if defined(PLATFORM_RD5R)
-				printSplitOrSpanText(32, pbuf);
-#else
-				printSplitOrSpanText(48, pbuf);
-#endif
+			{
+				printSplitOrSpanText(CONTACT_SECOND_LINE_Y_POS, pbuf);
+			}
 			else
+			{
 				displayChannelNameOrRxFrequency(buffer, (sizeof(buffer) / sizeof(buffer[0])));
+			}
 		}
 	}
 	else
@@ -1049,7 +1117,7 @@ static void displayContactTextInfos(char *text, size_t maxLen, bool isFromTalker
 
 void menuUtilityRenderQSOData(void)
 {
-	menuUtilityReceivedPcId=0;//reset the received PcId
+	menuUtilityReceivedPcId = 0;//reset the received PcId
 
 	/*
 	 * Note.
@@ -1070,7 +1138,7 @@ void menuUtilityRenderQSOData(void)
 			// Its a Private call
 			ucPrintCentered(16, LinkHead->contact, FONT_SIZE_3);
 
-			ucPrintCentered((DISPLAY_SIZE_Y/2), currentLanguage->private_call, FONT_SIZE_3);
+			ucPrintCentered((DISPLAY_SIZE_Y / 2), currentLanguage->private_call, FONT_SIZE_3);
 
 			if (LinkHead->talkGroupOrPcId != (trxDMRID | (PC_CALL_FLAG << 24)))
 			{
@@ -1086,8 +1154,8 @@ void menuUtilityRenderQSOData(void)
 		else
 		{
 			// Group call
-			if (	(LinkHead->talkGroupOrPcId & 0xFFFFFF) != trxTalkGroupOrPcId ||
-					(dmrMonitorCapturedTS!=-1 && dmrMonitorCapturedTS != trxGetDMRTimeSlot()) ||
+			if (((LinkHead->talkGroupOrPcId & 0xFFFFFF) != trxTalkGroupOrPcId )||
+					((dmrMonitorCapturedTS != -1) && (dmrMonitorCapturedTS != trxGetDMRTimeSlot())) ||
 					(trxGetDMRColourCode() != currentChannelData->rxColor))
 			{
 #if defined(PLATFORM_RD5R)
@@ -1107,7 +1175,6 @@ void menuUtilityRenderQSOData(void)
 #else
 				ucPrintCentered(CONTACT_Y_POS, LinkHead->talkgroup, FONT_SIZE_3);
 #endif
-
 			}
 
 			switch (nonVolatileSettings.contactDisplayPriority)
@@ -1188,7 +1255,7 @@ void menuUtilityRenderHeader(void)
 		}
 	}
 
-	if (scanActive &&  uiVFOModeIsScanning())
+	if (scanActive && uiVFOModeIsScanning())
 	{
 		int blinkPeriod = 1000;
 		if (scanBlinkPhase)
@@ -1254,19 +1321,19 @@ void menuUtilityRenderHeader(void)
 			if (settingsUsbMode != USB_MODE_HOTSPOT)
 			{
 //				(trxGetMode() == RADIO_MODE_DIGITAL && settingsPrivateCallMuteMode == true)?" MUTE":"");// The location that this was displayed is now used for the power level
-				if (!scanBlinkPhase && (nonVolatileSettings.dmrFilterLevel > DMR_FILTER_CC_TS))
+				if (!scanBlinkPhase && (nonVolatileSettings.dmrDestinationFilter > DMR_DESTINATION_FILTER_NONE))
 				{
 					ucFillRect(0, Y_OFFSET - 1, 20, 9, false);
 				}
 				if (!scanBlinkPhase)
 				{
-					bool isInverted = scanBlinkPhase ^ (nonVolatileSettings.dmrFilterLevel > DMR_FILTER_CC_TS);
+					bool isInverted = scanBlinkPhase ^ (nonVolatileSettings.dmrDestinationFilter > DMR_DESTINATION_FILTER_NONE);
 					ucPrintCore(MODE_TEXT_X_OFFSET, Y_OFFSET, "DMR", ((nonVolatileSettings.hotspotType != HOTSPOT_TYPE_OFF) ? FONT_SIZE_1_BOLD : FONT_SIZE_1), TEXT_ALIGN_LEFT, isInverted);
 				}
 
 				snprintf(buffer, bufferLen, "%s%d", currentLanguage->ts, trxGetDMRTimeSlot() + 1);
 				buffer[bufferLen - 1] = 0;
-				if (nonVolatileSettings.dmrFilterLevel < DMR_FILTER_CC_TS)
+				if (!(nonVolatileSettings.dmrCcTsFilter & DMR_TS_FILTER_PATTERN))
 				{
 					ucFillRect(FILTER_TEXT_X_OFFSET - 2, Y_OFFSET - 1, 21, 9, false);
 					ucPrintCore(FILTER_TEXT_X_OFFSET, Y_OFFSET, buffer, FONT_SIZE_1, TEXT_ALIGN_LEFT, true);
@@ -1291,10 +1358,10 @@ void menuUtilityRenderHeader(void)
 		strcat(buffer," L");
 	}*/
 
-	sprintf(buffer,"%s%s",POWER_LEVELS[nonVolatileSettings.txPowerLevel],POWER_LEVEL_UNITS[nonVolatileSettings.txPowerLevel]);
+	sprintf(buffer,"%s%s", POWER_LEVELS[nonVolatileSettings.txPowerLevel], POWER_LEVEL_UNITS[nonVolatileSettings.txPowerLevel]);
 	ucPrintCentered(Y_OFFSET,buffer, FONT_SIZE_1);
 
-	if (settingsUsbMode == USB_MODE_HOTSPOT || trxGetMode() == RADIO_MODE_ANALOG)
+	if ((settingsUsbMode == USB_MODE_HOTSPOT) || (trxGetMode() == RADIO_MODE_ANALOG))
 	{
 		// In hotspot mode the CC is show as part of the rest of the display and in Analogue mode the CC is meaningless
 		snprintf(buffer, bufferLen, "%d%%", getBatteryPercentage());
@@ -1306,12 +1373,13 @@ void menuUtilityRenderHeader(void)
 		const int COLOR_CODE_X_POSITION = 84;
 		int ccode = trxGetDMRColourCode();
 		snprintf(buffer, bufferLen, "C%d", ccode);
-		if (nonVolatileSettings.dmrFilterLevel == DMR_FILTER_NONE )
+		bool isNotFilteringCC = !(nonVolatileSettings.dmrCcTsFilter & DMR_CC_FILTER_PATTERN);
+		if (isNotFilteringCC)
 		{
-			ucFillRect(COLOR_CODE_X_POSITION - 1, Y_OFFSET - 1,13 + ((ccode > 9)*6) ,9,false);
+			ucFillRect(COLOR_CODE_X_POSITION - 1, Y_OFFSET - 1,13 + ((ccode > 9)*6), 9, false);
 		}
 
-		ucPrintCore(COLOR_CODE_X_POSITION, Y_OFFSET, buffer, FONT_SIZE_1, TEXT_ALIGN_LEFT, nonVolatileSettings.dmrFilterLevel == DMR_FILTER_NONE);
+		ucPrintCore(COLOR_CODE_X_POSITION, Y_OFFSET, buffer, FONT_SIZE_1, TEXT_ALIGN_LEFT, isNotFilteringCC);
 
 		snprintf(buffer, bufferLen, "%d%%", getBatteryPercentage());
 		buffer[bufferLen - 1] = 0;
@@ -1339,17 +1407,17 @@ void drawRSSIBarGraph(void)
 	}
 
 	barGraphLength = ((dBm + 130) * 24)/10;
-	if (barGraphLength<0)
+	if (barGraphLength < 0)
 	{
-		barGraphLength=0;
+		barGraphLength = 0;
 	}
 
-	if (barGraphLength>123)
+	if (barGraphLength > 123)
 	{
-		barGraphLength=123;
+		barGraphLength = 123;
 	}
-	ucFillRect(0, BAR_Y_POS,barGraphLength,4,false);
-	trxRxSignal=0;
+	ucFillRect(0, BAR_Y_POS, barGraphLength, 4, false);
+	trxRxSignal = 0;
 }
 
 void drawFMMicLevelBarGraph(void)
@@ -1376,62 +1444,63 @@ void drawDMRMicLevelBarGraph(void)
 
 void setOverrideTGorPC(int tgOrPc, bool privateCall)
 {
-	int tmpTGorPC = nonVolatileSettings.overrideTG;
-
 	menuUtilityTgBeforePcMode = 0;
-	nonVolatileSettings.overrideTG = tgOrPc;
+	settingsSet(nonVolatileSettings.overrideTG, tgOrPc);
 	if (privateCall == true)
 	{
 		// Private Call
 
-		if ((tmpTGorPC >> 24) != PC_CALL_FLAG)
+		if ((trxTalkGroupOrPcId >> 24) != PC_CALL_FLAG)
 		{
 			// if the current Tx TG is a TalkGroup then save it so it can be restored after the end of the private call
-			menuUtilityTgBeforePcMode = tmpTGorPC;
+			menuUtilityTgBeforePcMode = trxTalkGroupOrPcId;
 		}
-		nonVolatileSettings.overrideTG |= (PC_CALL_FLAG << 24);
+		settingsSet(nonVolatileSettings.overrideTG, (nonVolatileSettings.overrideTG | (PC_CALL_FLAG << 24)));
 	}
 }
 
 void printToneAndSquelch(void)
 {
 	char buf[24];
+	int pos = 0;
 	if (trxGetMode() == RADIO_MODE_ANALOG)
 	{
+		pos += snprintf(buf + pos, 24 - pos, "Rx:");
 		if (codeplugChannelToneIsCTCSS(currentChannelData->rxTone))
 		{
-			snprintf(buf, 24, "Rx:%d.%dHz|", currentChannelData->rxTone / 10 , currentChannelData->rxTone % 10);
+			pos += snprintf(buf + pos, 24 - pos, "%d.%dHz", currentChannelData->rxTone / 10 , currentChannelData->rxTone % 10);
 		}
 		else if (codeplugChannelToneIsDCS(currentChannelData->rxTone))
 		{
-			snprintf(buf, 24, "Rx:D%03oN|", currentChannelData->rxTone & 0777);
+			pos += snprintDCS(buf + pos, 24 - pos, currentChannelData->rxTone & 0777, (currentChannelData->rxTone & CODEPLUG_DCS_INVERTED_MASK));
 		}
 		else
 		{
-			snprintf(buf, 24, "Rx:%s|", currentLanguage->none);
+			pos += snprintf(buf + pos, 24 - pos, "%s", currentLanguage->none);
 		}
+		pos += snprintf(buf + pos, 24 - pos, "|Tx:");
 
 		if (codeplugChannelToneIsCTCSS(currentChannelData->txTone))
 		{
-			snprintf(buf, 24, "%sTx:%d.%dHz", buf, currentChannelData->txTone / 10 , currentChannelData->txTone % 10);
+			pos += snprintf(buf + pos, 24 - pos, "%d.%dHz", currentChannelData->txTone / 10 , currentChannelData->txTone % 10);
 		}
 		else if (codeplugChannelToneIsDCS(currentChannelData->txTone))
 		{
-			snprintf(buf, 24, "%sTx:D%03oN", buf, currentChannelData->txTone & 0777);
+			pos += snprintDCS(buf + pos, 24 - pos, currentChannelData->txTone & 0777, (currentChannelData->txTone & CODEPLUG_DCS_INVERTED_MASK));
 		}
 		else
 		{
-			snprintf(buf, 24, "%sTx:%s", buf, currentLanguage->none);
+			pos += snprintf(buf + pos, 24 - pos, "%s", currentLanguage->none);
 		}
 
 #if defined(PLATFORM_RD5R)
 		ucPrintCentered(13, buf, FONT_SIZE_1);
-		snprintf(buf, 24, "SQL:%d%%", 5*(((currentChannelData->sql == 0) ? nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]] : currentChannelData->sql)-1));
+		snprintf(buf, 24, "SQL:%d%%", 5 * (((currentChannelData->sql == 0) ? nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]] : currentChannelData->sql)-1));
 		ucPrintCentered(21 + 1, buf, FONT_SIZE_1);
 #else
 		ucPrintCentered(16, buf, FONT_SIZE_1);
 
-		snprintf(buf, 24, "SQL:%d%%", 5*(((currentChannelData->sql == 0) ? nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]] : currentChannelData->sql)-1));
+		snprintf(buf, 24, "SQL:%d%%", 5 * (((currentChannelData->sql == 0) ? nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]] : currentChannelData->sql)-1));
 		ucPrintCentered(24 + 1, buf, FONT_SIZE_1);
 #endif
 
@@ -1441,9 +1510,9 @@ void printToneAndSquelch(void)
 void printFrequency(bool isTX, bool hasFocus, uint8_t y, uint32_t frequency, bool displayVFOChannel, bool isScanMode)
 {
 #if defined(PLATFORM_RD5R)
-const int VFO_LETTER_Y_OFFSET = 0;// This is the different in height of the SIZE_1 and SIZE_3 fonts
+	const int VFO_LETTER_Y_OFFSET = 0;// This is the different in height of the SIZE_1 and SIZE_3 fonts
 #else
-const int VFO_LETTER_Y_OFFSET = 8;// This is the different in height of the SIZE_1 and SIZE_3 fonts
+	const int VFO_LETTER_Y_OFFSET = 8;// This is the different in height of the SIZE_1 and SIZE_3 fonts
 #endif
 	static const int bufferLen = 17;
 	char buffer[bufferLen];
@@ -1466,24 +1535,29 @@ const int VFO_LETTER_Y_OFFSET = 8;// This is the different in height of the SIZE
 	ucPrintAt(DISPLAY_SIZE_X - (3 * 8), y, "MHz", FONT_SIZE_3);
 }
 
+size_t snprintDCS(char *s, size_t n, uint16_t code, bool inverted)
+{
+	return snprintf(s, n, "D%03o%c", code, (inverted ? 'I' : 'N'));
+}
+
 void reset_freq_enter_digits(void)
 {
-	for (int i=0;i<12;i++)
+	for (int i = 0; i < 12; i++)
 	{
-		freq_enter_digits[i]='-';
+		freq_enter_digits[i] = '-';
 	}
 	freq_enter_idx = 0;
 }
 
 int read_freq_enter_digits(int startDigit, int endDigit)
 {
-	int result=0;
-	for (int i=startDigit;i<endDigit;i++)
+	int result = 0;
+	for (int i = startDigit; i < endDigit; i++)
 	{
-		result=result*10;
-		if ((freq_enter_digits[i]>='0') && (freq_enter_digits[i]<='9'))
+		result = result * 10;
+		if ((freq_enter_digits[i] >= '0') && (freq_enter_digits[i] <= '9'))
 		{
-			result=result+freq_enter_digits[i]-'0';
+			result = result + freq_enter_digits[i] - '0';
 		}
 	}
 	return result;
@@ -1508,28 +1582,28 @@ int getBatteryPercentage(void)
 
 void increasePowerLevel(void)
 {
-	nonVolatileSettings.txPowerLevel++;
+	settingsIncrement(nonVolatileSettings.txPowerLevel, 1);
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
-	announceItem(PROMPT_SEQUENCE_POWER,PROMPT_THRESHOLD_3);
+	announceItem(PROMPT_SEQUENCE_POWER, PROMPT_THRESHOLD_3);
 }
 
 void decreasePowerLevel(void)
 {
-	nonVolatileSettings.txPowerLevel--;
+	settingsDecrement(nonVolatileSettings.txPowerLevel, 1);
 	trxSetPowerFromLevel(nonVolatileSettings.txPowerLevel);
-	announceItem(PROMPT_SEQUENCE_POWER,PROMPT_THRESHOLD_3);
+	announceItem(PROMPT_SEQUENCE_POWER, PROMPT_THRESHOLD_3);
 }
 
-static void annouceRadioMode(void)
+void announceRadioMode(void)
 {
 	if (!voicePromptWasPlaying)
 	{
 		voicePromptsAppendLanguageString(&currentLanguage->mode);
 	}
-	voicePromptsAppendString( (trxGetMode() == RADIO_MODE_DIGITAL)?"DMR":"FM");
+	voicePromptsAppendString( (trxGetMode() == RADIO_MODE_DIGITAL) ? "DMR" : "FM");
 }
 
-static void annouceZoneName(void)
+void announceZoneName(void)
 {
 	if (!voicePromptWasPlaying)
 	{
@@ -1538,7 +1612,7 @@ static void annouceZoneName(void)
 	voicePromptsAppendString(currentZone.name);
 }
 
-static void announceContactNameTgOrPc(void)
+void announceContactNameTgOrPc(void)
 {
 	if (nonVolatileSettings.overrideTG == 0)
 	{
@@ -1548,8 +1622,8 @@ static void announceContactNameTgOrPc(void)
 	else
 	{
 		char buf[17];
-		itoa(nonVolatileSettings.overrideTG & 0xFFFFFF,buf, 10);
-		if ((nonVolatileSettings.overrideTG>>24)  == PC_CALL_FLAG)
+		itoa(nonVolatileSettings.overrideTG & 0xFFFFFF, buf, 10);
+		if ((nonVolatileSettings.overrideTG >> 24) == PC_CALL_FLAG)
 		{
 			voicePromptsAppendLanguageString(&currentLanguage->private_call);
 			voicePromptsAppendString("ID");
@@ -1562,7 +1636,7 @@ static void announceContactNameTgOrPc(void)
 	}
 }
 
-static void announcePowerLevel(void)
+void announcePowerLevel(void)
 {
 	voicePromptsAppendString((char *)POWER_LEVELS[nonVolatileSettings.txPowerLevel]);
 	switch(nonVolatileSettings.txPowerLevel)
@@ -1580,38 +1654,35 @@ static void announcePowerLevel(void)
 			voicePromptsAppendPrompt(PROMPT_WATTS);
 			break;
 	}
+
+	// When in 5W++ mode
 	if (nonVolatileSettings.txPowerLevel == 9)
 	{
-		voicePromptsAppendPrompt(PROMPT_WATTS);// Hack to just saw and extra Watts when in 5W++ mode
+		voicePromptsAppendPrompt(PROMPT_PLUS);
+		voicePromptsAppendPrompt(PROMPT_PLUS);
 	}
 }
 
-static void announceBatteryPercentage(void)
+void announceBatteryPercentage(void)
 {
-	char buf[8];
 	voicePromptsAppendLanguageString(&currentLanguage->battery);
-	itoa(getBatteryPercentage(),buf,10);
-	voicePromptsAppendString(buf);
+	voicePromptsAppendInteger(getBatteryPercentage());
 	voicePromptsAppendPrompt(PROMPT_PERCENT);
 }
 
-static void announceTS(void)
+void announceTS(void)
 {
-	char buf[8];
 	voicePromptsAppendPrompt(PROMPT_TIMESLOT);
-	itoa(trxGetDMRTimeSlot(),buf,10);
-	voicePromptsAppendString(buf);
+	voicePromptsAppendInteger(trxGetDMRTimeSlot() + 1);
 }
 
-static void announceCC(void)
+void announceCC(void)
 {
-	char buf[8];
 	voicePromptsAppendLanguageString(&currentLanguage->colour_code);
-	itoa(trxGetDMRColourCode(),buf,10);
-	voicePromptsAppendString(buf);
+	voicePromptsAppendInteger(trxGetDMRColourCode());
 }
 
-static void announceChannelName(void)
+void announceChannelName(void)
 {
 	char voiceBuf[17];
 	codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
@@ -1628,9 +1699,9 @@ static void removeUnnecessaryZerosFromVoicePrompts(char *str)
 {
 	const int NUM_DECIMAL_PLACES = 1;
 	int len = strlen(str);
-	for(int i=len;i>2;i--)
+	for(int i = len; i > 2; i--)
 	{
-		if (str[i-1]!='0' || str[i-(NUM_DECIMAL_PLACES+1)]=='.')
+		if ((str[i - 1] != '0') || (str[i - (NUM_DECIMAL_PLACES + 1)] == '.'))
 		{
 			str[i] = 0;
 			return;
@@ -1638,13 +1709,11 @@ static void removeUnnecessaryZerosFromVoicePrompts(char *str)
 	}
 }
 
-static void announceVFOAndFrequency()
+void announceFrequency(void)
 {
 	char buffer[17];
 
-	voicePromptsAppendPrompt(PROMPT_VFO);
-	voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");
-	if (currentChannelData->txFreq!=currentChannelData->rxFreq)
+	if (currentChannelData->txFreq != currentChannelData->rxFreq)
 	{
 		voicePromptsAppendPrompt(PROMPT_RECEIVE);
 	}
@@ -1654,7 +1723,7 @@ static void announceVFOAndFrequency()
 	removeUnnecessaryZerosFromVoicePrompts(buffer);
 	voicePromptsAppendString(buffer);
 
-	if (currentChannelData->txFreq!=currentChannelData->rxFreq)
+	if (currentChannelData->txFreq != currentChannelData->rxFreq)
 	{
 		voicePromptsAppendPrompt(PROMPT_TRANSMIT);
 		val_before_dp = currentChannelData->txFreq / 100000;
@@ -1663,6 +1732,13 @@ static void announceVFOAndFrequency()
 		removeUnnecessaryZerosFromVoicePrompts(buffer);
 		voicePromptsAppendString(buffer);
 	}
+}
+
+void announceVFOAndFrequency(void)
+{
+	voicePromptsAppendPrompt(PROMPT_VFO);
+	voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");
+	announceFrequency();
 }
 
 void playNextSettingSequence(void)
@@ -1674,10 +1750,10 @@ void playNextSettingSequence(void)
 		voicePromptSequenceState = 0;
 	}
 
-	announceItem(voicePromptSequenceState,PROMPT_THRESHOLD_3);
+	announceItem(voicePromptSequenceState, PROMPT_THRESHOLD_3);
 }
 
-void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouceThreshold)
+void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnounceThreshold)
 {
 	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
 	{
@@ -1702,10 +1778,10 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouc
 			}
 			break;
 		case PROMPT_SEQUENCE_ZONE:
-			annouceZoneName();
+			announceZoneName();
 			break;
 		case PROMPT_SEQUENCE_MODE:
-			annouceRadioMode();
+			announceRadioMode();
 			break;
 		case PROMPT_SEQUENCE_CONTACT_TG_OR_PC:
 			announceContactNameTgOrPc();
@@ -1727,7 +1803,8 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouc
 	}
 	// Follow-on when voicePromptWasPlaying is enabled on voice prompt level 2 and above
 	// Prompts are voiced immediately on voice prompt level 3
-	if ((voicePromptWasPlaying && nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_2) || (nonVolatileSettings.audioPromptMode >= immediateAnnouceThreshold) )
+	if ((voicePromptWasPlaying &&(nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_2)) ||
+			(nonVolatileSettings.audioPromptMode >= immediateAnnounceThreshold))
 	{
 		voicePromptsPlay();
 	}
@@ -1735,16 +1812,16 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouc
 
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen)
 {
-int contactIndex;
-struct_codeplugContact_t contact;
-uint32_t id = (trxTalkGroupOrPcId & 0x00FFFFFF);
+	int contactIndex;
+	struct_codeplugContact_t contact;
+	uint32_t id = (trxTalkGroupOrPcId & 0x00FFFFFF);
 
 	if ((trxTalkGroupOrPcId >> 24) == TG_CALL_FLAG)
 	{
-		contactIndex = codeplugContactIndexByTGorPC(id, CONTACT_CALLTYPE_TG,	&contact);
+		contactIndex = codeplugContactIndexByTGorPC(id, CONTACT_CALLTYPE_TG, &contact);
 		if (contactIndex == 0)
 		{
-			snprintf(nameBuf, bufferLen, "TG %d",(trxTalkGroupOrPcId & 0x00FFFFFF));
+			snprintf(nameBuf, bufferLen, "TG %d", (trxTalkGroupOrPcId & 0x00FFFFFF));
 		}
 		else
 		{
@@ -1754,7 +1831,8 @@ uint32_t id = (trxTalkGroupOrPcId & 0x00FFFFFF);
 	else
 	{
 		contactIndex = codeplugContactIndexByTGorPC(id, CONTACT_CALLTYPE_PC, &contact);
-		if (contactIndex == 0) {
+		if (contactIndex == 0)
+		{
 			dmrIdDataStruct_t currentRec;
 			if (dmrIDLookup(id, &currentRec))
 			{
@@ -1764,7 +1842,7 @@ uint32_t id = (trxTalkGroupOrPcId & 0x00FFFFFF);
 			{
 				// check LastHeard for TA data.
 				LinkItem_t *item = lastheardFindInList(id);
-				if (item!=NULL && strlen(item->talkerAlias)!=0)
+				if ((item != NULL) && (strlen(item->talkerAlias) != 0))
 				{
 					strncpy(nameBuf, item->talkerAlias, bufferLen);
 				}
@@ -1779,4 +1857,14 @@ uint32_t id = (trxTalkGroupOrPcId & 0x00FFFFFF);
 			codeplugUtilConvertBufToString(contact.name, nameBuf, 16);
 		}
 	}
+}
+
+void acceptPrivateCall(int id)
+{
+	uiPrivateCallState = PRIVATE_CALL;
+	uiPrivateCallLastID = (id & 0xffffff);
+	menuUtilityReceivedPcId = 0;
+
+	setOverrideTGorPC(uiPrivateCallLastID, true);
+	announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 }

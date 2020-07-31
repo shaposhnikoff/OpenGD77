@@ -20,7 +20,7 @@
  * Translators: OK2HAD
  *
  *
- * Rev: 3.9
+ * Rev: 4.0
  */
 #ifndef USER_INTERFACE_LANGUAGES_CZECH_H_
 #define USER_INTERFACE_LANGUAGES_CZECH_H_
@@ -34,7 +34,7 @@
  ********************************************************************/
 const stringsTable_t czechLanguage =
 {
-.LANGUAGE_NAME 			= "estina", // MaxLen: 16
+.LANGUAGE_NAME 			= "eötina", // MaxLen: 16
 .menu					= "Menu", // MaxLen: 16
 .credits				= "PõispùvatelÈ", // MaxLen: 16
 .zone					= "ZÛna", // MaxLen: 16
@@ -56,8 +56,8 @@ const stringsTable_t czechLanguage =
 .zones					= "ZÛny", // MaxLen: 16
 .keypad					= "Kl·vesa", // MaxLen: 12 (with .ptt)
 .ptt					= "PTT", // MaxLen: 12 (with .keypad)
-.locked					= "ZamÄen˝", // MaxLen: 15
-.press_blue_plus_star	= "StlaÄit ModrÈ + *", // MaxLen: 19
+.locked					= "ZamËen˝", // MaxLen: 15
+.press_blue_plus_star	= "StlaËit ModrÈ + *", // MaxLen: 19
 .to_unlock				= "Odemknout", // MaxLen: 19
 .unlocked				= "Odemknuto", // MaxLen: 15
 .power_off				= "VypÌnanÌ...", // MaxLen: 16
@@ -136,7 +136,7 @@ const stringsTable_t czechLanguage =
 .edit_contact			= "Upravit kontakt", // MaxLen: 16
 .delete_contact			= "Smazat Kontakt", // MaxLen: 16
 .group_call				= "Seznam Group", // MaxLen: 16
-.all_call				= "Vöechny ÄÌsla", // MaxLen: 16
+.all_call				= "Vöechny Ìsla", // MaxLen: 16
 .tone_scan				= "CTCSS Sken",//// MaxLen: 16
 .low_battery			= "SLAB¡ BATERIE!",//// MaxLen: 16
 .Auto					= "Automat.", // MaxLen 16 (with .mode + ':') 
@@ -146,7 +146,7 @@ const stringsTable_t czechLanguage =
 .stop					= "stop", // Maxlen 16 (with ':' + .scan_mode)
 .one_line				= "1 õ·dek", // MaxLen 16 (with ':' + .contact)
 .two_lines				= "2 õ·dky", // MaxLen 16 (with ':' + .contact)
-.new_channel			= "Nov˝ Kanal", // MaxLen: 16, leave room for a space and four channel digits after
+.new_channel			= "Nov˝ Kan·l", // MaxLen: 16, leave room for a space and four channel digits after
 .priority_order				= "Ìst ID", // MaxLen 16 (with ':' + 'Cc/DB/TA')
 .dmr_beep				= "pÌpDMR", // MaxLen 16 (with ':' + .star/.stop/.both/.none)
 .start					= "start", // MaxLen 16 (with ':' + .dmr_beep)
@@ -157,7 +157,7 @@ const stringsTable_t czechLanguage =
 .silent                                 = "Tich˝", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Norm·l", // Maxlen 16 (with : + audio_prompt)
 .beep					= "PÌp·", // Maxlen 16 (with : + audio_prompt)
-.voice_prompt_level_1					= "Hlas", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_1					= "Hlas-1", // Maxlen 16 (with : + audio_prompt)
 .transmitTalkerAlias	= "TA Tx", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
@@ -167,9 +167,12 @@ const stringsTable_t czechLanguage =
 .openGD77S 				= "OpenGD77S",// Do not translate
 .openDM1801 			= "OpenDM1801",// Do not translate
 .openRD5R 				= "OpenRD5R",// Do not translate
-.gitCommit				= "Git commit",
-.voice_prompt_level_2	= "Voice L2", // Maxlen 16 (with : + audio_prompt)
-.voice_prompt_level_3	= "Voice L3" // Maxlen 16 (with : + audio_prompt)
+.gitCommit				= "Git põipojenÌ",
+.voice_prompt_level_2	= "Hlas-2", // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_3	= "Hlas-3", // Maxlen 16 (with : + audio_prompt)
+.dmr_filter				= "DMR Filtr",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
+.dmr_cc_filter			= "CC Filtr", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "TS Filtr" // MaxLen: 12 (with ':' + settings: .on or .off)
 };
 /********************************************************************
  *

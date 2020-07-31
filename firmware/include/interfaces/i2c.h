@@ -21,10 +21,8 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
-
 #include "fsl_i2c.h"
 
-#include "common.h"
 
 #define I2C_BAUDRATE (100000) /* 100K */
 #define AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT (0x71U)
@@ -99,8 +97,10 @@ extern volatile int isI2cInUse;
 
 #endif
 
-void init_I2C0a(void);
-void init_I2C0b(void);
-void setup_I2C0(void);
+void I2C0aInit(void);
+void I2C0bInit(void);
+
+int I2CWriteReg2byte(uint8_t addr, uint8_t reg, uint8_t val1, uint8_t val2);
+int I2CReadReg2byte(uint8_t addr, uint8_t reg, uint8_t *val1, uint8_t *val2);
 
 #endif /* _FW_I2C_H_ */

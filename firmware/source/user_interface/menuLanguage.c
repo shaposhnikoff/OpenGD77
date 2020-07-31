@@ -36,7 +36,9 @@ menuStatus_t menuLanguage(uiEvent_t *ev, bool isFirstRun)
 		menuLanguageExitCode = MENU_STATUS_SUCCESS;
 
 		if (ev->hasEvent)
+		{
 			handleEvent(ev);
+		}
 	}
 	return menuLanguageExitCode;
 }
@@ -45,6 +47,7 @@ static void updateScreen(void)
 {
 	int mNum = 0;
 	//stringsTable_t *lang;
+
 	ucClearBuf();
 	menuDisplayTitle("Language");
 
@@ -63,28 +66,28 @@ static void handleEvent(uiEvent_t *ev)
 {
 	displayLightTrigger();
 
-	if (KEYCHECK_PRESS(ev->keys,KEY_DOWN) && gMenusEndIndex!=0)
+	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN) && (gMenusEndIndex != 0))
 	{
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_LANGUAGES);
 		updateScreen();
 		menuLanguageExitCode |= MENU_STATUS_LIST_TYPE;
 	}
-	else if (KEYCHECK_PRESS(ev->keys,KEY_UP))
+	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_LANGUAGES);
 		updateScreen();
 		menuLanguageExitCode |= MENU_STATUS_LIST_TYPE;
 	}
-	else if (KEYCHECK_SHORTUP(ev->keys,KEY_GREEN))
+	else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
-		nonVolatileSettings.languageIndex = gMenusCurrentItemIndex;
+		settingsSet(nonVolatileSettings.languageIndex, gMenusCurrentItemIndex);
 		currentLanguage = &languages[gMenusCurrentItemIndex];
+		settingsSaveIfNeeded(true);
 		menuSystemLanguageHasChanged();
-		SETTINGS_PLATFORM_SPECIFIC_SAVE_SETTINGS(false);// Some platform require the settings to be saved immediately
 		menuSystemPopAllAndDisplayRootMenu();
 		return;
 	}
-	else if (KEYCHECK_SHORTUP(ev->keys,KEY_RED))
+	else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
 		menuSystemPopPreviousMenu();
 		return;

@@ -20,7 +20,7 @@
 #include <settings.h>
 #include <ticks.h>
 
-int menuDisplayLightTimer=-1;
+int menuDisplayLightTimer = -1;
 
 menuItemNewData_t *gMenuCurrentMenuList;
 int gMenusCurrentItemIndex; // each menu can re-use this var to hold the position in their display list. To save wasted memory if they each had their own variable
@@ -110,11 +110,11 @@ static void menuSystemCheckForFirstEntryAudible(menuStatus_t status)
 	{
 		 if (((status & MENU_STATUS_LIST_TYPE) && (gMenusCurrentItemIndex == 0)) || (status & MENU_STATUS_FORCE_FIRST))
 		 {
-			 nextKeyBeepMelody = (int *)melody_key_beep_first_item;
+			 nextKeyBeepMelody = (int *)MELODY_KEY_BEEP_FIRST_ITEM;
 		 }
 		 else if (status & MENU_STATUS_INPUT_TYPE)
 		 {
-			 nextKeyBeepMelody = (int *)melody_ACK_beep;
+			 nextKeyBeepMelody = (int *)MELODY_ACK_BEEP;
 		 }
 	}
 }
@@ -216,6 +216,22 @@ int menuSystemGetCurrentMenuNumber(void)
 	return menuControlData.stack[menuControlData.stackPosition];
 }
 
+int menuSystemGetPreviousMenuNumber(void)
+{
+	if (menuControlData.stackPosition >= 1)
+	{
+		return menuControlData.stack[menuControlData.stackPosition - 1];
+	}
+
+	return -1;
+}
+
+int menuSystemGetRootMenuNumber(void)
+{
+	return menuControlData.stack[0];
+}
+
+
 void menuSystemCallCurrentMenuTick(uiEvent_t *ev)
 {
 	menuStatus_t status;
@@ -263,9 +279,9 @@ void menuInitMenuSystem(void)
 	uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = 0, .events = NO_EVENT, .hasEvent = false, .time = fw_millis() };
 
 	menuDisplayLightTimer = -1;
-	menuControlData.stack[menuControlData.stackPosition]  = UI_SPLASH_SCREEN;// set the very first screen as the splash screen
+	menuControlData.stack[menuControlData.stackPosition] = UI_SPLASH_SCREEN;// set the very first screen as the splash screen
 	gMenusCurrentItemIndex = 0;
-	menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev,true);// Init and display this screen
+	menuFunctions[menuControlData.stack[menuControlData.stackPosition]](&ev, true);// Init and display this screen
 }
 
 void menuSystemLanguageHasChanged(void)
@@ -274,7 +290,8 @@ void menuSystemLanguageHasChanged(void)
 	uiChannelModeColdStart();
 }
 
-const menuItemNewData_t mainMenuItems[] = {
+const menuItemNewData_t mainMenuItems[] =
+{
 	{ 3,  MENU_ZONE_LIST },
 	{ 4,  MENU_RSSI_SCREEN },
 	{ 5,  MENU_BATTERY },
@@ -289,17 +306,20 @@ const menuItemNewData_t mainMenuItems[] = {
 	{ 2,  MENU_CREDITS },
 };
 
-const menuItemsList_t menuDataMainMenu = {
+const menuItemsList_t menuDataMainMenu =
+{
 	.numItems = 12,
 	.items = mainMenuItems
 };
 
-const menuItemNewData_t contractMenuItems[] = {
+const menuItemNewData_t contractMenuItems[] =
+{
 	{ 15, MENU_CONTACT_LIST },
 	{ 14, MENU_CONTACT_NEW },
 };
 
-const menuItemsList_t menuDataContact = {
+const menuItemsList_t menuDataContact =
+{
 	.numItems = 2,
 	.items = contractMenuItems
 };
@@ -313,13 +333,13 @@ void menuDisplayTitle(const char *title)
 void menuDisplayEntry(int loopOffset, int focusedItem,const char *entryText)
 {
 #if defined(PLATFORM_RD5R)
-const int MENU_START_Y = 25;
-const int HIGHLIGHT_START_Y = 24;
-const int MENU_SPACING_Y = FONT_SIZE_3_HEIGHT+2;
+	const int MENU_START_Y = 25;
+	const int HIGHLIGHT_START_Y = 24;
+	const int MENU_SPACING_Y = FONT_SIZE_3_HEIGHT+2;
 #else
-const int MENU_START_Y = 32;
-const int HIGHLIGHT_START_Y = 32;
-const int MENU_SPACING_Y = FONT_SIZE_3_HEIGHT;
+	const int MENU_START_Y = 32;
+	const int HIGHLIGHT_START_Y = 32;
+	const int MENU_SPACING_Y = FONT_SIZE_3_HEIGHT;
 #endif
 
 	bool focused = (focusedItem == gMenusCurrentItemIndex);
@@ -329,7 +349,7 @@ const int MENU_SPACING_Y = FONT_SIZE_3_HEIGHT;
 		ucFillRoundRect(0, HIGHLIGHT_START_Y +  (loopOffset * MENU_SPACING_Y), DISPLAY_SIZE_X, MENU_SPACING_Y, 2, true);
 	}
 
-	ucPrintCore(0,  MENU_START_Y +  (loopOffset * MENU_SPACING_Y), entryText, FONT_SIZE_3, TEXT_ALIGN_LEFT, focused);
+	ucPrintCore(0, MENU_START_Y + (loopOffset * MENU_SPACING_Y), entryText, FONT_SIZE_3, TEXT_ALIGN_LEFT, focused);
 
 }
 
@@ -340,20 +360,28 @@ int menuGetMenuOffset(int maxMenuEntries, int loopOffset)
 	if (offset < 0)
 	{
 		if ((maxMenuEntries == 1) && (maxMenuEntries < MENU_MAX_DISPLAYED_ENTRIES))
+		{
 			offset = MENU_MAX_DISPLAYED_ENTRIES - 1;
+		}
 		else
+		{
 			offset = maxMenuEntries + offset;
+		}
 	}
 
 	if (maxMenuEntries < MENU_MAX_DISPLAYED_ENTRIES)
 	{
 		if (loopOffset == 1)
+		{
 			offset = MENU_MAX_DISPLAYED_ENTRIES - 1;
+		}
 	}
 	else
 	{
 		if (offset >= maxMenuEntries)
+		{
 			offset = offset - maxMenuEntries;
+		}
 	}
 
 	return offset;
@@ -364,7 +392,8 @@ int menuGetMenuOffset(int maxMenuEntries, int loopOffset)
  */
 int menuGetKeypadKeyValue(uiEvent_t *ev, bool digitsOnly)
 {
-	uint32_t keypadKeys[] = {
+	uint32_t keypadKeys[] =
+	{
 			KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9,
 			KEY_LEFT, KEY_UP, KEY_DOWN, KEY_RIGHT, KEY_STAR, KEY_HASH
 	};
@@ -372,7 +401,9 @@ int menuGetKeypadKeyValue(uiEvent_t *ev, bool digitsOnly)
 	for (int i = 0; i < ((sizeof(keypadKeys) / sizeof(keypadKeys[0])) - (digitsOnly ? 6 : 0 )); i++)
 	{
 		if (KEYCHECK_PRESS(ev->keys, keypadKeys[i]))
+		{
 				return i;
+		}
 	}
 
 	return 99;
@@ -390,18 +421,21 @@ void menuUpdateCursor(int pos, bool moved, bool render)
 	static bool     blink = false;
 	uint32_t        m = fw_millis();
 
-	if (moved) {
+	if (moved)
+	{
 		blink = true;
 	}
+
 	if (moved || (m - lastBlink) > 500)
 	{
-		ucDrawFastHLine(pos*8, MENU_CURSOR_Y, 8, blink);
+		ucDrawFastHLine(pos * 8, MENU_CURSOR_Y, 8, blink);
 
 		blink = !blink;
 		lastBlink = m;
 
-		if (render) {
-			ucRenderRows(MENU_CURSOR_Y/8,MENU_CURSOR_Y/8+1);
+		if (render)
+		{
+			ucRenderRows(MENU_CURSOR_Y / 8, MENU_CURSOR_Y / 8 + 1);
 		}
 	}
 }
@@ -410,8 +444,10 @@ void moveCursorLeftInString(char *str, int *pos, bool delete)
 {
 	int nLen = strlen(str);
 
-	if (*pos > 0) {
+	if (*pos > 0)
+	{
 		*pos -=1;
+
 		if (delete)
 		{
 			for (int i = *pos; i <= nLen; i++)
@@ -439,7 +475,9 @@ void moveCursorRightInString(char *str, int *pos, int max, bool insert)
 				str[*pos] = ' ';
 			}
 		}
-		if (*pos < max-1) {
+
+		if (*pos < max-1)
+		{
 			*pos += 1;
 		}
 	}

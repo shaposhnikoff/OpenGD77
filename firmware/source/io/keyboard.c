@@ -16,11 +16,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <buttons.h>
 #include <keyboard.h>
 #include <pit.h>
 #include <settings.h>
-#include <usb_com.h>
+#include <gpio.h>
 
 static char oldKeyboardCode;
 static uint32_t keyDebounceScancode;
@@ -96,43 +95,7 @@ static const char keypadAlphaMap[11][31] = {
 
 void keyboardInit(void)
 {
-#if ! defined(PLATFORM_GD77S)
-	port_pin_config_t config = {
-			kPORT_PullUp,
-			kPORT_FastSlewRate,
-			kPORT_PassiveFilterDisable,
-			kPORT_OpenDrainDisable,
-			kPORT_LowDriveStrength,
-			kPORT_MuxAsGpio,
-			kPORT_UnlockRegister
-	};
-
-    // column lines
-	PORT_SetPinMux(Port_Key_Col0, Pin_Key_Col0, kPORT_MuxAsGpio);
-	PORT_SetPinMux(Port_Key_Col1, Pin_Key_Col1, kPORT_MuxAsGpio);
-	PORT_SetPinMux(Port_Key_Col2, Pin_Key_Col2, kPORT_MuxAsGpio);
-	PORT_SetPinMux(Port_Key_Col3, Pin_Key_Col3, kPORT_MuxAsGpio);
-
-    // row lines
-    PORT_SetPinConfig(Port_Key_Row0, Pin_Key_Row0, &config);
-    PORT_SetPinConfig(Port_Key_Row1, Pin_Key_Row1, &config);
-    PORT_SetPinConfig(Port_Key_Row2, Pin_Key_Row2, &config);
-    PORT_SetPinConfig(Port_Key_Row3, Pin_Key_Row3, &config);
-    PORT_SetPinConfig(Port_Key_Row4, Pin_Key_Row4, &config);
-
-    // column lines
-    GPIO_PinInit(GPIO_Key_Col0, Pin_Key_Col0, &pin_config_input);
-    GPIO_PinInit(GPIO_Key_Col1, Pin_Key_Col1, &pin_config_input);
-    GPIO_PinInit(GPIO_Key_Col2, Pin_Key_Col2, &pin_config_input);
-    GPIO_PinInit(GPIO_Key_Col3, Pin_Key_Col3, &pin_config_input);
-
-    // row lines
-    GPIO_PinInit(GPIO_Key_Row0, Pin_Key_Row0, &pin_config_input);
-    GPIO_PinInit(GPIO_Key_Row1, Pin_Key_Row1, &pin_config_input);
-    GPIO_PinInit(GPIO_Key_Row2, Pin_Key_Row2, &pin_config_input);
-    GPIO_PinInit(GPIO_Key_Row3, Pin_Key_Row3, &pin_config_input);
-    GPIO_PinInit(GPIO_Key_Row4, Pin_Key_Row4, &pin_config_input);
-#endif // ! PLATFORM_GD77S
+	gpioInitKeyboard();
 
 	oldKeyboardCode = 0;
 	keyDebounceScancode = 0;
@@ -167,14 +130,14 @@ uint32_t keyboardRead(void)
 	uint32_t result = 0;
 
 #if ! defined(PLATFORM_GD77S)
-	for (int col=3; col>=0; col--)
+	for (int col = 3; col >= 0; col--)
 	{
 		GPIO_PinInit(GPIOC, col, &pin_config_output);
 		GPIO_PinWrite(GPIOC, col, 0);
 		for (volatile int i = 0; i < 100; i++)
 			; // small delay to allow voltages to settle. The delay value of 100 is arbitrary.
 
-		result=(result<<5) | keyboardReadCol();
+		result = (result << 5) | keyboardReadCol();
 
 		GPIO_PinWrite(GPIOC, col, 1);
 		GPIO_PinInit(GPIOC, col, &pin_config_input);
@@ -293,12 +256,15 @@ void keyboardCheckKeyEvent(keyboardCode_t *keys, int *event)
 		if (keypadAlphaEnable == true)
 		{
 			newAlphaKey = 0;
-			if (keycode >= '0' && keycode <= '9')
+			if ((keycode >= '0') && (keycode <= '9'))
 			{
-				newAlphaKey = keycode - '0'+1;
-			} else if (keycode == KEY_STAR) {
+				newAlphaKey = (keycode - '0') + 1;
+			}
+			else if (keycode == KEY_STAR)
+			{
 				newAlphaKey = 11;
 			}
+
 			if (keypadAlphaKey == 0)
 			{
 				if (newAlphaKey != 0)
@@ -318,6 +284,7 @@ void keyboardCheckKeyEvent(keyboardCode_t *keys, int *event)
 					}
 				}
 			}
+
 			if (keypadAlphaKey != 0)
 			{
 				if (newAlphaKey == keypadAlphaKey)
@@ -348,13 +315,13 @@ void keyboardCheckKeyEvent(keyboardCode_t *keys, int *event)
 		else
 		{
 			taskENTER_CRITICAL();
-			tmp_timer_keypad=timer_keypad;
+			tmp_timer_keypad = timer_keypad;
 			taskEXIT_CRITICAL();
 
 			if (tmp_timer_keypad == 0)
 			{
 				taskENTER_CRITICAL();
-				timer_keypad=keypadTimerRepeat;
+				timer_keypad = keypadTimerRepeat;
 				taskEXIT_CRITICAL();
 
 				keys->key = keycode;
@@ -376,7 +343,7 @@ void keyboardCheckKeyEvent(keyboardCode_t *keys, int *event)
 		else
 		{
 			taskENTER_CRITICAL();
-			tmp_timer_keypad=timer_keypad;
+			tmp_timer_keypad = timer_keypad;
 			taskEXIT_CRITICAL();
 
 			keys->key = keycode;
@@ -386,13 +353,13 @@ void keyboardCheckKeyEvent(keyboardCode_t *keys, int *event)
 			if (tmp_timer_keypad == 0)
 			{
 				taskENTER_CRITICAL();
-				timer_keypad=keypadTimerRepeat;
+				timer_keypad = keypadTimerRepeat;
 				taskEXIT_CRITICAL();
 
-				if (keys->key == KEY_LEFT || keys->key == KEY_RIGHT
-						|| keys->key == KEY_UP || keys->key == KEY_DOWN)
+				if ((keys->key == KEY_LEFT) || (keys->key == KEY_RIGHT)
+						|| (keys->key == KEY_UP) || (keys->key == KEY_DOWN))
 				{
-					keys->event = KEY_MOD_LONG | KEY_MOD_PRESS;
+					keys->event = (KEY_MOD_LONG | KEY_MOD_PRESS);
 				}
 			}
 		}

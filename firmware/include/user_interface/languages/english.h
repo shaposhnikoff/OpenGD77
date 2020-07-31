@@ -69,7 +69,7 @@ const stringsTable_t englishLanguage =
 .pc_entry				= "PC entry", // MaxLen: 15
 .user_dmr_id				= "User DMR ID", // MaxLen: 15
 .contact 				= "Contact", // MaxLen: 15
-.accept_call				= "Accept call?", // MaxLen: 16
+.accept_call				= "Return call to", // MaxLen: 16
 .private_call				= "Private Call", // MaxLen: 16
 .squelch				= "Squelch", // MaxLen: 8
 .quick_menu 				= "Quick Menu", // MaxLen: 16
@@ -169,7 +169,10 @@ const stringsTable_t englishLanguage =
 .openRD5R 				= "OpenRD5R",// Do not translate
 .gitCommit				= "Git commit",
 .voice_prompt_level_2	= "Voice L2", // Maxlen 16 (with : + audio_prompt)
-.voice_prompt_level_3	= "Voice L3" // Maxlen 16 (with : + audio_prompt)
+.voice_prompt_level_3	= "Voice L3", // Maxlen 16 (with : + audio_prompt)
+.dmr_filter				= "DMR Filter",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
+.dmr_cc_filter			= "CC Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "TS Filter" // MaxLen: 12 (with ':' + settings: .on or .off)
 };
 /********************************************************************
  *

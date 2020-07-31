@@ -36,7 +36,6 @@
 #include "LEDs.h"
 #include "keyboard.h"
 #include "rotary_switch.h"
-#include "speech_synthesis.h"
 #include "display.h"
 #include "vox.h"
 
