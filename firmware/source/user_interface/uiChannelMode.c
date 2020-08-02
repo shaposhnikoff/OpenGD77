@@ -401,11 +401,6 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 		trxSetModeAndBandwidth(channelScreenChannelData.chMode, false);// bandwidth false = 12.5Khz as DMR uses 12.5kHz
 		trxSetDMRColourCode(channelScreenChannelData.rxColor);
 
-#if defined(PLATFORM_GD77S)
-		// On GD-77S, update with linked channel's contact, as we need to set PC/TG as well
-		///settingsSet(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE], (channelScreenChannelData.contact - 1));
-#endif
-
 		rxGroupValid = codeplugRxGroupGetDataForIndex(channelScreenChannelData.rxGroupList, &currentRxGroupData);
 
 		// Current contact index is out of group list bounds, select first contact
