@@ -1072,10 +1072,18 @@ static void handleEvent(uiEvent_t *ev)
 		{
 			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))  // Toggle Channel Mode
 			{
-				channelScreenChannelData.chMode = (trxGetMode() == RADIO_MODE_ANALOG)?RADIO_MODE_DIGITAL:RADIO_MODE_ANALOG;
-				loadChannelData(true, false);
-
-				menuChannelExitStatus |= MENU_STATUS_FORCE_FIRST;
+				if (trxGetMode() == RADIO_MODE_ANALOG)
+				{
+					channelScreenChannelData.chMode = RADIO_MODE_DIGITAL;
+					loadChannelData(true, false);
+					menuChannelExitStatus |= MENU_STATUS_FORCE_FIRST;
+				}
+				else
+				{
+					channelScreenChannelData.chMode = RADIO_MODE_ANALOG;
+					trxSetModeAndBandwidth(channelScreenChannelData.chMode, ((channelScreenChannelData.flag4 & 0x02) == 0x02));
+					trxSetRxCSS(currentChannelData->rxTone);
+				}
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				uiChannelModeUpdateScreen(0);
 			}
