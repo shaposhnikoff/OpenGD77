@@ -1075,8 +1075,7 @@ static void handleEvent(uiEvent_t *ev)
 				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
 					channelScreenChannelData.chMode = RADIO_MODE_DIGITAL;
-					trxSetModeAndBandwidth(channelScreenChannelData.chMode, false);
-
+					loadChannelData(true, false);
 					menuChannelExitStatus |= MENU_STATUS_FORCE_FIRST;
 				}
 				else
