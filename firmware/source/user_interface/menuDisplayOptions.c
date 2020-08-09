@@ -264,9 +264,11 @@ static void handleEvent(uiEvent_t *ev)
 							settingsSet(nonVolatileSettings.displayBacklightPercentageOff, BACKLIGHT_MAX_PERCENTAGE);
 						}
 
-						if (nonVolatileSettings.displayBacklightPercentageOff > nonVolatileSettings.displayBacklightPercentage)
+						if (nonVolatileSettings.displayBacklightPercentageOff >= nonVolatileSettings.displayBacklightPercentage)
 						{
-							settingsSet(nonVolatileSettings.displayBacklightPercentageOff, nonVolatileSettings.displayBacklightPercentage);
+
+							settingsSet(nonVolatileSettings.displayBacklightPercentageOff,
+									nonVolatileSettings.displayBacklightPercentage ? (nonVolatileSettings.displayBacklightPercentage - 1) : 0);
 						}
 
 						if ((nonVolatileSettings.backlightMode == BACKLIGHT_MODE_MANUAL) && (!displayIsLit))
@@ -330,9 +332,10 @@ static void handleEvent(uiEvent_t *ev)
 						settingsSet(nonVolatileSettings.displayBacklightPercentage, 0);
 					}
 
-					if (nonVolatileSettings.displayBacklightPercentageOff > nonVolatileSettings.displayBacklightPercentage)
+					if (nonVolatileSettings.displayBacklightPercentageOff >= nonVolatileSettings.displayBacklightPercentage)
 					{
-						settingsSet(nonVolatileSettings.displayBacklightPercentageOff, nonVolatileSettings.displayBacklightPercentage);
+						settingsSet(nonVolatileSettings.displayBacklightPercentageOff,
+								nonVolatileSettings.displayBacklightPercentage ? (nonVolatileSettings.displayBacklightPercentage - 1) : 0);
 					}
 					break;
 				case DISPLAY_MENU_BRIGHTNESS_OFF:
