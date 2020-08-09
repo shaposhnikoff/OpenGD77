@@ -399,7 +399,7 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 	else
 	{
 		trxSetModeAndBandwidth(channelScreenChannelData.chMode, false);// bandwidth false = 12.5Khz as DMR uses 12.5kHz
-		trxSetDMRColourCode(channelScreenChannelData.rxColor);
+		trxSetDMRColourCode(channelScreenChannelData.txColor);
 
 		rxGroupValid = codeplugRxGroupGetDataForIndex(channelScreenChannelData.rxGroupList, &currentRxGroupData);
 
@@ -716,7 +716,7 @@ static void handleEvent(uiEvent_t *ev)
 		if (isDisplayingQSOData && BUTTONCHECK_DOWN(ev, BUTTON_SK2) && (trxGetMode() == RADIO_MODE_DIGITAL) &&
 				((trxTalkGroupOrPcId != tg) ||
 				((dmrMonitorCapturedTS != -1) && (dmrMonitorCapturedTS != trxGetDMRTimeSlot())) ||
-				(trxGetDMRColourCode() != currentChannelData->rxColor)))
+				(trxGetDMRColourCode() != currentChannelData->txColor)))
 		{
 			lastHeardClearLastID();
 
@@ -733,7 +733,7 @@ static void handleEvent(uiEvent_t *ev)
 				settingsSet(nonVolatileSettings.overrideTG, trxTalkGroupOrPcId);
 			}
 
-			currentChannelData->rxColor = trxGetDMRColourCode();// Set the CC to the current CC, which may have been determined by the CC finding algorithm in C6000.c
+			currentChannelData->txColor = trxGetDMRColourCode();// Set the CC to the current CC, which may have been determined by the CC finding algorithm in C6000.c
 
 			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 			uiChannelModeUpdateScreen(0);
