@@ -490,15 +490,13 @@ void mainTask(void *data)
 			// PTT toggle feature
 			//
 			// PTT is locked down, but any button, except SK1 or SK2(1750Hz in FM) or DTMF Key in Analog, is pressed, virtually release PTT
-#if defined(PLATFORM_RD5R)
 			if ((nonVolatileSettings.pttToggle && PTTToggledDown) &&
-					(((button_event & EVENT_BUTTON_CHANGE) && ((trxMode != RADIO_MODE_ANALOG) && (buttons & BUTTON_SK2))) ||
-							((keys.key != 0) && (keys.event & KEY_MOD_UP) && (((trxMode == RADIO_MODE_ANALOG) && keyboardKeyIsDTMFKey(keys.key)) == false))))
-#else
-			if ((nonVolatileSettings.pttToggle && PTTToggledDown) &&
-					(((button_event & EVENT_BUTTON_CHANGE) && ((buttons & BUTTON_ORANGE) || ((trxMode != RADIO_MODE_ANALOG) && (buttons & BUTTON_SK2)))) ||
-							((keys.key != 0) && (keys.event & KEY_MOD_UP) && (((trxMode == RADIO_MODE_ANALOG) && keyboardKeyIsDTMFKey(keys.key)) == false))))
+					(((button_event & EVENT_BUTTON_CHANGE) && (
+#if ! defined(PLATFORM_RD5R)
+							(buttons & BUTTON_ORANGE) ||
 #endif
+							((trxMode != RADIO_MODE_ANALOG) && (buttons & BUTTON_SK2)))) ||
+							((keys.key != 0) && (keys.event & KEY_MOD_UP) && (((trxMode == RADIO_MODE_ANALOG) && keyboardKeyIsDTMFKey(keys.key)) == false))))
 			{
 				PTTToggledDown = false;
 				button_event = EVENT_BUTTON_CHANGE;
