@@ -389,6 +389,7 @@ static void loadChannelData(bool useChannelDataInMemory, bool loadVoicePromptAnn
 		}
 	}
 
+	clearActiveDMRID();
 	trxSetFrequency(channelScreenChannelData.rxFreq, channelScreenChannelData.txFreq, DMR_MODE_AUTO);
 
 	if (channelScreenChannelData.chMode == RADIO_MODE_ANALOG)
@@ -982,7 +983,9 @@ static void handleEvent(uiEvent_t *ev)
 					settingsSet(nonVolatileSettings.overrideTG, 0);// setting the override TG to 0 indicates the TG is not overridden
 					menuClearPrivateCall();
 					uiChannelUpdateTrxID();
-					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+					// We're in digital mode, RXing, and current talker is already at the top of last heard list,
+					// hence immediately display complete contact/TG info on screen
+					menuDisplayQSODataState = (isQSODataAvailableForCurrentTalker() ? QSO_DISPLAY_CALLER_DATA : QSO_DISPLAY_DEFAULT_SCREEN);
 					uiChannelModeUpdateScreen(0);
 					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 				}
@@ -1045,7 +1048,9 @@ static void handleEvent(uiEvent_t *ev)
 					settingsSet(nonVolatileSettings.overrideTG, 0);// setting the override TG to 0 indicates the TG is not overridden
 					menuClearPrivateCall();
 					uiChannelUpdateTrxID();
-					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+					// We're in digital mode, RXing, and current talker is already at the top of last heard list,
+					// hence immediately display complete contact/TG info on screen
+					menuDisplayQSODataState = (isQSODataAvailableForCurrentTalker() ? QSO_DISPLAY_CALLER_DATA : QSO_DISPLAY_DEFAULT_SCREEN);
 					uiChannelModeUpdateScreen(0);
 					announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 				}
@@ -1157,8 +1162,13 @@ static void handleEvent(uiEvent_t *ev)
 				settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
 				tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
 				settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
-				channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screeen that the channel data is now invalid and needs to be reloaded
+				channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
 				menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
+
+				if (menuDisplayQSODataState != QSO_DISPLAY_DEFAULT_SCREEN)
+				{
+					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+				}
 
 				if (nonVolatileSettings.currentZone == 0)
 				{
@@ -1207,7 +1217,6 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_UP) || KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_UP))
 		{
-			displaySquelch = false;
 			handleUpKey(ev);
 			return;
 		}
@@ -1270,6 +1279,8 @@ static void handleEvent(uiEvent_t *ev)
 #if ! defined(PLATFORM_GD77S)
 static void handleUpKey(uiEvent_t *ev)
 {
+	displaySquelch = false;
+
 	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
 		int numZones = codeplugZonesGetCount();
@@ -1284,9 +1295,14 @@ static void handleUpKey(uiEvent_t *ev)
 		settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
 		channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
 		menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
+
+		if (menuDisplayQSODataState != QSO_DISPLAY_DEFAULT_SCREEN)
+		{
+			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+		}
+
 		if (nonVolatileSettings.currentZone == 0)
 		{
-			settingsSet(nonVolatileSettings.currentZone, 0);
 			menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
 		}
 		return;
