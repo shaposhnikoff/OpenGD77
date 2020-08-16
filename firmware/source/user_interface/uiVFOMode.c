@@ -1088,7 +1088,9 @@ static void handleEvent(uiEvent_t *ev)
 						settingsSet(nonVolatileSettings.overrideTG, 0);// setting the override TG to 0 indicates the TG is not overridden
 						menuClearPrivateCall();
 						uiVFOUpdateTrxID();
-						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+						// We're in digital mode, RXing, and current talker is already at the top of last heard list,
+						// hence immediately display complete contact/TG info on screen
+						menuDisplayQSODataState = (isQSODataAvailableForCurrentTalker() ? QSO_DISPLAY_CALLER_DATA : QSO_DISPLAY_DEFAULT_SCREEN);
 						uiVFOModeUpdateScreen(0);
 						announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 					}
@@ -1151,7 +1153,9 @@ static void handleEvent(uiEvent_t *ev)
 						settingsSet(nonVolatileSettings.overrideTG, 0);// setting the override TG to 0 indicates the TG is not overridden
 						menuClearPrivateCall();
 						uiVFOUpdateTrxID();
-						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
+						// We're in digital mode, RXing, and current talker is already at the top of last heard list,
+						// hence immediately display complete contact/TG info on screen
+						menuDisplayQSODataState = (isQSODataAvailableForCurrentTalker() ? QSO_DISPLAY_CALLER_DATA : QSO_DISPLAY_DEFAULT_SCREEN);
 						uiVFOModeUpdateScreen(0);
 						announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 					}
