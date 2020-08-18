@@ -453,6 +453,8 @@ void mainTask(void *data)
 				}
 			}
 
+			int trxMode = trxGetMode();
+
 #if ! defined(PLATFORM_GD77S)
 			if ((key_event == EVENT_KEY_CHANGE) && ((buttons & BUTTON_PTT) == 0) && (keys.key != 0))
 			{
@@ -485,7 +487,7 @@ void mainTask(void *data)
 			}
 			 */
 
-			int trxMode = trxGetMode();
+
 			//
 			// PTT toggle feature
 			//
