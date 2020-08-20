@@ -28,7 +28,7 @@
 
 static const int STORAGE_BASE_ADDRESS 		= 0x6000;
 
-static const int STORAGE_MAGIC_NUMBER 		= 0x474E;
+static const int STORAGE_MAGIC_NUMBER 		= 0x474D;
 
 // Bit patterns for DMR Beep
 const uint8_t BEEP_TX_NONE  = 0x00;
@@ -237,8 +237,6 @@ void settingsRestoreDefaultSettings(void)
 #else
 			AUDIO_PROMPT_MODE_NORMAL;
 #endif
-	// Tone Scan CSS (VFO)
-	nonVolatileSettings.toneScanCSS = TONE_SCAN_ALL;
 
 	currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];// Set the current channel data to point to the VFO data since the default screen will be the VFO
 

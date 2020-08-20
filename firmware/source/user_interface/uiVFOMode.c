@@ -54,6 +54,7 @@ static const int SCAN_TONE_INTERVAL = 200;//time between each tone for lowest to
 static int scanToneIndex = 0;
 static CSSTypes_t scanToneType = CSS_CTCSS;
 static uint16_t prevCSSTone = (CODEPLUG_CSS_NONE - 1);
+static uint16_t toneScanCSS = TONE_SCAN_ALL;
 
 static bool displayChannelSettings;
 static bool reverseRepeater;
@@ -1527,7 +1528,7 @@ static void updateQuickMenuScreen(bool isFirstRun)
 				if(trxGetMode() == RADIO_MODE_ANALOG)
 				{
 					const char *scanCSS[] = { currentLanguage->all, "CTCSS", "DCS", "iDCS" };
-					snprintf(rightSideVar, bufferLen, "%s", scanCSS[nonVolatileSettings.toneScanCSS]);
+					snprintf(rightSideVar, bufferLen, "%s", scanCSS[toneScanCSS]);
 				}
 				else
 				{
@@ -1699,7 +1700,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					scanToneActive = true;
 					scanTimer = SCAN_TONE_INTERVAL;
 					scanToneIndex = 0;
-					scanToneType = ((nonVolatileSettings.toneScanCSS != TONE_SCAN_ALL) ? nonVolatileSettings.toneScanCSS : CSS_CTCSS);
+					scanToneType = ((toneScanCSS != TONE_SCAN_ALL) ? toneScanCSS : CSS_CTCSS);
 					prevCSSTone = currentChannelData->rxTone;
 					currentChannelData->rxTone = cssGetTone(scanToneIndex, scanToneType);
 					trxSetRxCSS(currentChannelData->rxTone);
@@ -1783,9 +1784,9 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 			case VFO_SCREEN_TONE_SCAN:
 				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
-					if (nonVolatileSettings.toneScanCSS < TONE_SCAN_DCS_INVERTED)
+					if (toneScanCSS < TONE_SCAN_DCS_INVERTED)
 					{
-						settingsIncrement(nonVolatileSettings.toneScanCSS, 1);
+						toneScanCSS++;
 					}
 				}
 				break;
@@ -1843,9 +1844,9 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 			case VFO_SCREEN_TONE_SCAN:
 				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
-					if (nonVolatileSettings.toneScanCSS > TONE_SCAN_ALL)
+					if (toneScanCSS > TONE_SCAN_ALL)
 					{
-						settingsDecrement(nonVolatileSettings.toneScanCSS, 1);
+						toneScanCSS--;
 					}
 				}
 				break;
@@ -1893,7 +1894,7 @@ static void toneScan(void)
 	}
 	else
 	{
-		cssIncrement(&currentChannelData->rxTone, &scanToneIndex, &scanToneType, true, (nonVolatileSettings.toneScanCSS != TONE_SCAN_ALL));
+		cssIncrement(&currentChannelData->rxTone, &scanToneIndex, &scanToneType, true, (toneScanCSS != TONE_SCAN_ALL));
 		trxAT1846RxOff();
 		trxSetRxCSS(currentChannelData->rxTone);
 		scanTimer = ((scanToneType == CSS_CTCSS) ? (SCAN_TONE_INTERVAL - (scanToneIndex * 2)) : SCAN_TONE_INTERVAL);

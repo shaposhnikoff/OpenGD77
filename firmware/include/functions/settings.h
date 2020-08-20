@@ -93,7 +93,6 @@ typedef struct
 	uint8_t			voxTailUnits; // 500ms units
 	uint8_t			audioPromptMode;
 	uint8_t			dmrCcTsFilter;
-	uint8_t			toneScanCSS; // VFO Tone scan (CTCSS, DCS, iDCS or All)
 } settingsStruct_t;
 
 typedef enum DMR_DESTINATION_FILTER_TYPE
