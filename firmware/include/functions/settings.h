@@ -93,6 +93,7 @@ typedef struct
 	uint8_t			voxTailUnits; // 500ms units
 	uint8_t			audioPromptMode;
 	uint8_t			dmrCcTsFilter;
+	uint8_t			toneScanCSS; // VFO Tone scan (CTCSS, DCS, iDCS or All)
 } settingsStruct_t;
 
 typedef enum DMR_DESTINATION_FILTER_TYPE
@@ -126,6 +127,14 @@ typedef enum ANALOG_FILTER_TYPE
 	ANALOG_FILTER_CTCSS,
 	NUM_ANALOG_FILTER_LEVELS
 } analogFilter_t;
+
+typedef enum TONE_SCAN_CSS
+{
+	TONE_SCAN_ALL = 0,
+	TONE_SCAN_CTCSS,
+	TONE_SCAN_DCS,
+	TONE_SCAN_DCS_INVERTED
+} toneScanCSS_t;
 
 typedef enum AUDIO_PROMPT_MODE
 {
