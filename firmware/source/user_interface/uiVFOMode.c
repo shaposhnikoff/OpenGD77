@@ -1693,7 +1693,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					scanTimer = SCAN_TONE_INTERVAL;
 					scanToneIndex = 0;
 					scanToneType = ((nonVolatileSettings.toneScanCSS != TONE_SCAN_ALL) ? nonVolatileSettings.toneScanCSS : CSS_CTCSS);
-					currentChannelData->rxTone = cssGetCSSTone(scanToneIndex, scanToneType);
+					currentChannelData->rxTone = cssGetTone(scanToneIndex, scanToneType);
 					trxSetRxCSS(currentChannelData->rxTone);
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
 				}

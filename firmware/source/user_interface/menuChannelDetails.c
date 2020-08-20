@@ -80,7 +80,7 @@ static int cssIndex(uint16_t tone, CSSTypes_t type)
 	return 0;
 }
 
-uint16_t cssGetCSSTone(int32_t index, CSSTypes_t type)
+uint16_t cssGetTone(int32_t index, CSSTypes_t type)
 {
 	if (index >= 0)
 	{

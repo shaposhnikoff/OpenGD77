@@ -160,7 +160,7 @@ void menuHotspotRestoreSettings(void);
 void menuSystemMenuIncrement(int32_t *O, int32_t M);
 void menuSystemMenuDecrement(int32_t *O, int32_t M);
 
-uint16_t cssGetCSSTone(int32_t index, CSSTypes_t type);
+uint16_t cssGetTone(int32_t index, CSSTypes_t type);
 void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type, bool loop, bool stayInCSSType);
 
 
