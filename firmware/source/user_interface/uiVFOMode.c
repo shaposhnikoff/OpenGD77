@@ -53,6 +53,7 @@ bool scanToneActive = false;//tone scan active flag  (CTCSS/DCS)
 static const int SCAN_TONE_INTERVAL = 200;//time between each tone for lowest tone. (higher tones take less time.)
 static int scanToneIndex = 0;
 static CSSTypes_t scanToneType = CSS_CTCSS;
+static uint16_t prevCSSTone = (CODEPLUG_CSS_NONE - 1);
 
 static bool displayChannelSettings;
 static bool reverseRepeater;
@@ -566,6 +567,12 @@ void uiVFOModeStopScanning(void)
 {
 	if (scanToneActive)
 	{
+		if (prevCSSTone != (CODEPLUG_CSS_NONE - 1))
+		{
+			currentChannelData->rxTone = prevCSSTone;
+			prevCSSTone = (CODEPLUG_CSS_NONE - 1);
+		}
+
 		trxSetRxCSS(currentChannelData->rxTone);
 		scanToneActive = false;
 	}
@@ -1693,6 +1700,7 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					scanTimer = SCAN_TONE_INTERVAL;
 					scanToneIndex = 0;
 					scanToneType = ((nonVolatileSettings.toneScanCSS != TONE_SCAN_ALL) ? nonVolatileSettings.toneScanCSS : CSS_CTCSS);
+					prevCSSTone = currentChannelData->rxTone;
 					currentChannelData->rxTone = cssGetTone(scanToneIndex, scanToneType);
 					trxSetRxCSS(currentChannelData->rxTone);
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
@@ -1874,6 +1882,7 @@ static void toneScan(void)
 		currentChannelData->txTone = currentChannelData->rxTone;
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 		uiVFOModeUpdateScreen(0);
+		prevCSSTone = (CODEPLUG_CSS_NONE - 1);
 		scanToneActive = false;
 		return;
 	}
