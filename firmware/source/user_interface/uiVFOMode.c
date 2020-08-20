@@ -53,6 +53,8 @@ bool scanToneActive = false;//tone scan active flag  (CTCSS/DCS)
 static const int SCAN_TONE_INTERVAL = 200;//time between each tone for lowest tone. (higher tones take less time.)
 static int scanToneIndex = 0;
 static CSSTypes_t scanToneType = CSS_CTCSS;
+static uint16_t prevCSSTone = (CODEPLUG_CSS_NONE - 1);
+static uint16_t toneScanCSS = TONE_SCAN_ALL;
 
 static bool displayChannelSettings;
 static bool reverseRepeater;
@@ -566,6 +568,12 @@ void uiVFOModeStopScanning(void)
 {
 	if (scanToneActive)
 	{
+		if (prevCSSTone != (CODEPLUG_CSS_NONE - 1))
+		{
+			currentChannelData->rxTone = prevCSSTone;
+			prevCSSTone = (CODEPLUG_CSS_NONE - 1);
+		}
+
 		trxSetRxCSS(currentChannelData->rxTone);
 		scanToneActive = false;
 	}
@@ -1385,7 +1393,7 @@ enum VFO_SCREEN_QUICK_MENU_ITEMS // The last item in the list is used so that we
 	VFO_SCREEN_QUICK_MENU_FILTER,
 	VFO_SCREEN_QUICK_MENU_DMR_CC_FILTER,
 	VFO_SCREEN_QUICK_MENU_DMR_TS_FILTER,
-	VFO_SCREEN_QUICK_MENU_VFO_TO_NEW, VFO_SCREEN_CODE_SCAN,
+	VFO_SCREEN_QUICK_MENU_VFO_TO_NEW, VFO_SCREEN_TONE_SCAN,
 	NUM_VFO_SCREEN_QUICK_MENU_ITEMS
 };
 
@@ -1515,9 +1523,14 @@ static void updateQuickMenuScreen(bool isFirstRun)
 		    case VFO_SCREEN_QUICK_MENU_VFO_TO_NEW:
 		    	rightSideConst = (char * const *)&currentLanguage->vfoToNewChannel;
 		    	break;
-			case VFO_SCREEN_CODE_SCAN:
+			case VFO_SCREEN_TONE_SCAN:
 				leftSide = (char * const *)&currentLanguage->tone_scan;
-				if(trxGetMode() != RADIO_MODE_ANALOG)
+				if(trxGetMode() == RADIO_MODE_ANALOG)
+				{
+					const char *scanCSS[] = { currentLanguage->all, "CTCSS", "DCS", "iDCS" };
+					snprintf(rightSideVar, bufferLen, "%s", scanCSS[toneScanCSS]);
+				}
+				else
 				{
 					rightSideConst = (char * const *)&currentLanguage->n_a;
 				}
@@ -1529,14 +1542,7 @@ static void updateQuickMenuScreen(bool isFirstRun)
 
 		if (leftSide != NULL)
 		{
-			if ((mNum == VFO_SCREEN_CODE_SCAN) && (rightSideConst == NULL))
-			{
-				snprintf(buf, bufferLen, "%s", *leftSide);
-			}
-			else
-			{
-				snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0] ? rightSideVar : *rightSideConst));
-			}
+			snprintf(buf, bufferLen, "%s:%s", *leftSide, (rightSideVar[0] ? rightSideVar : *rightSideConst));
 		}
 		else
 		{
@@ -1688,14 +1694,15 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					soundSetMelody(MELODY_ERROR_BEEP);
 				}
 				break;
-			case VFO_SCREEN_CODE_SCAN:
+			case VFO_SCREEN_TONE_SCAN:
 				if (trxGetMode() == RADIO_MODE_ANALOG)
 				{
 					scanToneActive = true;
 					scanTimer = SCAN_TONE_INTERVAL;
 					scanToneIndex = 0;
-					scanToneType = CSS_CTCSS;
-					currentChannelData->rxTone = TRX_CTCSSTones[scanToneIndex];
+					scanToneType = ((toneScanCSS != TONE_SCAN_ALL) ? toneScanCSS : CSS_CTCSS);
+					prevCSSTone = currentChannelData->rxTone;
+					currentChannelData->rxTone = cssGetTone(scanToneIndex, scanToneType);
 					trxSetRxCSS(currentChannelData->rxTone);
 					disableAudioAmp(AUDIO_AMP_MODE_RF);
 				}
@@ -1774,6 +1781,15 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					}
 				}
 				break;
+			case VFO_SCREEN_TONE_SCAN:
+				if (trxGetMode() == RADIO_MODE_ANALOG)
+				{
+					if (toneScanCSS < TONE_SCAN_DCS_INVERTED)
+					{
+						toneScanCSS++;
+					}
+				}
+				break;
 			}
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_LEFT))
@@ -1825,6 +1841,15 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 					}
 				}
 				break;
+			case VFO_SCREEN_TONE_SCAN:
+				if (trxGetMode() == RADIO_MODE_ANALOG)
+				{
+					if (toneScanCSS > TONE_SCAN_ALL)
+					{
+						toneScanCSS--;
+					}
+				}
+				break;
 		}
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
@@ -1858,6 +1883,7 @@ static void toneScan(void)
 		currentChannelData->txTone = currentChannelData->rxTone;
 		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 		uiVFOModeUpdateScreen(0);
+		prevCSSTone = (CODEPLUG_CSS_NONE - 1);
 		scanToneActive = false;
 		return;
 	}
@@ -1868,7 +1894,7 @@ static void toneScan(void)
 	}
 	else
 	{
-		cssIncrement(&currentChannelData->rxTone, &scanToneIndex, &scanToneType, true);
+		cssIncrement(&currentChannelData->rxTone, &scanToneIndex, &scanToneType, true, (toneScanCSS != TONE_SCAN_ALL));
 		trxAT1846RxOff();
 		trxSetRxCSS(currentChannelData->rxTone);
 		scanTimer = ((scanToneType == CSS_CTCSS) ? (SCAN_TONE_INTERVAL - (scanToneIndex * 2)) : SCAN_TONE_INTERVAL);
