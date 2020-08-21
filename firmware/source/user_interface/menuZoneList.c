@@ -132,11 +132,7 @@ static void handleEvent(uiEvent_t *ev)
 
 		settingsSaveIfNeeded(true);
 		menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
-
-		if (menuDisplayQSODataState != QSO_DISPLAY_DEFAULT_SCREEN)
-		{
-			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-		}
+		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN; // Force screen redraw
 
 		return;
 	}

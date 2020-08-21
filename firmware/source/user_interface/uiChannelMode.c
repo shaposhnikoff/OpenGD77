@@ -1151,11 +1151,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				selectPrevNextZone(false);
 				menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
-
-				if (menuDisplayQSODataState != QSO_DISPLAY_DEFAULT_SCREEN)
-				{
-					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-				}
+				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN; // Force screen redraw
 
 				if (nonVolatileSettings.currentZone == 0)
 				{
@@ -1303,11 +1299,7 @@ static void handleUpKey(uiEvent_t *ev)
 	{
 		selectPrevNextZone(true);
 		menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
-
-		if (menuDisplayQSODataState != QSO_DISPLAY_DEFAULT_SCREEN)
-		{
-			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-		}
+		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN; // Force screen redraw
 
 		if (nonVolatileSettings.currentZone == 0)
 		{
