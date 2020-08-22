@@ -19,6 +19,7 @@
 #include <main.h>
 #include <settings.h>
 #include <user_interface/menuSystem.h>
+#include <user_interface/uiUtilities.h>
 #include <user_interface/uiLocalisation.h>
 
 static void updateScreen(bool isFirstRun);
@@ -131,6 +132,7 @@ static void handleEvent(uiEvent_t *ev)
 
 		settingsSaveIfNeeded(true);
 		menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
+		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN; // Force screen redraw
 
 		return;
 	}
