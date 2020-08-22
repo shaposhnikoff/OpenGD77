@@ -62,6 +62,7 @@ static uint16_t getCurrentChannelInCurrentZoneForGD77S(void);
 
 #else // ! PLATFORM_GD77S
 
+static void selectPrevNextZone(bool nextZone);
 static void handleUpKey(uiEvent_t *ev);
 static void updateQuickMenuScreen(bool isFirstRun);
 static void handleQuickMenuEvent(uiEvent_t *ev);
@@ -1148,27 +1149,9 @@ static void handleEvent(uiEvent_t *ev)
 
 			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 			{
-				int numZones = codeplugZonesGetCount();
-
-				if (nonVolatileSettings.currentZone == 0)
-				{
-					settingsSet(nonVolatileSettings.currentZone, (numZones - 1));
-				}
-				else
-				{
-					settingsDecrement(nonVolatileSettings.currentZone, 1);
-				}
-
-				settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
-				tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
-				settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
-				channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
+				selectPrevNextZone(false);
 				menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
-
-				if (menuDisplayQSODataState != QSO_DISPLAY_DEFAULT_SCREEN)
-				{
-					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-				}
+				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN; // Force screen redraw
 
 				if (nonVolatileSettings.currentZone == 0)
 				{
@@ -1277,29 +1260,46 @@ static void handleEvent(uiEvent_t *ev)
 }
 
 #if ! defined(PLATFORM_GD77S)
+static void selectPrevNextZone(bool nextZone)
+{
+	int numZones = codeplugZonesGetCount();
+
+	if (nextZone)
+	{
+		settingsIncrement(nonVolatileSettings.currentZone, 1);
+
+		if (nonVolatileSettings.currentZone >= numZones)
+		{
+			settingsSet(nonVolatileSettings.currentZone, 0);
+		}
+	}
+	else
+	{
+		if (nonVolatileSettings.currentZone == 0)
+		{
+			settingsSet(nonVolatileSettings.currentZone, (numZones - 1));
+		}
+		else
+		{
+			settingsDecrement(nonVolatileSettings.currentZone, 1);
+		}
+	}
+
+	settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
+	tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
+	settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
+	channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
+}
+
 static void handleUpKey(uiEvent_t *ev)
 {
 	displaySquelch = false;
 
 	if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 	{
-		int numZones = codeplugZonesGetCount();
-
-		settingsIncrement(nonVolatileSettings.currentZone, 1);
-		if (nonVolatileSettings.currentZone >= numZones)
-		{
-			settingsSet(nonVolatileSettings.currentZone, 0);
-		}
-		settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
-		tsSetOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
-		settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
-		channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
+		selectPrevNextZone(true);
 		menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, false);
-
-		if (menuDisplayQSODataState != QSO_DISPLAY_DEFAULT_SCREEN)
-		{
-			menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
-		}
+		menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN; // Force screen redraw
 
 		if (nonVolatileSettings.currentZone == 0)
 		{
