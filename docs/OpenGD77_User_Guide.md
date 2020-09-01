@@ -10,6 +10,7 @@ For latest information and discussions, please refer to the development and comm
   * [Introduction](#introduction)
     * [Download links and other resources](#download-links-and-other-resources)
   * [Installation](#installation)
+  * [Transferring data](#Transferring-data)
   * [Codeplug compatibility](#codeplug-compatibility)
   * [Variations between different supported radios](#variations-between-different-supported-radios)
   * [Main screens (VFO and Channel screens)](#main-screens-vfo-and-channel-screens)
@@ -143,6 +144,10 @@ For latest information and discussions, please refer to the development and comm
       * [Backup Before You Do Anything Else](#backup-before-you-do-anything-else)
       * [Reading and Writing Your Codeplug](#reading-and-writing-your-codeplug)
       * [Writing DMR IDs -- the User Database](#writing-dmr-ids----the-user-database)
+	  * [Boot Tune](#Boot-Tune)
+	    * [Boot Tune in Morse code](#Boot-Tune-in-Morse-code)
+	  * [Melodies and Notes](#melodies-and-notes)
+	  * [Boot Image](#boot-image)
 <!-- /TOC -->
 
 
@@ -203,6 +208,27 @@ Installation of the firmware is undertaken at the owners own risk, but the offic
 
 *Note:* The official Radioddity CPS PC software is not compatible with the firmware, and the "OpenGD77 CPS" should be used instead. This can be downloaded from the link show in section 1.1 of this guide. This CPS must also be used for the Baofeng DM-1801
 
+### Transferring data
+There are two mechanisms that can be used when connecting your computer to the radio.
+
+1. A Firmware upgrade.
+   Get the radio into dfu mode by:
+   * Holding down the two buttons indicated below and turning the radio on.
+   * The LCD screen will be blank.
+   * Connection will use the HID codes and a driver is not required to be installed.
+     * Radioddity GD-77 or 77s or the TYT MD-760 or 730:
+       * Hold down the two small Blue and Black buttons under the PTT button.
+       * Some variants have no Blue button. It will also be Black.
+     * Baofeng DM-1801 or DM-860:
+       * Hold down the two small Black buttons under the PTT button.
+     * Baofeng RD-5R or RD-5R Tier2:
+       * The Orange Call and Black PTT buttons.
+
+2. Updating the codeplug using OpenGD77 CPS.
+
+   This mechanism uses serial communication while the radio is normally on with the LCD active.  
+   If you have been updating the firmware then turn the radio off and turn it on normally.  
+   It uses serial ports so the OpenGD77 driver must be installed. This happens as part of the installation of the CPS software.
 
 ## Codeplug compatibility
 
@@ -712,6 +738,7 @@ Press **Left** and **Right** to move the cursor. Press **Function-Left** as back
 ## The control keys and buttons
 
 ![](media/RadioButtonsHSs.jpg)
+![](media/DM-1801-Cheatsheet-01.svg)
 
 ## The Menu System
 
@@ -1331,3 +1358,49 @@ Then, you can add in DMR IDs into the database by selecting an ID prefix. You ca
 *Note.* Because the memory size used for the DMR ID is limited, you can store more DMR IDs if you assign fewer characters per ID. Depending on actual information, the firmware can store approximately 13,000-26,000 IDs in its user database.
 
 As the firmware supports Talker Alias, you might find this sufficient -- the firmware will display callsign and name data retrieved from the DMR stream, for user IDs not stored in your radio's User Database.
+
+#### Boot tune
+
+The tones are in pitch, delay pairs. So 38,6 means play tone 38 (932Hz F#) for 6 time periods.
+
+##### Boot Tune in Morse code
+
+You can create your callsign in Morse code when turning on the radio. ITU Morse standards have the following ratios:
+* 38,6 = dash
+* 0,2 = internal pause
+* 38,2 = dot
+* 0,6 = interchar pause
+* 0,7 = interword pause (unused in a callsign)
+
+Or perhaps more usefully:
+* Dah = 38,6,0,2,
+* Dit = 38,2,0,2,
+   and change the terminating "2" to a 6 between letters. (No comma on the very end.)  
+   So KI4 (for example) would become:
+  * 38,6,0,2, 38,2,0,2, 38,6,0,6,
+  * 38,2,0,2, 38,2,0,6,
+  * 38,2,0,2, 38,2,0,2, 38,2,0,2, 38,2,0,2, 38,6,0,6
+* Remove the spaces and carriage returns once you've got it all worked out and paste into the Boot Tune section under Extras/OpenGD77 support
+
+##### Melodies and Notes
+
+For reference, the tone values in OpenGD77 are:
+
+| Value | Note | Freq | (info) | | | (Hz) | | | | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1  | A  | 110  | (A2) | 13 | A  | 220 | | 25 | A  | 440 | | 37 | A  | 880 |   |
+| 2  | A# | 116.5 | | 14 | A# | 223   | | 26 | A# | 466 | | 38 | A# | 932.3 | |
+| 3  | B  | 123.5 | | 15 | B  | 247   | | 27 | B  | 494 | | 39 | B  | 987.8 | |
+| 4  | C  | 130.8 | (C3) | 16 | C  | 261 | (C4 mid c)| 28 | C  | 587.3| (C5) | 40 | C  | 1046.5 | (C6) |
+| 5  | C# | 138.5 | | 17 | C# | 277   | | 29 | C# | 554.3 | | 41 | C# | 1108.7 | |
+| 6  | D  | 146.8 | | 18 | D  | 294   | | 30 | D  | 587.3 | | 42 | D  | 1174.7 | |
+| 7  | D# | 155.5 | | 19 | D# | 311   | | 31 | D# | 622.3 | | 43 | D# | 1244.5 | |
+| 8  | E  | 164.8 | | 20 | E  | 329.6 | | 32 | E  | 659.3 | | 44 | E  | 1318.5 | |
+| 9  | F  | 174.6 | | 21 | F  | 349   | | 33 | F  | 698.5 | | 45 | F  | 1397 | |
+| 10 | F# | 185   | | 22 | F# | 370   | | 34 | F# | 740 | | | | | |
+| 11 | G  | 196   | | 23 | G  | 392   | | 35 | G  | 784 | | | | | |
+| 12 | G# | 207.6 | | 24 | G# | 415.3 | | 36 | G# | 830.6 | | | | | |
+
+#### Boot Image
+
+The Boot image needs to be 128 wide x 64 pixels high. It needs to be in 1-bit png format. (An indexed image format that is not supported by some modern paint programs.)
