@@ -17,7 +17,6 @@
  */
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiLocalisation.h>
-#include <user_interface/UiUtilities.h>
 #include <settings.h>
 #include <ticks.h>
 
