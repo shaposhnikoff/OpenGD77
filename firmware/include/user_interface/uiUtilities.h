@@ -198,7 +198,9 @@ void announceVFOAndFrequency(void);
 
 void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouceThreshold);
 void playNextSettingSequence(void);
+void SpeakChar(char ch);
 
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
 void acceptPrivateCall(int id );
+
 #endif

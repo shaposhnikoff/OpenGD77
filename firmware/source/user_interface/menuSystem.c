@@ -447,7 +447,7 @@ void moveCursorLeftInString(char *str, int *pos, bool delete)
 	if (*pos > 0)
 	{
 		*pos -=1;
-
+		SpeakChar(str[*pos]); // speak the new char or the char about to be backspaced out.
 		if (delete)
 		{
 			for (int i = *pos; i <= nLen; i++)
@@ -479,6 +479,7 @@ void moveCursorRightInString(char *str, int *pos, int max, bool insert)
 		if (*pos < max-1)
 		{
 			*pos += 1;
+			SpeakChar(str[*pos]); // speak the new char or the char about to be backspaced out.
 		}
 	}
 }

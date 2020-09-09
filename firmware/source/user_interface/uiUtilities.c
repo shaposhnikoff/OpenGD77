@@ -1156,7 +1156,7 @@ void menuUtilityRenderQSOData(void)
 			// Group call
 			if (((LinkHead->talkGroupOrPcId & 0xFFFFFF) != trxTalkGroupOrPcId )||
 					((dmrMonitorCapturedTS != -1) && (dmrMonitorCapturedTS != trxGetDMRTimeSlot())) ||
-					(trxGetDMRColourCode() != currentChannelData->txColor))
+					(trxGetDMRColourCode() != currentChannelData->rxColor))
 			{
 #if defined(PLATFORM_RD5R)
 				// draw the text in inverse video
@@ -1867,4 +1867,20 @@ void acceptPrivateCall(int id)
 
 	setOverrideTGorPC(uiPrivateCallLastID, true);
 	announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
+}
+
+void SpeakChar(char ch)
+{
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+	{
+		return;
+	}
+
+	char buf[2];
+	buf[0]=ch;
+	buf[1]='\0';
+
+	voicePromptsInit();
+	voicePromptsAppendString(buf);
+	voicePromptsPlay();
 }
