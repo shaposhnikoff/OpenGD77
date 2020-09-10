@@ -17,7 +17,6 @@
  */
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiLocalisation.h>
-#include <user_interface/uiUtilities.h>
 #include <settings.h>
 #include <ticks.h>
 
@@ -448,7 +447,6 @@ void moveCursorLeftInString(char *str, int *pos, bool delete)
 	if (*pos > 0)
 	{
 		*pos -=1;
-		SpeakChar(str[*pos]); // speak the new char or the char about to be backspaced out.
 
 		if (delete)
 		{
@@ -481,7 +479,6 @@ void moveCursorRightInString(char *str, int *pos, int max, bool insert)
 		if (*pos < max-1)
 		{
 			*pos += 1;
-			SpeakChar(str[*pos]); // speak the new char or the char about to be backspaced out.
 		}
 	}
 }
