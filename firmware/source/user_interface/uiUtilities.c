@@ -1887,6 +1887,11 @@ void SpeakChar(char ch)
 
 void SpeakCSSCode(uint16_t code, CSSTypes_t cssType, bool inverted)
 {
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+	{
+		return;
+	}
+
 	static const int bufferLen = 17;
 	char buf[bufferLen];
 	switch (cssType)
