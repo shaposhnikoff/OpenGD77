@@ -26,9 +26,10 @@ extern const int CODEPLUG_MIN_VARIABLE_SQUELCH;
 extern const int CODEPLUG_ZONE_DATA_SIZE;
 extern const int VFO_FREQ_STEP_TABLE[8];
 
-extern const uint16_t CODEPLUG_CSS_NONE;
-extern const uint16_t CODEPLUG_DCS_FLAGS_MASK;
-extern const uint16_t CODEPLUG_DCS_INVERTED_MASK;
+#define CODEPLUG_CSS_NONE            0xFFFF
+#define CODEPLUG_DCS_FLAGS_MASK      0xC000
+#define CODEPLUG_DCS_INVERTED_MASK   0x4000
+
 
 extern int codeplugChannelsPerZone;
 

@@ -25,6 +25,7 @@
 #include <user_interface/uiUtilities.h>
 
 
+uint8_t trx_css_measure_count = 0;
 int trx_measure_count = 0;
 volatile bool trxTransmissionEnabled = false;
 volatile bool trxIsTransmitting = false;
@@ -463,7 +464,13 @@ void trxCheckAnalogSquelch(void)
 
 			if (trxIsTransmittingTone == false)
 			{
-				disableAudioAmp(AUDIO_AMP_MODE_RF);
+				trx_css_measure_count++;
+				// If using CTCSS or DCS and signal isn't lost, allow some loss of tone / code
+				if ((!rxCSSactive) || (trxRxNoise > squelch) || (trx_css_measure_count >= 8))
+				{
+					disableAudioAmp(AUDIO_AMP_MODE_RF);
+					trx_css_measure_count = 0;
+				}
 			}
 		}
 

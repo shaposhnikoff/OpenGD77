@@ -80,7 +80,38 @@ static int cssIndex(uint16_t tone, CSSTypes_t type)
 	return 0;
 }
 
-void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type, bool loop)
+uint16_t cssGetTone(int32_t index, CSSTypes_t type)
+{
+	if (index >= 0)
+	{
+		switch (type)
+		{
+			case CSS_CTCSS:
+				if (index < TRX_NUM_CTCSS)
+				{
+					return TRX_CTCSSTones[index];
+				}
+				break;
+			case CSS_DCS:
+				if (index < TRX_NUM_DCS)
+				{
+					return (TRX_DCSCodes[index] | 0x8000);
+				}
+				break;
+			case CSS_DCS_INVERTED:
+				if (index < TRX_NUM_DCS)
+				{
+					return (TRX_DCSCodes[index] | 0xC000);
+				}
+				break;
+			case CSS_NONE:
+				break;
+		}
+	}
+	return TRX_CTCSSTones[0];
+}
+
+void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type, bool loop, bool stayInCSSType)
 {
 	(*index)++;
 	switch (*type)
@@ -88,34 +119,55 @@ void cssIncrement(uint16_t *tone, int32_t *index, CSSTypes_t *type, bool loop)
 		case CSS_CTCSS:
 			if (*index >= TRX_NUM_CTCSS)
 			{
-				*type = CSS_DCS;
-				*index = 0;
-				*tone = TRX_DCSCodes[*index] | 0x8000;
-				return;
+				if (stayInCSSType)
+				{
+					*index = 0;
+				}
+				else
+				{
+					*type = CSS_DCS;
+					*index = 0;
+					*tone = TRX_DCSCodes[*index] | 0x8000;
+					return;
+				}
 			}
 			*tone = TRX_CTCSSTones[*index];
 			break;
 		case CSS_DCS:
 			if (*index >= TRX_NUM_DCS)
 			{
-				*type = CSS_DCS_INVERTED;
-				*index = 0;
-				*tone = TRX_DCSCodes[*index] | 0xC000;
-				return;
+				if (stayInCSSType)
+				{
+					*index = 0;
+				}
+				else
+				{
+					*type = CSS_DCS_INVERTED;
+					*index = 0;
+					*tone = TRX_DCSCodes[*index] | 0xC000;
+					return;
+				}
 			}
 			*tone = TRX_DCSCodes[*index] | 0x8000;
 			break;
 		case CSS_DCS_INVERTED:
 			if (*index >= TRX_NUM_DCS)
 			{
-				if (loop)
+				if (stayInCSSType)
 				{
-					*type = CSS_CTCSS;
 					*index = 0;
-					*tone = TRX_CTCSSTones[*index];
-					return;
 				}
-				*index = TRX_NUM_DCS - 1;
+				else
+				{
+					if (loop)
+					{
+						*type = CSS_CTCSS;
+						*index = 0;
+						*tone = TRX_CTCSSTones[*index];
+						return;
+					}
+					*index = TRX_NUM_DCS - 1;
+				}
 			}
 			*tone = TRX_DCSCodes[*index] | 0xC000;
 			break;
@@ -181,7 +233,7 @@ static void cssIncrementFromEvent(uiEvent_t *ev, uint16_t *tone, int32_t *index,
 		{
 			*index += 4;
 		}
-		cssIncrement(tone, index, type, false);
+		cssIncrement(tone, index, type, false, false);
 	}
 }
 
@@ -431,7 +483,7 @@ static void updateScreen(bool isFirstRun)
 					}
 					else
 					{
-						snprintf(rightSideVar, bufferLen, "%d", tmpChannel.rxColor);
+						snprintf(rightSideVar, bufferLen, "%d", tmpChannel.txColor);
 					}
 					break;
 				case CH_DETAILS_DMR_TS:
@@ -706,10 +758,10 @@ static void handleEvent(uiEvent_t *ev)
 			case CH_DETAILS_DMR_CC:
 				if (tmpChannel.chMode == RADIO_MODE_DIGITAL)
 				{
-					if (tmpChannel.rxColor < 15)
+					if (tmpChannel.txColor < 15)
 					{
-						tmpChannel.rxColor++;
-						trxSetDMRColourCode(tmpChannel.rxColor);
+						tmpChannel.txColor++;
+						trxSetDMRColourCode(tmpChannel.txColor);
 					}
 				}
 				break;
@@ -802,10 +854,10 @@ static void handleEvent(uiEvent_t *ev)
 			case CH_DETAILS_DMR_CC:
 				if (tmpChannel.chMode == RADIO_MODE_DIGITAL)
 				{
-					if (tmpChannel.rxColor > 0)
+					if (tmpChannel.txColor > 0)
 					{
-						tmpChannel.rxColor--;
-						trxSetDMRColourCode(tmpChannel.rxColor);
+						tmpChannel.txColor--;
+						trxSetDMRColourCode(tmpChannel.txColor);
 					}
 				}
 				break;

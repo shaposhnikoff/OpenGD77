@@ -34,7 +34,7 @@ For latest information and discussions, please refer to the development and comm
         * [Copy TX frequency to the RX frequency](#copy-tx-frequency-to-the-rx-frequency)
         * [Filter (DMR mode only)](#filter-dmr-mode-only)
       * [VFO to New Channel](#vfo-to-new-channel)
-        * [Tone Scan for CTCSS tone in FM](#tone-scan-for-ctcss-tone-in-fm)
+      * [Tone Scan for CTCSS or DCS tone in FM](#tone-scan-for-ctcss-or-dcs-tone-in-fm)
     * [DMR specific functionality (VFO and Channel screens)](#dmr-specific-functionality-vfo-and-channel-screens)
       * [Timeslot selection](#timeslot-selection)
       * [DMR ID callsign and name display](#dmr-id-callsign-and-name-display)
@@ -417,11 +417,17 @@ The name of the new channel uses the format "New channel NNN", where NNN is next
 
 This channel is not added to a Zone but is available via the "All Channels" Zone.
 
-##### Tone Scan for CTCSS tone in FM
+##### Tone Scan for CTCSS or DCS tone in FM
 
-This scans for any CTCSS tone, and sets the VFO to these parameters.
+This scans for any CTCSS or DSC tones, and sets the VFO to these parameters.
+
+The default is to scan **All** tones (CTCSS and DCS). To scan for just CTCSS or just DCS, press the **right** or **left** arrow keys select CTCSS or DCS
 
 Press the **Orange** button or **Green** key to confirm the copy or **Red** key to cancel.
+
+Cancelling the scan restores the Rx CTCSS/DCS to its value prior to the scan being started.
+
+If a tone is detected; both the Rx and Tx CTCSS/DCS values are set to the tone which was detected by the scan.
 
 ![](media/vfo-quick-menu.png)
 
