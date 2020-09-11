@@ -1884,3 +1884,28 @@ void SpeakChar(char ch)
 	voicePromptsAppendString(buf);
 	voicePromptsPlay();
 }
+
+void SpeakCSSCode(uint16_t code, CSSTypes_t cssType, bool inverted)
+{
+	static const int bufferLen = 17;
+	char buf[bufferLen];
+	switch (cssType)
+	{
+		case	CSS_NONE:
+			snprintf(buf, bufferLen, "%s", currentLanguage->none);
+			break;
+		case	CSS_CTCSS:
+			snprintf(buf, bufferLen, "%d.%dHz", code/10 , code%10);
+			break;
+		case	CSS_DCS:
+		case	CSS_DCS_INVERTED:
+		snprintf(buf, bufferLen, "D%03o%c", code&0777, inverted ? 'I' : 'N');
+		break;
+		default:
+		return;
+	}
+
+	voicePromptsInit();
+	voicePromptsAppendString(buf);
+	voicePromptsPlay();
+}

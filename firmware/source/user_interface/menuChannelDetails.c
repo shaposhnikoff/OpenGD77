@@ -777,12 +777,16 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					cssIncrementFromEvent(ev, &tmpChannel.rxTone, &RxCSSIndex, &RxCSSType);
 					trxSetRxCSS(tmpChannel.rxTone);
+					SpeakCSSCode(tmpChannel.rxTone, RxCSSType, (tmpChannel.rxTone & CODEPLUG_DCS_INVERTED_MASK));
+					allowedToSpeakUpdate=false;
 				}
 				break;
 			case CH_DETAILS_TXCTCSS:
 				if (tmpChannel.chMode == RADIO_MODE_ANALOG)
 				{
 					cssIncrementFromEvent(ev, &tmpChannel.txTone, &TxCSSIndex, &TxCSSType);
+					SpeakCSSCode(tmpChannel.txTone, TxCSSType, (tmpChannel.txTone & CODEPLUG_DCS_INVERTED_MASK));
+					allowedToSpeakUpdate=false;
 				}
 				break;
 			case CH_DETAILS_BANDWIDTH:
@@ -874,12 +878,16 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					cssDecrementFromEvent(ev, &tmpChannel.rxTone, &RxCSSIndex, &RxCSSType);
 					trxSetRxCSS(tmpChannel.rxTone);
+					SpeakCSSCode(tmpChannel.rxTone, RxCSSType, (tmpChannel.rxTone & CODEPLUG_DCS_INVERTED_MASK));
+					allowedToSpeakUpdate=false;
 				}
 				break;
 			case CH_DETAILS_TXCTCSS:
 				if (tmpChannel.chMode == RADIO_MODE_ANALOG)
 				{
 					cssDecrementFromEvent(ev, &tmpChannel.txTone, &TxCSSIndex, &TxCSSType);
+					SpeakCSSCode(tmpChannel.txTone, TxCSSType, (tmpChannel.txTone & CODEPLUG_DCS_INVERTED_MASK));
+					allowedToSpeakUpdate=false;
 				}
 				break;
 			case CH_DETAILS_BANDWIDTH:
