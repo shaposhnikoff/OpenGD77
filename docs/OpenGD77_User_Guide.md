@@ -1296,7 +1296,7 @@ When programming the radio using the CPS first add all the TalkGroups that you t
 
 Next create one or more “TG Lists” and populate each with the sets of the Talkgroups that you will want to use with different channels. You can have the same Talkgroups in many TG Lists.
 
-![](media/cps-rx-grouplist.png)
+![](media/cps-TGlists.png)
 
 Now setup the channels. Enter the frequencies, slot and colour code as normal for a DMR channel.
 
