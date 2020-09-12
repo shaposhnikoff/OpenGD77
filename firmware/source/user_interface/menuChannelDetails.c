@@ -24,7 +24,7 @@
 #include <user_interface/uiUtilities.h>
 #include <user_interface/uiLocalisation.h>
 
-static void updateScreen(bool isFirstRun);
+static void updateScreen(bool isFirstRun, bool allowedToSpeakUpdate);
 static void updateCursor(bool moved);
 static void handleEvent(uiEvent_t *ev);
 
@@ -400,7 +400,7 @@ menuStatus_t menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
 		}
 
-		updateScreen(true);
+		updateScreen(true, true);
 		updateCursor(true);
 
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
@@ -429,7 +429,7 @@ static void updateCursor(bool moved)
 	}
 }
 
-static void updateScreen(bool isFirstRun)
+static void updateScreen(bool isFirstRun, bool allowedToSpeakUpdate)
 {
 	int mNum = 0;
 	static const int bufferLen = 17;
@@ -618,7 +618,7 @@ static void updateScreen(bool isFirstRun)
 				strcpy(buf, rightSideVar);
 			}
 
-			if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
+			if ((i == 0) && (allowedToSpeakUpdate &&(nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)))
 			{
 				if (!isFirstRun)
 				{
@@ -688,19 +688,19 @@ static void handleEvent(uiEvent_t *ev)
 			if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 			{
 				updateFrequency();
-				updateScreen(false);
+				updateScreen(false, true);
 				return;
 			}
 			if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 			{
-				updateScreen(false);
+				updateScreen(false, true);
 				return;
 			}
 			if (KEYCHECK_SHORTUP(ev->keys, KEY_LEFT))
 			{
 				freq_enter_idx--;
 				freq_enter_digits[freq_enter_idx] = '-';
-				updateScreen(false);
+				updateScreen(false, true);
 				return;
 			}
 		}
@@ -718,24 +718,24 @@ static void handleEvent(uiEvent_t *ev)
 					updateFrequency();
 					freq_enter_idx = 0;
 				}
-				updateScreen(false);
+				updateScreen(false, true);
 				return;
 			}
 		}
 	}
 
 	// Not entering a frequency numeric digit
-
+	bool allowedToSpeakUpdate = true;
 	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{
 		menuSystemMenuIncrement(&gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
-		updateScreen(false);
+		updateScreen(false, true);
 		menuChannelDetailsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_UP))
 	{
 		menuSystemMenuDecrement(&gMenusCurrentItemIndex, NUM_CH_DETAILS_ITEMS);
-		updateScreen(false);
+		updateScreen(false, true);
 		menuChannelDetailsExitCode |= MENU_STATUS_LIST_TYPE;
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_RIGHT))
@@ -747,6 +747,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					moveCursorRightInString(channelName, &namePos, 16, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 					updateCursor(true);
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_MODE:
@@ -776,12 +777,16 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					cssIncrementFromEvent(ev, &tmpChannel.rxTone, &RxCSSIndex, &RxCSSType);
 					trxSetRxCSS(tmpChannel.rxTone);
+					SpeakCSSCode(tmpChannel.rxTone, RxCSSType, (tmpChannel.rxTone & CODEPLUG_DCS_INVERTED_MASK));
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_TXCTCSS:
 				if (tmpChannel.chMode == RADIO_MODE_ANALOG)
 				{
 					cssIncrementFromEvent(ev, &tmpChannel.txTone, &TxCSSIndex, &TxCSSType);
+					SpeakCSSCode(tmpChannel.txTone, TxCSSType, (tmpChannel.txTone & CODEPLUG_DCS_INVERTED_MASK));
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_BANDWIDTH:
@@ -810,7 +815,7 @@ static void handleEvent(uiEvent_t *ev)
 				break;
 			case CH_DETAILS_ALL_SKIP:
 				tmpChannel.flag4 |= 0x10;// set Channel All Skip bit (was Lone Worker)
-				break;				
+				break;
 			case CH_DETAILS_RXGROUP:
 				if (tmpChannel.chMode == RADIO_MODE_DIGITAL)
 				{
@@ -831,7 +836,7 @@ static void handleEvent(uiEvent_t *ev)
 				tmpChannel.flag4 |= 0x40;
 				break;
 		}
-		updateScreen(false);
+		updateScreen(false, allowedToSpeakUpdate);
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_LEFT))
 	{
@@ -842,6 +847,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					moveCursorLeftInString(channelName, &namePos, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 					updateCursor(true);
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_MODE:
@@ -872,12 +878,16 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					cssDecrementFromEvent(ev, &tmpChannel.rxTone, &RxCSSIndex, &RxCSSType);
 					trxSetRxCSS(tmpChannel.rxTone);
+					SpeakCSSCode(tmpChannel.rxTone, RxCSSType, (tmpChannel.rxTone & CODEPLUG_DCS_INVERTED_MASK));
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_TXCTCSS:
 				if (tmpChannel.chMode == RADIO_MODE_ANALOG)
 				{
 					cssDecrementFromEvent(ev, &tmpChannel.txTone, &TxCSSIndex, &TxCSSType);
+					SpeakCSSCode(tmpChannel.txTone, TxCSSType, (tmpChannel.txTone & CODEPLUG_DCS_INVERTED_MASK));
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_BANDWIDTH:
@@ -906,7 +916,7 @@ static void handleEvent(uiEvent_t *ev)
 				break;
 			case CH_DETAILS_ALL_SKIP:
 				tmpChannel.flag4 &= ~0x10;// clear Channel All Skip Bit (was Lone Worker bit)
-				break;				
+				break;
 			case CH_DETAILS_RXGROUP:
 				if (tmpChannel.chMode == RADIO_MODE_DIGITAL)
 				{
@@ -928,7 +938,7 @@ static void handleEvent(uiEvent_t *ev)
 				break;
 
 		}
-		updateScreen(false);
+		updateScreen(false, allowedToSpeakUpdate);
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
@@ -963,7 +973,8 @@ static void handleEvent(uiEvent_t *ev)
 		{
 			channelName[namePos] = ev->keys.key;
 			updateCursor(true);
-			updateScreen(false);
+			SpeakChar(ev->keys.key);
+			updateScreen(false, false);
 		}
 		if ((ev->keys.event == KEY_MOD_PRESS) && (namePos < 16))
 		{
@@ -973,7 +984,8 @@ static void handleEvent(uiEvent_t *ev)
 				namePos++;
 			}
 			updateCursor(true);
-			updateScreen(false);
+			SpeakChar(ev->keys.key);
+			updateScreen(false, false);
 		}
 	}
 }
