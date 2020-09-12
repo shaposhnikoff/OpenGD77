@@ -747,7 +747,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					moveCursorRightInString(channelName, &namePos, 16, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 					updateCursor(true);
-					allowedToSpeakUpdate =false;
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_MODE:
@@ -778,7 +778,7 @@ static void handleEvent(uiEvent_t *ev)
 					cssIncrementFromEvent(ev, &tmpChannel.rxTone, &RxCSSIndex, &RxCSSType);
 					trxSetRxCSS(tmpChannel.rxTone);
 					SpeakCSSCode(tmpChannel.rxTone, RxCSSType, (tmpChannel.rxTone & CODEPLUG_DCS_INVERTED_MASK));
-					allowedToSpeakUpdate=false;
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_TXCTCSS:
@@ -786,7 +786,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					cssIncrementFromEvent(ev, &tmpChannel.txTone, &TxCSSIndex, &TxCSSType);
 					SpeakCSSCode(tmpChannel.txTone, TxCSSType, (tmpChannel.txTone & CODEPLUG_DCS_INVERTED_MASK));
-					allowedToSpeakUpdate=false;
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_BANDWIDTH:
@@ -836,7 +836,7 @@ static void handleEvent(uiEvent_t *ev)
 				tmpChannel.flag4 |= 0x40;
 				break;
 		}
-		updateScreen(false, 					allowedToSpeakUpdate);
+		updateScreen(false, allowedToSpeakUpdate);
 	}
 	else if (KEYCHECK_PRESS(ev->keys, KEY_LEFT))
 	{
@@ -847,7 +847,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					moveCursorLeftInString(channelName, &namePos, BUTTONCHECK_DOWN(ev, BUTTON_SK2));
 					updateCursor(true);
-					allowedToSpeakUpdate =false;
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_MODE:
@@ -879,7 +879,7 @@ static void handleEvent(uiEvent_t *ev)
 					cssDecrementFromEvent(ev, &tmpChannel.rxTone, &RxCSSIndex, &RxCSSType);
 					trxSetRxCSS(tmpChannel.rxTone);
 					SpeakCSSCode(tmpChannel.rxTone, RxCSSType, (tmpChannel.rxTone & CODEPLUG_DCS_INVERTED_MASK));
-					allowedToSpeakUpdate=false;
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_TXCTCSS:
@@ -887,7 +887,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					cssDecrementFromEvent(ev, &tmpChannel.txTone, &TxCSSIndex, &TxCSSType);
 					SpeakCSSCode(tmpChannel.txTone, TxCSSType, (tmpChannel.txTone & CODEPLUG_DCS_INVERTED_MASK));
-					allowedToSpeakUpdate=false;
+					allowedToSpeakUpdate = false;
 				}
 				break;
 			case CH_DETAILS_BANDWIDTH:

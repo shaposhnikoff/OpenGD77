@@ -1877,8 +1877,8 @@ void SpeakChar(char ch)
 	}
 
 	char buf[2];
-	buf[0]=ch;
-	buf[1]='\0';
+	buf[0] = ch;
+	buf[1] = '\0';
 
 	voicePromptsInit();
 	voicePromptsAppendString(buf);
@@ -1892,19 +1892,20 @@ void SpeakCSSCode(uint16_t code, CSSTypes_t cssType, bool inverted)
 		return;
 	}
 
-	static const int bufferLen = 17;
-	char buf[bufferLen];
+	static const int BUFFER_LEN = 17;
+	char buf[BUFFER_LEN];
+
 	switch (cssType)
 	{
-		case	CSS_NONE:
-			snprintf(buf, bufferLen, "%s", currentLanguage->none);
+		case CSS_NONE:
+			snprintf(buf, BUFFER_LEN, "%s", currentLanguage->none);
 			break;
-		case	CSS_CTCSS:
-			snprintf(buf, bufferLen, "%d.%dHz", code/10 , code%10);
+		case CSS_CTCSS:
+			snprintf(buf, BUFFER_LEN, "%d.%dHz", code/10 , code%10);
 			break;
-		case	CSS_DCS:
-		case	CSS_DCS_INVERTED:
-		snprintf(buf, bufferLen, "D%03o%c", code&0777, inverted ? 'I' : 'N');
+		case CSS_DCS:
+		case CSS_DCS_INVERTED:
+			snprintf(buf, BUFFER_LEN, "D%03o%c", code&0777, inverted ? 'I' : 'N');
 		break;
 		default:
 		return;
