@@ -1240,7 +1240,7 @@ static void handleEvent(uiEvent_t *ev)
 				{
 					voicePromptsInit();
 					voicePromptsAppendPrompt(PROMPT_0 +  keyval);
-					if (freq_enter_idx == 2)
+					if ((freq_enter_idx == 2) || (freq_enter_idx == 8))
 					{
 						voicePromptsAppendPrompt(PROMPT_POINT);
 					}
