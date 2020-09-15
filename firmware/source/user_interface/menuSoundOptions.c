@@ -363,7 +363,7 @@ static void handleEvent(uiEvent_t *ev)
 		{
 			// Restore original settings.
 			memcpy(&nonVolatileSettings, &originalNonVolatileSettings, sizeof(settingsStruct_t));
-			settingsSet(soundBeepVolumeDivider, nonVolatileSettings.beepVolumeDivider);
+			soundBeepVolumeDivider = nonVolatileSettings.beepVolumeDivider;
 			setMicGainDMR(nonVolatileSettings.micGainDMR);
 			setMicGainFM(nonVolatileSettings.micGainFM);
 			voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);
