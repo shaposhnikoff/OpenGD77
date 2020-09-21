@@ -681,6 +681,18 @@ static void handleEvent(uiEvent_t *ev)
 		gMenusCurrentItemIndex = ev->function;
 	}
 
+	if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+	{
+		if (!voicePromptIsActive)
+		{
+			voicePromptsPlay();
+		}
+		else
+		{
+			voicePromptsTerminate();
+		}
+	}
+
 	if ((gMenusCurrentItemIndex == CH_DETAILS_RXFREQ) || (gMenusCurrentItemIndex == CH_DETAILS_TXFREQ))
 	{
 		if (freq_enter_idx != 0)
