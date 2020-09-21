@@ -56,6 +56,12 @@ static void updateScreen(void)
 	{
 		mNum = menuGetMenuOffset(NUM_LANGUAGES, i);
 		menuDisplayEntry(i, mNum, (char *)languages[mNum].LANGUAGE_NAME);
+		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1 && i==0)
+		{
+			voicePromptsInit();
+			voicePromptsAppendString((char *)languages[mNum].LANGUAGE_NAME);
+			voicePromptsPlay();
+		}
 	}
 
 	ucRender();
