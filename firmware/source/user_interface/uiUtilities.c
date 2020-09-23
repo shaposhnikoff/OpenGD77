@@ -1748,8 +1748,7 @@ void announceChar(char ch)
 		return;
 	}
 
-	char buf[2] = {0};
-	buf[0] = ch;
+	char buf[2] = {ch, 0};
 
 	voicePromptsInit();
 	voicePromptsAppendString(buf);
