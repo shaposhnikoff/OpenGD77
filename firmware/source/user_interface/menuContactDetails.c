@@ -305,7 +305,7 @@ static void handleEvent(uiEvent_t *ev)
 								if ((tmpContact.tgNumber > 0) && (tmpContact.tgNumber <= MAX_TG_OR_PC_VALUE))// 9999999)
 								{
 									codeplugUtilConvertStringToBuf(contactName, tmpContact.name, 16);
-									if (contactDetailsIndex > 0 && contactDetailsIndex <= 1024)
+									if ((contactDetailsIndex >= CODEPLUG_CONTACTS_MIN) && (contactDetailsIndex <= CODEPLUG_CONTACTS_MAX))
 									{
 										if (tmpContact.name[0] == 0xff)
 										{

@@ -26,6 +26,8 @@ extern const int CODEPLUG_MIN_VARIABLE_SQUELCH;
 extern const int CODEPLUG_ZONE_DATA_SIZE;
 extern const int VFO_FREQ_STEP_TABLE[8];
 
+#define CODEPLUG_CONTACTS_MIN        1
+#define CODEPLUG_CONTACTS_MAX        1024
 #define CODEPLUG_CSS_NONE            0xFFFF
 #define CODEPLUG_DCS_FLAGS_MASK      0xC000
 #define CODEPLUG_DCS_INVERTED_MASK   0x4000

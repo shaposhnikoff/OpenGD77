@@ -78,7 +78,7 @@ typedef struct
 {
 	int numTGContacts;
 	int numPCContacts;
-	codeplugContactCache_t contactsLookupCache[1024];
+	codeplugContactCache_t contactsLookupCache[CODEPLUG_CONTACTS_MAX];
 } codeplugContactsCache_t;
 
 __attribute__((section(".data.$RAM2"))) codeplugContactsCache_t codeplugContactsCache;
@@ -198,7 +198,6 @@ void codeplugUtilConvertBufToString(char *inBuf, char *outBuf, int len)
 		outBuf[i] = inBuf[i];
 	}
 	outBuf[len] = 0;
-	return;
 }
 
 void codeplugUtilConvertStringToBuf(char *inBuf, char *outBuf, int len)
@@ -296,8 +295,8 @@ bool codeplugChannelIndexIsValid(int index)
 	uint8_t bitarray[16];
 
 	index--;
-	int channelbank=index / 128;
-	int channeloffset=index % 128;
+	int channelbank = index / 128;
+	int channeloffset = index % 128;
 
 	if(channelbank == 0)
 	{
@@ -325,8 +324,8 @@ void codeplugChannelIndexSetValid(int index)
 	uint8_t bitarray[16];
 
 	index--;
-	int channelbank=index / 128;
-	int channeloffset=index % 128;
+	int channelbank = index / 128;
+	int channeloffset = index % 128;
 
 	if(channelbank == 0)
 	{
@@ -541,7 +540,7 @@ int codeplugContactGetDataForNumber(int number, int callType, struct_codeplugCon
 {
 	int pos = 0;
 
-	for (int i = 0; i < 1024; i++)
+	for (int i = 0; i < CODEPLUG_CONTACTS_MAX; i++)
 	{
 		if ((codeplugContactsCache.contactsLookupCache[i].tgOrPCNum >> 24) == callType)
 		{
@@ -596,10 +595,10 @@ void codeplugInitContactsCache(void)
 	codeplugContactsCache.numTGContacts = 0;
 	codeplugContactsCache.numPCContacts = 0;
 
-	for(int i = 0; i < 1024; i++)
+	for(int i = 0; i < CODEPLUG_CONTACTS_MAX; i++)
 	{
 		SPI_Flash_read((CODEPLUG_ADDR_CONTACTS + (i * CODEPLUG_CONTACT_DATA_LEN)), (uint8_t *)&contact, 16 + 4 + 1);// Name + TG/ID + Call type
-		if (contact.name[0]!=0xFF)
+		if (contact.name[0] != 0xFF)
 		{
 			codeplugContactsCache.contactsLookupCache[codeplugNumContacts].tgOrPCNum = bcd2int(byteSwap32(contact.tgNumber));
 			codeplugContactsCache.contactsLookupCache[codeplugNumContacts].index = i + 1;// Contacts are numbered from 1 to 1024
@@ -729,7 +728,7 @@ int codeplugContactGetFreeIndex(void)
 		lastIndex = codeplugContactsCache.contactsLookupCache[i].index;
 	}
 
-	if (i < 1024)
+	if (i < CODEPLUG_CONTACTS_MAX)
 	{
 		return codeplugContactsCache.contactsLookupCache[i - 1].index + 1;
 	}
@@ -739,7 +738,7 @@ int codeplugContactGetFreeIndex(void)
 
 bool codeplugContactGetDataForIndex(int index, struct_codeplugContact_t *contact)
 {
-	if ((index > 0) && (index <= 1024))
+	if ((index >= CODEPLUG_CONTACTS_MIN) && (index <= CODEPLUG_CONTACTS_MAX))
 	{
 		index--;
 		SPI_Flash_read(CODEPLUG_ADDR_CONTACTS + index * CODEPLUG_CONTACT_DATA_LEN, (uint8_t *)contact, CODEPLUG_CONTACT_DATA_LEN);
