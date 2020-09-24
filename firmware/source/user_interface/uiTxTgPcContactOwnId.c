@@ -170,7 +170,7 @@ static void updateScreen(bool inputModeHasChanged)
 static int getNextContact(int curIdx, bool next, struct_codeplugContact_t *ct)
 {
 	int idx = (curIdx != 0) ? (curIdx - 1) : (next ? (CODEPLUG_CONTACTS_MAX - 1) : 0);
-	int startIdx = ((curIdx == 0) ? (next ? (CODEPLUG_CONTACTS_MAX - 1) : 0) : idx);
+	int startIdx = idx;
 
 	do {
 		idx = ((next ? (idx + 1) : (idx + (CODEPLUG_CONTACTS_MAX - 1)))) % CODEPLUG_CONTACTS_MAX;
