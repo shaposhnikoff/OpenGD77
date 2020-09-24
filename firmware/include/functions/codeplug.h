@@ -140,7 +140,7 @@ uint16_t codeplugIntToCSS(uint16_t i);
 
 bool codeplugRxGroupGetDataForIndex(int index, struct_codeplugRxGroup_t *rxGroupBuf);
 bool codeplugContactGetDataForIndex(int index, struct_codeplugContact_t *contact);
-void codeplugDTMFContactGetDataForIndex(struct_codeplugDTMFContactList_t *contactList);
+void codeplugDTMFContactsGetList(struct_codeplugDTMFContactList_t *contactList);
 int codeplugGetUserDMRID(void);
 void codeplugSetUserDMRID(uint32_t dmrId);
 void codeplugGetRadioName(char *buf);

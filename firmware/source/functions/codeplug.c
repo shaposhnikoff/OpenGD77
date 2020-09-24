@@ -211,7 +211,6 @@ void codeplugUtilConvertStringToBuf(char *inBuf, char *outBuf, int len)
 		}
 		outBuf[i] = inBuf[i];
 	}
-	return;
 }
 
 int codeplugZonesGetCount(void)
@@ -851,21 +850,23 @@ bool codeplugContactGetRXGroup(int index)
 	return false;
 }
 
-void codeplugDTMFContactGetDataForIndex(struct_codeplugDTMFContactList_t *contactList)
+void codeplugDTMFContactsGetList(struct_codeplugDTMFContactList_t *contactList)
 {
-	int i;
+	int i, count = 0;
 
-	EEPROM_Read(CODEPLUG_ADDR_DTMF_CONTACTS, (uint8_t *)contactList, sizeof(struct_codeplugDTMFContact_t) * CODEPLUG_DTMF_CONTACTS_MAX_COUNT);
-
-	for(i = 0; i < CODEPLUG_DTMF_CONTACTS_MAX_COUNT; i++)
+	if (EEPROM_Read(CODEPLUG_ADDR_DTMF_CONTACTS, (uint8_t *)contactList, sizeof(struct_codeplugDTMFContact_t) * CODEPLUG_DTMF_CONTACTS_MAX_COUNT))
 	{
-		// Empty contact names contain 0xFF
-		if (contactList->contacts->name[0] == 0xff)
+		// Empty contact names contains 0xFF
+		// Contacts aren't contiguous
+		for(i = 0; i < CODEPLUG_DTMF_CONTACTS_MAX_COUNT; i++)
 		{
-			break;
+			if (contactList->contacts[i].name[0] != 0xff)
+			{
+				count++;
+			}
 		}
 	}
-	contactList->numContacts = i;
+	contactList->numContacts = count;
 }
 
 
