@@ -187,15 +187,15 @@ uint16_t codeplugIntToCSS(uint16_t i)
 	return i;
 }
 
-void codeplugUtilConvertBufToString(char *inBuf, char *outBuf, int len)
+void codeplugUtilConvertBufToString(char *codeplugBuf, char *outBuf, int len)
 {
 	for(int i = 0; i < len; i++)
 	{
-		if (inBuf[i] == 0xff)
+		if (codeplugBuf[i] == 0xff)
 		{
-			inBuf[i] = 0;
+			codeplugBuf[i] = 0;
 		}
-		outBuf[i] = inBuf[i];
+		outBuf[i] = codeplugBuf[i];
 	}
 	outBuf[len] = 0;
 }
