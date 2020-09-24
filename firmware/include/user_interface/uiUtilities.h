@@ -195,11 +195,11 @@ void announceCC(void);
 void announceChannelName(void);
 void announceFrequency(void);
 void announceVFOAndFrequency(void);
+void announceChar(char ch);
+void announceCSSCode(uint16_t code, CSSTypes_t cssType, bool inverted);
 
 void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouceThreshold);
 void playNextSettingSequence(void);
-void SpeakChar(char ch);
-void SpeakCSSCode(uint16_t num, CSSTypes_t cssType, bool inverted);
 
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
 void acceptPrivateCall(int id );
