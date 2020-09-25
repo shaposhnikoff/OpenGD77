@@ -200,7 +200,7 @@ void announceCSSCode(uint16_t code, CSSTypes_t cssType, bool inverted);
 
 void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouceThreshold);
 void playNextSettingSequence(void);
-
+void announceSquelchLevel(void);
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
 void acceptPrivateCall(int id );
 #endif

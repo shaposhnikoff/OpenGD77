@@ -1856,6 +1856,23 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 	}
 }
 
+void announceSquelchLevel()
+{
+	static const int BUFFER_LEN = 8;
+	char buf[BUFFER_LEN];
+	bool voicePromptWasPlaying = voicePromptsIsPlaying();
+	voicePromptsInit();
+
+	if (!voicePromptWasPlaying)
+	{
+		voicePromptsAppendLanguageString(&currentLanguage->squelch);
+	}
+
+	snprintf(buf, BUFFER_LEN, "%d%%", 5 * (((currentChannelData->sql == 0) ? nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]] : currentChannelData->sql)-1));
+	voicePromptsAppendString(buf);
+	voicePromptsPlay();
+}
+
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen)
 {
 	int contactIndex;

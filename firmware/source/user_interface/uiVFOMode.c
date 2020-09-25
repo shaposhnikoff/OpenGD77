@@ -1109,11 +1109,11 @@ static void handleEvent(uiEvent_t *ev)
 						else
 						{
 							if (currentChannelData->sql < CODEPLUG_MAX_VARIABLE_SQUELCH)
-
 							{
 								currentChannelData->sql++;
 							}
 						}
+						announceSquelchLevel();
 
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						displaySquelch = true;
@@ -1178,6 +1178,8 @@ static void handleEvent(uiEvent_t *ev)
 								currentChannelData->sql--;
 							}
 						}
+
+						announceSquelchLevel();
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						displaySquelch = true;
 						uiVFOModeUpdateScreen(0);

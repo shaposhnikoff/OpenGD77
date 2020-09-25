@@ -1004,6 +1004,8 @@ static void handleEvent(uiEvent_t *ev)
 						}
 					}
 
+					announceSquelchLevel();
+
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					displaySquelch = true;
 					uiChannelModeUpdateScreen(0);
@@ -1068,6 +1070,8 @@ static void handleEvent(uiEvent_t *ev)
 							currentChannelData->sql--;
 						}
 					}
+
+					announceSquelchLevel();
 
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					displaySquelch = true;
