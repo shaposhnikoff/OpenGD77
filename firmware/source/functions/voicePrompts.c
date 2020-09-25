@@ -294,7 +294,7 @@ void voicePromptsPlay(void)
 	}
 }
 
-bool voicePromptsIsPlaying(void)
+inline bool voicePromptsIsPlaying(void)
 {
 	return (voicePromptIsActive);// && (getAudioAmpStatus() & AUDIO_AMP_MODE_PROMPT));
 }

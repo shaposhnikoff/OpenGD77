@@ -197,8 +197,8 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (isDirty)
 	{
-		bool voicePromptsWerePlaying = voicePromptIsActive;
-		if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) && voicePromptIsActive)
+		bool voicePromptsWerePlaying = voicePromptsIsPlaying();
+		if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) && voicePromptsWerePlaying)
 		{
 			voicePromptsTerminate();
 		}
@@ -214,7 +214,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
 		{
-			if (!voicePromptIsActive)
+			if (!voicePromptsIsPlaying())
 			{
 				voicePromptsPlay();
 			}
@@ -244,7 +244,7 @@ static void menuLastHeardDisplayTA(uint8_t y, char *text, uint32_t time, uint32_
 
 	if (itemIsSelected && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
 	{
-		if (voicePromptIsActive)
+		if (voicePromptsIsPlaying())
 		{
 			voicePromptsTerminate();
 		}

@@ -34,7 +34,6 @@ enum voicePrompts { PROMPT_SILENCE = 0, PROMPT_POINT, PROMPT_0, PROMPT_1, PROMPT
 };
 
 
-extern bool voicePromptIsActive;
 extern bool voicePromptDataIsLoaded;
 
 void voicePromptsCacheInit(void);
@@ -46,7 +45,7 @@ void voicePromptsAppendString(char *);// Append a text string e.g. "VK3KYY"
 void voicePromptsAppendInteger(int32_t value); // Append a signed integer
 void voicePromptsAppendLanguageString(const char * const *);//Append a text from the current language e.g. &currentLanguage->battery
 void voicePromptsPlay(void);// Starts prompt playback
-bool voicePromptsIsPlaying(void);
+extern bool voicePromptsIsPlaying(void);
 bool voicePromptsHasDataToPlay(void);
 void voicePromptsTerminate(void);
 

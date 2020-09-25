@@ -702,7 +702,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
 		{
-			if (!voicePromptIsActive)
+			if (!voicePromptsIsPlaying())
 			{
 				voicePromptsPlay();
 			}
@@ -2119,7 +2119,7 @@ static void buildSpeechUiModeForGD77S(GD77S_UIMODES_t uiMode)
 			break;
 
 		case GD77S_UIMODE_ZONE: // Zone
-			announceZoneName();
+			announceZoneName(voicePromptsIsPlaying());
 			break;
 
 
