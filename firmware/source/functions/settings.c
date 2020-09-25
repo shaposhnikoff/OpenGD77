@@ -245,6 +245,16 @@ void settingsRestoreDefaultSettings(void)
 	settingsSaveSettings(false);
 }
 
+void enableVoicePromptsIfLoaded(void)
+{
+	if (voicePromptDataIsLoaded)
+	{
+		nonVolatileSettings.audioPromptMode =	AUDIO_PROMPT_MODE_VOICE_LEVEL_1;
+		settingsDirty = true;
+		settingsSaveSettings(false);
+	}
+}
+
 void settingsEraseCustomContent(void)
 {
 	//Erase OpenGD77 custom content

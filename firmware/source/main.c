@@ -166,6 +166,7 @@ void mainTask(void *data)
 	int function_event;
 	uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = 0, .events = NO_EVENT, .hasEvent = false, .time = 0 };
 	bool keyOrButtonChanged = false;
+	bool wasRestoringDefaultsettings = false;
 
 	USB_DeviceApplicationInit();
 
@@ -181,6 +182,7 @@ void mainTask(void *data)
 
 	if (buttons & BUTTON_SK2)
 	{
+		wasRestoringDefaultsettings = true;
 		settingsRestoreDefaultSettings();
 	}
 
@@ -269,6 +271,13 @@ void mainTask(void *data)
 	codeplugInitContactsCache();
 	dmrIDCacheInit();
 	voicePromptsCacheInit();
+#if !defined(PLATFORM_GD77S)
+	// Note GD77S has always has voice prompt level 3 enabled by default so no need to do this check on that radio
+	if (wasRestoringDefaultsettings)
+	{
+		enableVoicePromptsIfLoaded();
+	}
+#endif
 
 	// Should be initialized before the splash screen, as we don't want melodies when VOX is enabled
 	voxSetParameters(nonVolatileSettings.voxThreshold, nonVolatileSettings.voxTailUnits);
@@ -309,6 +318,7 @@ void mainTask(void *data)
 
 	lowbatteryTimer = fw_millis() + 5000;// Check battery 5 seconds after the firmware starts
 
+	wasRestoringDefaultsettings = false;//
 	while (1U)
 	{
 		taskENTER_CRITICAL();

@@ -235,5 +235,6 @@ void settingsRestoreDefaultSettings(void);
 void settingsEraseCustomContent(void);
 void settingsInitVFOChannel(int vfoNumber);
 bool settingsPlatformSpecificSaveSettings(bool includeVFOs);
+void enableVoicePromptsIfLoaded(void);
 
 #endif
