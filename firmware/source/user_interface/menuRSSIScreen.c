@@ -102,6 +102,14 @@ static void handleEvent(uiEvent_t *ev)
 {
 	displayLightTrigger();
 
+	if (ev->events & BUTTON_EVENT)
+	{
+		if (repeatVoicePromptOnSK1(ev))
+		{
+			return;
+		}
+	}
+
 	if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
 		menuSystemPopPreviousMenu();

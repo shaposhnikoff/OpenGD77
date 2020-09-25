@@ -18,6 +18,7 @@
 #include <main.h>
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiLocalisation.h>
+#include <user_interface/uiUtilities.h>
 
 static void updateScreen(bool isFirstRun);
 static void handleEvent(uiEvent_t *ev);
@@ -31,12 +32,11 @@ menuStatus_t menuDisplayMenuList(uiEvent_t *ev, bool isFirstRun)
 		int currentMenuNumber = menuSystemGetCurrentMenuNumber();
 		gMenuCurrentMenuList = (menuItemNewData_t *)menusData[currentMenuNumber]->items;
 		gMenusEndIndex = menusData[currentMenuNumber]->numItems;
-		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
-		{
-			voicePromptsInit();
-			voicePromptsAppendLanguageString(&currentLanguage->menu);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-		}
+
+		voicePromptsInit();
+		voicePromptsAppendLanguageString(&currentLanguage->menu);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+
 		updateScreen(true);
 
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
@@ -70,7 +70,8 @@ static void updateScreen(bool isFirstRun)
 			{
 				char **menuName = (char **)((int)&currentLanguage->LANGUAGE_NAME + (gMenuCurrentMenuList[mNum].stringOffset * sizeof(char *)));
 				menuDisplayEntry(i, mNum, (const char *)*menuName);
-				if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1) && (i==0))
+
+				if (i==0)
 				{
 					if (!isFirstRun)
 					{
@@ -90,6 +91,14 @@ static void updateScreen(bool isFirstRun)
 static void handleEvent(uiEvent_t *ev)
 {
 	displayLightTrigger();
+
+	if (ev->events & BUTTON_EVENT)
+	{
+		if (repeatVoicePromptOnSK1(ev))
+		{
+			return;
+		}
+	}
 
 	if (KEYCHECK_PRESS(ev->keys, KEY_DOWN))
 	{

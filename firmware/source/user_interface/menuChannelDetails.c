@@ -390,15 +390,12 @@ menuStatus_t menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 			namePos = 5;
 		}
 
-		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
-		{
-			voicePromptsInit();
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-			voicePromptsAppendLanguageString(&currentLanguage->channel_details);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-		}
+		voicePromptsInit();
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+		voicePromptsAppendLanguageString(&currentLanguage->channel_details);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
 
 		updateScreen(true, true);
 		updateCursor(true);
@@ -410,8 +407,11 @@ menuStatus_t menuChannelDetails(uiEvent_t *ev, bool isFirstRun)
 		menuChannelDetailsExitCode = MENU_STATUS_SUCCESS;
 
 		updateCursor(false);
+
 		if (ev->hasEvent)
+		{
 			handleEvent(ev);
+		}
 	}
 	return menuChannelDetailsExitCode;
 }
@@ -681,15 +681,11 @@ static void handleEvent(uiEvent_t *ev)
 		gMenusCurrentItemIndex = ev->function;
 	}
 
-	if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+	if (ev->events & BUTTON_EVENT)
 	{
-		if (!voicePromptsIsPlaying())
+		if (repeatVoicePromptOnSK1(ev))
 		{
-			voicePromptsPlay();
-		}
-		else
-		{
-			voicePromptsTerminate();
+			return;
 		}
 	}
 

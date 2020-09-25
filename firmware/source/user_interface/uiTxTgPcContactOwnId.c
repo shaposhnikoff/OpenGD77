@@ -124,31 +124,28 @@ static void updateScreen(bool inputModeHasChanged)
 
 	if (inputModeHasChanged)
 	{
-		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+		voicePromptsInit();
+		switch(gMenusCurrentItemIndex)
 		{
-			voicePromptsInit();
-			switch(gMenusCurrentItemIndex)
+		case ENTRY_TG:
+			voicePromptsAppendLanguageString(&currentLanguage->tg_entry);
+			break;
+		case ENTRY_PC:
+			voicePromptsAppendLanguageString(&currentLanguage->pc_entry);
+			break;
+		case ENTRY_SELECT_CONTACT:
+			voicePromptsAppendPrompt(PROMPT_CONTACT);
 			{
-				case ENTRY_TG:
-					voicePromptsAppendLanguageString(&currentLanguage->tg_entry);
-					break;
-				case ENTRY_PC:
-					voicePromptsAppendLanguageString(&currentLanguage->pc_entry);
-					break;
-				case ENTRY_SELECT_CONTACT:
-					voicePromptsAppendPrompt(PROMPT_CONTACT);
-					{
-						char buf[17];
-						codeplugUtilConvertBufToString(contact.name, buf, 16);
-						voicePromptsAppendString(buf);
-					}
-					break;
-				case ENTRY_USER_DMR_ID:
-					voicePromptsAppendString("ID");
-					break;
+				char buf[17];
+				codeplugUtilConvertBufToString(contact.name, buf, 16);
+				voicePromptsAppendString(buf);
 			}
-			voicePromptsPlay();
+			break;
+		case ENTRY_USER_DMR_ID:
+			voicePromptsAppendString("ID");
+			break;
 		}
+		voicePromptsPlay();
 	}
 
 	if (pcIdx == 0)
