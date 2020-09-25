@@ -17,6 +17,7 @@
  */
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiLocalisation.h>
+#include <user_interface/uiUtilities.h>
 
 static void updateScreen(void);
 static void handleEvent(uiEvent_t *ev);
@@ -78,17 +79,14 @@ static void updateScreen(void)
 
 #endif
 
-	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
-	{
-		voicePromptsInit();
-		voicePromptsAppendLanguageString((const char * const *)radioModel);
-		voicePromptsAppendLanguageString(&currentLanguage->built);
-		voicePromptsAppendString(__TIME__);
-		voicePromptsAppendString(__DATE__);
-		voicePromptsAppendLanguageString(&currentLanguage->gitCommit);
-		voicePromptsAppendString(buf);
-		voicePromptsPlay();
-	}
+	voicePromptsInit();
+	voicePromptsAppendLanguageString((const char * const *)radioModel);
+	voicePromptsAppendLanguageString(&currentLanguage->built);
+	voicePromptsAppendString(__TIME__);
+	voicePromptsAppendString(__DATE__);
+	voicePromptsAppendLanguageString(&currentLanguage->gitCommit);
+	voicePromptsAppendString(buf);
+	voicePromptsPlay();
 
 	ucRender();
 	displayLightTrigger();
@@ -102,13 +100,11 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
-		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+		if (repeatVoicePromptOnSK1(ev))
 		{
-			voicePromptsPlay();
+			return;
 		}
-		return;
 	}
-
 
 	if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
