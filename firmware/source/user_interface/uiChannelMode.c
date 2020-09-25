@@ -700,16 +700,9 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
-		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+		if (repeatVoicePromptOnSK1(ev))
 		{
-			if (!voicePromptsIsPlaying())
-			{
-				voicePromptsPlay();
-			}
-			else
-			{
-				voicePromptsTerminate();
-			}
+			return;
 		}
 
 		uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
@@ -1231,24 +1224,20 @@ static void handleEvent(uiEvent_t *ev)
 					}
 				}
 
-				if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+				if (directChannelNumber > 0)
 				{
-					if (directChannelNumber > 0)
+					voicePromptsInit();
+					if (directChannelNumber < 10)
 					{
-						voicePromptsInit();
-						if (directChannelNumber < 10)
-						{
-							voicePromptsAppendLanguageString(&currentLanguage->gotoChannel);
-						}
-						voicePromptsAppendPrompt(PROMPT_0 + keyval);
-						voicePromptsPlay();
+						voicePromptsAppendLanguageString(&currentLanguage->gotoChannel);
 					}
-					else
-					{
-						announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, PROMPT_THRESHOLD_3);
-					}
+					voicePromptsAppendPrompt(PROMPT_0 + keyval);
+					voicePromptsPlay();
 				}
-
+				else
+				{
+					announceItem(PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ, PROMPT_THRESHOLD_3);
+				}
 
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				uiChannelModeUpdateScreen(0);
@@ -1444,7 +1433,7 @@ static void updateQuickMenuScreen(bool isFirstRun)
 			snprintf(buf, bufferLen, "%s", (rightSideVar[0] ? rightSideVar : *rightSideConst));
 		}
 
-		if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
+		if (i == 0)
 		{
 			if (!isFirstRun)
 			{
@@ -1477,6 +1466,14 @@ static void updateQuickMenuScreen(bool isFirstRun)
 static void handleQuickMenuEvent(uiEvent_t *ev)
 {
 	bool isDirty = false;
+
+	if (ev->events & BUTTON_EVENT)
+	{
+		if (repeatVoicePromptOnSK1(ev))
+		{
+			return;
+		}
+	}
 
 	if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
@@ -1643,15 +1640,12 @@ menuStatus_t uiChannelModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 		tmpQuickMenuDmrCcTsFilterLevel = nonVolatileSettings.dmrCcTsFilter;
 		tmpQuickMenuAnalogFilterLevel = nonVolatileSettings.analogFilterLevel;
 
-		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
-		{
-			voicePromptsInit();
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-			voicePromptsAppendLanguageString(&currentLanguage->quick_menu);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-		}
+		voicePromptsInit();
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+		voicePromptsAppendLanguageString(&currentLanguage->quick_menu);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
 
 		updateQuickMenuScreen(true);
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);

@@ -698,17 +698,6 @@ static void handleEvent(uiEvent_t *ev)
 
 	if (ev->events & BUTTON_EVENT)
 	{
-		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
-		{
-			if (!voicePromptsIsPlaying())
-			{
-				voicePromptsPlay();
-			}
-			else
-			{
-				voicePromptsTerminate();
-			}
-		}
 
 #if ! defined(PLATFORM_RD5R)
 		// Stop the scan if any button is pressed.
@@ -718,6 +707,11 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 #endif
+
+		if (repeatVoicePromptOnSK1(ev))
+		{
+			return;
+		}
 
 		uint32_t tg = (LinkHead->talkGroupOrPcId & 0xFFFFFF);
 
@@ -1234,16 +1228,13 @@ static void handleEvent(uiEvent_t *ev)
 
 			if (keyval != 99)
 			{
-				if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+				voicePromptsInit();
+				voicePromptsAppendPrompt(PROMPT_0 +  keyval);
+				if ((freq_enter_idx == 2) || (freq_enter_idx == 8))
 				{
-					voicePromptsInit();
-					voicePromptsAppendPrompt(PROMPT_0 +  keyval);
-					if ((freq_enter_idx == 2) || (freq_enter_idx == 8))
-					{
-						voicePromptsAppendPrompt(PROMPT_POINT);
-					}
-					voicePromptsPlay();
+					voicePromptsAppendPrompt(PROMPT_POINT);
 				}
+				voicePromptsPlay();
 
 				freq_enter_digits[freq_enter_idx] = (char) keyval + '0';
 				freq_enter_idx++;
@@ -1403,15 +1394,12 @@ menuStatus_t uiVFOModeQuickMenu(uiEvent_t *ev, bool isFirstRun)
 		tmpQuickMenuDmrCcTsFilterLevel = nonVolatileSettings.dmrCcTsFilter;
 		tmpQuickMenuAnalogFilterLevel = nonVolatileSettings.analogFilterLevel;
 
-		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
-		{
-			voicePromptsInit();
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-			voicePromptsAppendLanguageString(&currentLanguage->quick_menu);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-			voicePromptsAppendPrompt(PROMPT_SILENCE);
-		}
+		voicePromptsInit();
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+		voicePromptsAppendLanguageString(&currentLanguage->quick_menu);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
+		voicePromptsAppendPrompt(PROMPT_SILENCE);
 
 		updateQuickMenuScreen(true);
 		return (MENU_STATUS_LIST_TYPE | MENU_STATUS_SUCCESS);
@@ -1547,7 +1535,7 @@ static void updateQuickMenuScreen(bool isFirstRun)
 			snprintf(buf, bufferLen, "%s", (rightSideVar[0] ? rightSideVar : *rightSideConst));
 		}
 
-		if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
+		if (i == 0)
 		{
 			if (!isFirstRun)
 			{
@@ -1589,6 +1577,14 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 	bool isDirty = false;
 
 	displayLightTrigger();
+
+	if (ev->events & BUTTON_EVENT)
+	{
+		if (repeatVoicePromptOnSK1(ev))
+		{
+			return;
+		}
+	}
 
 	if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{

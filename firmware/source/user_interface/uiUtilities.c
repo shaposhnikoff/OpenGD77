@@ -1915,3 +1915,21 @@ void acceptPrivateCall(int id)
 	announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
 }
 
+bool repeatVoicePromptOnSK1(uiEvent_t *ev)
+{
+	if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+	{
+		if (!voicePromptsIsPlaying())
+		{
+			voicePromptsPlay();
+		}
+		else
+		{
+			voicePromptsTerminate();
+		}
+
+		return true;
+	}
+
+	return false;
+}

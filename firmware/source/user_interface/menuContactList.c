@@ -74,16 +74,7 @@ menuStatus_t menuContactList(uiEvent_t *ev, bool isFirstRun)
 			}
 			reloadContactList();
 			menuContactListDisplayState = MENU_CONTACT_LIST_DISPLAY;
-		}
-		else
-		{
-			codeplugContactGetDataForIndex(contactListContactIndex, &contactListContactData);
-			menuContactListDisplayState = menuContactListOverrideState;
-			menuContactListOverrideState = 0;
-		}
 
-		if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
-		{
 			voicePromptsInit();
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
@@ -91,6 +82,12 @@ menuStatus_t menuContactList(uiEvent_t *ev, bool isFirstRun)
 			voicePromptsAppendLanguageString(&currentLanguage->menu);
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
 			voicePromptsAppendPrompt(PROMPT_SILENCE);
+		}
+		else
+		{
+			codeplugContactGetDataForIndex(contactListContactIndex, &contactListContactData);
+			menuContactListDisplayState = menuContactListOverrideState;
+			menuContactListOverrideState = 0;
 		}
 
 		updateScreen(true);
@@ -131,10 +128,7 @@ static void updateScreen(bool isFirstRun)
 		{
 			ucPrintCentered((DISPLAY_SIZE_Y / 2), currentLanguage->empty_list, FONT_SIZE_3);
 
-			if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
-			{
-				voicePromptsAppendLanguageString(&currentLanguage->empty_list);
-			}
+			voicePromptsAppendLanguageString(&currentLanguage->empty_list);
 		}
 		else
 		{
@@ -149,9 +143,10 @@ static void updateScreen(bool isFirstRun)
 					menuDisplayEntry(i, mNum, (char*) nameBuf);
 				}
 
-				if ((i == 0) && (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1))
+				if (i == 0)
 				{
 					voicePromptsAppendString(nameBuf);
+					voicePromptsPlay();
 				}
 			}
 		}
@@ -176,16 +171,20 @@ static void updateScreen(bool isFirstRun)
 		break;
 	}
 
-	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
-	{
-		voicePromptsPlay();
-	}
 	ucRender();
 	displayLightTrigger();
 }
 
 static void handleEvent(uiEvent_t *ev)
 {
+	if (ev->events & BUTTON_EVENT)
+	{
+		if (repeatVoicePromptOnSK1(ev))
+		{
+			return;
+		}
+	}
+
 	switch (menuContactListDisplayState)
 	{
 	case MENU_CONTACT_LIST_DISPLAY:
@@ -253,6 +252,8 @@ static void handleEvent(uiEvent_t *ev)
 			menuContactListDisplayState = MENU_CONTACT_LIST_DELETED;
 			reloadContactList();
 			updateScreen(false);
+			voicePromptsAppendLanguageString(&currentLanguage->contact_deleted);
+			voicePromptsPlay();
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 		{
@@ -290,11 +291,7 @@ static void updateSubMenuScreen(void)
 	char buf[bufferLen];
 	char * const *langTextConst = NULL;// initialise to please the compiler
 
-
-	if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
-	{
-		voicePromptsInit();
-	}
+	voicePromptsInit();
 
 	ucClearBuf();
 
@@ -343,6 +340,14 @@ static void updateSubMenuScreen(void)
 
 static void handleSubMenuEvent(uiEvent_t *ev)
 {
+	if (ev->events & BUTTON_EVENT)
+	{
+		if (repeatVoicePromptOnSK1(ev))
+		{
+			return;
+		}
+	}
+
 	if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 	{
 		menuSystemPopPreviousMenu();
@@ -373,10 +378,15 @@ static void handleSubMenuEvent(uiEvent_t *ev)
 				{
 					menuContactListTimeout = 2000;
 					menuContactListOverrideState = MENU_CONTACT_LIST_TG_IN_RXGROUP;
+					voicePromptsAppendLanguageString(&currentLanguage->contact_used);
+					voicePromptsAppendLanguageString(&currentLanguage->in_rx_group);
+					voicePromptsPlay();
 				}
 				else
 				{
 					menuContactListOverrideState = MENU_CONTACT_LIST_CONFIRM;
+					voicePromptsAppendLanguageString(&currentLanguage->delete_contact_qm);
+					voicePromptsPlay();
 				}
 				menuSystemPopPreviousMenu();
 			}

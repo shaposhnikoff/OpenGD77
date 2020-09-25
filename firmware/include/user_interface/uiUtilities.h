@@ -203,4 +203,7 @@ void playNextSettingSequence(void);
 
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
 void acceptPrivateCall(int id );
+bool repeatVoicePromptOnSK1(uiEvent_t *ev);
+
+
 #endif
