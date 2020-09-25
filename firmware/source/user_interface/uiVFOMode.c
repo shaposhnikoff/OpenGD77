@@ -47,8 +47,6 @@ static void handleUpKey(uiEvent_t *ev);
 
 static bool isDisplayingQSOData = false;
 
-static int16_t newChannelIndex = 0;
-
 bool scanToneActive = false;//tone scan active flag  (CTCSS/DCS)
 static const int SCAN_TONE_INTERVAL = 200;//time between each tone for lowest tone. (higher tones take less time.)
 static int scanToneIndex = 0;
@@ -1646,52 +1644,56 @@ static void handleQuickMenuEvent(uiEvent_t *ev)
 				break;
 
 			case VFO_SCREEN_QUICK_MENU_VFO_TO_NEW:
-				//look for empty channel
-				for (newChannelIndex = 1; newChannelIndex < 1024; newChannelIndex++)
 				{
-					if (!codeplugChannelIndexIsValid(newChannelIndex))
+					int16_t newChannelIndex;
+
+					//look for empty channel
+					for (newChannelIndex = CODEPLUG_CONTACTS_MIN; newChannelIndex <= CODEPLUG_CONTACTS_MAX; newChannelIndex++)
 					{
-						break;
+						if (!codeplugChannelIndexIsValid(newChannelIndex))
+						{
+							break;
+						}
 					}
-				}
 
-				if (newChannelIndex < 1024)
-				{
-					//set zone to all channels and channel index to free channel found
-					settingsSet(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
+					if (newChannelIndex <= CODEPLUG_CONTACTS_MAX)
+					{
+						//set zone to all channels and channel index to free channel found
+						settingsSet(nonVolatileSettings.currentZone, (codeplugZonesGetCount() - 1));
 
-					settingsSet(nonVolatileSettings.currentChannelIndexInAllZone, newChannelIndex);
+						settingsSet(nonVolatileSettings.currentChannelIndexInAllZone, newChannelIndex);
 
-					settingsCurrentChannelNumber = newChannelIndex;
+						settingsCurrentChannelNumber = newChannelIndex;
 
-					memcpy(&channelScreenChannelData.rxFreq, &settingsVFOChannel[nonVolatileSettings.currentVFONumber].rxFreq, sizeof(struct_codeplugChannel_t) - 16);// Don't copy the name of the vfo, which are in the first 16 bytes
+						memcpy(&channelScreenChannelData.rxFreq, &settingsVFOChannel[nonVolatileSettings.currentVFONumber].rxFreq, sizeof(struct_codeplugChannel_t) - 16);// Don't copy the name of the vfo, which are in the first 16 bytes
 
-					snprintf((char *) &channelScreenChannelData.name, 16, "%s %d", currentLanguage->new_channel, newChannelIndex);
+						snprintf((char *) &channelScreenChannelData.name, 16, "%s %d", currentLanguage->new_channel, newChannelIndex);
 
-					codeplugChannelSaveDataForIndex(newChannelIndex, &channelScreenChannelData);
+						codeplugChannelSaveDataForIndex(newChannelIndex, &channelScreenChannelData);
 
-					//Set channel index as valid
-					codeplugChannelIndexSetValid(newChannelIndex);
-					//settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
-					settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
-					channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
+						//Set channel index as valid
+						codeplugChannelIndexSetValid(newChannelIndex);
+						//settingsSet(nonVolatileSettings.overrideTG, 0); // remove any TG override
+						settingsSet(nonVolatileSettings.currentChannelIndexInZone, 0);// Since we are switching zones the channel index should be reset
+						channelScreenChannelData.rxFreq = 0x00; // Flag to the Channel screen that the channel data is now invalid and needs to be reloaded
 
-					//copy current channel from vfo to channel
-					settingsSet(nonVolatileSettings.currentIndexInTRxGroupList[0], nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber]);
+						//copy current channel from vfo to channel
+						settingsSet(nonVolatileSettings.currentIndexInTRxGroupList[0], nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber]);
 
-					//copy current TS
-					tsSetOverride(((Channel_t)nonVolatileSettings.currentVFONumber), (trxGetDMRTimeSlot() + 1));
+						//copy current TS
+						tsSetOverride(((Channel_t)nonVolatileSettings.currentVFONumber), (trxGetDMRTimeSlot() + 1));
 
-					inhibitInitialVoicePrompt = true;
-					menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
+						inhibitInitialVoicePrompt = true;
+						menuSystemPopAllAndDisplaySpecificRootMenu(UI_CHANNEL_MODE, true);
 
-					soundSetMelody(MELODY_ACK_BEEP);
+						soundSetMelody(MELODY_ACK_BEEP);
 
-					return;
-				}
-				else
-				{
-					soundSetMelody(MELODY_ERROR_BEEP);
+						return;
+					}
+					else
+					{
+						soundSetMelody(MELODY_ERROR_BEEP);
+					}
 				}
 				break;
 			case VFO_SCREEN_TONE_SCAN:

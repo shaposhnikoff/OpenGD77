@@ -26,6 +26,8 @@ extern const int CODEPLUG_MIN_VARIABLE_SQUELCH;
 extern const int CODEPLUG_ZONE_DATA_SIZE;
 extern const int VFO_FREQ_STEP_TABLE[8];
 
+#define CODEPLUG_CONTACTS_MIN        1
+#define CODEPLUG_CONTACTS_MAX        1024
 #define CODEPLUG_CSS_NONE            0xFFFF
 #define CODEPLUG_DCS_FLAGS_MASK      0xC000
 #define CODEPLUG_DCS_INVERTED_MASK   0x4000
@@ -126,7 +128,7 @@ void codeplugZoneSetSelected(int selectedZone,int selectedChannel);
 int codeplugZonesGetCount(void);
 void codeplugZoneGetDataForNumber(int indexNum,struct_codeplugZone_t *returnBuf);
 void codeplugChannelGetDataForIndex(int index, struct_codeplugChannel_t *channelBuf);
-void codeplugUtilConvertBufToString(char *inBuf,char *outBuf,int len);
+void codeplugUtilConvertBufToString(char *codeplugBuf,char *outBuf,int len);
 void codeplugUtilConvertStringToBuf(char *inBuf,char *outBuf,int len);
 uint32_t byteSwap32(uint32_t n);
 uint32_t bcd2int(uint32_t i);
@@ -138,7 +140,7 @@ uint16_t codeplugIntToCSS(uint16_t i);
 
 bool codeplugRxGroupGetDataForIndex(int index, struct_codeplugRxGroup_t *rxGroupBuf);
 bool codeplugContactGetDataForIndex(int index, struct_codeplugContact_t *contact);
-void codeplugDTMFContactGetDataForIndex(struct_codeplugDTMFContactList_t *contactList);
+void codeplugDTMFContactsGetList(struct_codeplugDTMFContactList_t *contactList);
 int codeplugGetUserDMRID(void);
 void codeplugSetUserDMRID(uint32_t dmrId);
 void codeplugGetRadioName(char *buf);

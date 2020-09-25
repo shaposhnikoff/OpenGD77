@@ -277,18 +277,18 @@ static void searchNextChannel(void)
 			nextChannelIndex += scanDirection;
 			if (scanDirection == 1)
 			{
-				if (nextChannelIndex > 1024)
+				if (nextChannelIndex > CODEPLUG_CONTACTS_MAX)
 				{
-					nextChannelIndex = 1;
+					nextChannelIndex = CODEPLUG_CONTACTS_MIN;
 				}
 			}
 			else
 			{
 				// Note this is inefficient check all the index down from 1024 until it gets to the first valid index from the end.
 				// To improve this. Highest valid channel number would need to be found and cached when the radio boots up
-				if (nextChannelIndex < 1)
+				if (nextChannelIndex < CODEPLUG_CONTACTS_MIN)
 				{
-					nextChannelIndex = 1024;
+					nextChannelIndex = CODEPLUG_CONTACTS_MAX;
 				}
 			}
 		} while(!codeplugChannelIndexIsValid(nextChannelIndex));
@@ -1168,9 +1168,9 @@ static void handleEvent(uiEvent_t *ev)
 					do
 					{
 						settingsDecrement(nonVolatileSettings.currentChannelIndexInAllZone, 1);
-						if (nonVolatileSettings.currentChannelIndexInAllZone < 1)
+						if (nonVolatileSettings.currentChannelIndexInAllZone < CODEPLUG_CONTACTS_MIN)
 						{
-							settingsSet(nonVolatileSettings.currentChannelIndexInAllZone, 1024);
+							settingsSet(nonVolatileSettings.currentChannelIndexInAllZone, CODEPLUG_CONTACTS_MAX);
 						}
 					} while(!codeplugChannelIndexIsValid(nonVolatileSettings.currentChannelIndexInAllZone));
 
@@ -1216,7 +1216,7 @@ static void handleEvent(uiEvent_t *ev)
 				directChannelNumber = (directChannelNumber * 10) + keyval;
 				if (currentZone.NOT_IN_MEMORY_isAllChannelsZone)
 				{
-					if(directChannelNumber > 1024)
+					if(directChannelNumber > CODEPLUG_CONTACTS_MAX)
 					{
 						directChannelNumber = 0;
 						soundSetMelody(MELODY_ERROR_BEEP);
@@ -1225,11 +1225,10 @@ static void handleEvent(uiEvent_t *ev)
 				else
 				{
 					if(directChannelNumber > currentZone.NOT_IN_MEMORY_numChannelsInZone)
-						{
-							directChannelNumber = 0;
-							soundSetMelody(MELODY_ERROR_BEEP);
-						}
-
+					{
+						directChannelNumber = 0;
+						soundSetMelody(MELODY_ERROR_BEEP);
+					}
 				}
 
 				if (nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
@@ -1316,7 +1315,7 @@ static void handleUpKey(uiEvent_t *ev)
 			{
 				settingsIncrement(nonVolatileSettings.currentChannelIndexInAllZone, 1);
 
-				if (nonVolatileSettings.currentChannelIndexInAllZone > 1024)
+				if (nonVolatileSettings.currentChannelIndexInAllZone > CODEPLUG_CONTACTS_MAX)
 				{
 					settingsSet(nonVolatileSettings.currentChannelIndexInAllZone, 1);
 					menuChannelExitStatus |= (MENU_STATUS_LIST_TYPE | MENU_STATUS_FORCE_FIRST);
