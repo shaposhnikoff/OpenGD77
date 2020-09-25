@@ -46,6 +46,11 @@ int numLastHeard=0;
 int menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 int qsodata_timer;
 const uint32_t RSSI_UPDATE_COUNTER_RELOAD = 100;
+
+#if defined(PLATFORM_GD77S)
+#define ANNOUNCE_STATIC
+#else
+#define ANNOUNCE_STATIC static
 static void announceRadioMode(bool voicePromptWasPlaying);
 static void announceZoneName(bool voicePromptWasPlaying);
 static void announceContactNameTgOrPc(void);
@@ -56,6 +61,8 @@ static void announceCC(void);
 static void announceChannelName(bool voicePromptWasPlaying);
 static void announceFrequency(void);
 static void announceVFOAndFrequency(void);
+#endif
+
 
 uint32_t menuUtilityReceivedPcId 	= 0;// No current Private call awaiting acceptance
 uint32_t menuUtilityTgBeforePcMode 	= 0;// No TG saved, prior to a Private call being accepted.
@@ -1604,7 +1611,7 @@ void decreasePowerLevel(void)
 	announceItem(PROMPT_SEQUENCE_POWER, PROMPT_THRESHOLD_3);
 }
 
-static void announceRadioMode(bool voicePromptWasPlaying)
+ANNOUNCE_STATIC void announceRadioMode(bool voicePromptWasPlaying)
 {
 	if (!voicePromptWasPlaying)
 	{
@@ -1613,7 +1620,7 @@ static void announceRadioMode(bool voicePromptWasPlaying)
 	voicePromptsAppendString( (trxGetMode() == RADIO_MODE_DIGITAL) ? "DMR" : "FM");
 }
 
-static void announceZoneName(bool voicePromptWasPlaying)
+ANNOUNCE_STATIC void announceZoneName(bool voicePromptWasPlaying)
 {
 	if (!voicePromptWasPlaying)
 	{
@@ -1622,7 +1629,7 @@ static void announceZoneName(bool voicePromptWasPlaying)
 	voicePromptsAppendString(currentZone.name);
 }
 
-static void announceContactNameTgOrPc(void)
+ANNOUNCE_STATIC void announceContactNameTgOrPc(void)
 {
 	if (nonVolatileSettings.overrideTG == 0)
 	{
@@ -1646,7 +1653,7 @@ static void announceContactNameTgOrPc(void)
 	}
 }
 
-static void announcePowerLevel(void)
+ANNOUNCE_STATIC void announcePowerLevel(void)
 {
 	voicePromptsAppendString((char *)POWER_LEVELS[nonVolatileSettings.txPowerLevel]);
 	switch(nonVolatileSettings.txPowerLevel)
@@ -1673,26 +1680,26 @@ static void announcePowerLevel(void)
 	}
 }
 
-static void announceBatteryPercentage(void)
+ANNOUNCE_STATIC void announceBatteryPercentage(void)
 {
 	voicePromptsAppendLanguageString(&currentLanguage->battery);
 	voicePromptsAppendInteger(getBatteryPercentage());
 	voicePromptsAppendPrompt(PROMPT_PERCENT);
 }
 
-static void announceTS(void)
+ANNOUNCE_STATIC void announceTS(void)
 {
 	voicePromptsAppendPrompt(PROMPT_TIMESLOT);
 	voicePromptsAppendInteger(trxGetDMRTimeSlot() + 1);
 }
 
-static void announceCC(void)
+ANNOUNCE_STATIC void announceCC(void)
 {
 	voicePromptsAppendLanguageString(&currentLanguage->colour_code);
 	voicePromptsAppendInteger(trxGetDMRColourCode());
 }
 
-static void announceChannelName(bool voicePromptWasPlaying)
+ANNOUNCE_STATIC void announceChannelName(bool voicePromptWasPlaying)
 {
 	char voiceBuf[17];
 	codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
@@ -1719,7 +1726,7 @@ static void removeUnnecessaryZerosFromVoicePrompts(char *str)
 	}
 }
 
-static void announceFrequency(void)
+ANNOUNCE_STATIC void announceFrequency(void)
 {
 	char buffer[17];
 
@@ -1744,7 +1751,7 @@ static void announceFrequency(void)
 	}
 }
 
-static void announceVFOAndFrequency(void)
+ANNOUNCE_STATIC void announceVFOAndFrequency(void)
 {
 	voicePromptsAppendPrompt(PROMPT_VFO);
 	voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");

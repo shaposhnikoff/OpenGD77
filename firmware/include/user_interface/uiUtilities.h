@@ -47,6 +47,18 @@
 #define NUM_PC_OR_TG_DIGITS                    8
 #define MAX_TG_OR_PC_VALUE              16777215
 
+#if defined(PLATFORM_GD77S)
+void announceRadioMode(bool voicePromptWasPlaying);
+void announceZoneName(bool voicePromptWasPlaying);
+void announceContactNameTgOrPc(void);
+void announcePowerLevel(void);
+void announceBatteryPercentage(void);
+void announceTS(void);
+void announceCC(void);
+void announceChannelName(bool voicePromptWasPlaying);
+void announceFrequency(void);
+void announceVFOAndFrequency(void);
+#endif
 
 extern struct_codeplugRxGroup_t currentRxGroupData;
 extern struct_codeplugContact_t currentContactData;

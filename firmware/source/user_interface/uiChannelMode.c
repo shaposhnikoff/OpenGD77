@@ -2119,7 +2119,7 @@ static void buildSpeechUiModeForGD77S(GD77S_UIMODES_t uiMode)
 			break;
 
 		case GD77S_UIMODE_ZONE: // Zone
-			announceZoneName();
+			announceZoneName(voicePromptsIsPlaying());
 			break;
 
 
