@@ -175,26 +175,7 @@ int read_freq_enter_digits(int startDigit, int endDigit);
 int getBatteryPercentage(void);
 void decreasePowerLevel(void);
 void increasePowerLevel(void);
-/*
-void announceTG(void);
-void announcePowerLevel(void);
-void announceBatteryPercentage(void);
 
-void announceVFOAndFrequency(bool announceImmediatly);
-void removeUnnecessaryZerosFromVoicePrompts(char *str);
-void announceChannelName(void);
-*/
-
-void announceRadioMode(void);
-void announceZoneName(void);
-void announceContactNameTgOrPc(void);
-void announcePowerLevel(void);
-void announceBatteryPercentage(void);
-void announceTS(void);
-void announceCC(void);
-void announceChannelName(void);
-void announceFrequency(void);
-void announceVFOAndFrequency(void);
 void announceChar(char ch);
 void announceCSSCode(uint16_t code, CSSTypes_t cssType, bool inverted);
 

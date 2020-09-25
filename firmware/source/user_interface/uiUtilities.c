@@ -46,6 +46,16 @@ int numLastHeard=0;
 int menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 int qsodata_timer;
 const uint32_t RSSI_UPDATE_COUNTER_RELOAD = 100;
+static void announceRadioMode(bool voicePromptWasPlaying);
+static void announceZoneName(bool voicePromptWasPlaying);
+static void announceContactNameTgOrPc(void);
+static void announcePowerLevel(void);
+static void announceBatteryPercentage(void);
+static void announceTS(void);
+static void announceCC(void);
+static void announceChannelName(bool voicePromptWasPlaying);
+static void announceFrequency(void);
+static void announceVFOAndFrequency(void);
 
 uint32_t menuUtilityReceivedPcId 	= 0;// No current Private call awaiting acceptance
 uint32_t menuUtilityTgBeforePcMode 	= 0;// No TG saved, prior to a Private call being accepted.
@@ -87,7 +97,7 @@ const int SCAN_SKIP_CHANNEL_INTERVAL = 1;		//This is actually just an implicit f
 
 voicePromptItem_t voicePromptSequenceState = PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ;
 struct_codeplugZone_t currentZone;
-static bool voicePromptWasPlaying;
+//static bool voicePromptWasPlaying;
 bool inhibitInitialVoicePrompt =
 #if defined(PLATFORM_GD77S)
 		true;
@@ -1594,7 +1604,7 @@ void decreasePowerLevel(void)
 	announceItem(PROMPT_SEQUENCE_POWER, PROMPT_THRESHOLD_3);
 }
 
-void announceRadioMode(void)
+static void announceRadioMode(bool voicePromptWasPlaying)
 {
 	if (!voicePromptWasPlaying)
 	{
@@ -1603,7 +1613,7 @@ void announceRadioMode(void)
 	voicePromptsAppendString( (trxGetMode() == RADIO_MODE_DIGITAL) ? "DMR" : "FM");
 }
 
-void announceZoneName(void)
+static void announceZoneName(bool voicePromptWasPlaying)
 {
 	if (!voicePromptWasPlaying)
 	{
@@ -1612,7 +1622,7 @@ void announceZoneName(void)
 	voicePromptsAppendString(currentZone.name);
 }
 
-void announceContactNameTgOrPc(void)
+static void announceContactNameTgOrPc(void)
 {
 	if (nonVolatileSettings.overrideTG == 0)
 	{
@@ -1636,7 +1646,7 @@ void announceContactNameTgOrPc(void)
 	}
 }
 
-void announcePowerLevel(void)
+static void announcePowerLevel(void)
 {
 	voicePromptsAppendString((char *)POWER_LEVELS[nonVolatileSettings.txPowerLevel]);
 	switch(nonVolatileSettings.txPowerLevel)
@@ -1663,26 +1673,26 @@ void announcePowerLevel(void)
 	}
 }
 
-void announceBatteryPercentage(void)
+static void announceBatteryPercentage(void)
 {
 	voicePromptsAppendLanguageString(&currentLanguage->battery);
 	voicePromptsAppendInteger(getBatteryPercentage());
 	voicePromptsAppendPrompt(PROMPT_PERCENT);
 }
 
-void announceTS(void)
+static void announceTS(void)
 {
 	voicePromptsAppendPrompt(PROMPT_TIMESLOT);
 	voicePromptsAppendInteger(trxGetDMRTimeSlot() + 1);
 }
 
-void announceCC(void)
+static void announceCC(void)
 {
 	voicePromptsAppendLanguageString(&currentLanguage->colour_code);
 	voicePromptsAppendInteger(trxGetDMRColourCode());
 }
 
-void announceChannelName(void)
+static void announceChannelName(bool voicePromptWasPlaying)
 {
 	char voiceBuf[17];
 	codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
@@ -1709,7 +1719,7 @@ static void removeUnnecessaryZerosFromVoicePrompts(char *str)
 	}
 }
 
-void announceFrequency(void)
+static void announceFrequency(void)
 {
 	char buffer[17];
 
@@ -1734,7 +1744,7 @@ void announceFrequency(void)
 	}
 }
 
-void announceVFOAndFrequency(void)
+static void announceVFOAndFrequency(void)
 {
 	voicePromptsAppendPrompt(PROMPT_VFO);
 	voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");
@@ -1805,7 +1815,7 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 	{
 		return;
 	}
-	voicePromptWasPlaying = voicePromptIsActive;
+	bool voicePromptWasPlaying = voicePromptIsActive;
 
 	voicePromptSequenceState = item;
 
@@ -1816,7 +1826,7 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 		case PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ:
 			if (menuSystemGetCurrentMenuNumber() == UI_CHANNEL_MODE)
 			{
-				announceChannelName();
+				announceChannelName(voicePromptWasPlaying);
 			}
 			else
 			{
@@ -1824,10 +1834,10 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 			}
 			break;
 		case PROMPT_SEQUENCE_ZONE:
-			announceZoneName();
+			announceZoneName(voicePromptWasPlaying);
 			break;
 		case PROMPT_SEQUENCE_MODE:
-			announceRadioMode();
+			announceRadioMode(voicePromptWasPlaying);
 			break;
 		case PROMPT_SEQUENCE_CONTACT_TG_OR_PC:
 			announceContactNameTgOrPc();
