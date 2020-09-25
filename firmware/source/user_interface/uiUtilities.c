@@ -47,23 +47,6 @@ int menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 int qsodata_timer;
 const uint32_t RSSI_UPDATE_COUNTER_RELOAD = 100;
 
-#if defined(PLATFORM_GD77S)
-#define ANNOUNCE_STATIC
-#else
-#define ANNOUNCE_STATIC static
-static void announceRadioMode(bool voicePromptWasPlaying);
-static void announceZoneName(bool voicePromptWasPlaying);
-static void announceContactNameTgOrPc(void);
-static void announcePowerLevel(void);
-static void announceBatteryPercentage(void);
-static void announceTS(void);
-static void announceCC(void);
-static void announceChannelName(bool voicePromptWasPlaying);
-static void announceFrequency(void);
-static void announceVFOAndFrequency(void);
-#endif
-
-
 uint32_t menuUtilityReceivedPcId 	= 0;// No current Private call awaiting acceptance
 uint32_t menuUtilityTgBeforePcMode 	= 0;// No TG saved, prior to a Private call being accepted.
 
@@ -1822,7 +1805,7 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 	{
 		return;
 	}
-	bool voicePromptWasPlaying = voicePromptIsActive;
+	bool voicePromptWasPlaying = voicePromptsIsPlaying();
 
 	voicePromptSequenceState = item;
 

@@ -702,7 +702,7 @@ static void handleEvent(uiEvent_t *ev)
 	{
 		if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
 		{
-			if (!voicePromptIsActive)
+			if (!voicePromptsIsPlaying())
 			{
 				voicePromptsPlay();
 			}
