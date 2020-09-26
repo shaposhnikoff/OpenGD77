@@ -88,7 +88,6 @@ void voicePromptsCacheInit(void)
 
 	// is data is not loaded change prompt mode back to beep.
 	if ((nonVolatileSettings.audioPromptMode > AUDIO_PROMPT_MODE_BEEP) && (voicePromptDataIsLoaded == false))
-
 	{
 		settingsSet(nonVolatileSettings.audioPromptMode, AUDIO_PROMPT_MODE_BEEP);
 	}
@@ -269,7 +268,6 @@ void voicePromptsAppendLanguageString(const char * const *languageStringAdd)
 	voicePromptsAppendPrompt(NUM_VOICE_PROMPTS + (languageStringAdd - &currentLanguage->LANGUAGE_NAME));
 }
 
-
 void voicePromptsPlay(void)
 {
 	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
@@ -303,4 +301,3 @@ bool voicePromptsHasDataToPlay(void)
 {
 	return (voicePromptsCurrentSequence.Length > 0);
 }
-
