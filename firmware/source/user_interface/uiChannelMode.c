@@ -997,7 +997,7 @@ static void handleEvent(uiEvent_t *ev)
 						}
 					}
 
-					announceSquelchLevel();
+					announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_1);
 
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					displaySquelch = true;
@@ -1064,7 +1064,7 @@ static void handleEvent(uiEvent_t *ev)
 						}
 					}
 
-					announceSquelchLevel();
+					announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_1);
 
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					displaySquelch = true;

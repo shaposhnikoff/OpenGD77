@@ -1741,6 +1741,20 @@ ANNOUNCE_STATIC void announceVFOAndFrequency(void)
 	announceFrequency();
 }
 
+ANNOUNCE_STATIC void announceSquelchLevel(bool voicePromptWasPlaying)
+{
+	static const int BUFFER_LEN = 8;
+	char buf[BUFFER_LEN];
+
+	if (!voicePromptWasPlaying)
+	{
+		voicePromptsAppendLanguageString(&currentLanguage->squelch);
+	}
+
+	snprintf(buf, BUFFER_LEN, "%d%%", 5 * (((currentChannelData->sql == 0) ? nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]] : currentChannelData->sql)-1));
+	voicePromptsAppendString(buf);
+}
+
 void announceChar(char ch)
 {
 	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
@@ -1844,6 +1858,9 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 		case PROMPT_SEQUENCE_BATTERY:
 			announceBatteryPercentage();
 			break;
+		case PROMPT_SQUENCE_SQUELCH:
+			announceSquelchLevel(voicePromptWasPlaying);
+			break;
 		default:
 			break;
 	}
@@ -1856,22 +1873,7 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 	}
 }
 
-void announceSquelchLevel()
-{
-	static const int BUFFER_LEN = 8;
-	char buf[BUFFER_LEN];
-	bool voicePromptWasPlaying = voicePromptsIsPlaying();
-	voicePromptsInit();
 
-	if (!voicePromptWasPlaying)
-	{
-		voicePromptsAppendLanguageString(&currentLanguage->squelch);
-	}
-
-	snprintf(buf, BUFFER_LEN, "%d%%", 5 * (((currentChannelData->sql == 0) ? nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]] : currentChannelData->sql)-1));
-	voicePromptsAppendString(buf);
-	voicePromptsPlay();
-}
 
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen)
 {

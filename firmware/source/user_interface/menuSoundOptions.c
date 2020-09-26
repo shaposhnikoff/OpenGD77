@@ -156,7 +156,7 @@ static void updateScreen(bool isFirstRun)
 			case OPTIONS_AUDIO_PROMPT_MODE:
 				{
 					leftSide = (char * const *)&currentLanguage->audio_prompt;
-					const char * const *audioPromptOption[] = { &currentLanguage->silent, &currentLanguage->normal, &currentLanguage->beep,
+					const char * const *audioPromptOption[] = { &currentLanguage->silent, &currentLanguage->beep,
 							&currentLanguage->voice_prompt_level_1, &currentLanguage->voice_prompt_level_2, &currentLanguage->voice_prompt_level_3 };
 					rightSideConst = (char * const *)audioPromptOption[nonVolatileSettings.audioPromptMode];
 				}

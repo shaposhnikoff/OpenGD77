@@ -83,6 +83,7 @@ typedef enum
 	PROMPT_SEQUENCE_CC,
 	PROMPT_SEQUENCE_POWER,
 	PROMPT_SEQUENCE_BATTERY,
+	PROMPT_SQUENCE_SQUELCH,
 	NUM_PROMPT_SEQUENCES
 } voicePromptItem_t;
 
@@ -200,7 +201,6 @@ void announceCSSCode(uint16_t code, CSSTypes_t cssType, bool inverted);
 
 void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnouceThreshold);
 void playNextSettingSequence(void);
-void announceSquelchLevel(void);
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen);
 void acceptPrivateCall(int id );
 bool repeatVoicePromptOnSK1(uiEvent_t *ev);
