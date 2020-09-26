@@ -35,6 +35,7 @@ enum voicePrompts { PROMPT_SILENCE = 0, PROMPT_POINT, PROMPT_0, PROMPT_1, PROMPT
 
 
 extern bool voicePromptDataIsLoaded;
+extern const uint32_t VOICE_PROMPTS_FLASH_HEADER_ADDRESS;
 
 void voicePromptsCacheInit(void);
 void voicePromptsTick(void);// Called from HR-C6000.c
