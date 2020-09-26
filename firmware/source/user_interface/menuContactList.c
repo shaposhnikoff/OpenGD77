@@ -532,7 +532,7 @@ menuStatus_t menuContactListSubMenu(uiEvent_t *ev, bool isFirstRun)
 			GPIO_PinWrite(GPIO_RX_audio_mux, Pin_RX_audio_mux, 1);
 		}
 
-		// DTMF has been TXed, restore DIGITAL
+		// DTMF has been TXed, restore DIGITAL/ANALOG
 		if (dtmfpoLen == 0U)
 		{
 			disableTransmission();
@@ -621,32 +621,11 @@ static void dtmfProcess(void)
 	{
 		dtmfNextPeriod = PITCounter + dtmfDuration;
 
-		//uint16_t tone;
-		// key the tone
-
-		// setTone().....
-		if (dtmfBuffer[dtmfpoPtr] == 0xFFU)
+		if (dtmfBuffer[dtmfpoPtr] != 0xFFU)
 		{
-			// stop tone
-		}
-		else
-		{
-			//disableTransmission();
 			trxSetDTMF(dtmfBuffer[dtmfpoPtr]);
-			//enableTransmission();
 		}
-		/*
-		 *
-		     0 .. 15 : len=16
 
-		     joue le 0, : len=16
-		     joue le 1, : len=16
-		     ...
-		     joue le 15 (DERNIER) : len=16
-
-		     joue 16;
-
-		 */
 		dtmfpoPtr++;
 
 		if (dtmfpoPtr > dtmfpoLen)
