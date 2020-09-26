@@ -166,8 +166,9 @@ void mainTask(void *data)
 	int function_event;
 	uiEvent_t ev = { .buttons = 0, .keys = NO_KEYCODE, .rotary = 0, .function = 0, .events = NO_EVENT, .hasEvent = false, .time = 0 };
 	bool keyOrButtonChanged = false;
+#if !defined(PLATFORM_GD77S)
 	bool wasRestoringDefaultsettings = false;
-
+#endif
 	USB_DeviceApplicationInit();
 
 	// Init I2C
@@ -182,7 +183,9 @@ void mainTask(void *data)
 
 	if (buttons & BUTTON_SK2)
 	{
+#if !defined(PLATFORM_GD77S)
 		wasRestoringDefaultsettings = true;
+#endif
 		settingsRestoreDefaultSettings();
 	}
 
@@ -318,7 +321,10 @@ void mainTask(void *data)
 
 	lowbatteryTimer = fw_millis() + 5000;// Check battery 5 seconds after the firmware starts
 
-	wasRestoringDefaultsettings = false;//
+#if !defined(PLATFORM_GD77S)
+	wasRestoringDefaultsettings = false;
+#endif
+
 	while (1U)
 	{
 		taskENTER_CRITICAL();
