@@ -179,7 +179,7 @@ static void cpsHandleWriteCommand(void)
 				// A better solution will be added to the CPS and firmware at a later date.
 				if ((sector * 4096) == VOICE_PROMPTS_FLASH_HEADER_ADDRESS)
 				{
-					nonVolatileSettings.audioPromptMode =	AUDIO_PROMPT_MODE_VOICE_LEVEL_1;
+					settingsSetUINT8(&nonVolatileSettings.audioPromptMode,AUDIO_PROMPT_MODE_VOICE_LEVEL_1);
 				}
 #endif
 				taskEXIT_CRITICAL();
