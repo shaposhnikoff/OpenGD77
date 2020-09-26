@@ -45,6 +45,7 @@ settingsStruct_t nonVolatileSettings;
 struct_codeplugChannel_t *currentChannelData;
 struct_codeplugChannel_t channelScreenChannelData = { .rxFreq = 0 };
 struct_codeplugContact_t contactListContactData;
+struct_codeplugDTMFContact_t contactListDTMFContactData;
 struct_codeplugChannel_t settingsVFOChannel[2];// VFO A and VFO B from the codeplug.
 int contactListContactIndex;
 int settingsUsbMode = USB_MODE_CPS;

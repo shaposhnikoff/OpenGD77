@@ -51,6 +51,7 @@ const stringsTable_t polishLanguage =
 .new_contact				= "Nowy kontakt", // MaxLen: 16
 .contact_list				= "Lista kontaktów", // MaxLen: 16
 .hotspot_mode				= "HotSpot", // MaxLen: 16
+.dtmf_contact_list			= "Lista DTMF", // Maxlen: 16
 .contact_details			= "Detale kontaktu", // MaxLen: 16
 .built					= "Kompilacja", // MaxLen: 16
 .zones					= "Strefy", // MaxLen: 16

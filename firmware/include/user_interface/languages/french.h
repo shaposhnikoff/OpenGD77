@@ -52,6 +52,7 @@ const stringsTable_t frenchLanguage =
 .contact_list			= "Liste contacts",
 .contact_details		= "Détails contact",
 .hotspot_mode			= "Hotspot",
+.dtmf_contact_list			= "Liste DTMF", // Maxlen: 16
 .built					= "Créé",
 .zones					= "Zones",
 .keypad					= "Clavier",

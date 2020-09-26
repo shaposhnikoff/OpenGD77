@@ -849,13 +849,13 @@ static void handleEvent(uiEvent_t *ev)
 		{
 			if (KEYCHECK_SHORTUP(ev->keys, KEY_HASH))
 			{
-				if (trxGetMode() == RADIO_MODE_DIGITAL)
+				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
 				{
-					if (BUTTONCHECK_DOWN(ev, BUTTON_SK2))
-					{
-						menuSystemPushNewMenu(MENU_CONTACT_QUICKLIST);
-					}
-					else
+					menuSystemPushNewMenu(MENU_CONTACT_QUICKLIST);
+				}
+				else
+				{
+					if (trxGetMode() == RADIO_MODE_DIGITAL)
 					{
 						menuSystemPushNewMenu(MENU_NUMERICAL_ENTRY);
 					}

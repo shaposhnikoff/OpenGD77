@@ -38,14 +38,13 @@ const int CODEPLUG_ADDR_CHANNEL_FLASH = 0x7B1C0;
 
 const int CODEPLUG_ADDR_RX_GROUP_LEN = 0x8D620;  // 76 TG lists
 const int CODEPLUG_ADDR_RX_GROUP = 0x8D6A0;//
-const int CODEPLUG_RX_GROUP_LEN = 0x50;
+const int CODEPLUG_RX_GROUP_SIZE = 80;
 
 const int CODEPLUG_ADDR_CONTACTS = 0x87620;
-const int CODEPLUG_CONTACT_DATA_LEN = 0x18;
+const int CODEPLUG_CONTACT_DATA_SIZE = 24;
 
 const int CODEPLUG_ADDR_DTMF_CONTACTS = 0x02f88;
-const int CODEPLUG_DTMF_CONTACTS_LEN = 0x10;
-const int CODEPLUG_DTMF_CONTACTS_MAX_COUNT = 32;
+const int CODEPLUG_DTMF_CONTACTS_SIZE = 32;
 
 const int CODEPLUG_ADDR_USER_DMRID = 0x00E8;
 const int CODEPLUG_ADDR_USER_CALLSIGN = 0x00E0;
@@ -76,9 +75,16 @@ typedef struct
 
 typedef struct
 {
+	uint8_t index;
+} codeplugDTMFContactCache_t;
+
+typedef struct
+{
 	int numTGContacts;
 	int numPCContacts;
+	int numDTMFContacts;
 	codeplugContactCache_t contactsLookupCache[CODEPLUG_CONTACTS_MAX];
+	codeplugDTMFContactCache_t contactsDTMFLookupCache[CODEPLUG_DTMF_CONTACTS_MAX];
 } codeplugContactsCache_t;
 
 __attribute__((section(".data.$RAM2"))) codeplugContactsCache_t codeplugContactsCache;
@@ -523,16 +529,30 @@ bool codeplugRxGroupGetDataForIndex(int index, struct_codeplugRxGroup_t *rxGroup
 	}
 }
 
+int codeplugDTMFContactsGetCount(void)
+{
+	return codeplugContactsCache.numDTMFContacts;
+}
+
 int codeplugContactsGetCount(int callType) // 0:TG 1:PC
 {
 	if (callType == CONTACT_CALLTYPE_PC)
 	{
 		return codeplugContactsCache.numPCContacts;
 	}
-	else
+
+	return codeplugContactsCache.numTGContacts;
+}
+
+int codeplugDTMFContactGetDataForNumber(int number, struct_codeplugDTMFContact_t *contact)
+{
+	if ((number >= CODEPLUG_DTMF_CONTACTS_MIN) && (number <= CODEPLUG_DTMF_CONTACTS_MAX))
 	{
-		return codeplugContactsCache.numTGContacts;
+		codeplugDTMFContactGetDataForIndex(codeplugContactsCache.contactsDTMFLookupCache[number - 1].index, contact);
+		return number;
 	}
+
+	return 0;
 }
 
 int codeplugContactGetDataForNumber(int number, int callType, struct_codeplugContact_t *contact)
@@ -553,6 +573,7 @@ int codeplugContactGetDataForNumber(int number, int callType, struct_codeplugCon
 			break;
 		}
 	}
+
 	return pos;
 }
 
@@ -590,29 +611,45 @@ bool codeplugContactsContainsPC(uint32_t pc)
 void codeplugInitContactsCache(void)
 {
 	struct_codeplugContact_t contact;
+	uint8_t                  c;
 	int codeplugNumContacts = 0;
 	codeplugContactsCache.numTGContacts = 0;
 	codeplugContactsCache.numPCContacts = 0;
+	codeplugContactsCache.numDTMFContacts = 0;
 
 	for(int i = 0; i < CODEPLUG_CONTACTS_MAX; i++)
 	{
-		SPI_Flash_read((CODEPLUG_ADDR_CONTACTS + (i * CODEPLUG_CONTACT_DATA_LEN)), (uint8_t *)&contact, 16 + 4 + 1);// Name + TG/ID + Call type
-		if (contact.name[0] != 0xFF)
+		if (SPI_Flash_read((CODEPLUG_ADDR_CONTACTS + (i * CODEPLUG_CONTACT_DATA_SIZE)), (uint8_t *)&contact, 16 + 4 + 1))// Name + TG/ID + Call type
 		{
-			codeplugContactsCache.contactsLookupCache[codeplugNumContacts].tgOrPCNum = bcd2int(byteSwap32(contact.tgNumber));
-			codeplugContactsCache.contactsLookupCache[codeplugNumContacts].index = i + 1;// Contacts are numbered from 1 to 1024
-			codeplugContactsCache.contactsLookupCache[codeplugNumContacts].tgOrPCNum |= (contact.callType << 24);// Store the call type in the upper byte
-			if (contact.callType == CONTACT_CALLTYPE_PC)
+			if (contact.name[0] != 0xFF)
 			{
-				codeplugContactsCache.numPCContacts++;
+				codeplugContactsCache.contactsLookupCache[codeplugNumContacts].tgOrPCNum = bcd2int(byteSwap32(contact.tgNumber));
+				codeplugContactsCache.contactsLookupCache[codeplugNumContacts].index = i + 1;// Contacts are numbered from 1 to 1024
+				codeplugContactsCache.contactsLookupCache[codeplugNumContacts].tgOrPCNum |= (contact.callType << 24);// Store the call type in the upper byte
+				if (contact.callType == CONTACT_CALLTYPE_PC)
+				{
+					codeplugContactsCache.numPCContacts++;
+				}
+				else
+				{
+					codeplugContactsCache.numTGContacts++;
+				}
+				codeplugNumContacts++;
 			}
-			else
-			{
-				codeplugContactsCache.numTGContacts++;
-			}
-			codeplugNumContacts++;
 		}
 	}
+
+	for (int i = 0; i < CODEPLUG_DTMF_CONTACTS_MAX; i++)
+	{
+		if (EEPROM_Read(CODEPLUG_ADDR_DTMF_CONTACTS + (i * CODEPLUG_DTMF_CONTACTS_SIZE), (uint8_t *)&c, 1))
+		{
+			if (c != 0xFF)
+			{
+				codeplugContactsCache.contactsDTMFLookupCache[codeplugContactsCache.numDTMFContacts++].index = i + 1; // Contacts are numbered from 1 to 32
+			}
+		}
+	}
+
 }
 
 void codeplugContactsCacheUpdateOrInsertContactAt(int index, struct_codeplugContact_t *contact)
@@ -735,12 +772,27 @@ int codeplugContactGetFreeIndex(void)
 	return 0;
 }
 
+bool codeplugDTMFContactGetDataForIndex(int index, struct_codeplugDTMFContact_t *contact)
+{
+	if ((index >= CODEPLUG_DTMF_CONTACTS_MIN) && (index <= CODEPLUG_DTMF_CONTACTS_MAX))
+	{
+		index--;
+		if(EEPROM_Read(CODEPLUG_ADDR_DTMF_CONTACTS + (index * CODEPLUG_DTMF_CONTACTS_SIZE), (uint8_t *)contact, CODEPLUG_DTMF_CONTACTS_SIZE))
+		{
+			return true;
+		}
+	}
+
+	memset(contact, 0xff, CODEPLUG_DTMF_CONTACTS_SIZE);
+	return false;
+}
+
 bool codeplugContactGetDataForIndex(int index, struct_codeplugContact_t *contact)
 {
 	if ((index >= CODEPLUG_CONTACTS_MIN) && (index <= CODEPLUG_CONTACTS_MAX))
 	{
 		index--;
-		SPI_Flash_read(CODEPLUG_ADDR_CONTACTS + index * CODEPLUG_CONTACT_DATA_LEN, (uint8_t *)contact, CODEPLUG_CONTACT_DATA_LEN);
+		SPI_Flash_read(CODEPLUG_ADDR_CONTACTS + index * CODEPLUG_CONTACT_DATA_SIZE, (uint8_t *)contact, CODEPLUG_CONTACT_DATA_SIZE);
 		contact->NOT_IN_CODEPLUGDATA_indexNumber = index + 1;
 		contact->tgNumber = bcd2int(byteSwap32(contact->tgNumber));
 		return true;
@@ -759,16 +811,16 @@ int codeplugContactSaveDataForIndex(int index, struct_codeplugContact_t *contact
 	int flashWritePos = CODEPLUG_ADDR_CONTACTS;
 	int flashSector;
 	int flashEndSector;
-	int bytesToWriteInCurrentSector = CODEPLUG_CONTACT_DATA_LEN;
+	int bytesToWriteInCurrentSector = CODEPLUG_CONTACT_DATA_SIZE;
 
 	index--;
 	contact->tgNumber = byteSwap32(int2bcd(contact->tgNumber));
 
 
-	flashWritePos += index * CODEPLUG_CONTACT_DATA_LEN;// go to the position of the specific index
+	flashWritePos += index * CODEPLUG_CONTACT_DATA_SIZE;// go to the position of the specific index
 
 	flashSector 	= flashWritePos / 4096;
-	flashEndSector 	= (flashWritePos + CODEPLUG_CONTACT_DATA_LEN) / 4096;
+	flashEndSector 	= (flashWritePos + CODEPLUG_CONTACT_DATA_SIZE) / 4096;
 
 	if (flashSector != flashEndSector)
 	{
@@ -797,7 +849,7 @@ int codeplugContactSaveDataForIndex(int index, struct_codeplugContact_t *contact
 	if (flashSector != flashEndSector)
 	{
 		uint8_t *channelBufPusOffset = (uint8_t *)contact + bytesToWriteInCurrentSector;
-		bytesToWriteInCurrentSector = CODEPLUG_CONTACT_DATA_LEN - bytesToWriteInCurrentSector;
+		bytesToWriteInCurrentSector = CODEPLUG_CONTACT_DATA_SIZE - bytesToWriteInCurrentSector;
 
 		SPI_Flash_read(flashEndSector * 4096, SPI_Flash_sectorbuffer, 4096);
 		memcpy(SPI_Flash_sectorbuffer, (uint8_t *)channelBufPusOffset, bytesToWriteInCurrentSector);
@@ -849,26 +901,6 @@ bool codeplugContactGetRXGroup(int index)
 	}
 	return false;
 }
-
-void codeplugDTMFContactsGetList(struct_codeplugDTMFContactList_t *contactList)
-{
-	int i, count = 0;
-
-	if (EEPROM_Read(CODEPLUG_ADDR_DTMF_CONTACTS, (uint8_t *)contactList, sizeof(struct_codeplugDTMFContact_t) * CODEPLUG_DTMF_CONTACTS_MAX_COUNT))
-	{
-		// Empty contact names contains 0xFF
-		// Contacts aren't contiguous
-		for(i = 0; i < CODEPLUG_DTMF_CONTACTS_MAX_COUNT; i++)
-		{
-			if (contactList->contacts[i].name[0] != 0xff)
-			{
-				count++;
-			}
-		}
-	}
-	contactList->numContacts = count;
-}
-
 
 int codeplugGetUserDMRID(void)
 {
