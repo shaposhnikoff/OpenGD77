@@ -231,11 +231,18 @@ void settingsRestoreDefaultSettings(void)
 	// VOX related
 	nonVolatileSettings.voxThreshold = 20;
 	nonVolatileSettings.voxTailUnits = 4; // 2 seconds tail
-	nonVolatileSettings.audioPromptMode =
+
 #if defined(PLATFORM_GD77S)
-			AUDIO_PROMPT_MODE_VOICE_LEVEL_3;
+	nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_VOICE_LEVEL_3;
 #else
-			AUDIO_PROMPT_MODE_NORMAL;
+	if (voicePromptDataIsLoaded)
+	{
+		nonVolatileSettings.audioPromptMode =	AUDIO_PROMPT_MODE_VOICE_LEVEL_1;
+	}
+	else
+	{
+		nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_NORMAL;
+	}
 #endif
 
 	currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];// Set the current channel data to point to the VFO data since the default screen will be the VFO
