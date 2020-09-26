@@ -187,9 +187,14 @@ void mainTask(void *data)
 		wasRestoringDefaultsettings = true;
 #endif
 		settingsRestoreDefaultSettings();
+		settingsLoadSettings();
 	}
-
-	settingsLoadSettings();
+	else
+	{
+#if !defined(PLATFORM_GD77S)
+		wasRestoringDefaultsettings = settingsLoadSettings();
+#endif
+	}
 
 	displayInit(nonVolatileSettings.displayInverseVideo);
 

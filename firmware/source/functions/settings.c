@@ -27,8 +27,7 @@
 #include <ticks.h>
 
 static const int STORAGE_BASE_ADDRESS 		= 0x6000;
-
-static const int STORAGE_MAGIC_NUMBER 		= 0x474D;
+static const int STORAGE_MAGIC_NUMBER 		= 0x474E;
 
 // Bit patterns for DMR Beep
 const uint8_t BEEP_TX_NONE  = 0x00;
@@ -78,10 +77,12 @@ bool settingsSaveSettings(bool includeVFOs)
 
 bool settingsLoadSettings(void)
 {
+	bool hasRestoredDefaultsettings=false;
 	bool readOK = EEPROM_Read(STORAGE_BASE_ADDRESS, (uint8_t*)&nonVolatileSettings, sizeof(settingsStruct_t));
 	if ((nonVolatileSettings.magicNumber != STORAGE_MAGIC_NUMBER) || (readOK != true))
 	{
 		settingsRestoreDefaultSettings();
+		hasRestoredDefaultsettings = true;
 	}
 
 // Force Hotspot mode to off for existing RD-5R users.
@@ -105,7 +106,7 @@ bool settingsLoadSettings(void)
 	settingsDirty = false;
 	settingsVFODirty = false;
 
-	return readOK;
+	return hasRestoredDefaultsettings;
 }
 
 void settingsInitVFOChannel(int vfoNumber)
@@ -241,7 +242,7 @@ void settingsRestoreDefaultSettings(void)
 	}
 	else
 	{
-		nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_NORMAL;
+		nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_BEEP;
 	}
 #endif
 
