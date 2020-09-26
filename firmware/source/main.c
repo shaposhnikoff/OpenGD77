@@ -615,6 +615,11 @@ void mainTask(void *data)
 								acceptPrivateCall(menuUtilityReceivedPcId);
 								menuSystemPopPreviousMenu();
 							}
+							else if ((menuSystemGetCurrentMenuNumber() == MENU_CONTACT_LIST_SUBMENU) && menuContactListIsDTMFSequenceKeying())
+							{
+								menuContactListDTMFSequenceReset();
+							}
+
 							menuSystemPushNewMenu(UI_TX_SCREEN);
 						}
 					}

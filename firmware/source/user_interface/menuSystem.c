@@ -65,6 +65,7 @@ const menuItemsList_t * menusData[] = {	NULL,// splash
 										NULL,// Quick menu - VFO
 										NULL,// Lock screen
 										NULL,// Contact List
+										NULL,// DTMF Contact List
 										NULL,// Contact Quick List (SK2+#)
 										NULL,// Contact List Quick Menu
 										NULL,// Contact Details
@@ -95,7 +96,8 @@ const menuFunctionPointer_t menuFunctions[] = { uiSplashScreen,
 												uiCPS,
 												uiChannelModeQuickMenu,
 												uiVFOModeQuickMenu,
-                                                menuLockScreen,
+												menuLockScreen,
+												menuContactList,
 												menuContactList,
 												menuContactList,
 												menuContactListSubMenu,
@@ -315,13 +317,14 @@ const menuItemsList_t menuDataMainMenu =
 
 const menuItemNewData_t contractMenuItems[] =
 {
-	{ 15, MENU_CONTACT_LIST },
-	{ 14, MENU_CONTACT_NEW },
+	{ 15, MENU_CONTACT_LIST      },
+	{ 139, MENU_DTMF_CONTACT_LIST },
+	{ 14, MENU_CONTACT_NEW       },
 };
 
 const menuItemsList_t menuDataContact =
 {
-	.numItems = 2,
+	.numItems = 3,
 	.items = contractMenuItems
 };
 

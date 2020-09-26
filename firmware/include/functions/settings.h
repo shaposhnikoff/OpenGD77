@@ -157,6 +157,7 @@ extern settingsStruct_t nonVolatileSettings;
 extern struct_codeplugChannel_t *currentChannelData;
 extern struct_codeplugChannel_t channelScreenChannelData;
 extern struct_codeplugContact_t contactListContactData;
+extern struct_codeplugDTMFContact_t contactListDTMFContactData;
 extern int contactListContactIndex;
 extern int settingsUsbMode;
 

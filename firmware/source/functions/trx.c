@@ -208,6 +208,7 @@ static volatile bool txPAEnabled = false;
 
 static int trxCurrentDMRTimeSlot;
 
+// DTMF Order: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, *, #
 const int trxDTMFfreq1[] = { 1336, 1209, 1336, 1477, 1209, 1336, 1477, 1209, 1336, 1477, 1633, 1633, 1633, 1633, 1209, 1477 };
 const int trxDTMFfreq2[] = {  941,  697,  697,  697,  770,  770,  770,  852,  852,  852,  697,  770,  852,  941,  941,  941 };
 
@@ -1239,5 +1240,24 @@ void setMicGainFM(uint8_t gain)
 
 	I2C_AT1846_set_register_with_mask(0x0A, 0xF83F, gain, 6);
 	I2C_AT1846_set_register_with_mask(0x41, 0xFF80, voice_gain_tx, 0);
+}
+
+void enableTransmission(void)
+{
+	GPIO_PinWrite(GPIO_LEDgreen, Pin_LEDgreen, 0);
+	GPIO_PinWrite(GPIO_LEDred, Pin_LEDred, 1);
+
+	txstopdelay = 0;
+	trx_setTX();
+}
+
+void disableTransmission(void)
+{
+	GPIO_PinWrite(GPIO_LEDred, Pin_LEDred, 0);
+	// Need to wrap this in Task Critical to avoid bus contention on the I2C bus.
+	taskENTER_CRITICAL();
+	trxActivateRx();
+	taskEXIT_CRITICAL();
+	//trxSetFrequency(freq_rx,freq_tx);
 }
 

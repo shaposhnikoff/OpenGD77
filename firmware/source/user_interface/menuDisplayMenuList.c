@@ -114,7 +114,7 @@ static void handleEvent(uiEvent_t *ev)
 	}
 	else if (KEYCHECK_SHORTUP(ev->keys, KEY_GREEN))
 	{
-		if (gMenuCurrentMenuList[gMenusCurrentItemIndex].menuNum!=-1)
+		if (gMenuCurrentMenuList[gMenusCurrentItemIndex].menuNum != -1)
 		{
 			menuSystemPushNewMenu(gMenuCurrentMenuList[gMenusCurrentItemIndex].menuNum);
 		}

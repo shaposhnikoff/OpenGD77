@@ -866,18 +866,18 @@ static void handleEvent(uiEvent_t *ev)
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_HASH))
 		{
-			if (trxGetMode() == RADIO_MODE_DIGITAL)
+			if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) != 0)
 			{
-				if (BUTTONCHECK_DOWN(ev, BUTTON_SK2) != 0)
-				{
-					menuSystemPushNewMenu(MENU_CONTACT_QUICKLIST);
-				}
-				else
+				menuSystemPushNewMenu(MENU_CONTACT_QUICKLIST);
+			}
+			else
+			{
+				if (trxGetMode() == RADIO_MODE_DIGITAL)
 				{
 					menuSystemPushNewMenu(MENU_NUMERICAL_ENTRY);
 				}
-				return;
 			}
+			return;
 		}
 		else if (KEYCHECK_SHORTUP(ev->keys, KEY_RED))
 		{
