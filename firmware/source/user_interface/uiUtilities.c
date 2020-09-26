@@ -1858,6 +1858,10 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 
 void announceSquelchLevel()
 {
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+	{
+		return;
+	}
 	static const int BUFFER_LEN = 8;
 	char buf[BUFFER_LEN];
 	bool voicePromptWasPlaying = voicePromptsIsPlaying();
