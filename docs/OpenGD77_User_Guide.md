@@ -107,7 +107,7 @@ For the latest information and discussions, please refer to the development and 
       * [FM mic](#fm-mic)
       * [VOX threshold](#vox-threshold)
       * [VOX Tail](#vox-tail)
-      * [Voice Prompts](voice-prompts)
+      * [Prompt](audio-prompt)
     * [Channel Details](#channel-details)
       * [Mode](#mode)
       * [Color Code](#color-code)
@@ -1028,27 +1028,38 @@ Threshold value which controls the mic level which triggers the radio to transmi
 
 Controls the length of time after the operator stops speaking, before the transmission is ended.
 
-#### Voice Prompts
+#### Prompt
 
-This option sets the level of voice feedback for the radio, from no prompts to maximum verbosity at level 3.
-For example, when voice prompts are set to level 3:
-Menu options are announced as you arrow through the menu system;
+This setting controls the audible feedback to button and key presses etc and has the following options
+
+Silent. The radio does not provide any audio feedback to button 
+Beep. The radio emits a beep when keys or buttons are pressed. There are 2 different pitches of beep. 
+When navigating through Channels or Talkgroups or menu items, when the first item in the list is reached the higher pitch beep is emitted.
+Also when switching between Timeslots, the higher pitch beep is emitted on TS1
+When switching between FM and DMR mode the higher pitch beep is emitted when the mode is DMR
+When changeing power, the higher pitch beep is emitted when the lowest power level is selected.
+
+In addition to the beep, the firmware also supports voice prompts if an voice prompt file is loaded via the CPS.
+There are 3 levels of voice prompt, "Voice", "Voice L2" and "Voice L3", in the latter two cases the L indicates the "Level"
+
+The voice level is used to control whether the voice prompt is played immediatly, or whether the operator needs to press button SK1 to play the which describes the last change made to the radio.
+
+For example. On "Voice mode", which is level 1, the things which are voiced immediatly voiced are:
+Number key, and # key buttons being pressed.
+Changes to squelch level.
+Menu options are announced as you arrow through the menu system, as well as the "Quick" menu accessed via the Orange button on the top of the radio
 Option values are announced as you change menu settings;
+
+Voice level 2 has almost identical operation to Voice level 1, except that if a key or button is pressed while a prompt is already being played, there will be a slight reduction in the verbosity of the next response.
+
+Voice level 3, all items voice immediatly, including
 Channel names are announced as you arrow through channels in channel mode;
 Talkgroup names are announced as you arrow through them in DMR mode;
-Squelch percentages are announced in channel and VFO mode;
-Digits and alpha characters are announced in text input mode;
-Arrowing left and right in text input mode will read the character at the cursor and sk2+left will read the character being backspaced;
-The SK1 button (black button immediatley below the PTT button) will announce the current frequency in VFO mode, channel name in channel mode, field in the Channel Details screen, etc.
 
-To turn on the Voice and Beep function in the GD77, do the following: 
-Firstly, ensure that a voice prompt file has been uploaded to the radio using the Extras menu of the CPS software.
-With the radio off, hold down the hash key (bottom right key on the keypad) and turn on the power. If voice prompts were off, they will be set to level 3. If they were previously already on, the level will not be changed.
+Voice prompts can be re-announced by pressing the SK1 button.
+For example, if the last voice prompt was the Talkgroup name, then pressing SK1 will play the Talkgroup name again.
 
-There are three levels of voice prompts. 
-The first level voices all the menus, but the channel and talk group etc. are only announced when you hit the black SK1 button (the button just below the PTT). 
-The second level is like the first but if you are voicing a talk group and change something else while it is speaking it will automatically begin voicing the new information, this is called follow on.
-The third level voices everything all the time without you hitting the SK1 button. 
+Pressing SK1 whilst a voice prompt is playing, terminates the voice prompt playback.
 
 
 ### Channel Details
