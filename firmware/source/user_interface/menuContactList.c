@@ -183,6 +183,7 @@ static void updateScreen(bool isFirstRun)
 			ucPrintCentered((DISPLAY_SIZE_Y / 2), currentLanguage->empty_list, FONT_SIZE_3);
 
 			voicePromptsAppendLanguageString(&currentLanguage->empty_list);
+			voicePromptsPlay();
 		}
 		else
 		{
