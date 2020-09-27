@@ -882,9 +882,11 @@ static void handleEvent(uiEvent_t *ev)
 					else
 					{
 						currentChannelData->chMode = RADIO_MODE_ANALOG;
+
 						trxSetModeAndBandwidth(currentChannelData->chMode, ((currentChannelData->flag4 & 0x02) == 0x02));
+						announceItem(PROMPT_SEQUENCE_MODE,PROMPT_THRESHOLD_3);
 					}
-					//announceItem(PROMPT_SEQUENCE_MODE,PROMPT_THRESHOLD_3);
+
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				}
 				else
@@ -905,7 +907,7 @@ static void handleEvent(uiEvent_t *ev)
 						{
 							menuVFOExitStatus |= MENU_STATUS_FORCE_FIRST;
 						}
-						//announceItem(PROMPT_SEQUENCE_TS,PROMPT_THRESHOLD_3);
+						announceItem(PROMPT_SEQUENCE_TS,PROMPT_THRESHOLD_3);
 					}
 					else
 					{
@@ -1109,7 +1111,7 @@ static void handleEvent(uiEvent_t *ev)
 								currentChannelData->sql++;
 							}
 						}
-						announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_1);
+						announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_3);
 
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						displaySquelch = true;
@@ -1175,7 +1177,7 @@ static void handleEvent(uiEvent_t *ev)
 							}
 						}
 
-						announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_1);
+						announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_3);
 						menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 						displaySquelch = true;
 						uiVFOModeUpdateScreen(0);

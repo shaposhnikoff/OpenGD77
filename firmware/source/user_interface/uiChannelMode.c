@@ -997,7 +997,7 @@ static void handleEvent(uiEvent_t *ev)
 						}
 					}
 
-					announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_1);
+					announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_3);
 
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					displaySquelch = true;
@@ -1064,7 +1064,7 @@ static void handleEvent(uiEvent_t *ev)
 						}
 					}
 
-					announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_1);
+					announceItem(PROMPT_SQUENCE_SQUELCH,PROMPT_THRESHOLD_3);
 
 					menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 					displaySquelch = true;
@@ -1088,8 +1088,9 @@ static void handleEvent(uiEvent_t *ev)
 					channelScreenChannelData.chMode = RADIO_MODE_ANALOG;
 					trxSetModeAndBandwidth(channelScreenChannelData.chMode, ((channelScreenChannelData.flag4 & 0x02) == 0x02));
 					trxSetRxCSS(currentChannelData->rxTone);
+					announceItem(PROMPT_SEQUENCE_MODE,PROMPT_THRESHOLD_3);
 				}
-				//announceItem(PROMPT_SEQUENCE_MODE,PROMPT_THRESHOLD_3);
+
 				menuDisplayQSODataState = QSO_DISPLAY_DEFAULT_SCREEN;
 				uiChannelModeUpdateScreen(0);
 			}
@@ -1112,7 +1113,7 @@ static void handleEvent(uiEvent_t *ev)
 					{
 						menuChannelExitStatus |= MENU_STATUS_FORCE_FIRST;
 					}
-					//announceItem(PROMPT_SEQUENCE_TS,PROMPT_THRESHOLD_3);
+					announceItem(PROMPT_SEQUENCE_TS,PROMPT_THRESHOLD_3);
 				}
 				else
 				{
