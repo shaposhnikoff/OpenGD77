@@ -12,7 +12,7 @@ pandoc \
     --columns=16 \
     -V pagestyle=empty \
     --self-contained \
-    -t latex -i OpenGD77_User_Guide-workingcopy.md -o OpenGD77_User_Guide-pandoc.pdf
+    -t latex -i OpenGD77_User_Guide-workingcopy.md -o OpenGD77_User_Guide.pdf
 rm -f OpenGD77_User_Guide-workingcopy.md
 
 exit 0
