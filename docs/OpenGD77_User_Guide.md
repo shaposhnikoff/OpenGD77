@@ -2,9 +2,10 @@
 
 # OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide
 
-For the latest information and discussions, please refer to the development and community forum at https://opengd77.com
+For the latest information and discussions, please refer to the development and community forum at <https://opengd77.com>
 
 <!-- TOC titleSize:2 tabSpaces:2 depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 skip:0 title:1 charForUnorderedList:* -->
+
 ## Table of Contents
 * [OpenGD77 / OpenGD77S / OpenDM1801 / OpenRD5R User Guide](#opengd77--opengd77s--opendm1801--openrd5r-user-guide)
   * [Introduction](#introduction)
@@ -156,7 +157,6 @@ For the latest information and discussions, please refer to the development and 
 
 ![](media/OpenGD77-logo.png)
 
-
 ## Introduction
 
 This user guide is a work in progress as is the OpenGD77, OpenGD77S, OpenDM1801 and  OpenRD5R firmware.
@@ -193,6 +193,9 @@ Battery saving features have not been developed, hence this firmware causes much
 
 **OpenGD77Forum:**
 <https://www.opengd77.com/>
+
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ## Installation
 
@@ -231,12 +234,15 @@ There are two mechanisms that can be used when connecting your computer to the r
    If you have been updating the firmware then turn the radio off and turn it on normally.  
    It uses serial ports so the OpenGD77 driver must be installed. This happens as part of the installation of the CPS software.
 
+
+<div style="page-break-after: always; break-after: page;"></div>
+
 ## Codeplug compatibility
 
 The official firmware for each of these radios use slightly different codeplug formats.
 
 Users radios other than the GD-77 will need to convert their codeplug using the tools written by Colin G4EML.
-See http://www.gb3gf.co.uk/downloads.html
+See <http://www.gb3gf.co.uk/downloads.html>
 Specifically export their existing codeplug to CSV format, and then import those CSV files into the OpenGD77 version of Colin's tools.
 
 The codeplug can only be uploaded to the firmware using the OpenGD77CPS.
@@ -266,13 +272,15 @@ See the appendix on GD-77S operation
 * The Baofeng DM-1801 / DM-860 has a dedicated **A/B** button, which is used to change between VFO A and B, in place of pressing the quick menu via the **Orange** button on the top of the radio
 
 
+<div style="page-break-after: always; break-after: page;"></div>
+
 ## Main screens (VFO and Channel screens)
 
 The firmware has 2 main screens.  The VFO screen and the Channel screen. These are similar to the channel and VFO screens in the official firmware, except have additional functionality.
 
 Initially after the firmware is installed, the VFO screen will be displayed.
 
-![](media/vfo-screen.png)
+![VFO screen](media/vfo-screen.png)
 
 The frequency used in the VFO for both Tx and Rx will be read from the “VFO A” settings of the codeplug.
 
@@ -288,7 +296,7 @@ The arrow to the left of the R (receive frequency) indicates that the keypad up 
 
 The channel screen displays the same information in the top row, but displays the Channel name (in this example “Lee Hill”) as well as the Zone (“Home DMR”). In DMR mode the TalkGroup (in this case "ColoradoHD") will also be displayed
 
-![](media/dmr-screen.png)
+![displayed informations](media/dmr-screen.png)
 
 On both the VFO and Channel screens:
 
@@ -331,22 +339,28 @@ In DMR mode the signal meter will only be active when the DMR hardware detects a
 
 In FM mode the signal meter should operate all the time.
 
-![](media/signal-meter.png)
+![signal meter](media/signal-meter.png)
+
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ### Channel screen specific functionality
+
 The Channel screen displays the current Channel number as well as the current zone.
 
-![](media/channel-and-zone.png)
+![channel and zone](media/channel-and-zone.png)
+
 
 #### Changing channels within the current zone
 
 Pressing the **Up** or **Down arrow** keys changes the channel in the current zone, and the channel number in the zone will be displayed beside the zone name.
 
+
 #### Changing zones
 
 Pressing **Function + Up arrow** or **Function + Down arrow** changes to the next or previous zone, respectively.
 
-![](media/changing-zones.png)
+![another zone](media/changing-zones.png)
 
 
 ### Displaying the channel Frequency
@@ -408,7 +422,7 @@ Use the **Right** or **Left** arrows to enable or disable
 
 When Timeslot filtering is disabled the Timeslot number is displayed in inverse video.
 
-![](media/channel-quick-menu.png)
+![channel quick menu](media/channel-quick-menu.png)
 
 #### VFO Quick Menu
 
@@ -456,7 +470,7 @@ Cancelling the scan restores the Rx CTCSS/DCS to its value prior to the scan bei
 
 If a tone is detected; both the Rx and Tx CTCSS/DCS values are set to the tone which was detected by the scan.
 
-![](media/vfo-quick-menu.png)
+![VFO quick menu](media/vfo-quick-menu.png)
 
 
 ### DMR specific functionality (VFO and Channel screens)
@@ -469,23 +483,23 @@ The **Star** key toggles between TimeSlot 1 and TimeSlot 2
 
 When a DMR signal is received which uses the same Colour Code as selected for the VFO or Channel, the radio display will show the station’s Talkgroup and DMR ID
 
-![](media/talkgroup-and-dmr-id.png)
+![talkgroup and DMR id](media/talkgroup-and-dmr-id.png)
 
 If the DMR ID is in the DMR ID database previously loaded into the radio, the callsign and name will be displayed.
 
-![](media/callsign-and-name.png)
+![callsign and name](media/callsign-and-name.png)
 
 #### Talker Alias display
 
 If receiving a signal from the Brandmeister network, and if the station’s DMR ID is not in the radio's DMR ID database, the display will show the Talker Alias information sent by Brandmeister.
 
-![](media/talker-alias.png)
+![talker alias](media/talker-alias.png)
 
 The callsign will be displayed in the centre of the screen, and additional information will be displayed at the bottom of the screen. The additional information will default to the text “DMR ID:” followed by the stations DMR ID number.
 
 If the station has entered any data into the APRS section of their Brandmeister “Self care” page, that text will be displayed in place of the DMR ID number.
 
-![](media/talker-alias-data.png)
+![talker alias data](media/talker-alias-data.png)
 
 Note: As the Talker Alias data is sent slowly as it is embedded inside the DMR audio data frames, the callsign will appear first and about half a second later the DMR ID or other text will arrive via the DMR data and be displayed.
 
@@ -510,7 +524,7 @@ If a Talkgroup is displayed in inverse video during reception of a DMR signal, t
 
 If you want to transmit on the same TalkGroup as the currently received signal, press the **Function** button on the side of the radio while the TalkGroup is being displayed in inverse. The TX TalkGroup will now be set to the RX TalkGroup.
 
-![](media/talkgroup-inverse-video.png)
+![talgroup in inverse video](media/talkgroup-inverse-video.png)
 
 #### Manual TalkGroup number entry
 
@@ -519,17 +533,17 @@ If the entered TG is in the Digital Contacts the name of the TG Contact will be 
 
 To return to the previous TG prior to manually entering the TG, press either the **Left arrrow** or **Right arrow** keys.
 
-![](media/talkgroup-entry.png)
+![talkgroup entry screen](media/talkgroup-entry.png)
 
 When a TG has been manually entered, the display shows a 1 pixel box around the TG display area to indicate that this TG has been manually entered, even if the Contact / TG name is displayed rather than the TG number.
 
-![](media/talkgroup-manually-entered.png)
+![talkgroup override](media/talkgroup-manually-entered.png)
 
 #### Private Call number entry
 
 Press the **Hash (#)** two times to enter a Private Call DMR ID number.
 
-![](media/private-call-entry.png)
+![personnal DMR ID entry screen](media/private-call-entry.png)
 
 In all numeric entry screens, pressing the Red menu key exits back to the previous screen, either the VFO or Channel screen.
 
@@ -537,7 +551,7 @@ In all numeric entry screens, pressing the Red menu key exits back to the previo
 
 Press the **Hash (#)** three times to access the Digital contacts defined in the CPS.
 
-![](media/contact-selection.png)
+![contact selection screen](media/contact-selection.png)
 
 The contact name is shown in the middle of the screen, e.g. “TG 505 TS2” and the TalkGroup or PC number is shown in smaller text at the bottom of the screen.
 
@@ -547,7 +561,7 @@ Press **Green** to select or **Red** to cancel.
 
 Private calls can also be selected in this manner.
 
-![](media/private-call-selection.png)
+![private call selection](media/private-call-selection.png)
 
 #### Station DMR ID number entry
 
@@ -557,7 +571,7 @@ This DMR ID will be used for transmission *until* the radio is rebooted or you e
 
 To make the change permanent, so that its written back to the codeplug Press **Function + Green** instead of **Green** to confirm the number.
 
-![](media/user-dmr-id.png)
+![DMR ID entry screen](media/user-dmr-id.png)
 
 ### FM specific functionality (VFO and Channel screens)
 
@@ -571,7 +585,7 @@ These can be set for the Channel or VFO. The letters **C** or **D** and **T**, *
 
 **C** means CTCSS and **D** means DCS code. **T** means Tx tone or code only. **R** means RX tone or code only. **TR** means both Tx and Rx tones or codes are configured.
 
-![](media/ctcss-tone.png)
+![CSS status](media/ctcss-tone.png)
 
 It is possible to configure Tx and Rx tones or codes independently.
 
@@ -579,7 +593,7 @@ It is possible to configure Tx and Rx tones or codes independently.
 
 Pressing **Left** or **Right** keys, controls the FM squelch.
 
-![](media/squelch.png)
+![squelch level](media/squelch.png)
 
 Once in squelch control mode, pressing **Right** tightens the squelch incrementally, **Left** opens up the squelch incrementally. The VFO and each channel have individual squelch settings that can be set in this manner.
 
@@ -606,7 +620,7 @@ The tone will also be audible through the speaker.
 
 ### VFO specific functionality
 
-![](media/vfo-screen.png)
+![VFO screen](media/vfo-screen.png)
 
 The VFO displays both the TX and RX frequency at all times.
 
@@ -622,7 +636,7 @@ The step can be adjusted by pressing **Function + Green** to enter the Channel D
 
 Pressing any of the number keys allows the direct entry of the frequency.
 
-![](media/frequency-entry.png)
+![frequency entry screen](media/frequency-entry.png)
 
 When all digits have been entered, the accept beep tones are played, and the display returns to the VFO screen.
 
@@ -652,6 +666,9 @@ If different TX and RX frequencies are set, and the currently selected input is 
 
 The only case where the frequency difference will not be maintained is if the TX frequency goes outside of the range of frequencies supported by the radio hardware.
 
+
+<div style="page-break-after: always; break-after: page;"></div>
+
 ## Transmitting
 
 During transmission the Talk Timer either counts up or down, depending on whether the channel has a timeout defined.
@@ -662,7 +679,7 @@ In DMR Tier2 the timer will not start counting until the repeater becomes active
 
 During FM and DMR Tx a VU meter is displayed showing the input microphone level, in the form of a bar graph across the top of the screen.
 
-![](media/dmr-mic-level.png)
+![VU meter](media/dmr-mic-level.png)
 
 ### Timeout warning beep
 
@@ -672,7 +689,10 @@ A timeout warning can be configured in the Sound Options menu. The radio will be
 
 If TOT is setup for the current channel or VFO, when the timer counts down to zero the transmission will stop, a warning beep will be played and the radio will stop transmitting.
 
-![](media/timeout.png)
+![timeout screen](media/timeout.png)
+
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ## Scanning
 
@@ -712,11 +732,14 @@ Pressing any other button will stop the scan
 
 Long press on the **Down arrow** arrow exits from scan mode.
 
+
+<div style="page-break-after: always; break-after: page;"></div>
+
 ## Other screens
 
 ### Lock screen
 
-![](media/lock-screen.png)
+![keypad lock screen](media/lock-screen.png)
 
 To lock the keypad.
 
@@ -724,7 +747,7 @@ On either the VFO or the Channel screen, press the **Green** menu key to display
 
 To unlock the keypad, press and hold the **Function** button and press the **Star** key.
 
-![](media/keypad-and-ptt-locked.png)
+![full lock screen](media/keypad-and-ptt-locked.png)
 
 You can also lock the PTT button by pressing the **Green** menu key to display the Main menu and then pressing the **Hash (#)** key. The keypad *and* the PTT can both be locked at the same time by first locking the PTT and then the keypad.
 
@@ -732,14 +755,21 @@ You can also lock the PTT button by pressing the **Green** menu key to display t
 
 The firmware now supports alphanumeric text entry while creating a new contact or editing an existing one.
 
-![](media/text-entry.png)
+![alphanumric entry](media/text-entry.png)
 
 Press **Left** and **Right** to move the cursor. Press **Function-Left** to backspace, and **Function-Right** to insert a space. The keypad entry follows the same functionality as stock GD77 firmware.
 
+
+<div style="page-break-after: always; break-after: page;"></div>
+
 ## The control keys and buttons
 
-![](media/RadioButtonsHSs.jpg)
-![](media/DM-1801-Cheatsheet-01.svg)
+![GD-77 cheatsheet](media/RadioButtonsHSs.jpg){ width=600 }
+
+![DM-1801 cheapsheet](media/DM-1801-Cheatsheet-01.svg){ width=600 }
+
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ## The Menu System
 
@@ -763,29 +793,32 @@ The **BLUE** button on the side of the radio, known as SK2, is used as a “**Fu
 
 Press the **ORANGE** button to access the quick menu from the standby screen.
 
+
+<div style="page-break-after: always; break-after: page;"></div>
+
 ## Main Menu
 
-![](media/main-menu.png)
+![main menu](media/main-menu.png)
 
 ### Zone
 
 This menu is used to select which groups of channels, called a Zone, is used in the Channel screen, and operates in the same way as the official Radioddity firmware, except with one addition.
 
-![](media/zones.png)
+![zone list](media/zones.png)
 
 In addition to the Zones that are defined in the CPS and uploaded to the radio using the Community CPS, the firmware creates a special Zone called **All Channels**.
 
-![](media/all-channels.png)
+![all channels zone](media/all-channels.png)
 
 When the All Channels zone is selected, the Channel screen displays "**All Channels** and the channel number instead of the zone name and channel number.
 
-![](media/all-channels-channel-screen.png)
+![all channel is selected](media/all-channels-channel-screen.png)
 
 Pressing the **Up** and **Down** arrows will cycle through all channels in the zone.
 
 Pressing any of the number keys on the keypad, enters ‘Goto channel number’ mode.
 
-![](media/goto-channel-number.png)
+![goto 12 is entered](media/goto-channel-number.png)
 
 In this mode, you can enter multiple digits and then press the **Green** key to confirm, or the **Red** key to cancel.
 
@@ -795,7 +828,7 @@ Note that you can quickly cycle through zones by holding the **Blue** button and
 
 Displays a signal strength indicator showing the numerical RSSI value in dBm, along with an S-Unit bar graph.
 
-![](media/rssi.png)
+![RSSI screen](media/rssi.png)
 
 *Notes*
 
@@ -809,17 +842,17 @@ The number in the top right of the display is for debugging purposes and is the 
 
 Displays the current battery voltage.
 
-![](media/battery.png)
+![battery status screen](media/battery.png)
 
 Press the **Down** key to display the battery usage chart. This shows the history of battery voltage on an hourly basis.
 
-![](media/battery-graph.png)
+![battery history graph](media/battery-graph.png)
 
 ### Last Heard
 
 Displays a record of the last 16 DMR stations that the radio has received.
 
-![](media/last-heard.png)
+![last heard screen](media/last-heard.png)
 
 Pressing the **Up** or **Down** arrows cycles through the list to show stations which have been heard.
 
@@ -827,24 +860,26 @@ Hold **Blue** button to view details like TalkGroup and time elapsed
 
 ### Firmware Info
 
-![](media/firmware-info.png)
+![firmware info screen](media/firmware-info.png)
 
 Displays the date and time the firmware was built, and also the Github commit code in brackets.
 
 To view details on Github, append the code to
-https://github.com/rogerclarkmelbourne/OpenGD77/commit/
+<https://github.com/rogerclarkmelbourne/OpenGD77/commit/>
 
 e.g.
-https://github.com/rogerclarkmelbourne/OpenGD77/commit/a0ebbc7
+<https://github.com/rogerclarkmelbourne/OpenGD77/commit/a0ebbc7>
+
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ### Options
 
-
-![](media/menu-options.png)
+![main menu](media/menu-options.png)
 
 This menu controls various settings specific to the firmware
 
-![](media/options-screen.png)
+![options menu](media/options-screen.png)
 
 #### Fact Reset
 
@@ -906,11 +941,11 @@ Note. The PTT latch function only works if a timeout has been defined for the ch
 
 **Hotspot mode is not supported on the Baofeng RD-5R / DM-5R because the hardware does not support reliable USB communications while the radio is transmitting**
 
-This option controls whether the firmware will enter hotspot mode when connected to MMDVMHost, including PiStar, or to BlueDV.
+This option controls whether the firmware will enter hotspot mode when connected to MMDVMHost, including Pi-Star, or to BlueDV.
 
 Options are
 **Off**
-**MMDVM**  for use with PiStar or any other system using MMDVMHost
+**MMDVM**  for use with Pi-Star or any other system using MMDVMHost
 **BlueDV** for use with BlueDV
 
 On the GD-77S. To enable hotspot mode, Press and hold the **black button** (SK1) while turning on the radio. This will toggle hotspot mode between **MMDVM** and **BlueDV** mode.
@@ -933,9 +968,12 @@ Use of this feature will cause problems on Motorola based repeaters and networks
 
 Allows Private Calls to be received
 
+
+<div style="page-break-after: always; break-after: page;"></div>
+
 ### Display Options
 
-![](media/display-options.png)
+![display options menu](media/display-options.png)
 
 #### Brightness
 The firmware allows the display backlight brightness to be controlled from 100% to 0%, in 10% steps between 10% and 100% and below 10% the brightness is controlled in 1% steps. The default backlight brightness (default 100%). Use the **Right** and **Left** arrow keys to adjust the brightness.
@@ -990,7 +1028,11 @@ If the caller information e.g. from TA is longer than 16 characters and won't fi
 The default is 1 Line.
 
 
+<div style="page-break-after: always; break-after: page;"></div>
+
 ### Sound Options
+
+![sound options menu](media/sound-options.png)
 
 #### Timeout beep
 
@@ -1062,9 +1104,11 @@ For example, if the last voice prompt was the Talkgroup name, then pressing SK1 
 Pressing SK1 whilst a voice prompt is playing, terminates the voice prompt playback.
 
 
+<div style="page-break-after: always; break-after: page;"></div>
+
 ### Channel Details
 
-![](media/channel-details.png)
+![channel details screen](media/channel-details.png)
 
 #### Mode
 
@@ -1121,14 +1165,19 @@ Pressing the **Green** menu key confirms the changes.
 Pressing **Function + Green** saves the settings to the codeplug, or in the case of the VFO the changes are saved to the non-volatile settings.
 Pressing the **Red** menu key closes the menu without making any changes to the channel.
 
+
+<div style="page-break-after: always; break-after: page;"></div>
+
 ### Credits Screen
 
-![](media/credits.png)
+![credits screen](media/credits.png)
 
 Details of the creators of firmware.
 
 If other developers contribute to the development effort they will be added to this screen, and the addition details will be viewed by pressing the **Down Arrow** to scroll the text
 
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ## Making and receiving DMR Private Calls
 
@@ -1167,7 +1216,7 @@ To return to normal Talkgroup operation, there are 3 methods
 
 On receipt of a private call, the radio will display this screen
 
-![](media/accept-call.png)
+![accept screen](media/accept-call.png)
 
 With the callers Callsign and Name (or ID) displayed.
 
@@ -1175,9 +1224,12 @@ To Accept the call, and configure the radio to return the Private call back to t
 
 If you accept the Private Call, the radio will be switched into Private Call mode, ready for transmission. The callers' ID or name is shown e.g.
 
-![](media/private-call.png)
+![private call screen](media/private-call.png)
 
 Once the private call is complete, you can return to the Talkgroup you were on prior to accepting the Private Call, by pressing **Function + Red** menu key. (or by any of the methods described in the section on making a Private Call)
+
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ## Hotspot mode
 
@@ -1185,38 +1237,40 @@ Once the private call is complete, you can return to the Talkgroup you were on p
 
 **Hotspot mode is not supported on the Baofeng RD-5R / DM-5R because the hardware does not support reliable USB communications while the radio is transmitting**
 
-* The USB connection between the radio and the host system e.g. PiStar needs to be protected from RF injection, otherwise the USB connection will occasionally be reset when the radio is transmitting, which will cause the hotspot to stop working.
+* The USB connection between the radio and the host system e.g. Pi-Star needs to be protected from RF injection, otherwise the USB connection will occasionally be reset when the radio is transmitting, which will cause the hotspot to stop working.
 * Do not use the antenna on top of the radio when in hotspot mode, this usually causes RF injection problems which can't be resolved by screening or ferrite chokes.
 * Connect the radio to an external antenna.
 * Use ferrite RFI protection on the USB cable.
 * When using a Raspberry Pi as the host system, use a metal enclosure for the Raspberry Pi
 
 
-The firmware can operate as a DMR (*voice only*) hotspot when connected via its USB programming cable to a Raspberry Pi running PiStar or any other device that is running MMDVMHost.
+The firmware can operate as a DMR (*voice only*) hotspot when connected via its USB programming cable to a Raspberry Pi running Pi-Star or any other device that is running MMDVMHost.
 
 *Note.* Hotspot mode may be compatible with software like BlueDV, but your mileage may vary.
 
 First, connect the radio to a Raspberry Pi via its programming cable.
 
-![](media/hotspot-connections.jpg)
+![a hotspot hardware](media/hotspot-connections.jpg){ width=600 }
 
 Hotspot mode works with the Raspberry Pi Zero, but an adaptor cable is needed to convert from the micro USB port on the RPi Zero to the full size USB plug on the radio's programming cable.
 
-In the PiStar Configuration screen, select “OpenGD77 DMR hotspot (USB)” as the modem type.
+<div style="page-break-after: always; break-after: page;"></div>
 
-![](media/pistar-configuration.png)
+In the Pi-Star Configuration screen, select “OpenGD77 DMR hotspot (USB)” as the modem type.
 
-If your version of PiStar does not contain the OpenGD77 DMR Hotspot as an option, please update your version of PiStar.
+![Pi-Star configuration page](media/pistar-configuration.png)
 
-After connecting the radio to the raspberry pi, hold down the black side key while powering on the radio. Assuming the modem type has been set properly in PiStar, the display will change on the radio to show it is in Hotspot Mode, and will show the Colour Code, Receive frequency and approximate TX power in mW.
+If your version of Pi-Star does not contain the OpenGD77 DMR Hotspot as an option, please update your version of Pi-Star.
 
-![](media/hotspot-mode.jpg)
+After connecting the radio to the raspberry pi, hold down the black side key while powering on the radio. Assuming the modem type has been set properly in Pi-Star, the display will change on the radio to show it is in Hotspot Mode, and will show the Colour Code, Receive frequency and approximate TX power in mW.
 
-If the radio does not enter Hotspot mode, power cycle the radio and power cycle PiStar
+![hotspot screen](media/hotspot-mode.jpg)
+
+If the radio does not enter Hotspot mode, power cycle the radio and power cycle Pi-Star
 
 If the radio still fails to enter hotspot mode, check your USB connections.
 
-*Note.* By default PiStar configures the “modem” to have a power setting of “100” in the Expert -> MMDVMHost settings.
+*Note.* By default Pi-Star configures the “modem” to have a power setting of “100” in the Expert -> MMDVMHost settings.
 
 This is 100% of the maximum power of the modem, and in the case of the radio the maximum power output is 5W, but the radio is not designed to operate as a hotspot, where it may be continuously transmitting.
 
@@ -1224,14 +1278,14 @@ The maximum power setting that the radio can support for continuous transmission
 
 It is the responsibility of the user to set an appropriate power level that will not overheat and damage the PA.
 
-In Hotspot mode, if PiStar (MMDVMHost) sends a power setting of 100%, the assumption is that that PiStar has not been correctly configured for the OpenGD77 and this value is disregarded.
+In Hotspot mode, if Pi-Star (MMDVMHost) sends a power setting of 100%, the assumption is that that Pi-Star has not been correctly configured for the OpenGD77 and this value is disregarded.
 
 Instead the firmware will use the power setting specified by the user in the Utilities menu, which will default to 1W.
 
-If the power setting in the PiStar MMDVMHost Expert settings is any other value e.g. 50%, the hotspot will use that power setting closest to the chosen value.
+If the power setting in the Pi-Star MMDVMHost Expert settings is any other value e.g. 50%, the hotspot will use that power setting closest to the chosen value.
 So 50% of 5W is 2.5W, and the closest power setting to this is 2W.
 
-Power | PiStar RFLevel
+Power | Pi-Star RFLevel
 --- | ---
 50mW  | 1
 250mW  | 5
@@ -1243,17 +1297,20 @@ Power | PiStar RFLevel
 5W  | 99
 5W++ | N/A
 
-The receive frequency specified by PiStar will be displayed at the bottom of the screen.
+The receive frequency specified by Pi-Star will be displayed at the bottom of the screen.
 
-*Note.* Offsets should not be applied to the TX or RX frequencies in PiStar, because the radio should not need any offsets, and any offset will be reflected in the frequency displayed on the radio, because PiStar actually sends the master frequency +/- the offset to the hotspot.
+*Note.* Offsets should not be applied to the TX or RX frequencies in Pi-Star, because the radio should not need any offsets, and any offset will be reflected in the frequency displayed on the radio, because Pi-Star actually sends the master frequency +/- the offset to the hotspot.
 
 When the radio receives an RF DMR signal, the green LED on the top of the radio will illuminate as normal, and the name and callsign are displayed if the DMR ID database contains that ID. If the ID is not in the DMR ID database, the ID number will be shown.
 
-![](media/hotspot-rx.jpg)
+![hotspot RX screen](media/hotspot-rx.jpg)
 
-When PiStar receives traffic from the Internet and sends it to the hotspot for transmission, the hotspot displays the Callsign and name or the DMR ID, and the TX frequency is shown.
+When Pi-Star receives traffic from the Internet and sends it to the hotspot for transmission, the hotspot displays the Callsign and name or the DMR ID, and the TX frequency is shown.
 
 The LED on the top of the radio also turns red to indicate the radio is transmitting
+
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ## Resetting the Settings
 
@@ -1263,6 +1320,8 @@ Additionally holding the **Blue (SK2)** button as well as the **Up arrow** and *
 
 On the GD-77S, which does not have a keypad, holding **Blue (SK2)** and **Orange** resets any custom boot melody.
 
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ## GD-77S operation
 
@@ -1310,6 +1369,8 @@ See details of available power step levels in the normal firmware.
 Note. Like in the normal firmware, the power output will only be accurate if the operator has calibrated the power of the radio, as the factory power level calibration is likely to be highly inaccurate.
 
 
+<div style="page-break-after: always; break-after: page;"></div>
+
 ## CPS software
 
 **NOTE**: You cannot use the standard Radioddity CPS, or Baofeng CPS, to write to a radio flashed with the firmware. If you wish to use the Radioddity CPS the radio will need to run the official Radioddity firmware. Once the codeplug has been written to the radio with your ID and callsign, you can then flash the firmware to the radio and it will then read and operate with the code plug written to it with the standard firmware and CPS software.
@@ -1327,11 +1388,11 @@ In DMR mode when using either the VFO or the Zones and Channels, you can use the
 
 When programming the radio using the CPS, first add all the TalkGroups that you think you may wish to use into the Digital Contacts list.
 
-![](media/cps-tg-contacts.png)
+![CPS TG contact lists](media/cps-tg-contacts.png)
 
 Next create one or more “TG Lists” and populate each with the sets of the Talkgroups that you will want to use with different channels. You can have the same Talkgroups in many TG Lists.
 
-![](media/cps-rx-grouplist.png)
+![TG list window](media/cps-TGlists.png)
 
 Now setup the channels. Enter the frequencies, slot and colour code as normal for a DMR channel.
 
@@ -1342,7 +1403,7 @@ Next select the TG List that you wish to use for the channel.
 
 The firmware can use the TG list to filter the incoming DMR signal, or it can operate in “Digital Monitor Mode” (aka promiscuous mode) all the time. This can be set in the radio quick menu setting for **Filter** and **DMR filter**
 
-![](media/cps-channel-rx-grouplist.png)
+![channel RX grouplist selection](media/cps-channel-rx-grouplist.png){ width=600 }
 
 *Note.* The “Contact” is not used by the firmware. You must use the TG list to define the TG’s you want to use with each channel. Hence you must have at least 1 TG list and it must contain at least 1 Digital Contact which is a TalkGroup.
 
@@ -1357,13 +1418,15 @@ To install the driver, download and unzip the zip file, and run the .bat file
 
 Once the driver is installed, the Windows device manager should show the “OpenGD77” in the “ports” section of the Windows device manager
 
-![](media/device-manager-ports.png)
+![Device manager window](media/device-manager-ports.png)
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 #### OpenGD77 Menu
 
 In the CPS there is a new menu item under the Extras menu for OpenGD77 Support, which opens this window.
 
-![](media/cps-opengd77-support.png)
+![OpenGD77 support window](media/cps-opengd77-support.png){ width=600 }
 
 From here you can backup the internal 64k EEPROM and the 1 mega byte Flash chip, as well as Reading and Writing the codeplug.
 The calibration data stored in the Flash chip (At address 0x8f000) can be backed up and restored without backing up the whole of the Flash.
@@ -1388,7 +1451,7 @@ Please change the Number of characters menu to the desired DMR callsign and name
 
 Then, you can add in DMR IDs into the database by selecting an ID prefix. You can continue adding DMR IDs based on your commonly heard prefixes until you fill up the allocation.
 
-![](media/cps-dmr-ids.png)
+![DMR IDs downloader window](media/cps-dmr-ids.png){ width=600 }
 
 *Note.* Because the memory size used for the DMR ID is limited, you can store more DMR IDs if you assign fewer characters per ID. Depending on actual information, the firmware can store approximately 13,000-26,000 IDs in its user database.
 
@@ -1416,6 +1479,9 @@ Or perhaps more usefully:
   * 38,2,0,2, 38,2,0,6,
   * 38,2,0,2, 38,2,0,2, 38,2,0,2, 38,2,0,2, 38,6,0,6
 * Remove the spaces and carriage returns once you've got it all worked out and paste into the Boot Tune section under Extras/OpenGD77 support
+
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ##### Melodies and Notes
 
