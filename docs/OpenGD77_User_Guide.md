@@ -764,9 +764,9 @@ Press **Left** and **Right** to move the cursor. Press **Function-Left** to back
 
 ## The control keys and buttons
 
-![GD-77 cheatsheet](media/RadioButtonsHSs.jpg){ width=600 }
+![GD-77 cheatsheet](media/RadioButtonsHSs.jpg)<!-- { width=600 } -->
 
-![DM-1801 cheapsheet](media/DM-1801-Cheatsheet-01.svg){ width=600 }
+![DM-1801 cheapsheet](media/DM-1801-Cheatsheet-01.svg)<!-- { width=600 } -->
 
 
 <div style="page-break-after: always; break-after: page;"></div>
@@ -1250,7 +1250,7 @@ The firmware can operate as a DMR (*voice only*) hotspot when connected via its 
 
 First, connect the radio to a Raspberry Pi via its programming cable.
 
-![a hotspot hardware](media/hotspot-connections.jpg){ width=600 }
+![a hotspot hardware](media/hotspot-connections.jpg)<!-- { width=600 } -->
 
 Hotspot mode works with the Raspberry Pi Zero, but an adaptor cable is needed to convert from the micro USB port on the RPi Zero to the full size USB plug on the radio's programming cable.
 
@@ -1403,7 +1403,7 @@ Next select the TG List that you wish to use for the channel.
 
 The firmware can use the TG list to filter the incoming DMR signal, or it can operate in “Digital Monitor Mode” (aka promiscuous mode) all the time. This can be set in the radio quick menu setting for **Filter** and **DMR filter**
 
-![channel RX grouplist selection](media/cps-channel-rx-grouplist.png){ width=600 }
+![channel RX grouplist selection](media/cps-channel-rx-grouplist.png)<!-- { width=600 } -->
 
 *Note.* The “Contact” is not used by the firmware. You must use the TG list to define the TG’s you want to use with each channel. Hence you must have at least 1 TG list and it must contain at least 1 Digital Contact which is a TalkGroup.
 
@@ -1426,7 +1426,7 @@ Once the driver is installed, the Windows device manager should show the “Open
 
 In the CPS there is a new menu item under the Extras menu for OpenGD77 Support, which opens this window.
 
-![OpenGD77 support window](media/cps-opengd77-support.png){ width=600 }
+![OpenGD77 support window](media/cps-opengd77-support.png)<!-- { width=600 } -->
 
 From here you can backup the internal 64k EEPROM and the 1 mega byte Flash chip, as well as Reading and Writing the codeplug.
 The calibration data stored in the Flash chip (At address 0x8f000) can be backed up and restored without backing up the whole of the Flash.
@@ -1451,7 +1451,7 @@ Please change the Number of characters menu to the desired DMR callsign and name
 
 Then, you can add in DMR IDs into the database by selecting an ID prefix. You can continue adding DMR IDs based on your commonly heard prefixes until you fill up the allocation.
 
-![DMR IDs downloader window](media/cps-dmr-ids.png){ width=600 }
+![DMR IDs downloader window](media/cps-dmr-ids.png)<!-- { width=600 } -->
 
 *Note.* Because the memory size used for the DMR ID is limited, you can store more DMR IDs if you assign fewer characters per ID. Depending on actual information, the firmware can store approximately 13,000-26,000 IDs in its user database.
 
