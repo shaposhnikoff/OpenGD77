@@ -51,7 +51,6 @@ const stringsTable_t danishLanguage =
 .new_contact			= "Ny Kontakt",
 .contact_list			= "Kontakt liste",
 .hotspot_mode			= "Hotspot mode",
-.dtmf_contact_list			= "DTMF liste", // Maxlen: 16
 .contact_details		= "Kontakt Detaljer",
 .built					= "Version",
 .zones					= "Zoner",
@@ -173,7 +172,8 @@ const stringsTable_t danishLanguage =
 .voice_prompt_level_3	= "Voice L3", // Maxlen 16 (with : + audio_prompt)
 .dmr_filter				= "DMR Filter",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "CC Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			= "TS Filter" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "TS Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dtmf_contact_list			= "DTMF liste", // Maxlen: 16
 };
 /********************************************************************
  *

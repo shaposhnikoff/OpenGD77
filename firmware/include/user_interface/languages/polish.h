@@ -51,7 +51,6 @@ const stringsTable_t polishLanguage =
 .new_contact				= "Nowy kontakt", // MaxLen: 16
 .contact_list				= "Lista kontaktów", // MaxLen: 16
 .hotspot_mode				= "HotSpot", // MaxLen: 16
-.dtmf_contact_list			= "Lista DTMF", // Maxlen: 16
 .contact_details			= "Detale kontaktu", // MaxLen: 16
 .built					= "Kompilacja", // MaxLen: 16
 .zones					= "Strefy", // MaxLen: 16
@@ -173,7 +172,8 @@ const stringsTable_t polishLanguage =
 .voice_prompt_level_3	= "Gˆos L3", // Maxlen 16 (with : + audio_prompt)
 .dmr_filter				= "DMR Filtr",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "CC Filtr", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			= "TS Filtr" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "TS Filtr", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dtmf_contact_list			= "Lista DTMF", // Maxlen: 16
 };
 /********************************************************************
  *

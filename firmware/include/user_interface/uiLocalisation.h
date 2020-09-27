@@ -50,7 +50,6 @@ typedef struct stringsTable
    const char *contact_list;// Menu number  15
    const char *contact_details;// Menu number 16
    const char *hotspot_mode;// Menu number 17
-   const char *dtmf_contact_list;// Menu number 18
 
   /*
    * DO NOT RE-ORGANISE THIS LIST as the items are accessed using pointer arithmetic
@@ -178,6 +177,7 @@ typedef struct stringsTable
    const char *dmr_filter;
    const char *dmr_cc_filter;
    const char *dmr_ts_filter;
+   const char *dtmf_contact_list;// Menu number 18
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

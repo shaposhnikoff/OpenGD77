@@ -318,7 +318,7 @@ const menuItemsList_t menuDataMainMenu =
 const menuItemNewData_t contractMenuItems[] =
 {
 	{ 15, MENU_CONTACT_LIST      },
-	{ 18, MENU_DTMF_CONTACT_LIST },
+	{ 139, MENU_DTMF_CONTACT_LIST },
 	{ 14, MENU_CONTACT_NEW       },
 };
 

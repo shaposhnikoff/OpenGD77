@@ -52,7 +52,6 @@ const stringsTable_t italianLanguage =
 .contact_list			   = "Lista Contatti", // MaxLen: 16
 .contact_details		   = "Det.gli Contatto", // MaxLen: 16
 .hotspot_mode			   = "Hotspot", // MaxLen: 16
-.dtmf_contact_list			= "Lista DTMF", // Maxlen: 16
 .built					   = "Versione", // MaxLen: 16
 .zones					   = "Zone", // MaxLen: 16
 .keypad					   = "Tastiera", // MaxLen: 12 (with .ptt)
@@ -173,7 +172,8 @@ const stringsTable_t italianLanguage =
 .voice_prompt_level_3	   = "Voce L3", // Maxlen 16 (with : + audio_prompt)
 .dmr_filter				   = "Filtro DMR",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			   = "Filtro CC", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			   = "Filtro TS" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			   = "Filtro TS", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dtmf_contact_list			= "Lista DTMF", // Maxlen: 16
 };
 /********************************************************************
  *

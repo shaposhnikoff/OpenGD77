@@ -51,7 +51,6 @@ const stringsTable_t turkishLanguage =
 .new_contact				= "Yeni Ki–i", // MaxLen: 16
 .contact_list				= "Ki–i listesi", // MaxLen: 16
 .hotspot_mode				= "Eri–im Modu", // MaxLen: 16
-.dtmf_contact_list			= "DTMF list", // Maxlen: 16
 .contact_details			= "Ki–i Detaylar“", // MaxLen: 16
 .built					= "Olu–turma", // MaxLen: 16
 .zones					= "Bölgeler", // MaxLen: 16
@@ -173,7 +172,8 @@ const stringsTable_t turkishLanguage =
 .voice_prompt_level_3	= "Voice L3", // Maxlen 16 (with : + audio_prompt)
 .dmr_filter				= "DMR Filter",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "CC Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			= "TS Filter" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "TS Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dtmf_contact_list			= "DTMF list", // Maxlen: 16
 };
 /********************************************************************
  *

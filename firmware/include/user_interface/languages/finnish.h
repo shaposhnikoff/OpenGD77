@@ -52,7 +52,6 @@ const stringsTable_t finnishLanguage =
 .new_channel		= "Uusi kanava", 	// MaxLen: 16, leave room for a space and four channel digits after
 .contact_list		= "Kontakti lista",
 .hotspot_mode		= "Hotspotti tila",
-.dtmf_contact_list	= "DTMF lista", // Maxlen: 16
 .contact_details	= "Kontakti Asetus",
 .built			= "Koontikäännös",
 .zones			= "Zonet",
@@ -173,7 +172,8 @@ const stringsTable_t finnishLanguage =
 .voice_prompt_level_3	= "Voice L3", // Maxlen 16 (with : + audio_prompt)
 .dmr_filter				= "DMR Filter",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "CC Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			= "TS Filter" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "TS Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dtmf_contact_list	= "DTMF lista", // Maxlen: 16
 };
 /********************************************************************
  *

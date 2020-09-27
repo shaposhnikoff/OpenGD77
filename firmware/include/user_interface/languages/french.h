@@ -52,7 +52,6 @@ const stringsTable_t frenchLanguage =
 .contact_list			= "Liste contacts",
 .contact_details		= "Détails contact",
 .hotspot_mode			= "Hotspot",
-.dtmf_contact_list			= "Liste DTMF", // Maxlen: 16
 .built					= "Créé",
 .zones					= "Zones",
 .keypad					= "Clavier",
@@ -173,7 +172,8 @@ const stringsTable_t frenchLanguage =
 .voice_prompt_level_3	= "Voice L3", // Maxlen 16 (with : + audio_prompt)
 .dmr_filter				= "DMR Filter",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "CC Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			= "TS Filter" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "TS Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dtmf_contact_list			= "Liste DTMF", // Maxlen: 16
 };
 /********************************************************************
  *

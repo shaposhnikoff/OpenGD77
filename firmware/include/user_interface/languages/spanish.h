@@ -51,7 +51,6 @@ const stringsTable_t spanishLanguage =
 .new_contact			= "Nuevo contacto", // MaxLen: 16
 .contact_list			= "Lista contactos", // MaxLen: 16
 .hotspot_mode			= "Hotspot", // MaxLen: 16
-.dtmf_contact_list			= "Lista DTMF", // Maxlen: 16
 .contact_details		= "Detalles contacto", // MaxLen: 16
 .built					= "Compilado", // MaxLen: 16
 .zones					= "Zonas", // MaxLen: 16
@@ -173,7 +172,8 @@ const stringsTable_t spanishLanguage =
 .voice_prompt_level_3	= "Voz L3", // Maxlen 16 (with : + audio_prompt)
 .dmr_filter				= "Filtro DMR",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "Filtro CC", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			= "Filtro TS" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "Filtro TS", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dtmf_contact_list			= "Lista DTMF", // Maxlen: 16
 };
 /********************************************************************
  *

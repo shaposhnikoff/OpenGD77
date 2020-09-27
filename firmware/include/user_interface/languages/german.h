@@ -51,7 +51,6 @@ const stringsTable_t germanLanguage =
 .new_contact			= "Neuer Kontakt", // MaxLen: 16
 .contact_list			= "Kontaktliste", // MaxLen: 16
 .hotspot_mode			= "Hotspot", // MaxLen: 16
-.dtmf_contact_list			= "DTMFliste", // Maxlen: 16
 .contact_details		= "Kontakt Details", // MaxLen: 16
 .built					= "Erstellt", // MaxLen: 16
 .zones					= "Zonen", // MaxLen: 16
@@ -173,7 +172,8 @@ const stringsTable_t germanLanguage =
 .voice_prompt_level_3	= "Stimme L3", // Maxlen 16 (with : + audio_prompt)
 .dmr_filter				= "DMR Filter",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "CC Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			= "TS Filter" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "TS Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dtmf_contact_list			= "DTMFliste", // Maxlen: 16
 };
 /********************************************************************
  *

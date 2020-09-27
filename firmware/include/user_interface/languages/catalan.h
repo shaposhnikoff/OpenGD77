@@ -51,7 +51,6 @@ const stringsTable_t catalanLanguage=
 .new_contact			= "Nou contacte",
 .contact_list			= "Contactes",
 .hotspot_mode			= "Mode Hotspot",
-.dtmf_contact_list			= "DTMF list", // Maxlen: 16
 .contact_details		= "Detall Ctte",
 .built					= "Compilat",
 .zones					= "Zones",
@@ -173,7 +172,8 @@ const stringsTable_t catalanLanguage=
 .voice_prompt_level_3	= "Veu L3", // Maxlen 16 (with : + audio_prompt)
 .dmr_filter				= "DMR Filter",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "CC Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dmr_ts_filter			= "TS Filter" // MaxLen: 12 (with ':' + settings: .on or .off)
+.dmr_ts_filter			= "TS Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
+.dtmf_contact_list			= "DTMF list", // Maxlen: 16
 };
 /********************************************************************
  *
