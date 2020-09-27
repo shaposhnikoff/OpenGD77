@@ -107,7 +107,7 @@ For the latest information and discussions, please refer to the development and 
       * [FM mic](#fm-mic)
       * [VOX threshold](#vox-threshold)
       * [VOX Tail](#vox-tail)
-      * [Prompt](audio-prompt)
+      * [Prompt](Prompt)
     * [Channel Details](#channel-details)
       * [Mode](#mode)
       * [Color Code](#color-code)
