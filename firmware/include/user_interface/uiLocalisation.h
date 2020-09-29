@@ -177,6 +177,7 @@ typedef struct stringsTable
    const char *dmr_filter;
    const char *dmr_cc_filter;
    const char *dmr_ts_filter;
+   const char *dtmf_contact_list;// Menu number 18
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

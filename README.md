@@ -8,7 +8,7 @@ The AMBE codec is not open source because of potential copyright problems, and i
 # Project status
 
 The firmware is relatively stable and provides DMR and FM audio transmission and reception, as well as a DMR hotspot mode.
-However it does currently support some core functionality that the official firmware supports, including sending and receiving of text messages, or Dual Capacity Direct operation, or Dual Watch operation etc
+However it does not currently support some core functionality that the official firmware supports, including sending and receiving of text messages, or Dual Capacity Direct operation, or Dual Watch operation etc
 
 Not all functionality provided in the official firmware is likely ever to be part of this firmware, because some features like encryption are explicitly prohibited for Amateur Radio operators.
 

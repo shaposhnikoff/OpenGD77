@@ -27,8 +27,7 @@
 #include <ticks.h>
 
 static const int STORAGE_BASE_ADDRESS 		= 0x6000;
-
-static const int STORAGE_MAGIC_NUMBER 		= 0x474D;
+static const int STORAGE_MAGIC_NUMBER 		= 0x474E;
 
 // Bit patterns for DMR Beep
 const uint8_t BEEP_TX_NONE  = 0x00;
@@ -45,6 +44,7 @@ settingsStruct_t nonVolatileSettings;
 struct_codeplugChannel_t *currentChannelData;
 struct_codeplugChannel_t channelScreenChannelData = { .rxFreq = 0 };
 struct_codeplugContact_t contactListContactData;
+struct_codeplugDTMFContact_t contactListDTMFContactData;
 struct_codeplugChannel_t settingsVFOChannel[2];// VFO A and VFO B from the codeplug.
 int contactListContactIndex;
 int settingsUsbMode = USB_MODE_CPS;
@@ -78,10 +78,12 @@ bool settingsSaveSettings(bool includeVFOs)
 
 bool settingsLoadSettings(void)
 {
+	bool hasRestoredDefaultsettings=false;
 	bool readOK = EEPROM_Read(STORAGE_BASE_ADDRESS, (uint8_t*)&nonVolatileSettings, sizeof(settingsStruct_t));
 	if ((nonVolatileSettings.magicNumber != STORAGE_MAGIC_NUMBER) || (readOK != true))
 	{
 		settingsRestoreDefaultSettings();
+		hasRestoredDefaultsettings = true;
 	}
 
 // Force Hotspot mode to off for existing RD-5R users.
@@ -105,7 +107,7 @@ bool settingsLoadSettings(void)
 	settingsDirty = false;
 	settingsVFODirty = false;
 
-	return readOK;
+	return hasRestoredDefaultsettings;
 }
 
 void settingsInitVFOChannel(int vfoNumber)
@@ -231,11 +233,18 @@ void settingsRestoreDefaultSettings(void)
 	// VOX related
 	nonVolatileSettings.voxThreshold = 20;
 	nonVolatileSettings.voxTailUnits = 4; // 2 seconds tail
-	nonVolatileSettings.audioPromptMode =
+
 #if defined(PLATFORM_GD77S)
-			AUDIO_PROMPT_MODE_VOICE_LEVEL_3;
+	nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_VOICE_LEVEL_3;
 #else
-			AUDIO_PROMPT_MODE_NORMAL;
+	if (voicePromptDataIsLoaded)
+	{
+		nonVolatileSettings.audioPromptMode =	AUDIO_PROMPT_MODE_VOICE_LEVEL_1;
+	}
+	else
+	{
+		nonVolatileSettings.audioPromptMode = AUDIO_PROMPT_MODE_BEEP;
+	}
 #endif
 
 	currentChannelData = &settingsVFOChannel[nonVolatileSettings.currentVFONumber];// Set the current channel data to point to the VFO data since the default screen will be the VFO
@@ -243,6 +252,16 @@ void settingsRestoreDefaultSettings(void)
 	settingsDirty = true;
 
 	settingsSaveSettings(false);
+}
+
+void enableVoicePromptsIfLoaded(void)
+{
+	if (voicePromptDataIsLoaded)
+	{
+		nonVolatileSettings.audioPromptMode =	AUDIO_PROMPT_MODE_VOICE_LEVEL_1;
+		settingsDirty = true;
+		settingsSaveSettings(false);
+	}
 }
 
 void settingsEraseCustomContent(void)

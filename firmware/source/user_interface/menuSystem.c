@@ -17,6 +17,7 @@
  */
 #include <user_interface/menuSystem.h>
 #include <user_interface/uiLocalisation.h>
+#include <user_interface/uiUtilities.h>
 #include <settings.h>
 #include <ticks.h>
 
@@ -64,6 +65,7 @@ const menuItemsList_t * menusData[] = {	NULL,// splash
 										NULL,// Quick menu - VFO
 										NULL,// Lock screen
 										NULL,// Contact List
+										NULL,// DTMF Contact List
 										NULL,// Contact Quick List (SK2+#)
 										NULL,// Contact List Quick Menu
 										NULL,// Contact Details
@@ -94,7 +96,8 @@ const menuFunctionPointer_t menuFunctions[] = { uiSplashScreen,
 												uiCPS,
 												uiChannelModeQuickMenu,
 												uiVFOModeQuickMenu,
-                                                menuLockScreen,
+												menuLockScreen,
+												menuContactList,
 												menuContactList,
 												menuContactList,
 												menuContactListSubMenu,
@@ -314,13 +317,14 @@ const menuItemsList_t menuDataMainMenu =
 
 const menuItemNewData_t contractMenuItems[] =
 {
-	{ 15, MENU_CONTACT_LIST },
-	{ 14, MENU_CONTACT_NEW },
+	{ 15, MENU_CONTACT_LIST      },
+	{ 139, MENU_DTMF_CONTACT_LIST },
+	{ 14, MENU_CONTACT_NEW       },
 };
 
 const menuItemsList_t menuDataContact =
 {
-	.numItems = 2,
+	.numItems = 3,
 	.items = contractMenuItems
 };
 
@@ -447,6 +451,7 @@ void moveCursorLeftInString(char *str, int *pos, bool delete)
 	if (*pos > 0)
 	{
 		*pos -=1;
+		announceChar(str[*pos]); // speak the new char or the char about to be backspaced out.
 
 		if (delete)
 		{
@@ -479,6 +484,7 @@ void moveCursorRightInString(char *str, int *pos, int max, bool insert)
 		if (*pos < max-1)
 		{
 			*pos += 1;
+			announceChar(str[*pos]); // speak the new char or the char about to be backspaced out.
 		}
 	}
 }

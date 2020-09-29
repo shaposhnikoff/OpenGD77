@@ -87,7 +87,7 @@ const int SCAN_SKIP_CHANNEL_INTERVAL = 1;		//This is actually just an implicit f
 
 voicePromptItem_t voicePromptSequenceState = PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ;
 struct_codeplugZone_t currentZone;
-static bool voicePromptWasPlaying;
+//static bool voicePromptWasPlaying;
 bool inhibitInitialVoicePrompt =
 #if defined(PLATFORM_GD77S)
 		true;
@@ -1594,7 +1594,7 @@ void decreasePowerLevel(void)
 	announceItem(PROMPT_SEQUENCE_POWER, PROMPT_THRESHOLD_3);
 }
 
-void announceRadioMode(void)
+ANNOUNCE_STATIC void announceRadioMode(bool voicePromptWasPlaying)
 {
 	if (!voicePromptWasPlaying)
 	{
@@ -1603,7 +1603,7 @@ void announceRadioMode(void)
 	voicePromptsAppendString( (trxGetMode() == RADIO_MODE_DIGITAL) ? "DMR" : "FM");
 }
 
-void announceZoneName(void)
+ANNOUNCE_STATIC void announceZoneName(bool voicePromptWasPlaying)
 {
 	if (!voicePromptWasPlaying)
 	{
@@ -1612,7 +1612,7 @@ void announceZoneName(void)
 	voicePromptsAppendString(currentZone.name);
 }
 
-void announceContactNameTgOrPc(void)
+ANNOUNCE_STATIC void announceContactNameTgOrPc(void)
 {
 	if (nonVolatileSettings.overrideTG == 0)
 	{
@@ -1636,7 +1636,7 @@ void announceContactNameTgOrPc(void)
 	}
 }
 
-void announcePowerLevel(void)
+ANNOUNCE_STATIC void announcePowerLevel(void)
 {
 	voicePromptsAppendString((char *)POWER_LEVELS[nonVolatileSettings.txPowerLevel]);
 	switch(nonVolatileSettings.txPowerLevel)
@@ -1663,26 +1663,26 @@ void announcePowerLevel(void)
 	}
 }
 
-void announceBatteryPercentage(void)
+ANNOUNCE_STATIC void announceBatteryPercentage(void)
 {
 	voicePromptsAppendLanguageString(&currentLanguage->battery);
 	voicePromptsAppendInteger(getBatteryPercentage());
 	voicePromptsAppendPrompt(PROMPT_PERCENT);
 }
 
-void announceTS(void)
+ANNOUNCE_STATIC void announceTS(void)
 {
 	voicePromptsAppendPrompt(PROMPT_TIMESLOT);
 	voicePromptsAppendInteger(trxGetDMRTimeSlot() + 1);
 }
 
-void announceCC(void)
+ANNOUNCE_STATIC void announceCC(void)
 {
 	voicePromptsAppendLanguageString(&currentLanguage->colour_code);
 	voicePromptsAppendInteger(trxGetDMRColourCode());
 }
 
-void announceChannelName(void)
+ANNOUNCE_STATIC void announceChannelName(bool voicePromptWasPlaying)
 {
 	char voiceBuf[17];
 	codeplugUtilConvertBufToString(channelScreenChannelData.name, voiceBuf, 16);
@@ -1709,7 +1709,7 @@ static void removeUnnecessaryZerosFromVoicePrompts(char *str)
 	}
 }
 
-void announceFrequency(void)
+ANNOUNCE_STATIC void announceFrequency(void)
 {
 	char buffer[17];
 
@@ -1734,11 +1734,71 @@ void announceFrequency(void)
 	}
 }
 
-void announceVFOAndFrequency(void)
+ANNOUNCE_STATIC void announceVFOAndFrequency(void)
 {
 	voicePromptsAppendPrompt(PROMPT_VFO);
 	voicePromptsAppendString((nonVolatileSettings.currentVFONumber == 0) ? "A" : "B");
 	announceFrequency();
+}
+
+ANNOUNCE_STATIC void announceSquelchLevel(bool voicePromptWasPlaying)
+{
+	static const int BUFFER_LEN = 8;
+	char buf[BUFFER_LEN];
+
+	if (!voicePromptWasPlaying)
+	{
+		voicePromptsAppendLanguageString(&currentLanguage->squelch);
+	}
+
+	snprintf(buf, BUFFER_LEN, "%d%%", 5 * (((currentChannelData->sql == 0) ? nonVolatileSettings.squelchDefaults[trxCurrentBand[TRX_RX_FREQ_BAND]] : currentChannelData->sql)-1));
+	voicePromptsAppendString(buf);
+}
+
+void announceChar(char ch)
+{
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+	{
+		return;
+	}
+
+	char buf[2] = {ch, 0};
+
+	voicePromptsInit();
+	voicePromptsAppendString(buf);
+	voicePromptsPlay();
+}
+
+void announceCSSCode(uint16_t code, CSSTypes_t cssType, bool inverted)
+{
+	if (nonVolatileSettings.audioPromptMode < AUDIO_PROMPT_MODE_VOICE_LEVEL_1)
+	{
+		return;
+	}
+
+	static const int BUFFER_LEN = 17;
+	char buf[BUFFER_LEN];
+
+	voicePromptsInit();
+
+	switch (cssType)
+	{
+		case CSS_NONE:
+			voicePromptsAppendLanguageString(&currentLanguage->none);
+			break;
+		case CSS_CTCSS:
+			snprintf(buf, BUFFER_LEN, "%d.%d", code / 10 , code % 10);
+			voicePromptsAppendString(buf);
+			voicePromptsAppendPrompt(PROMPT_HERTZ);
+			break;
+		case CSS_DCS:
+		case CSS_DCS_INVERTED:
+			snprintf(buf, BUFFER_LEN, "D%03o%c", code & 0777, inverted ? 'I' : 'N');
+			voicePromptsAppendString(buf);
+			break;
+	}
+
+	voicePromptsPlay();
 }
 
 void playNextSettingSequence(void)
@@ -1759,7 +1819,7 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 	{
 		return;
 	}
-	voicePromptWasPlaying = voicePromptIsActive;
+	bool voicePromptWasPlaying = voicePromptsIsPlaying();
 
 	voicePromptSequenceState = item;
 
@@ -1770,7 +1830,7 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 		case PROMPT_SEQUENCE_CHANNEL_NAME_OR_VFO_FREQ:
 			if (menuSystemGetCurrentMenuNumber() == UI_CHANNEL_MODE)
 			{
-				announceChannelName();
+				announceChannelName(voicePromptWasPlaying);
 			}
 			else
 			{
@@ -1778,10 +1838,10 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 			}
 			break;
 		case PROMPT_SEQUENCE_ZONE:
-			announceZoneName();
+			announceZoneName(voicePromptWasPlaying);
 			break;
 		case PROMPT_SEQUENCE_MODE:
-			announceRadioMode();
+			announceRadioMode(voicePromptWasPlaying);
 			break;
 		case PROMPT_SEQUENCE_CONTACT_TG_OR_PC:
 			announceContactNameTgOrPc();
@@ -1798,6 +1858,9 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 		case PROMPT_SEQUENCE_BATTERY:
 			announceBatteryPercentage();
 			break;
+		case PROMPT_SQUENCE_SQUELCH:
+			announceSquelchLevel(voicePromptWasPlaying);
+			break;
 		default:
 			break;
 	}
@@ -1809,6 +1872,8 @@ void announceItem(voicePromptItem_t item, audioPromptThreshold_t immediateAnnoun
 		voicePromptsPlay();
 	}
 }
+
+
 
 void buildTgOrPCDisplayName(char *nameBuf, int bufferLen)
 {
@@ -1867,4 +1932,23 @@ void acceptPrivateCall(int id)
 
 	setOverrideTGorPC(uiPrivateCallLastID, true);
 	announceItem(PROMPT_SEQUENCE_CONTACT_TG_OR_PC,PROMPT_THRESHOLD_3);
+}
+
+bool repeatVoicePromptOnSK1(uiEvent_t *ev)
+{
+	if (BUTTONCHECK_SHORTUP(ev, BUTTON_SK1))
+	{
+		if (!voicePromptsIsPlaying())
+		{
+			voicePromptsPlay();
+		}
+		else
+		{
+			voicePromptsTerminate();
+		}
+
+		return true;
+	}
+
+	return false;
 }
