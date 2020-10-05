@@ -10,7 +10,7 @@ For the latest information and discussions, please refer to the development and 
   * [Introduction](#introduction)
     * [Download links and other resources](#download-links-and-other-resources)
   * [Installation](#installation)
-  * [Transferring data](#Transferring-data)
+  * [Transferring data to Radio](#Transferring-data-to-Radio)
   * [Codeplug compatibility](#codeplug-compatibility)
   * [Variations between different supported radios](#variations-between-different-supported-radios)
   * [Main screens (VFO and Channel screens)](#main-screens-vfo-and-channel-screens)
@@ -209,12 +209,12 @@ Installation of the firmware is undertaken at the owners own risk, but the offic
 
 *Note:* The official Radioddity CPS PC software is not compatible with the firmware, and the "OpenGD77 CPS" should be used instead. This can be downloaded from the link show in section 1.1 of this guide. This CPS must also be used for the Baofeng DM-1801
 
-### Transferring data
+### Transferring data to Radio
 There are two mechanisms that can be used when connecting your computer to the radio.
 
-1. A Firmware upgrade.
+1. Firmware upgrade.
    Get the radio into dfu mode by:
-   * Holding down the two buttons indicated below and turning the radio on.
+   * Holding down the two buttons indicated below (S1,Fn) and turning the radio on.
    * The LCD screen will be blank.
    * Connection will use the HID codes and a driver is not required to be installed.
      * Radioddity GD-77 or 77s or the TYT MD-760 or 730:
@@ -222,14 +222,24 @@ There are two mechanisms that can be used when connecting your computer to the r
        * Some variants have no Blue button. It will also be Black.
      * Baofeng DM-1801 or DM-860:
        * Hold down the two small Black buttons under the PTT button.
-     * Baofeng RD-5R or RD-5R Tier2:
-       * The Orange Call and Black PTT buttons.
+     * Baofeng RD-5R or DM-5R Tier2:
+       * The Orange S1 (Call) and Black Fn (Moni or S2) buttons (either side of the PTT).
+![](media/PTT-layout.png)
+
+The Firmware is easily installed from the Extras menu in the CPS.  
+![](media/Firmware_loader-01.png)  
+Choose Your radio model.  
+![](media/Firmware_loader-02.png)  
+If you choose Download and Update then you can select from the Stable or Unstable branches.  
+![](media/Firmware_loader-03.png)
+
 
 2. Updating the codeplug using OpenGD77 CPS.
 
    This mechanism uses serial communication while the radio is normally on with the LCD active.  
    If you have been updating the firmware then turn the radio off and turn it on normally.  
-   It uses serial ports so the OpenGD77 driver must be installed. This happens as part of the installation of the CPS software.
+   It uses serial ports so the OpenGD77 driver must be installed. This happens as part of the installation of the CPS software.  
+   [Specific Detail in CPS section](#backup-before-you-do-anything-else)
 
 ## Codeplug compatibility
 
@@ -1363,7 +1373,10 @@ You can also use this window to grab a screenshot from the radio's current displ
 
 #### Backup Before You Do Anything Else
 
-Before writing a codeplug to the radio, you should backup both the EEPROM and Flash chip, and save the files somewhere safe, in case something goes wrong in the future and you need to restore the data.
+Before writing a codeplug to the radio the first time, you should backup both the EEPROM and Flash chip, and save the files somewhere safe, in case something goes wrong in the future and you need to restore the data.
+![](media/Backup-01.png)  
+Backup the EEPROM, Flash memory, Caibration data, MCU ROM, and the Codeplug.  
+![](media/Backup-02.png)
 
 #### Reading and Writing Your Codeplug
 
