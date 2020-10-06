@@ -226,7 +226,7 @@ There are two mechanisms that can be used when connecting your computer to the r
      * Baofeng DM-1801 or DM-860:
        * Hold down the two small Black buttons under the PTT button.
      * Baofeng RD-5R or RD-5R Tier2:
-       * The Orange Call and Black PTT buttons.
+       * The Orange Call and Black Moni buttons.
 
 2. Updating the codeplug using OpenGD77 CPS.
 
@@ -522,9 +522,11 @@ However if the Digital Contact has an override TS assigned (e.g., TS 1), when th
 
 If a Talkgroup is displayed in inverse video during reception of a DMR signal, this indicates that the current TX TalkGroup does not match the received TalkGroup, hence pressing the PTT would not transmit back to the station on the same TalkGroup.
 
+![talkgroup in inverse video](media/talkgroup-inverse-video.png)
+
 If you want to transmit on the same TalkGroup as the currently received signal, press the **Function** button on the side of the radio while the TalkGroup is being displayed in inverse. The TX TalkGroup will now be set to the RX TalkGroup.
 
-![talgroup in inverse video](media/talkgroup-inverse-video.png)
+![talkgroup temporary set](media/talkgroup-override.png)
 
 #### Manual TalkGroup number entry
 
