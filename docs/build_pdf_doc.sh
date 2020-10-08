@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cat OpenGD77_User_Guide.md | sed -e 's/<div style=\"page-break-after: always; break-after: page;\"><\/div>/\\pagebreak/g' -e 's/<!-- { width=600 } -->/{ width=600 }/g' > OpenGD77_User_Guide-workingcopy.md
+cat OpenGD77_User_Guide.md | sed -e 's/<div style=\"page-break-after: always; break-after: page;\"><\/div>/\\pagebreak/g' -e 's/<!--.*{.*\(width=.*\).*}.*-->/{ \1 }/' > OpenGD77_User_Guide-workingcopy.md
 pandoc \
     -H latex_preamble.tex \
     -V linkcolor:blue \
