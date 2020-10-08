@@ -1416,7 +1416,7 @@ Next select the TG List that you wish to use for the channel.
 
 The firmware can use the TG list to filter the incoming DMR signal, or it can operate in “Digital Monitor Mode” (aka promiscuous mode) all the time. This can be set in the radio quick menu setting for **Filter** and **DMR filter**
 
-![channel RX grouplist selection](media/cps-channel-rx-grouplist.png)<!-- { width=600 } -->
+![channel TG list selection](media/cps-channel-tglist.png)<!-- { width=600 } -->
 
 *Note.* The “Contact” is not used by the firmware. You must use the TG list to define the TG’s you want to use with each channel. Hence you must have at least 1 TG list and it must contain at least 1 Digital Contact which is a TalkGroup.
 
