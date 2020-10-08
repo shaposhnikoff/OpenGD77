@@ -11,7 +11,7 @@ For the latest information and discussions, please refer to the development and 
   * [Introduction](#introduction)
     * [Download links and other resources](#download-links-and-other-resources)
   * [Installation](#installation)
-  * [Transferring data to Radio](#Transferring-data-to-Radio)
+  * [Transferring data to Radio](#transferring-data-to-radio)
   * [Codeplug compatibility](#codeplug-compatibility)
   * [Variations between different supported radios](#variations-between-different-supported-radios)
   * [Main screens (VFO and Channel screens)](#main-screens-vfo-and-channel-screens)
@@ -143,7 +143,7 @@ For the latest information and discussions, please refer to the development and 
     * [Overview](#overview)
       * [New Driver Installation](#new-driver-installation)
       * [OpenGD77 Menu](#opengd77-menu)
-      * [Backup Before You Do Anything Else](#backup-before-you-do-anything-else)
+      * [IMPORTANT FIRST STEP: Backup First](#backup-before-you-do-anything-else)
       * [Reading and Writing Your Codeplug](#reading-and-writing-your-codeplug)
       * [Writing DMR IDs -- the User Database](#writing-dmr-ids----the-user-database)
 	  * [Boot Tune](#Boot-Tune)
@@ -216,7 +216,7 @@ Installation of the firmware is undertaken at the owners own risk, but the offic
 There are two mechanisms that can be used when connecting your computer to the radio.
 
 1. Firmware upgrade.
-   Get the radio into dfu mode by:
+ - Get the radio into dfu mode by:
    * Holding down the two buttons indicated below (S1,Fn) and turning the radio on.
    * The LCD screen will be blank.
    * Connection will use the HID codes and a driver is not required to be installed.
@@ -227,24 +227,23 @@ There are two mechanisms that can be used when connecting your computer to the r
        * Hold down the two small Black buttons under the PTT button.
      * Baofeng RD-5R or DM-5R Tier2:
        * The Orange S1 (Call) and Black Fn (Moni or S2) buttons (either side of the PTT).
-		![](media/PTT-layout.png)
+![](media/PTT-layout.png)<!-- { width=450 } -->
 
-		The Firmware is easily installed from the Extras menu in the CPS.  
-		![](media/Firmware_loader-01.png)  
-		
-		Choose Your radio model.  
-		![](media/Firmware_loader-02.png)  
-		
-		If you choose Download and Update then you can select from the Stable or Unstable branches.  
-		![](media/Firmware_loader-03.png)
+       * The Firmware is easily installed from the Extras menu in the CPS.
+![](media/Firmware_loader-01.png)
+
+       * Choose Your radio model.                        
+![](media/Firmware_loader-02.png)
+
+       * If you choose Download and Update then you can select from the Stable or Unstable branches.         
+![](media/Firmware_loader-03.png)<!-- { width=350 } -->
 
 
 2. Updating the codeplug using OpenGD77 CPS.
-
-   This mechanism uses serial communication while the radio is normally on with the LCD active.  
-   If you have been updating the firmware then turn the radio off and turn it on normally.  
-   It uses serial ports so the OpenGD77 driver must be installed. This happens as part of the installation of the CPS software.  
-   [Specific Detail in CPS section](#backup-before-you-do-anything-else)
+ * This mechanism uses serial communication while the radio is normally on with the LCD active.
+   * If you have been updating the firmware then turn the radio off and turn it on normally.
+   * It uses serial ports so the OpenGD77 driver must be installed. This happens as part of the installation of the CPS software.
+   * [Specific Detail in CPS section](#backup-before-you-do-anything-else)
 
 
 <div style="page-break-after: always; break-after: page;"></div>
@@ -1449,12 +1448,17 @@ The calibration data stored in the Flash chip (At address 0x8f000) can be backed
 
 You can also use this window to grab a screenshot from the radio's current display. Screenshots are saved in PNG format.
 
+<div style="page-break-after: always; break-after: page;"></div>
+
 #### Backup Before You Do Anything Else
 
-Before writing a codeplug to the radio the first time, you should backup both the EEPROM and Flash chip, and save the files somewhere safe, in case something goes wrong in the future and you need to restore the data.
-![](media/Backup-01.png)  
-Backup the EEPROM, Flash memory, Caibration data, MCU ROM, and the Codeplug.  
-![](media/Backup-02.png)
+Before writing a codeplug to the radio the first time, you should backup both the EEPROM and Flash chip, and save the files in a safe place, in case something goes wrong in the future and you need to restore the data.
+
+![menu entry to access the OpenGD77 support window](media/Backup-01.png)
+
+Backup the EEPROM, Flash memory, Calibration data, MCU ROM and the Codeplug.
+
+![buttons that create various backups](media/Backup-02.png)
 
 #### Reading and Writing Your Codeplug
 
@@ -1468,7 +1472,7 @@ Please change the Number of characters menu to the desired DMR callsign and name
 
 Then, you can add in DMR IDs into the database by selecting an ID prefix. You can continue adding DMR IDs based on your commonly heard prefixes until you fill up the allocation.
 
-![DMR IDs downloader window](media/cps-dmr-ids.png)<!-- { width=600 } -->
+![DMR IDs downloader window](media/cps-dmr-ids.png)<!-- { width=550 } -->
 
 *Note.* Because the memory size used for the DMR ID is limited, you can store more DMR IDs if you assign fewer characters per ID. Depending on actual information, the firmware can store approximately 13,000-26,000 IDs in its user database.
 
