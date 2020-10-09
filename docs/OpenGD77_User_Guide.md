@@ -727,11 +727,15 @@ Whilst scanning the mode indicator **DMR** or **FM** will flash.
 The VFO screen has a special scanning mode, which is entered by performing a Long Press on the **Up** arrow button.
 When scan mode is enabled, the display changes to show the lower and upper scan limit frequencies, instead of showing the Tx frequency.
 
+![VFO scan screen](media/vfo-scan-screen.png)
+
 Initially the scan limits will be set to the current VFO Rx frequency minus 1Mhz to plus 1Mhz.
 
 Scan limits can be changed by manually entering both frequencies e.g.
 
 1 4 4 0 0 0 1 4 8 0 0 0
+
+![VFO scan limits entering](media/vfo-scan-limits.png)
 
 To start the scan, use Long press on the **Up** arrow, until the radio beeps.
 
