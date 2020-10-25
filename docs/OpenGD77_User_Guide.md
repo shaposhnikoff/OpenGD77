@@ -22,7 +22,7 @@ For the latest information and discussions, please refer to the development and 
     * [Channel screen specific functionality](#channel-screen-specific-functionality)
       * [Changing channels within the current zone](#changing-channels-within-the-current-zone)
       * [Changing zones](#changing-zones)
-    * [Displaying the channel Frequency](#displaying-the-channel-frequency)
+	  * [Displaying the channel Frequency](#displaying-the-channel-frequency)
     * [Displaying FM specific channel information](#displaying-fm-specific-channel-information)
     * [Listening on a repeater input](#listening-on-a-repeater-input)
       * [Channel screen Quick Menu](#channel-screen-quick-menu)
@@ -58,6 +58,7 @@ For the latest information and discussions, please refer to the development and 
       * [Frequency change up/down step](#frequency-change-updown-step)
       * [Numerical frequency entry](#numerical-frequency-entry)
       * [To adjust the TX frequency, independent of the RX frequency](#to-adjust-the-tx-frequency-independent-of-the-rx-frequency)
+  * [Monitor mode](#monitor-mode)
   * [Transmitting](#transmitting)
     * [Timeout warning beep](#timeout-warning-beep)
     * [TOT](#tot)
@@ -124,6 +125,7 @@ For the latest information and discussions, please refer to the development and 
       * [Zone Skip](#zone-skip)
       * [All Skip](#all-skip)
       * [VOX](#vox)
+	  * [Channel Power](#Ch-power)
       * [Accepting and saving the changes to the channel](#accepting-and-saving-the-changes-to-the-channel)
     * [Credits Screen](#credits-screen)
   * [Making and receiving DMR Private Calls](#making-and-receiving-dmr-private-calls)
@@ -221,10 +223,9 @@ There are two mechanisms that can be used when connecting your computer to the r
    * The LCD screen will be blank.
    * Connection will use the HID codes and a driver is not required to be installed.
      * Radioddity GD-77 or 77s or the TYT MD-760 or 730:
-       * Hold down the two small Blue and Black buttons under the PTT button.
-       * Some variants have no Blue button. It will also be Black.
+       * Hold down the two small buttons next to the PTT button.
      * Baofeng DM-1801 or DM-860:
-       * Hold down the two small Black buttons under the PTT button.
+       * Hold down the two small buttons under the PTT button.
      * Baofeng RD-5R or DM-5R Tier2:
        * The Orange S1 (Call) and Black Fn (Moni or S2) buttons (either side of the PTT).
 ![](media/PTT-layout.png)<!-- { width=450 } -->
@@ -266,11 +267,13 @@ Its also recommended that you restructure your codeplug to remove any duplicate 
 Not all the supported radios have the same number of buttons, or the same size screen, hence there are some differences when operating radios other than the Radioddity GD-77.
 Also, not all radios support all the functionality
 
+* The Radioddity GD-77 (aka TYT MD-670), has 2 buttons below the PTT. The black button is tehnically known as **SK1**, and the blue button is know as **SK2** and is also referred to in this manual as the **Function** button. This radio also has an **Orange** button at the top.
+
 * The Baofeng RD-5R / DM-5R USB hardware will not support USB connections while the radio is transmitting, so it is not possible to use Hotspot mode on this radio.
 
 * The Baofeng RD-5R / DM-5R does not have left or right arrow buttons, so the **A/B** button is used to replace the left arrow and the "Band" button is used to replace the right arrow
 * The Baofeng RD-5R / DM-5R does not have the **Orange** button, and its functionality has been simulated by using a Long press on the orange coloured **MR/VFO** button
-* The Baofeng RD-5R / DM-5R has 2 buttons on the side, but their position is different from the GD-77 and DM-1801. The button above the PTT is used as the "Black" button on the side of the GD-77, also know as button SK1. The button below the PTT is used as the **Blue** button, also known as SK2.
+* The Baofeng RD-5R / DM-5R has 2 buttons on the side, but their position is different from the GD-77 and DM-1801. The button above the PTT is used as the "Black" button on the side of the GD-77, also know as button SK1. The button below the PTT is used as the **Function** button, also known as **SK2**.
 
 * The Baofeng RD-5R / DM-5R does not work well as a Hotspot, because its RF output is impure and seems to cause RFI problems with the Raspberry Pi and possibly other host systems, causing the USB connection to fail.
 
@@ -330,7 +333,24 @@ In DMR mode, pressing the **Star** key toggles between TimeSlot 1 and TimeSlot 2
 
 ### Controlling Tx power
 
+The firmware has two main ways to control the output power.
+
+1. The "Master" power control, which controls the power to both VFOs and also all channels, and ...
+2. Channel specific power.
+
+By default, all Channels are set to use the Master power, however this setting can be changed in the CPS and also in the Channel Details screen, so that individual channels have their own custom power setting.
+
+When a Channel has a custom power setting, the power will be displayed in a Bold font.
+
+Increasing and descreasing the power on a channel with a custom power setting will temporarily override the power on the channel, but this change is not saved to the codeplug, so changing channels will result in the temporary override being lost.
+To make a temporary change to a channel custom power value, you must open the Channel Details screen, and then exit by pressing **Function + Green**
+
+Increasing or decreasing the power level on a channel which uses the Master power control, will change the Master power level for all other channels which use the Master power and also both VFOs.
+Changing the power on either VFO also changes the Master power setting.
+
 Press **Function + Right** to increase the power. Press **Function + Left** to decrease the power. Power can be set to 50mW, 250mW, 500mW, 750mW, 1W, 2W, 3W, 4W, , 5W and 5W++.
+
+
 
 The 5W++ power setting configures the PA drive to its maximum value.
 This power setting is designed for emergency use only, and results in around 5.5W being produced on 70cm and 7W on 2m.
@@ -376,15 +396,15 @@ Pressing **Function + Up arrow** or **Function + Down arrow** changes to the nex
 
 ### Displaying the channel Frequency
 
-Press and hold the **Black button** to display the Rx and Tx frequency in both DMR and FM mode.
+Press and hold the **SK1 button** to display the Rx and Tx frequency in both DMR and FM mode.
 
 ### Displaying FM specific channel information
 
-Press and hold the **Black button** to display FM specific information: CTCSS / DCS and squelch setting.
+Press and hold the **SK1 button** to display FM specific information: CTCSS / DCS and squelch setting.
 
 ### Listening on a repeater input
 
-Pressing the **Black button** and **Blue button** enables the radio to receive on the input to a repeater.
+Pressing the **SK1 button** and **Function button** enables the radio to receive on the input to a repeater.
 This works on both DMR and FM repeaters.
 This also shows the channel information as described above.
 
@@ -663,7 +683,7 @@ Pressing **Left** arrow deletes the digits one by one.
 
 #### To adjust the TX frequency, independent of the RX frequency
 
-Press the **Function** button on the side of the radio, and then the **Down** arrow.
+Press the and hold **Function** button on the side of the radio, and then the **Down** arrow.
 
 This will change the currently selected frequency to the TX frequency, and the arrow will move to the left of the “**T**” instead of the “**R**”
 
@@ -678,6 +698,17 @@ Use this method to set different TX and RX frequencies. For example, this can be
 If different TX and RX frequencies are set, and the currently selected input is set to RX, changing the RX frequency will also change the TX frequency, and the difference between the RX and TX frequency will be maintained if possible.
 
 The only case where the frequency difference will not be maintained is if the TX frequency goes outside of the range of frequencies supported by the radio hardware.
+
+## Monitor mode
+
+Monitor mode enables the operator to listen to a signal even if it is currently being filtered by either the DMR TG, TS or CC filters or the FM CTCSS/DCS filter or FM squelch level setting
+
+To enable Monitor mode press and hold button **Function** button (which is the Function button on the GD-77). After 2 seconds the radio will enter monitor mode, and stay in this mode until the **Function** is released
+When Monitor mode is active...
+In FM mode, any Rx CTCSS/DCS filter is disabled, and the squelch is changed to be fully open.
+In DMR mode the TG, TS and CC filters are disabled, and if  no DMR signal is detected within 250mS the radio is switched to FM mode with the CTCSS/DCS and squelch disabled.
+
+Releasing the **Function** button returns the radio back into the mode and filter configuration prior to it being pressed.  
 
 
 <div style="page-break-after: always; break-after: page;"></div>
@@ -727,15 +758,11 @@ Whilst scanning the mode indicator **DMR** or **FM** will flash.
 The VFO screen has a special scanning mode, which is entered by performing a Long Press on the **Up** arrow button.
 When scan mode is enabled, the display changes to show the lower and upper scan limit frequencies, instead of showing the Tx frequency.
 
-![VFO scan screen](media/vfo-scan-screen.png)
-
 Initially the scan limits will be set to the current VFO Rx frequency minus 1Mhz to plus 1Mhz.
 
 Scan limits can be changed by manually entering both frequencies e.g.
 
 1 4 4 0 0 0 1 4 8 0 0 0
-
-![VFO scan limits entering](media/vfo-scan-limits.png)
 
 To start the scan, use Long press on the **Up** arrow, until the radio beeps.
 
@@ -965,7 +992,7 @@ Options are
 **MMDVM**  for use with Pi-Star or any other system using MMDVMHost
 **BlueDV** for use with BlueDV
 
-On the GD-77S. To enable hotspot mode, Press and hold the **black button** (SK1) while turning on the radio. This will toggle hotspot mode between **MMDVM** and **BlueDV** mode.
+On the GD-77S. To enable hotspot mode, Press and hold the **SK1 button** (SK1) while turning on the radio. This will toggle hotspot mode between **MMDVM** and **BlueDV** mode.
 
 
 
@@ -1176,6 +1203,12 @@ Set to skip the channel when scanning within the All Channels list.
 #### VOX
 Controls whether VOX (Voice Operated Switch) is enabled or disabled.
 
+#### Ch Power
+Controls the custom / individual power assigned to the channel.
+See also the section in about controlling power.
+
+By defaulat all channels will use the Master power setting, and this option allows a custom power setting to be set on a channel, or for the channel set to use the Master power setting.
+
 #### Accepting and saving the changes to the channel
 Pressing the **Green** menu key confirms the changes.
 
@@ -1350,7 +1383,7 @@ The GD-77S has a 16 position rotary switch on the top of the radio, next to the 
 This control is used to select the channel in the current zone.
 Note. Although the OpenGD77 CPS and codeplug format allows up to 80 channels per Zone, the GD-77S can only access the first 16 channels in each Zone, so codeplugs designed for the GD-77 containing more than 16 channels will need to be modified so that each zone only contains a maximum of 16 channels.
 
-The GD-77S has 2 buttons on the side of the radio below the PTT button. A black button known as SK1 and a blue button known as SK2. It also has an orange coloured button at the top, next to the channel selector switch.
+The GD-77S has 2 buttons on the side of the radio below the PTT button. A SK1 button known as SK1 and a Function button known as SK2. It also has an orange coloured button at the top, next to the channel selector switch.
 
 The firmware uses the concepts of different Control modes. In each mode buttons SK1 and SK2 perform a different function, the operator cycles through the Control modes by pressing the Orange button.
 
