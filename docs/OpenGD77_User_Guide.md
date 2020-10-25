@@ -78,7 +78,6 @@ For the latest information and discussions, please refer to the development and 
     * [Firmware Info](#firmware-info)
     * [Options](#options)
       * [Fact Reset](#fact-reset)
-      * [Calibration](#calibration)
       * [Band Limits](#band-limits)
       * [Key long](#key-long)
       * [Key rpt](#key-rpt)
@@ -930,14 +929,6 @@ This menu controls various settings specific to the firmware
 Resets the radio to default settings, and reads the CPS VFO A values from the codeplug into the VFO screen. Power cycle the radio to apply.
 
 **The radio can also be set to the default settings by holding the Blue (Function) key while turning on the radio.**
-
-#### Calibration
-
-Turns ON/OFF the calibration function (default OFF).
-
-Some radios seem to have invalid calibration data, possibly because the official firmware has corrupted the calibration parameters in the Flash memory. This requires a power cycle for the setting to apply.
-
-If the radio does not seem to transmit or receive correctly, or if it does not work correctly (e.g., high BER) with certain hotspots, try disabling the calibration and rebooting the radio, as the nominal calibration parameters used by the firmware normally work almost as well as correct calibration data.
 
 #### Band Limits
 
