@@ -100,6 +100,7 @@ For the latest information and discussions, please refer to the development and 
       * [Colour mode](#colour-mode)
       * [Order](#order)
       * [Contact](#contact)
+	  * [Battery units](#battery-units)
     * [Sound Options](#sound-options)
       * [Timeout beep](#timeout-beep)
       * [Beep volume](#beep-volume)
@@ -359,7 +360,11 @@ To access this power setting, select the 5W power setting, then press and hold *
 
 (1) The power output will only be correct after the operator has calibrated their own radio, as these radios do not seem to have very accurate power calibration applied in the factory.
 
-(2) The High / Low power setting defined for a Channel (or VFO) is not used by the firmware, as it can only have 2 settings, whereas the firmware supports 10 power levels.
+(2) Power output on settings below 1W is not very accurate, because the calibration only holds data points for the 1W and 5W power values.
+Between 1W and 5W the PA FET output power is approximately directly proportional to the PA drive level, hence the interpolated drive levels result in reasonably accurate power levels for 2,3 and 4W.
+However below 1W the PA FET ouput power is not directly proportional to the PA drive level, and varies conserable between different radios. Hence the power accuracy below 1W is at best around 80% accurate.
+Also the PA FET minimum operational power threshold is very close to, or sometimes even above 50mW, so operating at this power level can produce unwanted suprious emissions.
+Please confirm your power output and spectral emissions before using the 50mW setting anywhere it may cause interferance.
 
 ### Signal strength bar graph
 
@@ -368,6 +373,10 @@ In both FM and DMR mode, the signal strength of the received signal is shown as 
 In DMR mode the signal meter will only be active when the DMR hardware detects a DMR signal.
 
 In FM mode the signal meter should operate all the time.
+
+Note. 
+Currently the S meter reading is not very accurate becuase the radio hardware Rx sensitivity is not calibrated at the factor.
+Hence the value displayed is based on a radio with average sensitivity, individial radios may be more or less sensitive than average and hence the S meter will read higher or lower than is absolutely correct.
 
 ![signal meter](media/signal-meter.png)
 
@@ -485,8 +494,7 @@ This function is identical to the Filter described for Channel mode operation (a
 
 The "VFO --> New Chan" option, creates a new channel using the current VFO settings.
 The name of the new channel uses the format "New channel NNN", where NNN is the next available number in the All Channels zone.
-
-This channel is not added to a Zone but is available via the "All Channels" Zone.
+The Channel will also be added to the currently active Zone in the Channel screen. If the Channel screen is set to the All Channels zone, the channel will be added to that zone.
 
 ##### Tone Scan for CTCSS or DCS tone in FM
 
@@ -537,6 +545,9 @@ Note: As the Talker Alias data is sent slowly as it is embedded inside the DMR a
 
 Press the **Left** or **Right** Arrow keys to cycle through the TalkGroups in the TGList assigned to the VFO or Channel in the CPS.
 This TalkGroup will apply to both RX and TX.
+
+If a Channel does not have a TGList assigned, then the Contact assigned to the Channel will be used, and the **Left** and **Right** arrows will have no effect.
+If a Channel does not have  TGList assigned, and the Contact is also assigned to "None" or "N/A" the radio will default to using TG 9.
 
 Note. The Baofeng RD-5R does not have Right and Left arrow keys. Use the A/B button as the left arrow and the Band button as the right arrow
 
@@ -932,7 +943,26 @@ Resets the radio to default settings, and reads the CPS VFO A values from the co
 
 #### Band Limits
 
-Turns ON/Off the transmit band limit function that prevent transmission outside of the Amateur Radio bands. (Default ON).
+This setting controls the frequency band ranges inside which the radio can transmit.
+Option are 
+
+"OFF" Where tranmission is not limited to band ranges.
+"ON" Where the band limits for the USA are applied (144Mhz - 148Mhz, 222Mhz - 225Mhz, 420Mhz - 450Mhz).  This is the Default setting.
+"CPS" Where the VHF and UHF limits set in the CPS are used. If the CPS band limts do not contain valid values, for example the UHF frequency band range is less than or intersects with the VHF band range, the radio will use the Default settings (as above)
+
+![main menu](media/cps-band-limits.png)
+
+The CPS band limits do not affect the overall hardware band limits, hence it is not possible to extend the hardware limits by using values for the CPS band limits which extend outside the hardware limits.
+
+The hardware band limits are
+127Mhz - 178MHz
+190Mhz - 282Mhz
+380Mhz - 564Mhz
+
+These limits are because the AT1846S RF chip will not operate reliably outside this range, and this range is actually beyond the published specification of the AT1846S, which is technically 134Mhz-174Mhz,200Mhz-260Mhz,400Mhz-520Mhz
+
+It should also be noted that the radio does **not** have a PA or Rx section for the 200Mhz band, so operating in this range has high suprious emissions, usually on the 1st harmonic of the frequency in use.
+
 
 #### Key long
 
@@ -1061,6 +1091,13 @@ Auto - When the Callsign and name will fit on the middle line of the display, on
 If the caller information e.g. from TA is longer than 16 characters and won't fit on the middle line, the display will be split onto both lines and is equivalent to the "2 Lines" option.
 
 The default is 1 Line.
+
+### Battery units
+
+Controls whether the battery is show as a percentage or as voltage.
+Options are
+%  Shows the battery percentage e.g. 0 to 100%
+V  Shows the battery voltage e.g. 8.1V
 
 
 <div style="page-break-after: always; break-after: page;"></div>
