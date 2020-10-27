@@ -170,17 +170,14 @@ The photos will be updated when the firmware in a particular area stabilises
 The intention of the project is to create a fully featured non-commercial firmware that entirely replaces the Radioddity GD-77, and Baofeng DM-1801 factory firmware.
 This firmware is specifically designed for **Amateur Radio** use, and has features not available in the official firmware.
 
-**Note:**
-**The firmware is still under development and there are some key areas of functionality which are supported in the official firmware but not in this firmware**
+*Note:*
 
-SMS message Tx and Rx are not currently supported, but may possibly be supported in the future.
-
-Dual Watch is not supported, and may never be supported, because this functionality can almost be replicated using the Channel / Zone scan feature
-Scan Lists are not supported because Channel / Zone scan feature provides almost identical functionality.
-
-Privacy and Encryption will not be supported, as its illegal for Amateur Radio use, developers in some countries (e.g. Australia) are now legally required to put a back door access into any encryption systems at the request of the government, hence effectively making it illegal or impossible to develop systems that contain encryption.
-
-Battery saving features have not been developed, hence this firmware causes much higher battery usage in Rx when there is no signal. Some battery saving features may be developed in the future, however some advanced features like the S meter will not be possible if battery saving is implemented.
+- **The firmware is still under development and there are some key areas of functionality which are supported in the official firmware but not in this firmware**
+- SMS message Tx and Rx are not currently supported, but may possibly be supported in the future.
+- Dual Watch is not supported, and may never be supported, because this functionality can almost be replicated using the Channel / Zone scan feature
+- Scan Lists are not supported because Channel / Zone scan feature provides almost identical functionality.
+- Privacy and Encryption will not be supported, as its illegal for Amateur Radio use, developers in some countries (e.g. Australia) are now legally required to put a back door access into any encryption systems at the request of the government, hence effectively making it illegal or impossible to develop systems that contain encryption.
+- Battery saving features have not been developed, hence this firmware causes much higher battery usage in Rx when there is no signal. Some battery saving features may be developed in the future, however some advanced features like the S meter will not be possible if battery saving is implemented.
 
 
 ### Download links and other resources
@@ -212,7 +209,9 @@ Firmware can be installed using the FirmwareLoader.exe in the firmware release, 
 
 Installation of the firmware is undertaken at the owners own risk, but the official firmware can usually be reloaded onto the radio if the user has problems with the firmware, **as long as the operator takes a full backup of their radio using the OpenGD77 CPS immediately after the firmware has been installed**
 
-*Note:* The official Radioddity CPS PC software is not compatible with the firmware, and the "OpenGD77 CPS" should be used instead. This can be downloaded from the link show in section 1.1 of this guide. This CPS must also be used for the Baofeng DM-1801
+*Note:*
+
+- The official Radioddity CPS PC software is not compatible with the firmware, and the "OpenGD77 CPS" should be used instead. This can be downloaded from the link show in section 1.1 of this guide. This CPS must also be used for the Baofeng DM-1801
 
 ### Transferring data to Radio
 There are two mechanisms that can be used when connecting your computer to the radio.
@@ -321,8 +320,10 @@ Note on radios like the Baofeng DM-1801 and RD-5R, press the MR/VFO button to to
 Press the **Green** menu key to enter the menu system
 
 Press **Function + Green** for quick access to the Channel details screen, which can also be accessed via the menu system.
+
 *Note:*
-The VFO is actually a special type of channel; hence the Channel Details screen also works for the VFO.
+
+- The VFO is actually a special type of channel; hence the Channel Details screen also works for the VFO.
 
 ### Changing between VFO and Channel
 
@@ -358,13 +359,12 @@ To access this power setting, select the 5W power setting, then press and hold *
 
 *Notes:*
 
-(1) The power output will only be correct after the operator has calibrated their own radio, as these radios do not seem to have very accurate power calibration applied in the factory.
-
-(2) Power output on settings below 1W is not very accurate, because the calibration only holds data points for the 1W and 5W power values.
-Between 1W and 5W the PA FET output power is approximately directly proportional to the PA drive level, hence the interpolated drive levels result in reasonably accurate power levels for 2,3 and 4W.
-However below 1W the PA FET ouput power is not directly proportional to the PA drive level, and varies conserable between different radios. Hence the power accuracy below 1W is at best around 80% accurate.
-Also the PA FET minimum operational power threshold is very close to, or sometimes even above 50mW, so operating at this power level can produce unwanted suprious emissions.
-Please confirm your power output and spectral emissions before using the 50mW setting anywhere it may cause interferance.
+- The power output will only be correct after the operator has calibrated their own radio, as these radios do not seem to have very accurate power calibration applied in the factory.
+- Power output on settings below 1W is not very accurate, because the calibration only holds data points for the 1W and 5W power values.
+- Between 1W and 5W the PA FET output power is approximately directly proportional to the PA drive level, hence the interpolated drive levels result in reasonably accurate power levels for 2,3 and 4W.
+- However below 1W the PA FET ouput power is not directly proportional to the PA drive level, and varies conserable between different radios. Hence the power accuracy below 1W is at best around 80% accurate.
+- Also the PA FET minimum operational power threshold is very close to, or sometimes even above 50mW, so operating at this power level can produce unwanted suprious emissions.
+- Please confirm your power output and spectral emissions before using the 50mW setting anywhere it may cause interferance.
 
 ### Signal strength bar graph
 
@@ -374,9 +374,10 @@ In DMR mode the signal meter will only be active when the DMR hardware detects a
 
 In FM mode the signal meter should operate all the time.
 
-Note. 
-Currently the S meter reading is not very accurate becuase the radio hardware Rx sensitivity is not calibrated at the factor.
-Hence the value displayed is based on a radio with average sensitivity, individial radios may be more or less sensitive than average and hence the S meter will read higher or lower than is absolutely correct.
+*Note:*
+
+- Currently the S meter reading is not very accurate becuase the radio hardware Rx sensitivity is not calibrated at the factor.
+- Hence the value displayed is based on a radio with average sensitivity, individial radios may be more or less sensitive than average and hence the S meter will read higher or lower than is absolutely correct.
 
 ![signal meter](media/signal-meter.png)
 
@@ -421,7 +422,9 @@ This also shows the channel information as described above.
 
 Pressing the **Orange** button on the top of the radio in Channel mode displays the Quick Menu for the Channel screen. Note that in Quick Menu, the **Orange** button has the same function as the **Green** key, which confirms your current selection.
 
-Note. The Baofeng RD-5R does not have an Orange button. On this radio press and hold the orange coloured MR/VFO button to enter the Quick menu
+*Note:*
+
+- The Baofeng RD-5R does not have an Orange button. On this radio press and hold the orange coloured MR/VFO button to enter the Quick menu
 
 
 ##### Copying a channel to VFO
@@ -467,7 +470,9 @@ When Timeslot filtering is disabled the Timeslot number is displayed in inverse 
 
 Pressing the **Orange** button on the top of the radio in VFO mode displays the Quick menu for the VFO screen. Currently this has five options.
 
-Note. The Baofeng RD-5R does not have an Orange button. On this radio press and hold the orange coloured MR/VFO button to enter the Quick menu
+*Note:*
+
+- The Baofeng RD-5R does not have an Orange button. On this radio press and hold the orange coloured MR/VFO button to enter the Quick menu
 
 ##### VFO selection A or B
 
@@ -539,7 +544,9 @@ If the station has entered any data into the APRS section of their Brandmeister 
 
 ![talker alias data](media/talker-alias-data.png)
 
-Note: As the Talker Alias data is sent slowly as it is embedded inside the DMR audio data frames, the callsign will appear first and about half a second later the DMR ID or other text will arrive via the DMR data and be displayed.
+*Note:*
+
+- As the Talker Alias data is sent slowly as it is embedded inside the DMR audio data frames, the callsign will appear first and about half a second later the DMR ID or other text will arrive via the DMR data and be displayed.
 
 #### Talkgroup selection from the Rx Group list
 
@@ -549,7 +556,9 @@ This TalkGroup will apply to both RX and TX.
 If a Channel does not have a TGList assigned, then the Contact assigned to the Channel will be used, and the **Left** and **Right** arrows will have no effect.
 If a Channel does not have  TGList assigned, and the Contact is also assigned to "None" or "N/A" the radio will default to using TG 9.
 
-Note. The Baofeng RD-5R does not have Right and Left arrow keys. Use the A/B button as the left arrow and the Band button as the right arrow
+*Note:*
+
+- The Baofeng RD-5R does not have Right and Left arrow keys. Use the A/B button as the left arrow and the Band button as the right arrow
 
 #### Assignment of Timeslot to Digital Contact TalkGroup
 
@@ -648,8 +657,9 @@ If the squelch is changed in the VFO the value will be remembered even if the ra
 
 To make the squelch change permanent to a Channel, press **Function + Green** to enter the Channel Details screen, and then press **Function + Green** again to save the channel data to the codeplug.
 
-Note.
-If RX CTCSS is enabled, this has priority over the squelch control, and lowering the squelch threshold will not cause the squelch to be opened.
+*Note:*
+
+- If RX CTCSS is enabled, this has priority over the squelch control, and lowering the squelch threshold will not cause the squelch to be opened.
 
 #### 1750Hz Tone for repeater operation
 
@@ -703,9 +713,9 @@ When the TX frequency is changed, the RX frequency will not be changed.
 
 Use this method to set different TX and RX frequencies. For example, this can be useful for satellite operation as it allows Cross Band operation as well as split frequency simplex operation on the same band.
 
-**Note**
+*Note:*
 
-If different TX and RX frequencies are set, and the currently selected input is set to RX, changing the RX frequency will also change the TX frequency, and the difference between the RX and TX frequency will be maintained if possible.
+- If different TX and RX frequencies are set, and the currently selected input is set to RX, changing the RX frequency will also change the TX frequency, and the difference between the RX and TX frequency will be maintained if possible.
 
 The only case where the frequency difference will not be maintained is if the TX frequency goes outside of the range of frequencies supported by the radio hardware.
 
@@ -884,9 +894,9 @@ Displays a signal strength indicator showing the numerical RSSI value in dBm, al
 
 ![RSSI screen](media/rssi.png)
 
-*Notes*
+*Notes:*
 
-Both RSSI and S meter are not calibrated and will vary somewhat between different radios in their accuracy.
+- Both RSSI and S meter are not calibrated and will vary somewhat between different radios in their accuracy.
 
 DMR signals by their nature, because they are pulse transmissions, will not give accurate RSSI values.
 
@@ -944,20 +954,22 @@ Resets the radio to default settings, and reads the CPS VFO A values from the co
 #### Band Limits
 
 This setting controls the frequency band ranges inside which the radio can transmit.
-Option are 
 
-"OFF" Where tranmission is not limited to band ranges.
-"ON" Where the band limits for the USA are applied (144Mhz - 148Mhz, 222Mhz - 225Mhz, 420Mhz - 450Mhz).  This is the Default setting.
-"CPS" Where the VHF and UHF limits set in the CPS are used. If the CPS band limts do not contain valid values, for example the UHF frequency band range is less than or intersects with the VHF band range, the radio will use the Default settings (as above)
+Options are 
 
-![main menu](media/cps-band-limits.png)
+- ***OFF*** Where tranmission is not limited to band ranges.
+- ***ON*** Where the band limits for the USA are applied (144Mhz - 148Mhz, 222Mhz - 225Mhz, 420Mhz - 450Mhz).  This is the Default setting.
+- ***CPS*** Where the VHF and UHF limits set in the CPS are used. If the CPS band limts do not contain valid values, for example the UHF frequency band range is less than or intersects with the VHF band range, the radio will use the Default settings (as above)
+
+![CPS band limit window](media/cps-band-limits.png)
 
 The CPS band limits do not affect the overall hardware band limits, hence it is not possible to extend the hardware limits by using values for the CPS band limits which extend outside the hardware limits.
 
 The hardware band limits are
-127Mhz - 178MHz
-190Mhz - 282Mhz
-380Mhz - 564Mhz
+
+- 127Mhz - 178MHz
+- 190Mhz - 282Mhz
+- 380Mhz - 564Mhz
 
 These limits are because the AT1846S RF chip will not operate reliably outside this range, and this range is actually beyond the published specification of the AT1846S, which is technically 134Mhz-174Mhz,200Mhz-260Mhz,400Mhz-520Mhz
 
@@ -1000,7 +1012,11 @@ This setting controls the squelch level for 2 meter VHF when using an analog cha
 
 When PTT latch is enabled, the PTT switch toggles the radio to transmit or receive. In this mode the PTT does not need to be pressed continuously during an over.
 
-Note. The PTT latch function only works if a timeout has been defined for the channel, or VFO, to prevent constant accidental transmission.
+*Note:*
+
+- The PTT latch function only works if a timeout has been defined for the channel, or VFO, to prevent constant accidental transmission.
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 #### Hotspot
 
@@ -1009,9 +1025,10 @@ Note. The PTT latch function only works if a timeout has been defined for the ch
 This option controls whether the firmware will enter hotspot mode when connected to MMDVMHost, including Pi-Star, or to BlueDV.
 
 Options are
-**Off**
-**MMDVM**  for use with Pi-Star or any other system using MMDVMHost
-**BlueDV** for use with BlueDV
+
+- **Off**
+- **MMDVM**  for use with Pi-Star or any other system using MMDVMHost
+- **BlueDV** for use with BlueDV
 
 On the GD-77S. To enable hotspot mode, Press and hold the **SK1 button** (SK1) while turning on the radio. This will toggle hotspot mode between **MMDVM** and **BlueDV** mode.
 
@@ -1026,8 +1043,9 @@ Talker Alias reception is always operational. Do not enable this feature because
 
 The text of "Line1" and "Line2" from the "Boot Item" screen is used for this transmission, with no space between the Line1 and Line2 data.
 
-Note.
-Use of this feature will cause problems on Motorola based repeaters and networks, and should only be used for simplex and possibly on Brandmeister and other networks which correctly support Talker Alias
+*Note:*
+
+- Use of this feature will cause problems on Motorola based repeaters and networks, and should only be used for simplex and possibly on Brandmeister and other networks which correctly support Talker Alias
 
 #### Allow PC
 
@@ -1068,7 +1086,10 @@ Sets the time before the display backlight is extinguished (default No timeout).
 
 #### Colour mode
 This option allows for Normal or inverse colour display. Normal is white background with black pixels; Inverse is black background with white pixels.
-*Note.* This does not completely replicate the GD-77 “Black” display hardware version, because that radio uses a different LCD panel which physically has a black background, whereas the normal GD-77 has an LCD panel with a white background
+
+*Note:*
+
+- This does not completely replicate the GD-77 “Black” display hardware version, because that radio uses a different LCD panel which physically has a black background, whereas the normal GD-77 has an LCD panel with a white background
 
 #### Order
 Controls where the DMR Contact display data is sourced from
@@ -1080,14 +1101,12 @@ The default is Cc/Db/TA, which means the received DMR ID is first checked in the
 
 #### Contact
 Controls the position on the screen where the DMR Callsign and Name etc, is displayed.
+
 Options are
-1 Line, 2 Lines or Auto
 
-1 Line - This only uses the middle line of the display to show the callsign and name. When using Talker Alias which contains more characters than the 16 character width of the screen, the text will be cropped, so you will not see the end of the TA text.
-
-2 Lines - The Callsign is displayed on the middle line of the display, and the name and other information will be displayed on the bottom line of the display. i.e the firmware automatically breaks up the "CALLSIGN NAME" format text at the space separating the callsign from the name.
-
-Auto - When the Callsign and name will fit on the middle line of the display, only the middle line will be used (this is equivalent to the "1 Line" option.)
+- 1 Line - This only uses the middle line of the display to show the callsign and name. When using Talker Alias which contains more characters than the 16 character width of the screen, the text will be cropped, so you will not see the end of the TA text.
+- 2 Lines - The Callsign is displayed on the middle line of the display, and the name and other information will be displayed on the bottom line of the display. i.e the firmware automatically breaks up the "CALLSIGN NAME" format text at the space separating the callsign from the name.
+- Auto - When the Callsign and name will fit on the middle line of the display, only the middle line will be used (this is equivalent to the "1 Line" option.)
 If the caller information e.g. from TA is longer than 16 characters and won't fit on the middle line, the display will be split onto both lines and is equivalent to the "2 Lines" option.
 
 The default is 1 Line.
@@ -1095,9 +1114,11 @@ The default is 1 Line.
 ### Battery units
 
 Controls whether the battery is show as a percentage or as voltage.
+
 Options are
-%  Shows the battery percentage e.g. 0 to 100%
-V  Shows the battery voltage e.g. 8.1V
+
+- %  Shows the battery percentage e.g. 0 to 100%
+- V  Shows the battery voltage e.g. 8.1V
 
 
 <div style="page-break-after: always; break-after: page;"></div>
@@ -1120,7 +1141,12 @@ This setting controls the beeps which are played at the start or end, or both st
 The beep at the start of transmissions is used to confirm connection to a repeater, because it is only played when the radio enters the main transmission phase to a repeater, and not when its 'waking' the repeater
 These beeps are only played through the radio's speaker, they are not transmitted via the DMR audio signal
 
-Options are "Start", "Stop", "None" or "Both"
+Options are
+
+- **None**
+- **Start**
+- **Stop**
+- **Both**
 
 #### DMR mic
 
@@ -1271,11 +1297,11 @@ In DMR mode, either in the VFO or the Channel screen...
 
 * Press the Green menu key to confirm, or the Red menu key to exit.
 
-*Note.* If you make a mistake when entering the number, press the **Left** arrow key to erase the digits one by one.
+*Note:*
 
-If the PC ID you entered is in the DMR ID database you had previously uploaded to the radio, the stations Callsign and name will now be displayed on the screen.
-
-If the ID is not in the DMR ID database, the text, “ID: “ followed by the number, will be displayed
+- If you make a mistake when entering the number, press the **Left** arrow key to erase the digits one by one.
+- If the PC ID you entered is in the DMR ID database you had previously uploaded to the radio, the stations Callsign and name will now be displayed on the screen.
+- If the ID is not in the DMR ID database, the text, “ID: “ followed by the number, will be displayed
 
 **The radio is now in Private call mode.**
 
@@ -1288,7 +1314,9 @@ To return to normal Talkgroup operation, there are 3 methods
 3. Press the **Hash (#)** key, then enter a TG number and press the **Green** menu key.
 
 
-*Note.* When in Private Call mode, changing between VFO mode and Channel mode or vice versa, via the **Red** menu key will not change back to TalkGroup mode
+*Note:*
+
+- When in Private Call mode, changing between VFO mode and Channel mode or vice versa, via the **Red** menu key will not change back to TalkGroup mode
 
 ### To Receive a Private Call
 
@@ -1324,7 +1352,9 @@ Once the private call is complete, you can return to the Talkgroup you were on p
 
 The firmware can operate as a DMR (*voice only*) hotspot when connected via its USB programming cable to a Raspberry Pi running Pi-Star or any other device that is running MMDVMHost.
 
-*Note.* Hotspot mode may be compatible with software like BlueDV, but your mileage may vary.
+*Note:*
+
+- Hotspot mode may be compatible with software like BlueDV, but your mileage may vary.
 
 First, connect the radio to a Raspberry Pi via its programming cable.
 
@@ -1348,7 +1378,9 @@ If the radio does not enter Hotspot mode, power cycle the radio and power cycle 
 
 If the radio still fails to enter hotspot mode, check your USB connections.
 
-*Note.* By default Pi-Star configures the “modem” to have a power setting of “100” in the Expert -> MMDVMHost settings.
+*Note:*
+
+- By default Pi-Star configures the “modem” to have a power setting of “100” in the Expert -> MMDVMHost settings.
 
 This is 100% of the maximum power of the modem, and in the case of the radio the maximum power output is 5W, but the radio is not designed to operate as a hotspot, where it may be continuously transmitting.
 
@@ -1377,7 +1409,9 @@ Power | Pi-Star RFLevel
 
 The receive frequency specified by Pi-Star will be displayed at the bottom of the screen.
 
-*Note.* Offsets should not be applied to the TX or RX frequencies in Pi-Star, because the radio should not need any offsets, and any offset will be reflected in the frequency displayed on the radio, because Pi-Star actually sends the master frequency +/- the offset to the hotspot.
+*Note:*
+
+- Offsets should not be applied to the TX or RX frequencies in Pi-Star, because the radio should not need any offsets, and any offset will be reflected in the frequency displayed on the radio, because Pi-Star actually sends the master frequency +/- the offset to the hotspot.
 
 When the radio receives an RF DMR signal, the green LED on the top of the radio will illuminate as normal, and the name and callsign are displayed if the DMR ID database contains that ID. If the ID is not in the DMR ID database, the ID number will be shown.
 
@@ -1409,7 +1443,10 @@ See the section relating to voice prompts and how to install them.
 
 The GD-77S has a 16 position rotary switch on the top of the radio, next to the volume control.
 This control is used to select the channel in the current zone.
-Note. Although the OpenGD77 CPS and codeplug format allows up to 80 channels per Zone, the GD-77S can only access the first 16 channels in each Zone, so codeplugs designed for the GD-77 containing more than 16 channels will need to be modified so that each zone only contains a maximum of 16 channels.
+
+*Note:*
+
+- Although the OpenGD77 CPS and codeplug format allows up to 80 channels per Zone, the GD-77S can only access the first 16 channels in each Zone, so codeplugs designed for the GD-77 containing more than 16 channels will need to be modified so that each zone only contains a maximum of 16 channels.
 
 The GD-77S has 2 buttons on the side of the radio below the PTT button. A SK1 button known as SK1 and a Function button known as SK2. It also has an orange coloured button at the top, next to the channel selector switch.
 
@@ -1444,7 +1481,9 @@ Zone selection wraps around, so pressing SK2 on the first Zone, selects the last
 In this mode, pressing SK1 increases the power by one step, and pressing SK2 decreases the power by one step.
 See details of available power step levels in the normal firmware.
 
-Note. Like in the normal firmware, the power output will only be accurate if the operator has calibrated the power of the radio, as the factory power level calibration is likely to be highly inaccurate.
+*Note:*
+
+- Like in the normal firmware, the power output will only be accurate if the operator has calibrated the power of the radio, as the factory power level calibration is likely to be highly inaccurate.
 
 
 <div style="page-break-after: always; break-after: page;"></div>
@@ -1474,8 +1513,10 @@ Next create one or more “TG Lists” and populate each with the sets of the Ta
 
 Now setup the channels. Enter the frequencies, slot and colour code as normal for a DMR channel.
 
-Note. Currently the firmware does not use the “Contact” e.g., shown as TG9 below. Instead it uses the TG’s in the TG list.
-However we advise all users to set the “Contact” to the first channel in the TG list assigned to the channel.
+*Note:*
+
+- Currently the firmware does not use the “Contact” e.g., shown as TG9 below. Instead it uses the TG’s in the TG list.
+- However we advise all users to set the “Contact” to the first channel in the TG list assigned to the channel.
 
 Next select the TG List that you wish to use for the channel.
 
@@ -1483,7 +1524,9 @@ The firmware can use the TG list to filter the incoming DMR signal, or it can op
 
 ![channel TG list selection](media/cps-channel-tglist.png)<!-- { width=600 } -->
 
-*Note.* The “Contact” is not used by the firmware. You must use the TG list to define the TG’s you want to use with each channel. Hence you must have at least 1 TG list and it must contain at least 1 Digital Contact which is a TalkGroup.
+*Note:*
+
+- The “Contact” is not used by the firmware. You must use the TG list to define the TG’s you want to use with each channel. Hence you must have at least 1 TG list and it must contain at least 1 Digital Contact which is a TalkGroup.
 
 Finally save your codeplug to your computer before writing the code plug to the radio using either the standard Radioddity CPS to programme the radio before flashing it to OpenGD77 or if you are using the special OpenGD77 compatible version of the “Community CPS”, (as detailed in the next section) you can write the code plug directly to an already flashed OpenGD77 radio.
 
@@ -1509,7 +1552,9 @@ In the CPS there is a new menu item under the Extras menu for OpenGD77 Support, 
 From here you can backup the internal 64k EEPROM and the 1 mega byte Flash chip, as well as Reading and Writing the codeplug.
 The calibration data stored in the Flash chip (At address 0x8f000) can be backed up and restored without backing up the whole of the Flash.
 
-*Note.* If you restore the Flash you will also overwrite the calibration data as it’s stored in the 1Mb Flash chip.
+*Note:*
+
+- If you restore the Flash you will also overwrite the calibration data as it’s stored in the 1Mb Flash chip.
 
 You can also use this window to grab a screenshot from the radio's current display. Screenshots are saved in PNG format.
 
@@ -1539,9 +1584,13 @@ Then, you can add in DMR IDs into the database by selecting an ID prefix. You ca
 
 ![DMR IDs downloader window](media/cps-dmr-ids.png)<!-- { width=550 } -->
 
-*Note.* Because the memory size used for the DMR ID is limited, you can store more DMR IDs if you assign fewer characters per ID. Depending on actual information, the firmware can store approximately 13,000-26,000 IDs in its user database.
+*Note:*
+
+- Because the memory size used for the DMR ID is limited, you can store more DMR IDs if you assign fewer characters per ID. Depending on actual information, the firmware can store approximately 13,000-26,000 IDs in its user database.
 
 As the firmware supports Talker Alias, you might find this sufficient -- the firmware will display callsign and name data retrieved from the DMR stream, for user IDs not stored in your radio's User Database.
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 #### Boot tune
 
@@ -1565,9 +1614,6 @@ Or perhaps more usefully:
   * 38,2,0,2, 38,2,0,6,
   * 38,2,0,2, 38,2,0,2, 38,2,0,2, 38,2,0,2, 38,6,0,6
 * Remove the spaces and carriage returns once you've got it all worked out and paste into the Boot Tune section under Extras/OpenGD77 support
-
-
-<div style="page-break-after: always; break-after: page;"></div>
 
 ##### Melodies and Notes
 
