@@ -1394,7 +1394,7 @@ On receipt of a *Private Call*, the radio will display this screen:
 
 ![accept screen](media/accept-call.png)
 
-With the callers *Callsign* and *Name* (or ID) displayed.
+With the caller's *Callsign* and *Name* (or ID) displayed.
 
 To accept the call, and configure the radio to return the Private call back to the calling station:
 
@@ -1403,7 +1403,7 @@ To accept the call, and configure the radio to return the Private call back to t
 
 If you accept the Private Call, the radio will be switched into **Private Call mode**, ready for transmission.
 
-The callers' ID or Name is shown *e.g.*:
+The caller's ID or Name is shown *e.g.*:
 
 ![private call screen](media/private-call.png)
 
