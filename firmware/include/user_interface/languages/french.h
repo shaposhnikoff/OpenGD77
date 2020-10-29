@@ -176,6 +176,7 @@ const stringsTable_t frenchLanguage =
 .dtmf_contact_list			= "Liste DTMF", // Maxlen: 16
 .channel_power				= "Pce Canal", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
 .channel_power_from_master		= "Maître",// Displayed if per-channel power is not enabled  the .channel_power
+.set_quickkey				= "Set Quickkey",
 };
 /********************************************************************
  *
