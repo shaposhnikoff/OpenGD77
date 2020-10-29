@@ -180,6 +180,7 @@ typedef struct stringsTable
    const char *dtmf_contact_list;// Menu number 18
    const char *channel_power;// "Ch Power" for the Channel details screen
    const char *channel_power_from_master;// "Master" for the power setting on the Channel details screen
+   const char *set_quickkey;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];
