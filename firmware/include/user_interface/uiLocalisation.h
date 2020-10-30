@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#ifndef _UI_LOCALISATION_H_
-#define _UI_LOCALISATION_H_
+#ifndef _OPENGD77_UILOCALISATION_H_
+#define _OPENGD77_UILOCALISATION_H_
 
 #define NUM_LANGUAGES 15
 #define LANGUAGE_TEXTS_LENGTH 17
 
-typedef struct stringsTable
+typedef struct
 {
 /*
  * IMPORTANT
@@ -181,8 +181,28 @@ typedef struct stringsTable
    const char *channel_power;// "Ch Power" for the Channel details screen
    const char *channel_power_from_master;// "Master" for the power setting on the Channel details screen
    const char *set_quickkey;
+   const char *dual_watch;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];
 extern const stringsTable_t *currentLanguage;
+
+enum languageNamesOrder  { 	englishLanguageName = 0,
+							catalanLanguageName,
+							danishLanguageName,
+							frenchLanguageName,
+							deutschGermanLanguageName,
+							italianLanguageName,
+							portuguesLanguageName,
+							spanishLanguageName,
+							suomiFinnishLanguageName,
+							polishLanguageName,
+							turkishLanguageName,
+							czechLanguageName,
+							nederlandsDutchLanguageName,
+							slovenianLanguageName,
+							portuguesBrazilLanguageName};
+
+extern const int LANGUAGE_DISPLAY_ORDER[];
+
 #endif

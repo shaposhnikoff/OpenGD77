@@ -176,7 +176,8 @@ const stringsTable_t italianLanguage =
 .dtmf_contact_list			= "Lista DTMF", // Maxlen: 16
 .channel_power				= "W Ch", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
 .channel_power_from_master	= "di base",// Displayed if per-channel power is not enabled  the .channel_power
-.set_quickkey				= "Set Quickkey",
+.set_quickkey				= "Set Quickkey", // MaxLen: 16
+.dual_watch				= "Dual Watch" // MaxLen: 16
 };
 /********************************************************************
  *
