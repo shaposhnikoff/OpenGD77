@@ -182,6 +182,8 @@ typedef struct
    const char *channel_power_from_master;// "Master" for the power setting on the Channel details screen
    const char *set_quickkey;
    const char *dual_watch;
+   const char *info;
+   const char *pwr;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

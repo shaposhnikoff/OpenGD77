@@ -62,7 +62,7 @@ const stringsTable_t englishLanguage =
 .unlocked				= "Unlocked", // MaxLen: 15
 .power_off				= "Power Off...", // MaxLen: 16
 .error					= "ERROR", // MaxLen: 8
-.rx_only				= "Rx only", // MaxLen: 14
+.rx_only				= "Rx Only", // MaxLen: 14
 .out_of_band				= "OUT OF BAND", // MaxLen: 14
 .timeout				= "TIMEOUT", // MaxLen: 8
 .tg_entry				= "TG entry", // MaxLen: 15
@@ -177,7 +177,9 @@ const stringsTable_t englishLanguage =
 .channel_power				= "Ch Power", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
 .channel_power_from_master		= "Master",// Displayed if per-channel power is not enabled  the .channel_power
 .set_quickkey				= "Set Quickkey", // MaxLen: 16
-.dual_watch				= "Dual Watch" // MaxLen: 16
+.dual_watch				= "Dual Watch", // MaxLen: 16
+.info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
+.pwr					= "Pwr"
 };
 /********************************************************************
  *

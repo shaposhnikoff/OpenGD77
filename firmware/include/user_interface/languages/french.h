@@ -62,7 +62,7 @@ const stringsTable_t frenchLanguage =
 .unlocked				= "Déverrouillé",
 .power_off				= "Extinction...",
 .error					= "ERREUR",
-.rx_only				= "Rx uniqmnt.",
+.rx_only				= "Rx Uniqmnt.",
 .out_of_band				= "HORS BANDE",
 .timeout				= "TIMEOUT",
 .tg_entry				= "Entrez TG",
@@ -177,7 +177,9 @@ const stringsTable_t frenchLanguage =
 .channel_power				= "Pce Canal", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
 .channel_power_from_master		= "Maître",// Displayed if per-channel power is not enabled  the .channel_power
 .set_quickkey				= "Défini Quickkey", // MaxLen: 16
-.dual_watch				= "Double Veille" // MaxLen: 16
+.dual_watch				= "Double Veille", // MaxLen: 16
+.info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
+.pwr					= "Pwr"
 };
 /********************************************************************
  *

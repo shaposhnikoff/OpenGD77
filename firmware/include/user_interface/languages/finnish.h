@@ -177,7 +177,9 @@ const stringsTable_t finnishLanguage =
 .channel_power				= "Ch Power", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
 .channel_power_from_master	= "Master",// Displayed if per-channel power is not enabled  the .channel_power
 .set_quickkey				= "Set Quickkey", // MaxLen: 16
-.dual_watch				= "Dual Watch" // MaxLen: 16
+.dual_watch				= "Dual Watch", // MaxLen: 16
+.info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
+.pwr					= "Pwr"
 };
 /********************************************************************
  *
