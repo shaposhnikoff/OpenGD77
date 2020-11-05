@@ -184,6 +184,7 @@ typedef struct
    const char *dual_watch;
    const char *info;
    const char *pwr;
+   const char *user_power;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

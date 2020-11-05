@@ -44,8 +44,8 @@ const stringsTable_t frenchLanguage =
 .last_heard				= "Derniers reçus",
 .firmware_info				= "Info Firmware",
 .options				= "Options",
-.display_options			= "Options aff.",
-.sound_options				= "Options son", // MaxLen: 16
+.display_options			= "Options affich.",
+.sound_options				= "Options audio", // MaxLen: 16
 .channel_details			= "Détails canal",
 .language				= "Langue",
 .new_contact				= "Nouv. contact",
@@ -67,12 +67,12 @@ const stringsTable_t frenchLanguage =
 .timeout				= "TIMEOUT",
 .tg_entry				= "Entrez TG",
 .pc_entry				= "Entrez PC",
-.user_dmr_id				= "DMR ID perso.",
+.user_dmr_id				= "DMR ID Perso.",
 .contact 				= "Contact",
 .accept_call				= "Répondre à",
 .private_call				= "Appel Privé",
 .squelch				= "Squelch",
-.quick_menu 				= "Menu rapide",
+.quick_menu 				= "Menu Rapide",
 .filter					= "Filtre",
 .all_channels				= "Tous Canaux",
 .gotoChannel				= "Aller",
@@ -179,7 +179,8 @@ const stringsTable_t frenchLanguage =
 .set_quickkey				= "Défini Quickkey", // MaxLen: 16
 .dual_watch				= "Double Veille", // MaxLen: 16
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
-.pwr					= "Pwr"
+.pwr					= "Pwr",
+.user_power				= "Pce Perso." // MaxLen: 16 (with ':' + 0..4100)
 };
 /********************************************************************
  *

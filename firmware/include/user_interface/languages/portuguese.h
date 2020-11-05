@@ -179,7 +179,8 @@ const stringsTable_t portuguesLanguage =
 .set_quickkey				= "Set Quickkey", // MaxLen: 16
 .dual_watch				= "Dual Watch", // MaxLen: 16
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
-.pwr					= "Pwr"
+.pwr					= "Pwr",
+.user_power				= "User Power"
 };
 /********************************************************************
  *

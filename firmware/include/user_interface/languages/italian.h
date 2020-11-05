@@ -179,7 +179,8 @@ const stringsTable_t italianLanguage =
 .set_quickkey				= "Imposta tasti", // MaxLen: 16
 .dual_watch				= "Doppio ascolto", // MaxLen: 16
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
-.pwr					= "Potenza"
+.pwr					= "Potenza",
+.user_power				= "User Power"
 };
 /********************************************************************
  *
