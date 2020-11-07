@@ -20,7 +20,7 @@
  * Translators: IU4LEG, IZ2EIB
  *
  *
- * Rev: 2020.11.05 IZ2EIB  & IU4LEG 
+ * Rev: 2020.11.06 IZ2EIB  & IU4LEG 
  */
 #ifndef USER_INTERFACE_LANGUAGES_ITALIAN_H_
 #define USER_INTERFACE_LANGUAGES_ITALIAN_H_
@@ -79,7 +79,7 @@ const stringsTable_t italianLanguage =
 .scan					   = "Scansione", // MaxLen: 16
 .channelToVfo			   = "Canale --> VFO", // MaxLen: 16
 .vfoToChannel			   = "VFO --> Canale", // MaxLen: 16
-.vfoToNewChannel		   = "VFO --> New Ch.", // MaxLen: 16
+.vfoToNewChannel		   = "VFO --> Nuovo Ch", // MaxLen: 16
 .group					   = "Gruppo", // MaxLen: 16 (with .type)
 .private				   = "Privato", // MaxLen: 16 (with .type)
 .all					   = "Tutti", // MaxLen: 16 (with .type)
@@ -125,7 +125,7 @@ const stringsTable_t italianLanguage =
 .no___in_uppercase		   = "NO", // MaxLen: 8 (choice above green/red buttons)
 .DISMISS				   = "RIFIUTA", // MaxLen: 8 (choice above green/red buttons)
 .scan_mode				   = "Modo Scan", // MaxLen: 16 (with ':' + .hold, .pause or .stop)
-.hold					   = "Hold", // MaxLen: 16 (with ':' + .scan_mode)
+.hold					   = "Blocco", // MaxLen: 16 (with ':' + .scan_mode)
 .pause					   = "Pausa", // MaxLen: 16 (with ':' + .scan_mode)
 .empty_list				   = "Lista Vuota", // MaxLen: 16
 .delete_contact_qm		   = "Canc. Contatto?", // MaxLen: 16
@@ -137,7 +137,7 @@ const stringsTable_t italianLanguage =
 .delete_contact			   = "Canc. Contatto", // MaxLen: 16
 .group_call				   = "Chiama Gruppo", // MaxLen: 16
 .all_call				   = "Chiama Tutti", // MaxLen: 16
-.tone_scan				   = "Scansione Toni",//// MaxLen: 16
+.tone_scan				   = "Scan Toni",//// MaxLen: 16
 .low_battery			   = "BATTERIA SCARICA",//// MaxLen: 16
 .Auto					   = "Automatico", // MaxLen 16 (with .mode + ':') 
 .manual					   = "Manuale",  // MaxLen 16 (with .mode + ':') 
