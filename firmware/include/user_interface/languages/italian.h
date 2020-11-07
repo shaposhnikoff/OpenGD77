@@ -20,7 +20,7 @@
  * Translators: IU4LEG, IZ2EIB
  *
  *
- * Rev: 2020.11.03 IZ2EIB  & IU4LEG 
+ * Rev: 2020.11.05 IZ2EIB  & IU4LEG 
  */
 #ifndef USER_INTERFACE_LANGUAGES_ITALIAN_H_
 #define USER_INTERFACE_LANGUAGES_ITALIAN_H_
@@ -180,7 +180,7 @@ const stringsTable_t italianLanguage =
 .dual_watch				= "Doppio ascolto", // MaxLen: 16
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
 .pwr					= "Potenza",
-.user_power				= "User Power"
+.user_power				= "Volt PA"
 };
 /********************************************************************
  *
