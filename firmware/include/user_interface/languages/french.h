@@ -180,7 +180,12 @@ const stringsTable_t frenchLanguage =
 .dual_watch				= "Double Veille", // MaxLen: 16
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
 .pwr					= "Pwr",
-.user_power				= "Pce Perso." // MaxLen: 16 (with ':' + 0..4100)
+.user_power				= "Pce Perso.", // MaxLen: 16 (with ':' + 0..4100)
+.temperature				= "Temperature", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
+.celcius				= "°C",
+.seconds				= "secondes",
+.radio_info				= "Infos radio",
+.temperature_calibration		= "Etal. t°"
 };
 /********************************************************************
  *

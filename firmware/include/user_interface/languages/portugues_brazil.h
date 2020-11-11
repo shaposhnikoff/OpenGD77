@@ -180,7 +180,12 @@ const stringsTable_t portuguesBrazilLanguage =
 .dual_watch				= "Dual Watch", // MaxLen: 16
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
 .pwr					= "Pwr",
-.user_power				= "User Power"
+.user_power				= "User Power",
+.temperature				= "Temperature", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
+.celcius				= "°C",
+.seconds				= "seconds",
+.radio_info				= "Radio infos",
+.temperature_calibration		= "Temp Cal"
 };
 /*********************************************************************
  *

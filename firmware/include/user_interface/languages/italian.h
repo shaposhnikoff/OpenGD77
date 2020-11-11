@@ -180,7 +180,12 @@ const stringsTable_t italianLanguage =
 .dual_watch				= "Doppio ascolto", // MaxLen: 16
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
 .pwr					= "Potenza",
-.user_power				= "Volt PA"
+.user_power				= "Volt PA",
+.temperature				= "Temperature", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
+.celcius				= "°C",
+.seconds				= "seconds",
+.radio_info				= "Radio infos",
+.temperature_calibration		= "Temp Cal"
 };
 /********************************************************************
  *

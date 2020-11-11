@@ -178,9 +178,14 @@ const stringsTable_t englishLanguage =
 .channel_power_from_master		= "Master",// Displayed if per-channel power is not enabled  the .channel_power
 .set_quickkey				= "Set Quickkey", // MaxLen: 16
 .dual_watch				= "Dual Watch", // MaxLen: 16
-.info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
+.info					= "Info", // MaxLen: 16 (with ':' + .off or .ts or .pwr or .both)
 .pwr					= "Pwr",
-.user_power				= "User Power"
+.user_power				= "User Power",
+.temperature				= "Temperature", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
+.celcius				= "°C",
+.seconds				= "seconds",
+.radio_info				= "Radio info",
+.temperature_calibration		= "Temp Cal"
 };
 /********************************************************************
  *

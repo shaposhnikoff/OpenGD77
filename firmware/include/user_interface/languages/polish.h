@@ -137,7 +137,7 @@ const stringsTable_t polishLanguage =
 .delete_contact				= "Usu‹ kontakt", // MaxLen: 16
 .group_call				= "Grupy", // MaxLen: 16
 .all_call				= "‡„cze wszystkich", // MaxLen: 16
-.tone_scan				= "Skan tonu CTCSS",//// MaxLen: 16
+.tone_scan				= "Skanuj",//// MaxLen: 16
 .low_battery				= "S‡ABA BATERIA!!!",//// MaxLen: 16
 .Auto					= "Automat", // MaxLen 16 (with .mode + ':')
 .manual					= "Manualny",  // MaxLen 16 (with .mode + ':') 
@@ -174,13 +174,18 @@ const stringsTable_t polishLanguage =
 .dmr_cc_filter			= "CC Filtr", // MaxLen: 12 (with ':' + settings: .on or .off)
 .dmr_ts_filter			= "TS Filtr", // MaxLen: 12 (with ':' + settings: .on or .off)
 .dtmf_contact_list			= "Lista DTMF", // Maxlen: 16
-.channel_power				= "Ch Power", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
+.channel_power				= "Moc kanaˆu", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
 .channel_power_from_master	= "Master",// Displayed if per-channel power is not enabled  the .channel_power
 .set_quickkey				= "Set Quickkey", // MaxLen: 16
-.dual_watch				= "Dual Watch", // MaxLen: 16
+.dual_watch				= "Dwa osobne VFO", // MaxLen: 16
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
 .pwr					= "Moc",
-.user_power				= "Max moc +W-"
+.user_power				= "Max moc +W-",
+.temperature				= "Temperature", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
+.celcius				= "°C",
+.seconds				= "seconds",
+.radio_info				= "Radio infos",
+.temperature_calibration		= "Temp Cal"
 };
 /********************************************************************
  *
