@@ -20,7 +20,7 @@
  * Translators: DG3GSP, DL4LEX
  *
  *
- * Rev: 4.1
+ * Rev: 4.2
  */
 #ifndef USER_INTERFACE_LANGUAGES_GERMAN_H_
 #define USER_INTERFACE_LANGUAGES_GERMAN_H_
@@ -176,15 +176,15 @@ const stringsTable_t germanLanguage =
 .dtmf_contact_list			= "DTMF Kontakte", // Maxlen: 16
 .channel_power				= "Ch Leist.", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
 .channel_power_from_master	= "Master",// Displayed if per-channel power is not enabled  the .channel_power
-.set_quickkey				= "Set Quickkey", // MaxLen: 16
+.set_quickkey				= "Quickkey belegen", // MaxLen: 16
 .dual_watch				= "Dual Watch", // MaxLen: 16
 .info					= "Infoleiste", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
 .pwr					= "Leistung",
 .user_power				= "User Power",
-.temperature				= "Temperature", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
+.temperature				= "Temperatur", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
 .celcius				= "°C",
-.seconds				= "seconds",
-.radio_info				= "Radio infos",
+.seconds				= "sekunden",
+.radio_info				= "Radio Infos",
 .temperature_calibration		= "Temp Cal"
 };
 /********************************************************************
