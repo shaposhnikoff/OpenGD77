@@ -73,7 +73,7 @@ For the latest information and discussions, please refer to the development and 
   * [Main Menu](#main-menu)
     * [Zone](#zone)
     * [RSSI](#rssi)
-    * [Battery](#battery)
+    * [Radio Info](#radio-info)
     * [Last Heard](#last-heard)
     * [Firmware Info](#firmware-info)
     * [Options](#options)
@@ -920,15 +920,24 @@ DMR signals by their nature, because they are pulse transmissions, **will not** 
 
 *The number in the top right of the display is for debugging purposes and is the number reported by the receiver hardware.*
 
-### Battery
+### Radio Info
 
-Displays the current battery voltage and percentage.
+Displays the current battery voltage and percentage, battery voltage history and radio temperature.
 
-![battery status screen](media/battery.png)
+![battery status screen](media/battery-level.png)
+
+- Press the **Down** key to display the radio temperature.
+
+![temperature screen](media/temperature.png)
 
 - Press the **Down** key to display the battery usage chart. This shows the history of battery voltage on an hourly basis.
 
-![battery history graph](media/battery-graph.png)
+![battery history graph](media/battery-graph-fill.png)
+
+- Press the **Left** or **Right** to alternate from fill to line style.
+
+![battery history graph](media/battery-graph-line.png)
+
 
 ### Last Heard
 
@@ -1394,7 +1403,7 @@ On receipt of a *Private Call*, the radio will display this screen:
 
 ![accept screen](media/accept-call.png)
 
-With the callers *Callsign* and *Name* (or ID) displayed.
+With the caller's *Callsign* and *Name* (or ID) displayed.
 
 To accept the call, and configure the radio to return the Private call back to the calling station:
 
@@ -1403,7 +1412,7 @@ To accept the call, and configure the radio to return the Private call back to t
 
 If you accept the Private Call, the radio will be switched into **Private Call mode**, ready for transmission.
 
-The callers' ID or Name is shown *e.g.*:
+The caller's ID or Name is shown *e.g.*:
 
 ![private call screen](media/private-call.png)
 
