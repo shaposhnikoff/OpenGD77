@@ -185,7 +185,10 @@ const stringsTable_t frenchLanguage =
 .celcius				= "°C",
 .seconds				= "secondes",
 .radio_info				= "Infos radio",
-.temperature_calibration		= "Etal. t°"
+.temperature_calibration		= "Etal. t°",
+.pin_code				= "Code Pin",
+.please_confirm				= "Confirmez", // MaxLen: 15
+.scanning				= "Scanning"
 };
 /********************************************************************
  *

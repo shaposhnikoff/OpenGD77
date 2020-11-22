@@ -185,7 +185,10 @@ const stringsTable_t englishLanguage =
 .celcius				= "°C",
 .seconds				= "seconds",
 .radio_info				= "Radio info",
-.temperature_calibration		= "Temp Cal"
+.temperature_calibration		= "Temp Cal",
+.pin_code				= "Pin Code",
+.please_confirm				= "Please confirm", // MaxLen: 15
+.scanning				= "Scanning"
 };
 /********************************************************************
  *

@@ -190,6 +190,9 @@ typedef struct
    const char *seconds;
    const char *radio_info;
    const char *temperature_calibration;
+   const char *pin_code;
+   const char *please_confirm;
+   const char *scanning;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];
