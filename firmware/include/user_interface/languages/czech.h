@@ -20,7 +20,7 @@
  * Translators: OK2HAD
  *
  *
- * Rev: 4.1
+ * Rev: 4.2
  */
 #ifndef USER_INTERFACE_LANGUAGES_CZECH_H_
 #define USER_INTERFACE_LANGUAGES_CZECH_H_
@@ -49,7 +49,7 @@ const stringsTable_t czechLanguage =
 .channel_details		= "Kan·l Detail", // MaxLen: 16
 .language				= "Jazyk", // MaxLen: 16
 .new_contact			= "Nov˝ Kontakt", // MaxLen: 16
-.contact_list			= "Kontakt list", // MaxLen: 16
+.dmr_contacts				= "DMR Kontakt", // MaxLen: 16
 .hotspot_mode			= "Hotspot-MÛd", // MaxLen: 16
 .contact_details		= "Kontakt Detail", // MaxLen: 16
 .built					= "SestavenÌ", // MaxLen: 16
@@ -57,7 +57,7 @@ const stringsTable_t czechLanguage =
 .keypad					= "Kl·vesa", // MaxLen: 12 (with .ptt)
 .ptt					= "PTT", // MaxLen: 12 (with .keypad)
 .locked					= "ZamÄen˝", // MaxLen: 15
-.press_blue_plus_star	= "StlaÄit ModrÈ + *", // MaxLen: 19
+.press_blue_plus_star	= "StlaÄ ModrÈ + *", // MaxLen: 19
 .to_unlock				= "Odemknout", // MaxLen: 19
 .unlocked				= "Odemknuto", // MaxLen: 15
 .power_off				= "VypÌnanÌ...", // MaxLen: 16
@@ -111,8 +111,8 @@ const stringsTable_t czechLanguage =
 .beep_volume			= "ZvukKl·ves", // MaxLen: 16 (with ':' + -24..6 + 'dB')
 .dmr_mic_gain			= "DMR mic", // MaxLen: 16 (with ':' + -33..12 + 'dB')
 .fm_mic_gain				= "FM mic", // MaxLen: 16 (with ':' + 0..31)
-.key_long				= "Drûet", // MaxLen: 11 (with ':' + x.xs fitted)
-.key_repeat				= "Znovu", // MaxLen: 11 (with ':' + x.xs fitted)
+.key_long				= "Drûet Kl·v.", // MaxLen: 11 (with ':' + x.xs fitted)
+.key_repeat				= "Znovu StlaÄ", // MaxLen: 11 (with ':' + x.xs fitted)
 .dmr_filter_timeout		= "asDMRFiltru", // MaxLen: 16 (with ':' + 1..90 + 's')
 .brightness				= "Jas", // MaxLen: 16 (with ':' + 0..100 + '%')
 .brightness_off			= "Min. Jas", // MaxLen: 16 (with ':' + 0..100 + '%')
@@ -139,8 +139,8 @@ const stringsTable_t czechLanguage =
 .all_call				= "Vöechny Ìsla", // MaxLen: 16
 .tone_scan				= "CTCSS Sken",//// MaxLen: 16
 .low_battery			= "SLAB¡ BATERIE!",//// MaxLen: 16
-.Auto					= "Automat.", // MaxLen 16 (with .mode + ':') 
-.manual					= "ManualnÌ",  // MaxLen 16 (with .mode + ':') 
+.Auto					= "Auto", // MaxLen 16 (with .mode + ':') 
+.manual					= "Manualnù",  // MaxLen 16 (with .mode + ':') 
 .ptt_toggle				= "PTT põepnout", // MaxLen 16 (with ':' + .on or .off)
 .private_call_handling		= "Soukr.Vol·nÌ", // MaxLen 16 (with ':' + .on ot .off)
 .stop					= "stop", // Maxlen 16 (with ':' + .scan_mode)
@@ -156,7 +156,7 @@ const stringsTable_t czechLanguage =
 .audio_prompt				= "V˝zvaZvuk",// Maxlen 16 (with ':' + .silent, .normal, .beep or .voice_prompt_level_1)
 .silent                                 = "Tich˝", // Maxlen 16 (with : + audio_prompt)
 .normal                                 = "Norm·l", // Maxlen 16 (with : + audio_prompt)
-.beep					= "PÌp·", // Maxlen 16 (with : + audio_prompt)
+.beep					= "PÌp·nÌ", // Maxlen 16 (with : + audio_prompt)
 .voice_prompt_level_1					= "Hlas-1", // Maxlen 16 (with : + audio_prompt)
 .transmitTalkerAlias	= "VysÌlat TA", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
@@ -173,7 +173,7 @@ const stringsTable_t czechLanguage =
 .dmr_filter				= "DMR Filtr",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "CC Filtr", // MaxLen: 12 (with ':' + settings: .on or .off)
 .dmr_ts_filter			= "TS Filtr", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dtmf_contact_list			= "DTMF list", // Maxlen: 16
+.dtmf_contact_list			= "FM DTMF kontakt", // Maxlen: 16
 .channel_power				= "V˝konKan·l", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
 .channel_power_from_master	= "RuÄnù",// Displayed if per-channel power is not enabled  the .channel_power
 .set_quickkey				= "Nast.ModrÈ + 1-9", // MaxLen: 16
@@ -181,14 +181,14 @@ const stringsTable_t czechLanguage =
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
 .pwr					= "V˝kon",
 .user_power				= "Uûiv.V˝kon",
-.temperature				= "Temperature", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
+.temperature				= "Teplota", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
 .celcius				= "∞C",
-.seconds				= "seconds",
-.radio_info				= "Radio infos",
-.temperature_calibration		= "Temp Cal",
-.pin_code				= "Pin Code",
-.please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning"
+.seconds				= "sekund",
+.radio_info				= "R·dio info",
+.temperature_calibration		= "Tepl.Kal",
+.pin_code				= "KÛd PIN",
+.please_confirm				= "ProsÌm potvrte", // MaxLen: 15
+.scanning				= "Skenuji"
 };
 /********************************************************************
  *

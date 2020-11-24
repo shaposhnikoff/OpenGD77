@@ -47,7 +47,7 @@ typedef struct
    const char *channel_details;// Menu number  12
    const char *language;// Menu number  13
    const char *new_contact;// Menu number  14
-   const char *contact_list;// Menu number  15
+   const char *dmr_contacts;// Menu number  15
    const char *contact_details;// Menu number 16
    const char *hotspot_mode;// Menu number 17
 
