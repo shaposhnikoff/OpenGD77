@@ -20,7 +20,7 @@
  * Translators: DG3GSP, DL4LEX
  *
  *
- * Rev: 4.2
+ * Rev: 4.3
  */
 #ifndef USER_INTERFACE_LANGUAGES_GERMAN_H_
 #define USER_INTERFACE_LANGUAGES_GERMAN_H_
@@ -49,7 +49,7 @@ const stringsTable_t germanLanguage =
 .channel_details		= "Kanal Details", // MaxLen: 16
 .language				= "Sprache", // MaxLen: 16
 .new_contact			= "Neuer Kontakt", // MaxLen: 16
-.dmr_contacts				= "DMR contacts", // MaxLen: 16
+.dmr_contacts				= "DMR Kontakte", // MaxLen: 16
 .hotspot_mode			= "Hotspot", // MaxLen: 16
 .contact_details		= "Kontakt Details", // MaxLen: 16
 .built					= "Erstellt", // MaxLen: 16
@@ -173,7 +173,7 @@ const stringsTable_t germanLanguage =
 .dmr_filter				= "DMR Filter",// MaxLen: 12 (with ':' + settings: "TG" or "Ct" or "RxG")
 .dmr_cc_filter			= "CC Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
 .dmr_ts_filter			= "TS Filter", // MaxLen: 12 (with ':' + settings: .on or .off)
-.dtmf_contact_list			= "FM DTMF contacts", // Maxlen: 16
+.dtmf_contact_list			= "FM DTMF Kontakte", // Maxlen: 16
 .channel_power				= "Ch Leist.", //Displayed as "Ch Power:" + .channel_power_from_master or "Ch Power:"+ power text e.g. "Power:500mW" . Max total length 16
 .channel_power_from_master	= "Master",// Displayed if per-channel power is not enabled  the .channel_power
 .set_quickkey				= "Quickkey belegen", // MaxLen: 16
@@ -187,8 +187,9 @@ const stringsTable_t germanLanguage =
 .radio_info				= "Radio Infos",
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
-.please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning"
+.please_confirm				= "Bitte bestätigen", // MaxLen: 15
+.scanning				= "Scanning",
+.overwrite_qm				= "Überschreiben?" //Maxlen: 14 chars
 };
 /********************************************************************
  *

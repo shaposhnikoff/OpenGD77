@@ -193,6 +193,7 @@ typedef struct
    const char *pin_code;
    const char *please_confirm;
    const char *scanning;
+   const char *overwrite_qm;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

@@ -188,7 +188,8 @@ const stringsTable_t turkishLanguage =
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning"
+.scanning				= "Scanning",
+.overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
 };
 /********************************************************************
  *

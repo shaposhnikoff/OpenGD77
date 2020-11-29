@@ -188,7 +188,8 @@ const stringsTable_t frenchLanguage =
 .temperature_calibration		= "Etal. t°",
 .pin_code				= "Code Pin",
 .please_confirm				= "Confirmez", // MaxLen: 15
-.scanning				= "Scanning"
+.scanning				= "Scanning",
+.overwrite_qm				= "Écraser ?" //Maxlen: 14 chars
 };
 /********************************************************************
  *

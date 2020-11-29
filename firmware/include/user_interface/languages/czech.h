@@ -188,7 +188,8 @@ const stringsTable_t czechLanguage =
 .temperature_calibration		= "Tepl.Kal",
 .pin_code				= "Kód PIN",
 .please_confirm				= "Prosím potvrte", // MaxLen: 15
-.scanning				= "Skenuji"
+.scanning				= "Skenuji",
+.overwrite_qm				= "P›epsat ?" //Maxlen: 14 chars
 };
 /********************************************************************
  *
