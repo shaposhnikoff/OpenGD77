@@ -77,7 +77,6 @@ For the latest information and discussions, please refer to the development and 
     * [Last Heard](#last-heard)
     * [Firmware Info](#firmware-info)
     * [Options](#options)
-      * [Fact Reset](#fact-reset)
       * [Band Limits](#band-limits)
       * [Key long](#key-long)
       * [Key rpt](#key-rpt)
@@ -968,12 +967,6 @@ This menu controls various settings specific to the firmware
 
 ![options menu](media/options-screen.png)
 
-#### Fact Reset<!-- linebreak -->
-
-Resets the radio to **default settings**, and reads the CPS VFO A values from the codeplug into the VFO screen. Power cycle the radio to apply.
-
-**The radio can also be set to the default settings by holding the Blue (Function) key while turning on the radio.**
-
 #### Band Limits<!-- linebreak -->
 
 This setting controls the frequency band ranges inside which the radio can transmit.
@@ -1305,7 +1298,7 @@ For both Tx and Rx CTCSS / DCS.
 
 #### Bandwidth<!-- linebreak -->
 
-Sets the *Rx and Tx bandwidth* in **FM** mode to either **25Khz** or *12.5Khz**.
+Sets the *Rx and Tx bandwidth* in **FM** mode to either **25Khz** or **12.5Khz**.
 
 #### RX<!-- linebreak -->
 
