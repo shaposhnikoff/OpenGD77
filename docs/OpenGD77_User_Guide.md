@@ -917,8 +917,6 @@ Displays a signal strength indicator showing the numerical **RSSI** value in **d
 
 DMR signals by their nature, because they are pulse transmissions, **will not** give accurate RSSI values.
 
-*The number in the top right of the display is for debugging purposes and is the number reported by the receiver hardware.*
-
 ### Radio Info
 
 Displays the current battery voltage and percentage, battery voltage history and radio temperature.
