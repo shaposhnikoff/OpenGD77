@@ -100,12 +100,12 @@ const stringsTable_t czechLanguage =
 .off					= "Vyp", // MaxLen: 16 (with ':' + .timeout_beep, .calibration or .band_limits)
 .zone_skip				= "Skip v ZÛnù", // MaxLen: 16 (with ':' + .yes or .no) 
 .all_skip				= "Skip ve Vöe", // MaxLen: 16 (with ':' + .yes or .no)
-.yes					= "Ano", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
-.no						= "Ne", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
+.yes					= "Ano", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
+.no						= "Ne", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
 .rx_group				= "Rx Group", // MaxLen: 16 (with ':' and codeplug group name)
 .on						= "Zap", // MaxLen: 16 (with ':' + .calibration or .band_limits)
 .timeout_beep			= "TÛnLimit", // MaxLen: 16 (with ':' + .off or 5..20)
-.factory_reset			= "⁄pln˝-Reset", // MaxLen: 16 (with ':' + .yes or .no)
+.UNUSED_1				= "",
 .calibration			= "Kalibrace", // MaxLen: 16 (with ':' + .on or .off)
 .band_limits			= "OmezitP·smo", // MaxLen: 16 (with ':' + .on or .off)
 .beep_volume			= "ZvukKl·ves", // MaxLen: 16 (with ':' + -24..6 + 'dB')
@@ -188,7 +188,7 @@ const stringsTable_t czechLanguage =
 .temperature_calibration		= "Tepl.Kal",
 .pin_code				= "KÛd PIN",
 .please_confirm				= "ProsÌm potvrte", // MaxLen: 15
-.scanning				= "Skenuji",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Põepsat ?" //Maxlen: 14 chars
 };
 /********************************************************************

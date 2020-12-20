@@ -105,7 +105,7 @@ const stringsTable_t catalanLanguage=
 .rx_group				= "RX Grup",
 .on						= "Sí",
 .timeout_beep			= "Avís T.O.T.",
-.factory_reset			= "Reinici fabr.",
+.UNUSED_1				= "",
 .calibration			= "Calibració",
 .band_limits			= "Límit bandes",
 .beep_volume			= "Volum tons",
@@ -188,7 +188,7 @@ const stringsTable_t catalanLanguage=
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
 };
 /********************************************************************

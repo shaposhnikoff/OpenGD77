@@ -100,12 +100,12 @@ const stringsTable_t turkishLanguage =
 .off					= "Kapal“", // MaxLen: 16 (with ':' + .timeout_beep, .calibration or .band_limits)
 .zone_skip				= "Bölge Atla", // MaxLen: 16 (with ':' + .yes or .no) 
 .all_skip				= "Tüm Atla", // MaxLen: 16 (with ':' + .yes or .no)
-.yes					= "Evet", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
-.no					= "Hay“r", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
+.yes					= "Evet", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
+.no					= "Hay“r", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
 .rx_group				= "Rx Grp", // MaxLen: 16 (with ':' and codeplug group name)
 .on					= "Aç", // MaxLen: 16 (with ':' + .calibration or .band_limits)
 .timeout_beep				= "Zaman bip", // MaxLen: 16 (with ':' + .off or 5..20)
-.factory_reset				= "Fabrika Ayarlar“", // MaxLen: 16 (with ':' + .yes or .no)
+.UNUSED_1				= "",
 .calibration				= "Kalibrasyon", // MaxLen: 16 (with ':' + .on or .off)
 .band_limits				= "Band S“n“r“", // MaxLen: 16 (with ':' + .on or .off)
 .beep_volume				= "Bip sesi", // MaxLen: 16 (with ':' + -24..6 + 'dB')
@@ -188,7 +188,7 @@ const stringsTable_t turkishLanguage =
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
 };
 /********************************************************************

@@ -100,12 +100,12 @@ const stringsTable_t germanLanguage =
 .off					= "Aus", // MaxLen: 16 (with ':' + .timeout_beep, .calibration or .band_limits)
 .zone_skip				= "Skip Zone", // MaxLen: 16 (with ':' + .yes or .no) 
 .all_skip				= "Skip Alle", // MaxLen: 16 (with ':' + .yes or .no)
-.yes					= "Ja", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
-.no						= "Nein", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
+.yes					= "Ja", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
+.no						= "Nein", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
 .rx_group				= "Rx Gruppe", // MaxLen: 16 (with ':' and codeplug group name)
 .on						= "Ein", // MaxLen: 16 (with ':' + .calibration or .band_limits)
 .timeout_beep			= "Timeout-Ton", // MaxLen: 16 (with ':' + .off or 5..20)
-.factory_reset			= "Werks-Reset", // MaxLen: 16 (with ':' + .yes or .no)
+.UNUSED_1				= "",
 .calibration			= "Kalibration", // MaxLen: 16 (with ':' + .on or .off)
 .band_limits			= "Band Limit", // MaxLen: 16 (with ':' + .on or .off)
 .beep_volume			= "Beep Lauts", // MaxLen: 16 (with ':' + -24..6 + 'dB')
@@ -188,7 +188,7 @@ const stringsTable_t germanLanguage =
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Bitte bestätigen", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Überschreiben?" //Maxlen: 14 chars
 };
 /********************************************************************

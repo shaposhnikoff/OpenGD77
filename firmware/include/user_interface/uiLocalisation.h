@@ -109,7 +109,7 @@ typedef struct
    const char *rx_group;
    const char *on;
    const char *timeout_beep;
-   const char *factory_reset;
+   const char *UNUSED_1;
    const char *calibration;
    const char *band_limits;
    const char *beep_volume;
@@ -192,7 +192,7 @@ typedef struct
    const char *temperature_calibration;
    const char *pin_code;
    const char *please_confirm;
-   const char *scanning;
+   const char *vfo_freq_bind_mode;
    const char *overwrite_qm;
 } stringsTable_t;
 

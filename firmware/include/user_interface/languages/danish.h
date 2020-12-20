@@ -105,7 +105,7 @@ const stringsTable_t danishLanguage =
 .rx_group				= "Rx Grp",
 .on						= "On",
 .timeout_beep			= "Timeout bip",
-.factory_reset			= "Fabriksinst",
+.UNUSED_1				= "",
 .calibration			= "Justering",
 .band_limits			= "Åben FRQ",
 .beep_volume			= "Bip vol",
@@ -188,7 +188,7 @@ const stringsTable_t danishLanguage =
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
 };
 /********************************************************************

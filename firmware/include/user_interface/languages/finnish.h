@@ -101,12 +101,12 @@ const stringsTable_t finnishLanguage =
 .off			= "Ei", 		// MaxLen: 16 (with ':' + .timeout_beep, .calibration or .band_limits)
 .zone_skip		= "Skippaa zone", 	// MaxLen: 16 (with ':' + .yes or .no) 
 .all_skip		= "Skippaa kaik", 	// MaxLen: 16 (with ':' + .yes or .no)
-.yes			= "Joo", 		// MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
-.no			= "Ei", 		// MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
+.yes			= "Joo", 		// MaxLen: 16 (with ':' + .zone_skip, .all_skip)
+.no			= "Ei", 		// MaxLen: 16 (with ':' + .zone_skip, .all_skip)
 .rx_group		= "Rx Ryhmä", 		// MaxLen: 16 (with ':' and codeplug group name)
 .on			= "On", 		// MaxLen: 16 (with ':' + .calibration or .band_limits)
 .timeout_beep		= "Aikakatk beep", 	// MaxLen: 16 (with ':' + .off or 5..20)
-.factory_reset		= "TehdasAsetus", 	// MaxLen: 16 (with ':' + .yes or .no)
+.UNUSED_1				= "",
 .calibration		= "Kalibriointi", 	// MaxLen: 16 (with ':' + .on or .off)
 .band_limits		= "Bändi Rajoitu", 	// MaxLen: 16 (with ':' + .on or .off)
 .beep_volume		= "NäpÄäniVoim", 	// MaxLen: 16 (with ':' + -24..6 + 'dB')
@@ -188,7 +188,7 @@ const stringsTable_t finnishLanguage =
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
 };
 /********************************************************************

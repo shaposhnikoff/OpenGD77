@@ -105,7 +105,7 @@ const stringsTable_t portuguesLanguage =
 .rx_group				= "Rx Grp",
 .on						= "On",
 .timeout_beep			= "Beep timeout",
-.factory_reset			= "Fact Reset",
+.UNUSED_1				= "",
 .calibration			= "Calibracao",
 .band_limits			= "Limites banda",
 .beep_volume			= "Volume beep",
@@ -188,7 +188,7 @@ const stringsTable_t portuguesLanguage =
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
 };
 /********************************************************************

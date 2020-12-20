@@ -100,12 +100,12 @@ const stringsTable_t slovenianLanguage =
 .off					= "Izk", // MaxLen: 16 (with ':' + .timeout_beep, .calibration or .band_limits)
 .zone_skip				= "Preskoci cono", // MaxLen: 16 (with ':' + .yes or .no) 
 .all_skip				= "Preskoci vse", // MaxLen: 16 (with ':' + .yes or .no)
-.yes					= "Da", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
-.no					    = "Ne", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
+.yes					= "Da", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
+.no					    = "Ne", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
 .rx_group				= "Rx Sku", // MaxLen: 16 (with ':' and codeplug group name)
 .on					    = "Vkl", // MaxLen: 16 (with ':' + .calibration or .band_limits)
 .timeout_beep			= "Timeout pisk", // MaxLen: 16 (with ':' + .off or 5..20)
-.factory_reset			= "Tovarnisko", // MaxLen: 16 (with ':' + .yes or .no)
+.UNUSED_1				= "",
 .calibration			= "Kalibracija", // MaxLen: 16 (with ':' + .on or .off)
 .band_limits			= "Omejitve pasu", // MaxLen: 16 (with ':' + .on or .off)
 .beep_volume			= "Glas Piska", // MaxLen: 16 (with ':' + -24..6 + 'dB')
@@ -188,7 +188,7 @@ const stringsTable_t slovenianLanguage =
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
 };
 /********************************************************************

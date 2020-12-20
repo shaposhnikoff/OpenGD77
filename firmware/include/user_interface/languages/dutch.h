@@ -100,12 +100,12 @@ const stringsTable_t dutchLanguage =
 .off						= "Uit", // MaxLen: 16 (with ':' + .timeout_beep, .calibration or .band_limits)
 .zone_skip					= "Zone Oversl", // MaxLen: 16 (with ':' + .yes or .no)
 .all_skip					= "Alles Overs", // MaxLen: 16 (with ':' + .yes or .no)
-.yes						= "Ja", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
-.no							= "Neen", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
+.yes						= "Ja", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
+.no							= "Neen", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
 .rx_group					= "Rx Grp", // MaxLen: 16 (with ':' and codeplug group name)
 .on							= "Aan", // MaxLen: 16 (with ':' + .calibration or .band_limits)
 .timeout_beep				= "Timeout Piep", // MaxLen: 16 (with ':' + .off or 5..20)
-.factory_reset				= "Fact Reset", // MaxLen: 16 (with ':' + .yes or .no)
+.UNUSED_1				= "",
 .calibration				= "Calibratie", // MaxLen: 16 (with ':' + .on or .off)
 .band_limits				= "Band Lim. ", // MaxLen: 16 (with ':' + .on or .off)
 .beep_volume				= "Piepvolume", // MaxLen: 16 (with ':' + -24..6 + 'dB')
@@ -188,7 +188,7 @@ const stringsTable_t dutchLanguage =
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
 };
 /********************************************************************

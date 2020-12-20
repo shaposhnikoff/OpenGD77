@@ -105,7 +105,7 @@ const stringsTable_t frenchLanguage =
 .rx_group				= "Grp Rx",
 .on					= "On",
 .timeout_beep				= "Son timeout",
-.factory_reset				= "Ràz Usine",
+.UNUSED_1				= "",
 .calibration				= "Étalonnage",
 .band_limits				= "Lim. Bandes",
 .beep_volume				= "Vol. bip",
@@ -188,7 +188,7 @@ const stringsTable_t frenchLanguage =
 .temperature_calibration		= "Etal. t°",
 .pin_code				= "Code Pin",
 .please_confirm				= "Confirmez", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Liées",
 .overwrite_qm				= "Écraser ?" //Maxlen: 14 chars
 };
 /********************************************************************

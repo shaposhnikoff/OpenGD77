@@ -100,12 +100,12 @@ const stringsTable_t spanishLanguage =
 .off					= "Off", // MaxLen: 16 (with ':' + .timeout_beep, .calibration or .band_limits)
 .zone_skip				= "Saltar zona", // MaxLen: 16 (with ':' + .yes or .no) 
 .all_skip				= "Saltar todo", // MaxLen: 16 (with ':' + .yes or .no)
-.yes					= "Si", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
-.no						= "No", // MaxLen: 16 (with ':' + .zone_skip, .all_skip or .factory_reset)
+.yes					= "Si", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
+.no						= "No", // MaxLen: 16 (with ':' + .zone_skip, .all_skip)
 .rx_group				= "Grp.RX", // MaxLen: 16 (with ':' and codeplug group name)
 .on						= "On", // MaxLen: 16 (with ':' + .calibration or .band_limits)
 .timeout_beep			= "Sonido TOT", // MaxLen: 16 (with ':' + .off or 5..20)
-.factory_reset			= "Reset fabrica", // MaxLen: 16 (with ':' + .yes or .no)
+.UNUSED_1				= "",
 .calibration			= "Calibración", // MaxLen: 16 (with ':' + .on or .off)
 .band_limits			= "Limite Banda", // MaxLen: 16 (with ':' + .on or .off)
 .beep_volume			= "Vol. BEEP", // MaxLen: 16 (with ':' + -24..6 + 'dB')
@@ -188,7 +188,7 @@ const stringsTable_t spanishLanguage =
 .temperature_calibration		= "Temp Cal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Please confirm", // MaxLen: 15
-.scanning				= "Scanning",
+.vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
 };
 /********************************************************************
