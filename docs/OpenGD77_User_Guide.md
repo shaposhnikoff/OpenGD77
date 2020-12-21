@@ -77,7 +77,6 @@ For the latest information and discussions, please refer to the development and 
     * [Last Heard](#last-heard)
     * [Firmware Info](#firmware-info)
     * [Options](#options)
-      * [Fact Reset](#fact-reset)
       * [Band Limits](#band-limits)
       * [Key long](#key-long)
       * [Key rpt](#key-rpt)
@@ -918,8 +917,6 @@ Displays a signal strength indicator showing the numerical **RSSI** value in **d
 
 DMR signals by their nature, because they are pulse transmissions, **will not** give accurate RSSI values.
 
-*The number in the top right of the display is for debugging purposes and is the number reported by the receiver hardware.*
-
 ### Radio Info
 
 Displays the current battery voltage and percentage, battery voltage history and radio temperature.
@@ -967,12 +964,6 @@ To view details on Github, append the code to <https://github.com/rogerclarkmelb
 This menu controls various settings specific to the firmware
 
 ![options menu](media/options-screen.png)
-
-#### Fact Reset<!-- linebreak -->
-
-Resets the radio to **default settings**, and reads the CPS VFO A values from the codeplug into the VFO screen. Power cycle the radio to apply.
-
-**The radio can also be set to the default settings by holding the Blue (Function) key while turning on the radio.**
 
 #### Band Limits<!-- linebreak -->
 
@@ -1305,7 +1296,7 @@ For both Tx and Rx CTCSS / DCS.
 
 #### Bandwidth<!-- linebreak -->
 
-Sets the *Rx and Tx bandwidth* in **FM** mode to either **25Khz** or *12.5Khz**.
+Sets the *Rx and Tx bandwidth* in **FM** mode to either **25Khz** or **12.5Khz**.
 
 #### RX<!-- linebreak -->
 
