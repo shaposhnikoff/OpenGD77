@@ -20,7 +20,7 @@
  * Translators: IU4LEG, IZ2EIB
  *
  *
- * Rev: 2020.11.06 IZ2EIB  & IU4LEG 
+ * Rev: 2020.12.20 IZ2EIB  & IU4LEG 
  */
 #ifndef USER_INTERFACE_LANGUAGES_ITALIAN_H_
 #define USER_INTERFACE_LANGUAGES_ITALIAN_H_
@@ -181,15 +181,15 @@ const stringsTable_t italianLanguage =
 .info					= "Info", // MaxLen: 16 (with ':' + .off or.ts or .pwr or .both)
 .pwr					= "Potenza",
 .user_power				= "Volt PA",
-.temperature				= "Temperature", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
+.temperature				= "Temperatura", // MaxLen: 16 (with ':' + .celcius or .fahrenheit)
 .celcius				= "°C",
-.seconds				= "seconds",
-.radio_info				= "Radio infos",
-.temperature_calibration		= "Temp Cal",
-.pin_code				= "Pin Code",
-.please_confirm				= "Please confirm", // MaxLen: 15
-.vfo_freq_bind_mode			= "Freq. Bind",
-.overwrite_qm				= "Overwrite ?" //Maxlen: 14 chars
+.seconds				= "secondi",
+.radio_info				= "Info radio",
+.temperature_calibration		= "Cal Temp",
+.pin_code				= "Codice PIN",
+.please_confirm				= "Conferma, prego", // MaxLen: 15
+.vfo_freq_bind_mode			= "Abbina Freq.",
+.overwrite_qm				= "Sovrascrivi ?" //Maxlen: 14 chars
 };
 /********************************************************************
  *
