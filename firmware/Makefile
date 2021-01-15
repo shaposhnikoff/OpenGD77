@@ -2,18 +2,29 @@
 ## export PATH=$ARM_TOOLCHAIN_PATH:$PATH
 ## mkdir build && cd build && make -f ../Makefile -j8
 ##
+## if needed, you can specify some options like this:
+## make -f ../Makefile -j8 RADIO=GD77s VERBOSE=1
+##
 
-RADIO := GD77
+ifndef RADIO
+	RADIO := GD77
+endif
 
 ##
 ## Selection of MCU platform and baseband
 ##
 ifeq ("$(RADIO)","GD77")
 	DEFINES  := -DPLATFORM_GD77
+	BIN2SGL_OPT  :=
 else ifeq ("$(RADIO)","GD77s")
 	DEFINES  := -DPLATFORM_GD77S
+	BIN2SGL_OPT  := -m GD-77S
 else ifeq ("$(RADIO)","DM1801")
 	DEFINES  := -DPLATFORM_DM1801
+	BIN2SGL_OPT  := -m DM-1801
+else ifeq ("$(RADIO)","RD5R")
+	DEFINES  := -DPLATFORM_RD5R
+	BIN2SGL_OPT  := -m RD-5R
 endif
 
 ##
@@ -212,7 +223,7 @@ OpenGD77.sgl: firmware.axf
 	$(ECHO) 'Performing post-build steps'
 	$(Q)$(SZ) $(BUILD_DIR)/firmware.axf
 	$(Q)$(CP) -v -O binary $(BUILD_DIR)/firmware.axf $(BUILD_DIR)/firmware.bin
-	$(Q) ../tools/bin2sgl $(BUILD_DIR)/firmware.bin
+	$(Q) ../tools/bin2sgl $(BIN2SGL_OPT) $(BUILD_DIR)/firmware.bin
 	$(Q) mv $(BUILD_DIR)/firmware.sgl $(BUILD_DIR)/OpenGD77.sgl
 #../tools/GD77_FirmwareLoader "firmware.bin" GUI
 # checksum -p MK22FN512xxx12 -d "firmware.bin"
