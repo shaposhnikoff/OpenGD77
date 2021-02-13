@@ -357,6 +357,12 @@
 							<inputType id="com.crt.advproject.compiler.input.318169612" superClass="com.crt.advproject.compiler.input"/>
 						</tool>
 					</fileInfo>
+					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.1367170586" name="i2s.c" rcbsApplicability="disable" resourcePath="source/interfaces/i2s.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.475830819.528571396">
+						<tool id="com.crt.advproject.gcc.exe.debug.475830819.528571396" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.475830819">
+							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.1892457509" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="true" value="gnu.c.optimization.level.size" valueType="enumerated"/>
+							<inputType id="com.crt.advproject.compiler.input.2039956381" superClass="com.crt.advproject.compiler.input"/>
+						</tool>
+					</fileInfo>
 					<fileInfo id="com.crt.advproject.config.exe.debug.1021312312.1679550635" name="fw_codeplug.c" rcbsApplicability="disable" resourcePath="source/functions/codeplug.c" toolsToInvoke="com.crt.advproject.gcc.exe.debug.475830819.953729492">
 						<tool id="com.crt.advproject.gcc.exe.debug.475830819.953729492" name="MCU C Compiler" superClass="com.crt.advproject.gcc.exe.debug.475830819">
 							<option id="com.crt.advproject.gcc.exe.debug.option.optimization.level.885880514" name="Optimization Level" superClass="com.crt.advproject.gcc.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.size" valueType="enumerated"/>
@@ -3492,7 +3498,7 @@
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
 		<sdkName>SDK_2.x_MK22FN512xxx12</sdkName>
-		<sdkVersion>2.7.0</sdkVersion>
+		<sdkVersion>2.8.2</sdkVersion>
 		<sdkComponents>middleware.freertos.MK22F51212;middleware.template_application.freertos.MK22F51212;platform.drivers.sai_edma.MK22F51212;device.MK22F51212_CMSIS.MK22F51212;platform.Include_common.MK22F51212;platform.Include_core_cm4.MK22F51212;platform.drivers.clock.MK22F51212;platform.drivers.common.MK22F51212;platform.drivers.dmamux.MK22F51212;platform.drivers.edma.MK22F51212;platform.drivers.sai.MK22F51212;platform.drivers.i2c_freertos.MK22F51212;platform.drivers.i2c.MK22F51212;platform.drivers.dspi_freertos.MK22F51212;platform.drivers.dspi.MK22F51212;platform.drivers.port.MK22F51212;platform.drivers.gpio.MK22F51212;platform.drivers.dac.MK22F51212;platform.drivers.adc16.MK22F51212;middleware.usb.device_stack.MK22F51212;middleware.usb.device_config_template.MK22F51212;middleware.usb.stack_common.MK22F51212;device.MK22F51212_startup.MK22F51212;</sdkComponents>
 		<package>MK22FN512VLL12</package>
 		<core>cm4</core>

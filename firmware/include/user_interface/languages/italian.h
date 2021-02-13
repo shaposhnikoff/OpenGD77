@@ -189,7 +189,8 @@ const stringsTable_t italianLanguage =
 .pin_code				= "Codice PIN",
 .please_confirm				= "Conferma, prego", // MaxLen: 15
 .vfo_freq_bind_mode			= "Abbina Freq.",
-.overwrite_qm				= "Sovrascrivi ?" //Maxlen: 14 chars
+.overwrite_qm				= "Sovrascrivi ?", //Maxlen: 14 chars
+.eco_level					= "Economizzarre"
 };
 /********************************************************************
  *

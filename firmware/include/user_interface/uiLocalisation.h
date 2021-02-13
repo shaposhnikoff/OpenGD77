@@ -18,7 +18,12 @@
 #ifndef _OPENGD77_UILOCALISATION_H_
 #define _OPENGD77_UILOCALISATION_H_
 
+#if defined(LANGUAGE_BUILD_JAPANESE)
+#define NUM_LANGUAGES 2
+#else
 #define NUM_LANGUAGES 15
+#endif
+
 #define LANGUAGE_TEXTS_LENGTH 17
 
 typedef struct
@@ -179,7 +184,7 @@ typedef struct
    const char *dmr_ts_filter;
    const char *dtmf_contact_list;// Menu number 18
    const char *channel_power;// "Ch Power" for the Channel details screen
-   const char *from_master;// "Master" for the power setting on the Channel details screen
+   const char *from_master;// "Master" for the power or squelch setting on the Channel details screen
    const char *set_quickkey;
    const char *dual_watch;
    const char *info;
@@ -194,12 +199,16 @@ typedef struct
    const char *please_confirm;
    const char *vfo_freq_bind_mode;
    const char *overwrite_qm;
+   const char *eco_level;// Economy / Power saving level
 } stringsTable_t;
 
 extern const stringsTable_t languages[];
 extern const stringsTable_t *currentLanguage;
 
 enum languageNamesOrder  { 	englishLanguageName = 0,
+#if defined(LANGUAGE_BUILD_JAPANESE)
+							japaneseLanguageName,
+#else
 							catalanLanguageName,
 							danishLanguageName,
 							frenchLanguageName,
@@ -213,7 +222,9 @@ enum languageNamesOrder  { 	englishLanguageName = 0,
 							czechLanguageName,
 							nederlandsDutchLanguageName,
 							slovenianLanguageName,
-							portuguesBrazilLanguageName};
+							portuguesBrazilLanguageName
+#endif
+};
 
 extern const int LANGUAGE_DISPLAY_ORDER[];
 

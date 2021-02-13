@@ -158,7 +158,7 @@ const stringsTable_t germanLanguage =
 .normal                                 = "Normal", // Maxlen 16 (with : + audio_prompt)
 .beep					= "Töne", // Maxlen 16 (with : + audio_prompt)
 .voice_prompt_level_1					= "Stimme L1", // Maxlen 16 (with : + audio_prompt)
-.transmitTalkerAlias	= "TAlias senden", // Maxlen 16 (with : + .on or .off)
+.transmitTalkerAlias	= "TA senden", // Maxlen 16 (with : + .on or .off)
 .squelch_VHF			= "VHF Squelch",// Maxlen 16 (with : + XX%)
 .squelch_220			= "220 Squelch",// Maxlen 16 (with : + XX%)
 .squelch_UHF			= "UHF Squelch", // Maxlen 16 (with : + XX%)
@@ -189,7 +189,8 @@ const stringsTable_t germanLanguage =
 .pin_code				= "Pin Code",
 .please_confirm				= "Bitte bestätigen", // MaxLen: 15
 .vfo_freq_bind_mode			= "Freq. Bind",
-.overwrite_qm				= "Überschreiben?" //Maxlen: 14 chars
+.overwrite_qm				= "Überschreiben?", //Maxlen: 14 chars
+.eco_level					= "Eco Level"
 };
 /********************************************************************
  *

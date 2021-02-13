@@ -189,7 +189,8 @@ const stringsTable_t frenchLanguage =
 .pin_code				= "Code Pin",
 .please_confirm				= "Confirmez", // MaxLen: 15
 .vfo_freq_bind_mode			= "Freq. Liées",
-.overwrite_qm				= "Écraser ?" //Maxlen: 14 chars
+.overwrite_qm				= "Écraser ?", //Maxlen: 14 chars
+.eco_level					= "Eco Level"
 };
 /********************************************************************
  *

@@ -25,8 +25,8 @@
 #include "fsl_dspi.h"
 
 
-#define SPI_0_BAUDRATE (1500000U) /*! Transfer baudrate - 1500k */
-#define SPI_1_BAUDRATE (500000U) /*! Transfer baudrate - 500k */
+#define SPI_0_BAUDRATE (3000000U) /*! Transfer baudrate - 3MHz */
+#define SPI_1_BAUDRATE (3000000U) /*! Transfer baudrate - 3MHz */
 
 #define SPI_DATA_LENGTH (256)         /*! Transfer size */
 extern uint8_t spi_masterReceiveBuffer_SPI0[SPI_DATA_LENGTH];
