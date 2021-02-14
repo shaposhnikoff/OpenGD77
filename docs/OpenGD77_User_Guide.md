@@ -92,6 +92,7 @@ For the latest information and discussions, please refer to the development and 
       * [Hotspot](#hotspot)
       * [TA Tx](#ta-tx)
       * [Allow PC](#allow-pc)
+      * [Eco Level](#eco-level)
     * [Display Options](#display-options)
       * [Brightness](#brightness)
       * [Min Bright](#min-bright)
@@ -129,6 +130,8 @@ For the latest information and discussions, please refer to the development and 
 	  * [Channel Power](#ch-power)
       * [Accepting and saving the changes to the channel](#accepting-and-saving-the-changes-to-the-channel)
     * [Credits Screen](#credits-screen)
+	
+  * [User definabale number key functionality QuickKeys](#user-definabale-number-key-functionality-quickkeys) 	
   * [Making and receiving DMR Private Calls](#making-and-receiving-dmr-private-calls)
     * [To make a Private Call](#to-make-a-private-call)
     * [To Receive a Private Call](#to-receive-a-private-call)
@@ -1105,6 +1108,27 @@ The text of **Line1** and **Line2** from the "**Boot Item**" CPS screen is used 
 Allows **Private Calls** to be received.
 
 
+#### Eco Level<!-- linebreak -->
+
+Controls the power saving when the radio is idle, (when the radio is receiving but there is no signal.)
+
+Level 0: No power saving measures are used. 
+
+For other values refer to the table below
+
+Level | Rx duty cycle | Entry delay (secs) | Average latency (ms) | Current (mA)
+----- | ------------- | ------------------ | -------------------  | ------------
+0  | N/A | N/A | N/A | 62
+1  | 1:1 | 10 | 320  | 40
+2  | 1:2 | 8 | 420  | 33
+3  | 1:4 | 6 | 600  | 27
+4  | 1:8 | 2 | 900  | 23
+
+
+Current was measured on a GD-77 with a full battery, with in Rx with no signal, and no backlight.
+
+
+
 <div style="page-break-after: always; break-after: page;"></div>
 
 ### Display Options
@@ -1380,6 +1404,28 @@ Details of the creators of firmware.
 
 If other developers contribute to the development effort they will be added to this screen, and the addition details will be viewed by pressing the **Down** arrow to scroll the text.
 
+
+<div style="page-break-after: always; break-after: page;"></div>
+
+
+## User definabale number key functionality QuickKeys
+
+The number keys  0 - 9 can be defined by the operator to perform many functions available in the menu system, including opening specific menu screens, or adjusting individual settings e.g. increase display backlight brightness
+
+To define a QuickKey navigate to a Menu, or menu screen, and press SK2 + NUMBER (0 to 9). 
+If the radio is displaying the main Menu the key will be assigned to open the screen for the currently selected menu item.
+If the radio is on a screen like Last Heard, then the key will be assigned to open that screen.
+If the radio is on a screen with sub-options e.g. the Display Options screen, then the operator will be prompted to specify whether the QuickKey should action the Left or Right arrow or the Green menu / OK.
+If Left or Right is selected e.g. to increase or decrease a value, this will be the function of that QuickKey e.g. Increase display backlight brightness.
+Selecting OK, will assign the QuickKey to open the menu to the selected option, but will not change it.
+
+After a QuickKey has been saved, the radio will beep to acknowledge the action has been saved.
+
+To play a QuickKey, the radio must be on the Channel or VFO screen, and is actioned by pressing the same key combination SK2 + Number
+
+A QuickKey can be cleared by doing a Long press of SK2 + NUMBER (0 - 9). The radio will beep with descending followed by ascending beep to confirm the QuickKey combination has been cleared.
+
+If a QuickKey has been asssigned to a function, it can't be re-assigned to another function until it has been cleared.
 
 <div style="page-break-after: always; break-after: page;"></div>
 
