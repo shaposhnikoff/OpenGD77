@@ -131,7 +131,7 @@ For the latest information and discussions, please refer to the development and 
       * [Accepting and saving the changes to the channel](#accepting-and-saving-the-changes-to-the-channel)
     * [Credits Screen](#credits-screen)
 	
-  * [User definabale number key functionality QuickKeys](#user-definabale-number-key-functionality-quickkeys) 	
+  * [User definable number key functionality QuickKeys](#user-definable-number-key-functionality-quickkeys) 	
   * [Making and receiving DMR Private Calls](#making-and-receiving-dmr-private-calls)
     * [To make a Private Call](#to-make-a-private-call)
     * [To Receive a Private Call](#to-receive-a-private-call)
@@ -1408,7 +1408,7 @@ If other developers contribute to the development effort they will be added to t
 <div style="page-break-after: always; break-after: page;"></div>
 
 
-## User definabale number key functionality QuickKeys
+## User definable number key functionality QuickKeys
 
 The number keys  0 - 9 can be defined by the operator to perform many functions available in the menu system, including opening specific menu screens, or adjusting individual settings e.g. increase display backlight brightness
 
