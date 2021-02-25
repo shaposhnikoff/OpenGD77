@@ -190,7 +190,8 @@ const stringsTable_t frenchLanguage =
 .please_confirm				= "Confirmez", // MaxLen: 15
 .vfo_freq_bind_mode			= "Freq. Liées",
 .overwrite_qm				= "Écraser ?", //Maxlen: 14 chars
-.eco_level					= "Eco Level"
+.eco_level				= "Niveau Eco",
+.buttons				= "Boutons"
 };
 /********************************************************************
  *

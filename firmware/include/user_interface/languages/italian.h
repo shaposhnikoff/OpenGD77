@@ -20,7 +20,7 @@
  * Translators: IU4LEG, IZ2EIB
  *
  *
- * Rev: 2020.12.20 IZ2EIB  & IU4LEG 
+ * Rev: 2021.02.13 IZ2EIB  & IU4LEG
  */
 #ifndef USER_INTERFACE_LANGUAGES_ITALIAN_H_
 #define USER_INTERFACE_LANGUAGES_ITALIAN_H_
@@ -190,7 +190,8 @@ const stringsTable_t italianLanguage =
 .please_confirm				= "Conferma, prego", // MaxLen: 15
 .vfo_freq_bind_mode			= "Abbina Freq.",
 .overwrite_qm				= "Sovrascrivi ?", //Maxlen: 14 chars
-.eco_level					= "Economizzarre"
+.eco_level				= "Grado consumi",
+.buttons				= "Buttons"
 };
 /********************************************************************
  *
