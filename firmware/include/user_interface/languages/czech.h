@@ -190,7 +190,8 @@ const stringsTable_t czechLanguage =
 .please_confirm				= "Prosím potvrte", // MaxLen: 15
 .vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "P›epsat ?", //Maxlen: 14 chars
-.eco_level					= "Eco Level"
+.eco_level				= "Eco Level",
+.buttons				= "Buttons"
 };
 /********************************************************************
  *

@@ -20,7 +20,7 @@
  * Translators: DG3GSP, DL4LEX
  *
  *
- * Rev: 4.3
+ * Rev: 4.4
  */
 #ifndef USER_INTERFACE_LANGUAGES_GERMAN_H_
 #define USER_INTERFACE_LANGUAGES_GERMAN_H_
@@ -185,12 +185,13 @@ const stringsTable_t germanLanguage =
 .celcius				= "°C",
 .seconds				= "sekunden",
 .radio_info				= "Radio Infos",
-.temperature_calibration		= "Temp Cal",
+.temperature_calibration		= "Temp Kal",
 .pin_code				= "Pin Code",
 .please_confirm				= "Bitte bestätigen", // MaxLen: 15
 .vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Überschreiben?", //Maxlen: 14 chars
-.eco_level					= "Eco Level"
+.eco_level				= "Eco Stufe",
+.buttons				= "Buttons"
 };
 /********************************************************************
  *
