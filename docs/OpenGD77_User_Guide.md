@@ -102,7 +102,8 @@ For the latest information and discussions, please refer to the development and 
       * [Colour mode](#colour-mode)
       * [Order](#order)
       * [Contact](#contact)
-	  * [Battery units](#battery-units)
+      * [Battery units](#battery-units)
+      * [Info](#info)
     * [Sound Options](#sound-options)
       * [Timeout beep](#timeout-beep)
       * [Beep volume](#beep-volume)
@@ -1211,6 +1212,16 @@ Options are
 - **%**:  Shows the battery percentage *e.g.* **0%** to **100%**.
 - **V**:  Shows the battery voltage *e.g.* **8.1V**.
 
+
+#### Info<!-- linebreak -->
+Controls whether the Timeslot or Power level is displayed in bold to indicate that an override is currently applied to that setting
+
+Options are
+
+- **Off**:  Neither the TS or Power is shown in bold to indicate an override
+- **TS**:   The TS is shown in bold if the TS has been overridden by either pressing the * (Star) key or by a TS override on a Contact / TG
+- **Pwr**:  The Power is shown in bold if a channel specific power setting is currently being applied which overrides the master power setting
+- **Both**: Equivalent to both the TS and Pwr options as described above.
 
 <div style="page-break-after: always; break-after: page;"></div>
 
