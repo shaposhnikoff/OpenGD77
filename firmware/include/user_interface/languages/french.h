@@ -191,7 +191,8 @@ const stringsTable_t frenchLanguage =
 .vfo_freq_bind_mode			= "Freq. Liées",
 .overwrite_qm				= "Écraser ?", //Maxlen: 14 chars
 .eco_level				= "Niveau Eco",
-.buttons				= "Boutons"
+.buttons				= "Boutons",
+.leds					= "DELs"
 };
 /********************************************************************
  *

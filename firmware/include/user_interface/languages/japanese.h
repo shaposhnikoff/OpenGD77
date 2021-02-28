@@ -191,7 +191,8 @@ const stringsTable_t japaneseLanguage =
 .vfo_freq_bind_mode			= "TRFÚÝÄÞ³",
 .overwrite_qm				= "¶·¶´OK?", //Maxlen: 14 chars
 .eco_level				= "Eco Level",
-.buttons				= "Buttons"
+.buttons				= "Buttons",
+.leds					= "LEDs"
 };
 /********************************************************************
  *

@@ -20,7 +20,7 @@
  * Translators: DG3GSP, DL4LEX
  *
  *
- * Rev: 4.4
+ * Rev: 4.5
  */
 #ifndef USER_INTERFACE_LANGUAGES_GERMAN_H_
 #define USER_INTERFACE_LANGUAGES_GERMAN_H_
@@ -191,7 +191,8 @@ const stringsTable_t germanLanguage =
 .vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "Überschreiben?", //Maxlen: 14 chars
 .eco_level				= "Eco Stufe",
-.buttons				= "Buttons"
+.buttons				= "Tasten",
+.leds					= "LEDs"
 };
 /********************************************************************
  *

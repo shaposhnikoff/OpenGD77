@@ -201,6 +201,7 @@ typedef struct
    const char *overwrite_qm;
    const char *eco_level;// Economy / Power saving level
    const char *buttons;
+   const char *leds;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

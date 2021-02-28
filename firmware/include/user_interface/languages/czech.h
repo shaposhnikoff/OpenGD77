@@ -191,7 +191,8 @@ const stringsTable_t czechLanguage =
 .vfo_freq_bind_mode			= "Freq. Bind",
 .overwrite_qm				= "P›epsat ?", //Maxlen: 14 chars
 .eco_level				= "Eco Level",
-.buttons				= "Buttons"
+.buttons				= "Buttons",
+.leds					= "LEDs"
 };
 /********************************************************************
  *

@@ -191,7 +191,8 @@ const stringsTable_t italianLanguage =
 .vfo_freq_bind_mode			= "Abbina Freq.",
 .overwrite_qm				= "Sovrascrivi ?", //Maxlen: 14 chars
 .eco_level				= "Grado consumi",
-.buttons				= "Buttons"
+.buttons				= "Buttons",
+.leds					= "LEDs"
 };
 /********************************************************************
  *
