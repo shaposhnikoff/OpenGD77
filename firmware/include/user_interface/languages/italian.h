@@ -20,7 +20,7 @@
  * Translators: IU4LEG, IZ2EIB
  *
  *
- * Rev: 2021.02.13 IZ2EIB  & IU4LEG
+ * Rev: 2021.02.28 IZ2EIB  & IU4LEG
  */
 #ifndef USER_INTERFACE_LANGUAGES_ITALIAN_H_
 #define USER_INTERFACE_LANGUAGES_ITALIAN_H_
@@ -191,8 +191,8 @@ const stringsTable_t italianLanguage =
 .vfo_freq_bind_mode			= "Abbina Freq.",
 .overwrite_qm				= "Sovrascrivi ?", //Maxlen: 14 chars
 .eco_level				= "Grado consumi",
-.buttons				= "Buttons",
-.leds					= "LEDs"
+.buttons				= "Bottoni",
+.leds					= "LED"
 };
 /********************************************************************
  *
