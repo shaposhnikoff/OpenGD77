@@ -1758,7 +1758,7 @@ As the firmware supports **Talker Alias**, you might find this sufficient. The f
 
 #### Boot tune<!-- linebreak -->
 
-The tones are in pitch, delay pairs. So **38,6** means play **tone 38** (*932Hz F#*) for **6 time periods**.
+The tones are in pitch, delay pairs. So **38,6** means play **tone 38** (*932Hz A#*) for **6 time periods**.
 
 ##### Boot Tune in Morse code<!-- linebreak -->
 
