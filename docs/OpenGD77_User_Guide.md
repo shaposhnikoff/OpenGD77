@@ -772,7 +772,7 @@ During transmission the *Talk Timer* either counts up or down, depending on whet
 
 If a timeout is defined in the CPS, or adjusted in the *Channel Details* screen, the *Talk Timer* will count down and when the timeout period is reached a beep will play and the TX will stop.
 
-In **DMR Tier2** the timer will not start counting until the repeater becomes active.
+When transmitting to a DMR repeater which is not currently transmitting, the timer will not start counting until the repeater becomes active.
 
 During FM and DMR Tx, a *VU meter* is displayed showing the input microphone level, in the form of a bar graph across the top of the screen.
 
@@ -812,7 +812,7 @@ The VFO screen has a special scanning mode, which is entered by performing a **L
 
 When scan mode is enabled, the display changes to show the *lower* and *upper* scan limit frequencies, instead of showing the Tx frequency.
 
-Initially the scan limits will be set to the current VFO Rx frequency, minus 1Mhz to plus 1Mhz.
+Initially the scan limits will be set to the current VFO Rx frequency to the current VFO Rx frequency plus 1Mhz.
 
 Scan limits can be changed by manually entering both frequencies *e.g.*
 
@@ -1160,10 +1160,11 @@ Lower values result in dark text, higher values result in darker text but the ba
 
 Controls the display backlight operation
 
-- **Auto** Display backlight will turn on automatically when triggered by various events *e.g.* Rx of signal, or pressing a key or button.
-- **Squelch** Display backlight remains illuminated while the FM squelch is open or there is a valid DMR signal, and also remains illuminated for the specified backlight timeout after the squelch has closed. The minimum timeout period in this mode is 5 seconds.
-- **Manual** Display backlight is toggled on and off by pressing the **Black** button (**SK1**).
-- **None** Display backlight will not illuminate under any condition.
+- **Auto** The backlight will turn on automatically when triggered by various events *e.g.* Rx of signal, or pressing a key or button.
+- **Squelch** The backlight remains illuminated while the FM squelch is open or there is a valid DMR signal, and also remains illuminated for the specified backlight timeout after the squelch has closed. The minimum timeout period in this mode is 5 seconds.
+- **Manual** The backlight is toggled on and off by pressing the **Black** button (**SK1**).
+- **Buttons** The backlight will only illuminate if a button or key is pressed (including the PTT)
+- **None** The backlight will not illuminate under any condition.
 
 #### Timeout<!-- linebreak -->
 
@@ -1222,6 +1223,15 @@ Options are
 - **TS**:   The TS is shown as cTS1 or CTS2 if the TS has been overridden by either pressing the * (Star) key or by a TS override on a Contact / TG
 - **Pwr**:  The Power is shown in bold if a channel specific power setting is currently being applied which overrides the master power setting
 - **Both**: Equivalent to both the TS and Pwr options as described above.
+
+#### Leds<!-- linebreak -->
+
+Controls whether the red / green (tx / rx signal) LED illuminates 
+
+Options are 
+
+- **On**: The LED(s) will illuminate as normal e.g. Red LED will illuminate when transmitting, Green LED will illuminate when there is a signal
+- **Off**: The LED(s) will not illuminate
 
 <div style="page-break-after: always; break-after: page;"></div>
 
