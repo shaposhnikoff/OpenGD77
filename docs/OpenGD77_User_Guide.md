@@ -1120,15 +1120,22 @@ For other values refer to the table below
 Level | Rx duty cycle | Entry delay (secs) | Average latency (ms) | Current (mA)
 ----- | ------------- | ------------------ | -------------------  | ------------
 0  | N/A | N/A | N/A | 62
-1  | 1:1 | 10 | 320  | 40
+1  | 1:1 | 10 | 320  | 47
 2  | 1:2 | 8 | 420  | 33
 3  | 1:4 | 6 | 600  | 27
 4  | 1:8 | 2 | 900  | 23
 
+Default is level 1.
+
+Level 2,3 and 4 power down the C6000 DMR chip, which can cause problems with DMR and beep audio on some radios.
+
+This is caused by an internal bug in the C6000 chip. If your radio has problem with DMR or beep audio on level 2 and above, please use Level 0 or Level 1.
 
 Current was measured on a GD-77 with a full battery, with in Rx with no signal, and no backlight.
 
+Current consumption increases as battery voltage descreases because of the switching regulators used in these radios.
 
+Average Rx idle power consumption of the GD-77 is 500mW.
 
 <div style="page-break-after: always; break-after: page;"></div>
 
