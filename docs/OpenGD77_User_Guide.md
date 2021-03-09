@@ -92,6 +92,7 @@ For the latest information and discussions, please refer to the development and 
       * [Hotspot](#hotspot)
       * [TA Tx](#ta-tx)
       * [Allow PC](#allow-pc)
+      * [User Power)(#user-power)
       * [Eco Level](#eco-level)
     * [Display Options](#display-options)
       * [Brightness](#brightness)
@@ -351,10 +352,10 @@ Changing the power on **either** VFO also changes the **Master** power setting.
 - Press **Function** + **Right** to increase the power.
 - Press **Function** + **Left** to decrease the power.
 
-Power can be set to **50mW**, **250mW**, **500mW**, **750mW**, **1W**, **2W**, **3W**, **4W**, **5W** and **5W++**.
+Power can be set to **50mW**, **250mW**, **500mW**, **750mW**, **1W**, **2W**, **3W**, **4W**, **5W** and **+W-**.
 
-The **5W++** power setting configures the PA drive to its **maximum value**.
-**This power setting is designed for emergency use only, and results in around 5.5W being produced on 70cm and 7W on 2m.**
+The **+W-** power setting configures the PA drive to the value set in the Options screen "User Power" setting.
+
 To access this power setting, select the **5W** power setting, then press and hold **Function** + **Right**
 
 *Notes:*
@@ -1107,6 +1108,16 @@ The text of **Line1** and **Line2** from the "**Boot Item**" CPS screen is used 
 #### Allow PC<!-- linebreak -->
 
 Allows **Private Calls** to be received.
+
+#### User Power<!-- linebreak -->
+
+Allows the operator to set the hardware PA drive level to any value between 0 and the maximum (4100)
+
+The transmit power produced by this setting will vary depending on the band, and also individual radio performance.
+
+Power output on VHF is much higher than it is on UHF for the same PA drive value.
+
+To use the User Power value, the power setting much be set to the +W- option. See the "Controlling PA power" section.
 
 
 #### Eco Level<!-- linebreak -->
