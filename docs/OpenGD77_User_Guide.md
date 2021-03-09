@@ -92,7 +92,7 @@ For the latest information and discussions, please refer to the development and 
       * [Hotspot](#hotspot)
       * [TA Tx](#ta-tx)
       * [Allow PC](#allow-pc)
-      * [User Power)(#user-power)
+      * [User Power](#user-power)
       * [Eco Level](#eco-level)
     * [Display Options](#display-options)
       * [Brightness](#brightness)
