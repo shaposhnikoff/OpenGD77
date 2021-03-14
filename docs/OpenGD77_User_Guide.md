@@ -704,6 +704,8 @@ To make the squelch change permanent to a Channel, press **Function** + **Green*
 
 The tone will also be audible through the speaker.
 
+<div style="page-break-after: always; break-after: page;"></div>
+
 ### VFO specific functionality
 
 The VFO displays both the TX and RX frequency at all times.
@@ -750,6 +752,8 @@ Use this method to set different TX and RX frequencies. For example, this can be
 - If different TX and RX frequencies are set, and the currently selected input is set to RX, changing the RX frequency will also change the TX frequency, and the difference between the RX and TX frequency will be maintained if possible.
 
 The only case where the frequency difference **will not be maintained** is if the TX frequency goes outside of the range of frequencies supported by the radio hardware.
+
+<div style="page-break-after: always; break-after: page;"></div>
 
 ## Monitor mode
 
@@ -1851,15 +1855,15 @@ When Voice prompts are loaded into the radio, the Sound Options->Prompt: setting
 
 ### Hardware problems and other errata
 
-* Some older GD-77 radios appear to have a hardware fault in the C6000 DMR chip. This problem is manifest by the Beep not working when the beep level is set very low e.g. -12dB. The DMR audio can also cease to work. Increaseing the Beep volume to 0dB can sometimes fix this problem, but there it has not be possible to find a firmware solution to this hardware bug, which works 100% of the time on the older radios
+* Some older GD-77 radios appear to have a hardware fault in the C6000 DMR chip. This problem is manifest by the Beep not working when the beep level is set very low e.g. -12dB. The DMR audio can also cease to work. Increasing the Beep volume to 0dB can sometimes fix this problem, but there it has not be possible to find a firmware solution to this hardware bug, which works 100% of the time on the older radios
 * Internal voltage regulation on the Baofeng RD-5R is quite bad. It can result in the LEDs and display backlight flickering during DMR transmission on higher power settings, and is noticable even on low power settings.
 * Internal voltage smoothing on the Baofeng DM-1801 and RD-5R is not as good as on the GD-77 and this can result in noise being heard during Rx
 * Because the firmware has features like display backlight dimming and changing the beep volume, which are not available in the official firmware for any of the supported radios, some individual radios can have problems. However so that 99%+ of users can enjoy these features they have been retained in the firmware.
-* The USB connection to all radios is suseptable to RF injection during transmission. Also RF injection has been known to interfere with the PTT control when connecting via long external PTT cables.  This is not a problem in the firmware and needs to be dealt with by the radio's operator fitting the appropriate screening and RF filtering to USB and PTT cables etc, if they are used during transmission.
-* The RD-5R is very suseptable to RF injection, which makes it almost impossible to be used as a hotspot.
+* The USB connection to all radios is susceptible to RF injection during transmission. Also RF injection has been known to interfere with the PTT control when connecting via long external PTT cables.  This is not a problem in the firmware and needs to be dealt with by the radio's operator fitting the appropriate screening and RF filtering to USB and PTT cables etc, if they are used during transmission.
+* The RD-5R is very susceptible to RF injection, which makes it almost impossible to be used as a hotspot.
 * RF injection to the mic audio input is also common when using external microphones, and results in "mototboating" on DMR, unless appropriate filtering is used
 * The cases of these radios are not shielded and they are also sensitive to nearby high power radio transmissions on unrelated frequencies.
-* The RF chip (AT1846S) used in these radios is also suseptable to high power transmissions on unrelated frequencies, via the antenna RF input, even if the case is shielded.
+* The RF chip (AT1846S) used in these radios is also susceptible to high power transmissions on unrelated frequencies, via the antenna RF input, even if the case is shielded.
 * The RF chip is not very good at detecting individual CTCSS tones, and has a fairly wide pass band of around 10Hz
-* The RD-RF RF design is compromised by its small form factor and lacks separate RF stages for VHF and UHF, which results in much worse RF performance than the GD-77 and DM-1801
+* The RD-5R RF design is compromised by its small form factor and lacks separate RF stages for VHF and UHF, which results in much worse RF performance than the GD-77 and DM-1801
 * The 100Mhz FM broadcast feature of the RD-5R is not supported, because no data sheet is available for the separate RF chip used for this.
