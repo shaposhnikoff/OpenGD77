@@ -159,6 +159,7 @@ For the latest information and discussions, please refer to the development and 
 	  * [Melodies and Notes](#melodies-and-notes)
 	  * [Boot Image](#boot-image)
    * [Voice prompts](#voice-prompts)
+   * [Hardware problems and other errata](#hardware-problems-and-other-errata)
 <!-- /TOC -->
 
 
