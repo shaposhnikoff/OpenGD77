@@ -158,6 +158,7 @@ For the latest information and discussions, please refer to the development and 
 	    * [Boot Tune in Morse code](#boot-tune-in-morse-code)
 	  * [Melodies and Notes](#melodies-and-notes)
 	  * [Boot Image](#boot-image)
+   * [Voice prompts](#voice-prompts)
 <!-- /TOC -->
 
 
@@ -175,6 +176,7 @@ The photos will be updated when the firmware in a particular area stabilises.
 
 The intention of the project is to create a fully featured non-commercial firmware that entirely replaces the Radioddity GD-77, and Baofeng DM-1801 factory firmware.
 This firmware is specifically designed for **Amateur Radio** use, and has features not available in the official firmware.
+The license forbids commerial use of this firmware.
 
 *Note:*
 
@@ -182,7 +184,6 @@ This firmware is specifically designed for **Amateur Radio** use, and has featur
 - SMS message Tx and Rx **are not currently supported**, but may possibly be supported in the future.
 - Scan Lists **are not supported** because Channel or Zone scan feature provides almost identical functionality.
 - Privacy and Encryption **will not** be supported, as its illegal for Amateur Radio use, developers in some countries (*e.g.* Australia) are now legally required to put a back door access into any encryption systems at the request of the government, hence effectively making it illegal or impossible to develop systems that contain encryption.
-- Battery saving features have **not been developed**, hence this firmware causes much higher battery usage in Rx when there is no signal. Some battery saving features may be developed in the future, however some advanced features like the S meter will not be possible if battery saving is implemented.
 
 
 ### Download links and other resources
@@ -210,13 +211,13 @@ The firmware can be installed onto the following radios
 - Baofeng DM-1801 (also known as Baofeng DM-860)
 - Baofeng RD-5R (also known as Baofeng DM-5R Tier 2)
 
-Firmware can be installed using the *FirmwareLoader.exe* in the firmware release web page, using the *Firmware loader* included in the [CPS software](#cps-software), or by using the firmware update tool provided by Radioddity or Baofeng, with their official firmware update packages. This can be downloaded from Radioddity’s website [radioddity.com](https://radioddity.com/) (*see Radioddity’s documentation on how to use their firmware update tool)*
+The firmware can easy be loaded using the [CPS software](#cps-software), or by using the firmware update tool provided by Radioddity or Baofeng, with their official firmware update packages. This can be downloaded from Radioddity’s website [radioddity.com](https://radioddity.com/) (*see Radioddity’s documentation on how to use their firmware update tool)*
 
-Installation of the firmware is undertaken at the owners own risk, but the official firmware can usually be reloaded onto the radio if the user has problems with the firmware, **as long as the operator takes a full backup of their radio using the OpenGD77 CPS immediately after the firmware has been installed** (see [*backup section*](#backup-before-you-do-anything-else))
+Installation of the firmware is undertaken at the owners own risk, but the official firmware can usually be reloaded onto the radio if the user has problems with the firmware, **as long as the operator takes a full backup of their radio using the CPS immediately after the firmware has been installed** (see [*backup section*](#backup-before-you-do-anything-else))
 
 *Note:*
 
-- The official Radioddity CPS PC software is not compatible with the firmware, and the **OpenGD77 CPS** should be used instead. This can be downloaded from the link show in [section 1.1](#download-links-and-other-resources) of this guide. This CPS must also be used for the Baofeng DM-1801
+- The official Radioddity CPS PC software is not compatible with the firmware, and the **OpenGD77 CPS** should be used instead. This can be downloaded from the link show in [section 1.1](#download-links-and-other-resources) of this guide. This CPS must also be used for the Baofeng DM-1801 and RD-5R
 
 ### Transferring data to Radio
 
@@ -1614,6 +1615,9 @@ Additionally holding the **Blue** (**SK2**) button as well as the **Up AND Down*
 
 On the GD-77S, which does not have a keypad, holding **Blue** (**SK2**) **AND Orange** resets **any** custom boot melody.
 
+If voice prompts are loaded into the radio, the Sound Options -> Prompt: setting will be set to Voice.
+If voice prompts are not loaded the Prompt: will be set to Beep.
+
 
 <div style="page-break-after: always; break-after: page;"></div>
 
@@ -1834,3 +1838,27 @@ For reference, the tone values in OpenGD77 are:
 #### Boot Image<!-- linebreak -->
 
 The Boot image needs to be **128 wide x 64 pixels high**. It needs to be in **1-bit png format**. (*An indexed image format that is not supported by some modern paint programs*).
+<!-- linebreak -->
+### Voice prompts<!-- linebreak -->
+
+Voice prompts are not part of the radio firmware, and have to be loaded separately using the CPS.
+They are stored in the Flash memory chip.
+
+When Voice prompts are loaded into the radio, the Sound Options->Prompt: setting is automatically changed to "Voice" so that the prompts become immediatly operational.
+
+
+
+### Hardware problems and other errata
+
+* Some older GD-77 radios appear to have a hardware fault in the C6000 DMR chip. This problem is manifest by the Beep not working when the beep level is set very low e.g. -12dB. The DMR audio can also cease to work. Increaseing the Beep volume to 0dB can sometimes fix this problem, but there it has not be possible to find a firmware solution to this hardware bug, which works 100% of the time on the older radios
+* Internal voltage regulation on the Baofeng RD-5R is quite bad. It can result in the LEDs and display backlight flickering during DMR transmission on higher power settings, and is noticable even on low power settings.
+* Internal voltage smoothing on the Baofeng DM-1801 and RD-5R is not as good as on the GD-77 and this can result in noise being heard during Rx
+* Because the firmware has features like display backlight dimming and changing the beep volume, which are not available in the official firmware for any of the supported radios, some individual radios can have problems. However so that 99%+ of users can enjoy these features they have been retained in the firmware.
+* The USB connection to all radios is suseptable to RF injection during transmission. Also RF injection has been known to interfere with the PTT control when connecting via long external PTT cables.  This is not a problem in the firmware and needs to be dealt with by the radio's operator fitting the appropriate screening and RF filtering to USB and PTT cables etc, if they are used during transmission.
+* The RD-5R is very suseptable to RF injection, which makes it almost impossible to be used as a hotspot.
+* RF injection to the mic audio input is also common when using external microphones, and results in "mototboating" on DMR, unless appropriate filtering is used
+* The cases of these radios are not shielded and they are also sensitive to nearby high power radio transmissions on unrelated frequencies.
+* The RF chip (AT1846S) used in these radios is also suseptable to high power transmissions on unrelated frequencies, via the antenna RF input, even if the case is shielded.
+* The RF chip is not very good at detecting individual CTCSS tones, and has a fairly wide pass band of around 10Hz
+* The RD-RF RF design is compromised by its small form factor and lacks separate RF stages for VHF and UHF, which results in much worse RF performance than the GD-77 and DM-1801
+* The 100Mhz FM broadcast feature of the RD-5R is not supported, because no data sheet is available for the separate RF chip used for this.
