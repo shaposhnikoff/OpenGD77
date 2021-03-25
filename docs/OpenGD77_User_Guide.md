@@ -105,6 +105,7 @@ For the latest information and discussions, please refer to the development and 
       * [Contact](#contact)
       * [Battery units](#battery-units)
       * [Info](#info)
+      * [Leds](#leds)
     * [Sound Options](#sound-options)
       * [Timeout beep](#timeout-beep)
       * [Beep volume](#beep-volume)
@@ -1239,12 +1240,13 @@ Options are
 
 
 #### Info<!-- linebreak -->
+
 Controls whether the Timeslot or Power level is displayed in bold to indicate that an override is currently applied to that setting
 
 Options are
 
 - **Off**:  Neither the TS or Power is shown in bold to indicate an override
-- **TS**:   The TS is shown as cTS1 or CTS2 if the TS has been overridden by either pressing the * (Star) key or by a TS override on a Contact / TG
+- **TS**:   The TS is shown (in bold) as **TS*x*** or **cS*x*** if the TS has been overridden by either pressing the * (Star) key, or by a TS override on a Contact / TG (displayed as cS*x* in this case)
 - **Pwr**:  The Power is shown in bold if a channel specific power setting is currently being applied which overrides the master power setting
 - **Both**: Equivalent to both the TS and Pwr options as described above.
 
