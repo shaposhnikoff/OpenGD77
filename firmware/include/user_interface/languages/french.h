@@ -192,7 +192,8 @@ const stringsTable_t frenchLanguage =
 .overwrite_qm				= "Écraser ?", //Maxlen: 14 chars
 .eco_level				= "Niveau Eco",
 .buttons				= "Boutons",
-.leds					= "DELs"
+.leds					= "DELs",
+.scan_step_time			= "Scan step"
 };
 /********************************************************************
  *

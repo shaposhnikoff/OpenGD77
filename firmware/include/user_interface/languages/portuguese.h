@@ -192,7 +192,8 @@ const stringsTable_t portuguesLanguage =
 .overwrite_qm				= "Overwrite ?", //Maxlen: 14 chars
 .eco_level				= "Eco Level",
 .buttons				= "Buttons",
-.leds					= "LEDs"
+.leds					= "LEDs",
+.scan_step_time			= "Scan step"
 };
 /********************************************************************
  *

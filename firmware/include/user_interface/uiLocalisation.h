@@ -202,6 +202,7 @@ typedef struct
    const char *eco_level;// Economy / Power saving level
    const char *buttons;
    const char *leds;
+   const char *scan_step_time;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

@@ -192,7 +192,8 @@ const stringsTable_t germanLanguage =
 .overwrite_qm				= "Überschreiben?", //Maxlen: 14 chars
 .eco_level				= "Eco Stufe",
 .buttons				= "Tasten",
-.leds					= "LEDs"
+.leds					= "LEDs",
+.scan_step_time			= "Scan step"
 };
 /********************************************************************
  *

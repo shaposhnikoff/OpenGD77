@@ -192,7 +192,8 @@ const stringsTable_t dutchLanguage =
 .overwrite_qm				= "Overschrijven?", //Maxlen: 14 chars
 .eco_level				= "Eco Niveau",
 .buttons				= "Knoppen",
-.leds					= "leds"
+.leds					= "leds",
+.scan_step_time			= "Scan step"
 };
 /********************************************************************
  *

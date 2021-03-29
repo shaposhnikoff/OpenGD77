@@ -192,7 +192,8 @@ const stringsTable_t italianLanguage =
 .overwrite_qm				= "Sovrascrivi ?", //Maxlen: 14 chars
 .eco_level				= "Grado consumi",
 .buttons				= "Bottoni",
-.leds					= "LED"
+.leds					= "LED",
+.scan_step_time			= "Scan step"
 };
 /********************************************************************
  *
