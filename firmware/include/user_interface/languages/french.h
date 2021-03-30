@@ -193,7 +193,7 @@ const stringsTable_t frenchLanguage =
 .eco_level				= "Niveau Eco",
 .buttons				= "Boutons",
 .leds					= "DELs",
-.scan_step_time			= "Scan step"
+.scan_dwell_time		= "Scan dwell"
 };
 /********************************************************************
  *

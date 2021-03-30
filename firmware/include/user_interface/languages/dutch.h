@@ -193,7 +193,7 @@ const stringsTable_t dutchLanguage =
 .eco_level				= "Eco Niveau",
 .buttons				= "Knoppen",
 .leds					= "leds",
-.scan_step_time			= "Scan step"
+.scan_dwell_time		= "Scan dwell"
 };
 /********************************************************************
  *

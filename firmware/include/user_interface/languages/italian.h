@@ -193,7 +193,7 @@ const stringsTable_t italianLanguage =
 .eco_level				= "Grado consumi",
 .buttons				= "Bottoni",
 .leds					= "LED",
-.scan_step_time			= "Scan step"
+.scan_dwell_time		= "Scan dwell"
 };
 /********************************************************************
  *

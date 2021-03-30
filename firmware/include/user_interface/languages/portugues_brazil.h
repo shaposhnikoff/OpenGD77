@@ -193,7 +193,7 @@ const stringsTable_t portuguesBrazilLanguage =
 .eco_level				= "Eco Level",
 .buttons				= "Buttons",
 .leds					= "LEDs",
-.scan_step_time			= "Scan step"
+.scan_dwell_time		= "Scan dwell"
 };
 /*********************************************************************
  *
