@@ -24,7 +24,7 @@
 #include "fsl_i2c.h"
 
 
-#define I2C_BAUDRATE (400000) /* 400K */
+#define I2C_BAUDRATE (100000) /* 100K */
 #define AT1846S_I2C_MASTER_SLAVE_ADDR_7BIT (0x71U)
 
 extern volatile int isI2cInUse;
