@@ -20,7 +20,7 @@
  * Translators: IU4LEG, IZ2EIB
  *
  *
- * Rev: 2021.02.28 IZ2EIB  & IU4LEG
+ * Rev: 2021.04.02 IZ2EIB  & IU4LEG
  */
 #ifndef USER_INTERFACE_LANGUAGES_ITALIAN_H_
 #define USER_INTERFACE_LANGUAGES_ITALIAN_H_
@@ -193,7 +193,7 @@ const stringsTable_t italianLanguage =
 .eco_level				= "Grado consumi",
 .buttons				= "Bottoni",
 .leds					= "LED",
-.scan_dwell_time		= "Scan dwell"
+.scan_dwell_time		= "Ciclo SCAN"
 };
 /********************************************************************
  *
