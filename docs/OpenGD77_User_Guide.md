@@ -84,6 +84,7 @@ For the latest information and discussions, please refer to the development and 
       * [Key rpt](#key-rpt)
       * [Filter time](#filter-time)
       * [Scan delay](#scan-delay)
+      * [Scan dwell](#scan-dwell)
       * [Scan mode](#scan-mode)
       * [Squelch UHF](#squelch-uhf)
       * [Squelch 220](#squelch-220)
@@ -1053,6 +1054,10 @@ When **TimeSlot** filtering is turned **on** (**Filter: TS** in *Quick Menu*), t
 During scan mode, this controls the duration that the radio tunes in to a channel before resuming scan.
 
 This works when **Pause** is selected as the scan mode.
+
+#### Scan dwell<!-- linebreak -->
+
+During scan mode, this controls the duration that the radio listens (dwells) on each frequency. This applies to both channel mode and VFO mode scanning. The default value is 30ms. Longer dwell times result in better sensitivity to weak signals, but slower overall scan speed.  For DMR simplex channels the dwell time duing the scan will be set to 60ms even if the dwell time is set to less than 60ms, because its necessary to listen for at least 60ms in order to receive at least 1 DMR frame / timeslot.
 
 #### Scan mode<!-- linebreak -->
 
