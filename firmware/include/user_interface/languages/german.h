@@ -193,7 +193,8 @@ const stringsTable_t germanLanguage =
 .eco_level				= "Eco Stufe",
 .buttons				= "Tasten",
 .leds					= "LEDs",
-.scan_dwell_time		= "Scan dwell"
+.scan_dwell_time			= "Scan dwell",
+.battery_calibration			= "Batt. Cal"
 };
 /********************************************************************
  *

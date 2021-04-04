@@ -203,6 +203,7 @@ typedef struct
    const char *buttons;
    const char *leds;
    const char *scan_dwell_time;
+   const char *battery_calibration;
 } stringsTable_t;
 
 extern const stringsTable_t languages[];

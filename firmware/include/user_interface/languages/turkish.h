@@ -193,7 +193,8 @@ const stringsTable_t turkishLanguage =
 .eco_level				= "Eco Level",
 .buttons				= "Buttons",
 .leds					= "LEDs",
-.scan_dwell_time		= "Scan dwell"
+.scan_dwell_time			= "Scan dwell",
+.battery_calibration			= "Batt. Cal"
 };
 /********************************************************************
  *

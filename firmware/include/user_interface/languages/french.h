@@ -185,7 +185,7 @@ const stringsTable_t frenchLanguage =
 .celcius				= "°C",
 .seconds				= "secondes",
 .radio_info				= "Infos radio",
-.temperature_calibration		= "Etal. t°",
+.temperature_calibration		= "Étal. t°",
 .pin_code				= "Code Pin",
 .please_confirm				= "Confirmez", // MaxLen: 15
 .vfo_freq_bind_mode			= "Freq. Liées",
@@ -193,7 +193,8 @@ const stringsTable_t frenchLanguage =
 .eco_level				= "Niveau Eco",
 .buttons				= "Boutons",
 .leds					= "DELs",
-.scan_dwell_time		= "Scan dwell"
+.scan_dwell_time			= "Durée Scan",
+.battery_calibration			= "Étal. Bat."
 };
 /********************************************************************
  *
