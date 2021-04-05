@@ -94,6 +94,8 @@ For the latest information and discussions, please refer to the development and 
       * [TA Tx](#ta-tx)
       * [Allow PC](#allow-pc)
       * [User Power](#user-power)
+      * [Temp Cal](#temp-cal)
+      * [Bat Cal](#bat-cal)
       * [Eco Level](#eco-level)
     * [Display Options](#display-options)
       * [Brightness](#brightness)
@@ -1131,6 +1133,21 @@ Power output on VHF is much higher than it is on UHF for the same PA drive value
 
 To use the User Power value, the power setting much be set to the +W- option. See the "Controlling PA power" section.
 
+#### Temp Cal<!-- linebreak -->
+Temperature sensor calibraton
+
+The microcontroller (CPU) in radio contains an internal temperature sensor, which measures the temperature of the microcontroller.
+The temperature is displayed on the temperature page of the Radio Info screen.
+The temperature sensor value needs to be calibrated before it is at all accurate, and this setting allows the operator to set an offset value, so that the sensor reads correctly for their radio.
+It should be noted that this is the temperature of the microcontroller and not the PA or the battery.
+
+
+#### Bat Cal<!-- linebreak -->
+Battery voltage calibration
+
+The radio contains a circuit which measures the voltage of the battery, however because of hardware design errors and tolerances in external components, the value measured by the microcontroller may not be accurate.
+This setting allows the operator to correct for the component tollerances and hardware design.
+
 
 #### Eco Level<!-- linebreak -->
 
@@ -1142,11 +1159,12 @@ For other values refer to the table below
 
 Level | Rx duty cycle | Entry delay (secs) | Average latency (ms) | Current (mA)
 ----- | ------------- | ------------------ | -------------------  | ------------
-0  | N/A | N/A | N/A | 62
-1  | 1:1 | 10 | 320  | 47
-2  | 1:2 | 8 | 420  | 33
-3  | 1:4 | 6 | 600  | 27
-4  | 1:8 | 2 | 900  | 23
+0  | N/A  | N/A | N/A | 62
+1  | 1:1  | 10 | 240  | 40
+2  | 1:2  | 8  | 330  | 33
+3  | 1:4  | 6  | 500  | 27
+4  | 1:8  | 2  | 810  | 23
+5  | 1:16 | 2  | 1360 | 21
 
 Default is level 1.
 
