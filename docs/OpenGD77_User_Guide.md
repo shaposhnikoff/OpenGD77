@@ -1163,12 +1163,12 @@ Level | Rx duty cycle | Entry delay (secs) | Average latency (ms) | Current (mA)
 1  | 1:1  | 10 | 240  | 40
 2  | 1:2  | 8  | 330  | 33
 3  | 1:4  | 6  | 500  | 27
-4  | 1:8  | 2  | 810  | 23
-5  | 1:16 | 2  | 1360 | 21
+4  | 1:8  | 4  | 810  | 23
+5  | 1:16 | 4  | 1360 | 21
 
 Default is level 1.
 
-Level 2,3 and 4 power down the C6000 DMR chip, which can cause problems with DMR and beep audio on some radios.
+Level 2,3,4 and 5 power down the C6000 DMR chip, which can cause problems with DMR and beep audio on some radios.
 
 This is caused by an internal bug in the C6000 chip. If your radio has problem with DMR or beep audio on level 2 and above, please use Level 0 or Level 1.
 
