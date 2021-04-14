@@ -15,7 +15,7 @@ For the latest information and discussions, please refer to the development and 
   * [Codeplug compatibility](#codeplug-compatibility)
   * [Variations between different supported radios](#variations-between-different-supported-radios)
   * [Main screens (VFO and Channel screens)](#main-screens-vfo-and-channel-screens)
-    * [Changing between FM and DMR](#changing-between-FM-and-DMR)
+    * [Changing between FM and DMR](#changing-between-fm-and-dmr)
     * [Changing Timeslot in DMR mode](#changing-timeslot-in-dmr-mode)
     * [Controlling Tx power](#controlling-tx-power)
     * [Signal strength bar graph](#signal-strength-bar-graph)
