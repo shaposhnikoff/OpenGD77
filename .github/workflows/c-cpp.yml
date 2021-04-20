@@ -17,5 +17,5 @@ jobs:
     - name: list files
       run: ls -l
     - name: Build
-      run: cd firmware && mkdir build && cd build && make -f ../Makefile
+      run: cd firmware && make
       
