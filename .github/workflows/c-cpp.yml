@@ -12,11 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: numworks/setup-arm-toolchain@2020-q2
     - uses: actions/checkout@v2
     - name: list files
       run: ls -l
-    - name: install arm toolchain 
-      run: sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi gdb-arm-none-eabi openocd
     - name: Build
       run: cd firmware && mkdir build && cd build && make -f ../Makefile
       
